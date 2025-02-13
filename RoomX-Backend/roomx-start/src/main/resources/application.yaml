@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: RoomX
+  profiles:
+    active: dev

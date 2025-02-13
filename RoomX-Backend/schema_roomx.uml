@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>DATABASE</ID>
+  <OriginalElement>cbcd4b96-fed3-4d12-8064-4be6f17839b3.SCHEMA:roomx.schema_roomx</OriginalElement>
+  <nodes>
+    <node x="-119.5" y="398.60094637223983">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.dich_vu</node>
+    <node x="666.3380126182964" y="494.3958990536278">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.nhan_vien</node>
+    <node x="176.75" y="379.60094637223983">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phieu_dat_phong</node>
+    <node x="80.76466876971608" y="50.0">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.thiet_bi</node>
+    <node x="-139.95015772870659" y="97.5">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.chi_tiet_dich_vu</node>
+    <node x="471.54400630914824" y="295.2646687697161">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.ngan_sach</node>
+    <node x="744.8380126182964" y="269.60094637223983">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phong_ban</node>
+    <node x="44.26466876971608" y="307.60094637223983">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.loai_thiet_bi</node>
+    <node x="240.64234700315455" y="748.4594952681389">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.nhan_vien_vai_tro</node>
+    <node x="353.1783974763407" y="605.8672807570978">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.quyen</node>
+    <node x="676.3380126182964" y="68.18328075709779">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.chi_nhanh</node>
+    <node x="-106.5" y="597.2885678233438">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.vai_tro_quyen</node>
+    <node x="-18.108012618296527" y="717.4220063091482">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.vai_tro</node>
+    <node x="369.1470031545741" y="31.0">cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phong_hop</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phieu_dat_phong" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.nhan_vien" relationship="REFERENCES">
+      <point x="113.5" y="19.79495268138794" />
+      <point x="-81.0" y="-114.0" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.nhan_vien" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phong_ban" relationship="REFERENCES">
+      <point x="73.5" y="-121.5" />
+      <point x="0.0" y="83.5" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.thiet_bi" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.loai_thiet_bi" relationship="REFERENCES">
+      <point x="-94.5" y="93.0" />
+      <point x="0.0" y="-45.5" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phong_hop" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.chi_nhanh" relationship="REFERENCES">
+      <point x="68.5" y="-10.316719242902195" />
+      <point x="-76.0" y="0.0" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phong_ban" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.chi_nhanh" relationship="REFERENCES">
+      <point x="-68.5" y="-83.5" />
+      <point x="0.0" y="64.5" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.nhan_vien_vai_tro" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.nhan_vien" relationship="REFERENCES">
+      <point x="69.0" y="0.0" />
+      <point x="747.3380126182964" y="783.9594952681389" />
+      <point x="0.0" y="121.5" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.chi_tiet_dich_vu" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.thiet_bi" relationship="REFERENCES">
+      <point x="63.0" y="0.0" />
+      <point x="-110.0" y="0.0" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.thiet_bi" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phong_hop" relationship="REFERENCES">
+      <point x="110.0" y="0.0" />
+      <point x="-68.5" y="0.0" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.ngan_sach" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phong_ban" relationship="REFERENCES">
+      <point x="68.5" y="-6.663722397476249" />
+      <point x="-76.0" y="0.0" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.vai_tro_quyen" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.vai_tro" relationship="REFERENCES">
+      <point x="59.5" y="35.5" />
+      <point x="-9.891987381703473" y="-36.0" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.vai_tro_quyen" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.quyen" relationship="REFERENCES">
+      <point x="67.0" y="9.078712933753991" />
+      <point x="-48.0" y="0.0" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.dich_vu" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phieu_dat_phong" relationship="REFERENCES">
+      <point x="73.5" y="0.0" />
+      <point x="-113.5" y="0.0" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phieu_dat_phong" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.phong_hop" relationship="REFERENCES">
+      <point x="106.0" y="-102.5" />
+      <point x="-41.39700315457412" y="112.0" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.chi_tiet_dich_vu" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.dich_vu" relationship="REFERENCES">
+      <point x="30.950157728706586" y="45.5" />
+      <point x="0.0" y="-83.5" />
+    </edge>
+    <edge source="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.nhan_vien_vai_tro" target="cbcd4b96-fed3-4d12-8064-4be6f17839b3.TABLE:roomx.schema_roomx.vai_tro" relationship="REFERENCES">
+      <point x="-69.0" y="-2.037488958990707" />
+      <point x="48.0" y="28.5" />
+    </edge>
+  </edges>
+  <settings layout="Channel" zoom="1.2116254892367908" showDependencies="false" x="464.8727651735044" y="435.73665615141994" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Columns</Category>
+    <Category>Comments</Category>
+    <Category>Key columns</Category>
+    <Category>Virtual foreign keys</Category>
+  </Categories>
+</Diagram>
+
