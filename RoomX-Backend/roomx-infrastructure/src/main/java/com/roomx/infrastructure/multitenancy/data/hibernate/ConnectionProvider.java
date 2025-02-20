@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.multitenancy.data.hibernate;
 
 import com.roomx.infrastructure.multitenancy.tenantdetails.TenantDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
@@ -16,6 +17,7 @@ public class ConnectionProvider implements MultiTenantConnectionProvider<String>
 
     private final DataSource dataSource;
     private final TenantDetailsService tenantDetailsService;
+    private static final String DEFAULT_SCHEMA = "public";
 
     ConnectionProvider(DataSource dataSource, TenantDetailsService tenantDetailsService) {
         this.dataSource = dataSource;
@@ -24,7 +26,7 @@ public class ConnectionProvider implements MultiTenantConnectionProvider<String>
 
     @Override
     public Connection getAnyConnection() throws SQLException {
-        return getConnection("DEFAULT");
+        return getConnection(DEFAULT_SCHEMA);
     }
 
     @Override
@@ -44,7 +46,7 @@ public class ConnectionProvider implements MultiTenantConnectionProvider<String>
 
     @Override
     public void releaseConnection(String tenantIdentifier, Connection connection) throws SQLException {
-        connection.setSchema("DEFAULT");
+        connection.setSchema(DEFAULT_SCHEMA);
         connection.close();
     }
 

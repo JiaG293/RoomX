@@ -5,6 +5,7 @@ include 'controller'
 include 'application'
 include 'infrastructure'
 include 'domain'
+include 'shared'
 
 // Định nghĩa tên project là [start] nhưng import từ đường dẫn là [roomx-start]
 project(':start').projectDir = file('roomx-start')
@@ -12,3 +13,4 @@ project(':controller').projectDir = file('roomx-controller')
 project(':application').projectDir = file('roomx-application')
 project(':infrastructure').projectDir = file('roomx-infrastructure')
 project(':domain').projectDir = file('roomx-domain')
+project(':shared').projectDir = file('roomx-shared')

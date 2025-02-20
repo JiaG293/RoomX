@@ -1,12 +1,11 @@
+/*
 package com.roomx.application.service.admin.impl;
 
 
 import com.roomx.application.dto.request.UserCreationRequest;
 import com.roomx.application.dto.response.UserResponse;
-import com.roomx.application.exception.AppException;
-import com.roomx.application.exception.ErrorCode;
-import com.roomx.application.mapper.UserDomainMapper;
-import com.roomx.infrastructure.keycloak.repository.UserRepresentationRepository;
+import com.roomx.start.exception.AppException;
+import com.roomx.start.exception.ErrorCode;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +30,6 @@ public class KeycloakUserService {
 
     Keycloak keycloak;
 
-    UserRepresentationRepository userRepresentationRepository;
-
-    UserDomainMapper userDomainMapper;
-
     @NonFinal
     @Value("${keycloak.realm}")
     String realm;
@@ -43,7 +38,9 @@ public class KeycloakUserService {
     public UserResponse createUser(UserCreationRequest request){
 
 
-        /*// Tạo user mới trong Keycloak
+        */
+/*//*
+/ Tạo user mới trong Keycloak
         UserRepresentation user = new UserRepresentation();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
@@ -59,7 +56,8 @@ public class KeycloakUserService {
 
         // Gửi request tạo user
         keycloakAdminClient.realm(realm).users().create(user);
-        return "ok";*/
+        return "ok";*//*
+
 
         var realmRoles = keycloak.realm(realm).clients().findByClientId("roomx-tenantId-idp").getFirst();
 
@@ -71,7 +69,8 @@ public class KeycloakUserService {
         log.info("realmRoles: {}", listRoles);
 
         //Kiểm tra maNhanVien và email có tồn tại chưa
-        /*var checkMaNhanVien = userRepresentationRepository.findById(realm, request.getUsername());
+        */
+/*var checkMaNhanVien = userRepresentationRepository.findById(realm, request.getUsername());
         var checkEmail = userRepresentationRepository.findByEmail(realm, request.getEmail());
 
         log.info("Kiem tra ma nhan vien: {}", checkMaNhanVien.isPresent());
@@ -82,7 +81,8 @@ public class KeycloakUserService {
         log.info("Kiem tra email: {}", checkEmail.isPresent());
         if(checkEmail.isPresent()){
             throw new AppException(ErrorCode.EMAIL_EXISTED);
-        }*/
+        }*//*
+
 
         var user = userDomainMapper.toUserDomain(request);
 
@@ -92,3 +92,4 @@ public class KeycloakUserService {
 
     }
 }
+*/

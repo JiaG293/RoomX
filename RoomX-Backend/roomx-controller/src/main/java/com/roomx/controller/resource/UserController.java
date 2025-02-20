@@ -1,17 +1,17 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.request.UserCreationRequest;
+import com.roomx.application.dto.request.UserQueryFilterRequest;
+import com.roomx.application.dto.request.UserCreateRequest;
+import com.roomx.application.dto.response.UserCreateResponse;
+import com.roomx.application.dto.response.UserPageResponse;
 import com.roomx.application.dto.response.UserResponse;
-import com.roomx.application.exception.ResultResponse;
-import com.roomx.application.model.UserKeycloak;
-import com.roomx.application.model.UserModel;
-import com.roomx.application.service.admin.impl.KeycloakUserService;
-import com.roomx.application.service.auth.impl.UserServiceImpl;
-import com.roomx.controller.model.request.UserRequestModel;
+import com.roomx.application.service.employee.UserApplicationService;
+import com.roomx.shared.exception.ResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -22,8 +22,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -35,22 +35,28 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-    UserServiceImpl userService;
-    KeycloakUserService keycloakUserService;
+    UserApplicationService userApplicationService;
 
-    @GetMapping("/info")
-    public ResultResponse<?> getCurrentUser() {
-        return ResultResponse.<UserModel>builder().result(userService.getUser()).build();
+
+
+    @PostMapping
+    public ResultResponse<?> createUser(@RequestBody UserCreateRequest request) {
+        return ResultResponse.<UserCreateResponse>builder().result(userApplicationService.createUser(request)).build();
     }
 
-    @PreAuthorize("HAS_ROLE_SUPER_ADMIN")
+
+   /* @GetMapping("/info")
+    public ResultResponse<?> getCurrentUser() {
+        return ResultResponse.<UserApp>builder().result(userApplicationService.getUser()).build();
+    }*/
+  /*  @PreAuthorize("HAS_ROLE_SUPER_ADMIN")
     @PostMapping
     public ResultResponse<?> createUser(@RequestBody UserCreationRequest request) {
         log.info("request:  {}", request);
         return ResultResponse.<UserResponse>builder().result(keycloakUserService.createUser(request)).build();
-    }
+    }*/
 
-    @GetMapping
+    @GetMapping("/taolao")
     public Map<String, Object> getAuthInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -58,6 +64,9 @@ public class UserController {
             Jwt jwt = (Jwt) authentication.getPrincipal();
             return jwt.getClaims();
         }
+
+        Locale locale = LocaleContextHolder.getLocale();
+        log.info("Current locale: {}", locale);
 
         return Map.of("message", "No JWT found");
     }
@@ -82,5 +91,28 @@ public class UserController {
 
         return ResultResponse.<Map<String, String>>builder().result(response).build();
     }
+
+    @GetMapping("/tenant/{data}")
+    public ResultResponse<?> getTenantCurrent(@PathVariable String data) {
+        log.info("getTenantCurrent: {}", userApplicationService.getUserDetail(data));
+
+        return ResultResponse.<String>builder().result(userApplicationService.getTenant()).build();
+    }
+
+    @GetMapping
+    public ResultResponse<?> getListPageUser(
+            @ModelAttribute UserQueryFilterRequest filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+            ) {
+
+
+        return ResultResponse.<UserPageResponse>builder()
+                .result(userApplicationService.getListUserPages(filter, page, size, sortBy, direction))
+                .build();
+    }
+
 
 }

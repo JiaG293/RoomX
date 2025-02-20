@@ -1,6 +1,6 @@
 package com.roomx.infrastructure.multitenancy.data.hibernate;
 
-import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
+import com.roomx.infrastructure.multitenancy.security.context.TenantContextHolder;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
@@ -12,7 +12,7 @@ import java.util.Objects;
 @Component
 public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver<String>, HibernatePropertiesCustomizer {
 
-    public static final String DEFAULT_TENANT = "DEFAULT";
+    public static final String DEFAULT_TENANT = "schema_roomx";
 
     @Override
     public String resolveCurrentTenantIdentifier() {

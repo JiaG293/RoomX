@@ -1,14 +1,20 @@
 package com.roomx.application.dto.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserResponse {
-    private String maNhanVien;
-    private String matKhau;
-    private String tenNhanVien;
+    private String userId;
+    private String employeeId;
     private String email;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+    private String userType;
 }

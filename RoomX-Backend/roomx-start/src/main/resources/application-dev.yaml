@@ -1,5 +1,10 @@
 server:
   port: ${SERVER_PORT:8888}
+  servlet: # sửa lỗi font tiếng việt
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 #  servlet:
 #    context-path: /api
 #  tomcat:
@@ -8,10 +13,13 @@ server:
 #      min-spare: 50
 #    accept-count: 20000
 spring:
+  messages: # Cấu hình message chuận utf8 tránh lỗi font tiếng việt
+    encoding: UTF-8
   flyway:
-    baseline-on-migrate: true
-    locations: classpath:db/migration/default
-    schemas: default
+#    baseline-on-migrate: true
+    locations: classpath:db/migration/tenant
+    schemas: tenant
+    enabled: true
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:roomx}
     username: ${DB_USERNAME:root}
@@ -34,9 +42,10 @@ spring:
         format_sql: true
         use_sql_comments: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
-      #        default_schema: ${DB_SCHEMA_HIBERNATE:schema_roomx}
-#      defer-datasource-initialization: true   # Ngăn insert dữ liệu trước khi jpa mapping
+        hbm2ddl:
+          auto: update # không bật trong production
+      #      default_schema: ${DB_SCHEMA_HIBERNATE:DEFAULT}
+      defer-datasource-initialization: true   # Ngăn insert dữ liệu trước khi jpa mapping
   jackson:
     serialization:
       indent-output: true
@@ -47,12 +56,12 @@ spring:
 #      mode: ${SQL_INIT_MODE:never}
 #      data-locations: ${SQL_INIT_DATA:classpath:database/data.sql}  # SQL native thêm dữ liệu
 #      schema-locations: ${SQL_INIT_SCHEMA:classpath:database/schema.sql} # SQL native tạo schema
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${OAUTH2_RESOURCESERVER_JWT_ISSUER:http://localhost:5555/realms/roomx}
-          jwk-set-uri: ${OAUTH2_RESOURCESERVER_JWT_JWK:http://localhost:5555/realms/roomx/protocol/openid-connect/certs}
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: ${OAUTH2_RESOURCESERVER_JWT_ISSUER:http://localhost:5555/realms/roomx}
+#          jwk-set-uri: ${OAUTH2_RESOURCESERVER_JWT_JWK:http://localhost:5555/realms/roomx/protocol/openid-connect/certs}
   mail:
     port: 587
     host: ${MAIL_HOST:smtp.gmail.com}
@@ -114,9 +123,9 @@ management:
     health:
       show-details: always
 keycloak:
-  realm: roomx
+  realm: master
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:5555} # địa chỉ của keycloak server
-  resource: ${KEYCLOAK_RESOURCE:roomx-tenantId-idp} # Client ID của ứng dụng
+  resource: ${KEYCLOAK_RESOURCE:roomx-backend-admin} # Client ID của ứng dụng liên lạc với backend
   credentials:
     secret: ${KEYCLOAK_CREDENTIALS_SECRET:NE5P98sS61cQ8bBBofe4kveX8rUEZ7Hy}
   use-resource-role-mappings: true
@@ -139,6 +148,6 @@ multitenancy:
       schema: sang
       issuer: http://192.168.1.251:5555/realms/sang
     - identifier: hiep
-      enabled: false
+      enabled: true
       schema: hiep
       issuer: http://192.168.1.251:5555/realms/hiep

@@ -1,17 +1,15 @@
 package com.roomx.infrastructure.multitenancy.tenantdetails;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PropertiesTenantDetailsService implements TenantDetailsService {
 
     private final TenantDetailsProperties tenantDetailsProperties;
-
-    public PropertiesTenantDetailsService(TenantDetailsProperties tenantDetailsProperties) {
-        this.tenantDetailsProperties = tenantDetailsProperties;
-    }
 
     @Override
     public List<TenantDetails> loadAllTenants() {

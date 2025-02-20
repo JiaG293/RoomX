@@ -1,9 +1,8 @@
 package com.roomx.controller.resource;
 
 
-import com.roomx.application.exception.ResultResponse;
+import com.roomx.shared.exception.ResultResponse;
 import com.roomx.application.service.event.impl.EventAppServiceImpl;
-import com.roomx.application.dto.response.TestDTOResponse;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -72,7 +71,7 @@ public class TestController {
         return restTemplate.getForObject("https://jsonplaceholder.typicode.com/posts/" + id, String.class);
     }
 
-    @Operation(summary = "Lấy thông tin TEST", description = "Trả về thông tin TEST")
+  /*  @Operation(summary = "Lấy thông tin TEST", description = "Trả về thông tin TEST")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -87,6 +86,6 @@ public class TestController {
 
 
         return ResultResponse.<TestDTOResponse>builder().result(TestDTOResponse.builder().message(header + "\n1").build()).build();
-    }
+    }*/
 
 }
