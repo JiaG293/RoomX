@@ -1,23 +1,18 @@
 package com.roomx.application.service.user;
 
 import com.roomx.application.dto.user.request.RoleCreateRequest;
-import com.roomx.application.dto.user.request.RolePermissionCreateRequest;
 import com.roomx.application.dto.user.response.RoleResponse;
-import com.roomx.application.dto.user.response.RolePermissonCreateReponse;
 import com.roomx.application.mapper.PermissionAppMapper;
 import com.roomx.application.mapper.RoleAppMapper;
 import com.roomx.domain.repository.RoleRepository;
 import com.roomx.domain.service.RoleDomainService;
 import com.roomx.infrastructure.multitenancy.keycloak.service.KeycloakPermissonService;
 import com.roomx.infrastructure.multitenancy.keycloak.service.KeycloakRoleService;
-import com.roomx.infrastructure.multitenancy.persistence.repository.impl.RoleEntityRepository;
 import com.roomx.shared.exception.AppException;
 import com.roomx.shared.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -88,7 +83,7 @@ public class RoleAppService {
                             null
                     );
 
-            return roleAppMapper.toReponse(savedRole);
+            return roleAppMapper.toResponse(savedRole);
         } catch (Exception e) {
             // Rollback keycloan nếu có lỗi
             keycloakRoleService.deleteRole(roleCreateRequest.getRoleName());
@@ -102,7 +97,7 @@ public class RoleAppService {
 
             keycloakPermissonService.assignPermissonToRole(permisisonName, roleName);
             log.info("role assign: {}", role);
-            return roleAppMapper.toReponse(role);
+            return roleAppMapper.toResponse(role);
         } catch (Exception e) {
             // Rollback keycloak nếu có lỗi
             keycloakPermissonService.revokePermissionFromRole(permisisonName, roleName);

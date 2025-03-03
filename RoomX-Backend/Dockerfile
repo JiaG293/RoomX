@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Cache gradle
 COPY build.gradle settings.gradle gradlew ./
-COPY gradle /app/gradle
+COPY roomx-start/gradle /app/gradle
 
 # Tải dependencies để cache
 RUN chmod +x gradlew && ./gradlew dependencies --no-daemon
@@ -19,7 +19,7 @@ RUN chmod +x gradlew && ./gradlew build -x test --no-daemon
 
 ## 2️⃣ Production stage
 FROM eclipse-temurin:21-jre AS production
-WORKDIR app
+WORKDIR /app
 #
 ## Copy file JAR từ build stage
 COPY --from=build /app/build/libs/*.jar roomx_be.jar

@@ -2,7 +2,6 @@ package com.roomx.application.mapper;
 
 import com.roomx.application.dto.user.request.RoleCreateRequest;
 import com.roomx.application.dto.user.response.RoleResponse;
-import com.roomx.application.dto.user.response.RolePermissonCreateReponse;
 import com.roomx.domain.model.aggrerate.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,7 +9,7 @@ import org.mapstruct.Mappings;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring", uses = PermissionAppMapper.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+@Mapper(componentModel = "spring", uses = PermissionAppMapper.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface RoleAppMapper {
     RoleAppMapper INSTANCE = Mappers.getMapper(RoleAppMapper.class);
 
@@ -26,8 +25,8 @@ public interface RoleAppMapper {
 
     @Mappings({
             @Mapping(target = "roleName", source = "id"),
-//            @Mapping(target = "permissions", source = "permissions")
+            @Mapping(target = "permissions", source = "permissions")
     })
-    RoleResponse toReponse(Role domain);
+    RoleResponse toResponse(Role domain);
 
 }
