@@ -16,9 +16,9 @@ spring:
   messages: # Cấu hình message chuận utf8 tránh lỗi font tiếng việt
     encoding: UTF-8
   flyway:
-#    baseline-on-migrate: true
-    locations: classpath:db/migration/tenant
-    schemas: tenant
+    baseline-on-migrate: true
+    locations: classpath:db/migration/default
+    schemas: public
     enabled: true
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:roomx}
@@ -123,6 +123,7 @@ management:
     health:
       show-details: always
 keycloak:
+  client-default: ${KEYCLOAK_CLIENT_DEFAULT:roomx-fe} # client mặc định cho app roomx
   realm: master
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:5555} # địa chỉ của keycloak server
   resource: ${KEYCLOAK_RESOURCE:roomx-backend-admin} # Client ID của ứng dụng liên lạc với backend

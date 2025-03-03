@@ -1,7 +1,7 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.request.LoginRequest;
-import com.roomx.application.dto.request.TokenResponse;
+import com.roomx.application.dto.auth.request.LoginRequest;
+import com.roomx.application.dto.auth.request.TokenResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

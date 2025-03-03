@@ -12,7 +12,7 @@ import java.util.Objects;
 @Component
 public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver<String>, HibernatePropertiesCustomizer {
 
-    public static final String DEFAULT_TENANT = "schema_roomx";
+    public static final String DEFAULT_TENANT = "public";
 
     @Override
     public String resolveCurrentTenantIdentifier() {

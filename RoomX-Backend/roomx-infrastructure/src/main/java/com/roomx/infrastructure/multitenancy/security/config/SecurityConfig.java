@@ -1,10 +1,10 @@
 package com.roomx.infrastructure.multitenancy.security.config;
 
-import com.roomx.infrastructure.multitenancy.security.oauth.JwtAuthenticationEntryPoint;
-import com.roomx.infrastructure.multitenancy.keycloak.repository.KeycloakClientRoleConverter;
-import com.roomx.infrastructure.multitenancy.keycloak.repository.KeycloakRealmRoleConverter;
-import com.roomx.infrastructure.multitenancy.security.oauth.MultiTenantJwtDecoder;
+import com.roomx.infrastructure.multitenancy.keycloak.config.KeycloakClientRoleConverter;
+import com.roomx.infrastructure.multitenancy.keycloak.config.KeycloakRealmRoleConverter;
 import com.roomx.infrastructure.multitenancy.security.context.filter.TenantContextFilter;
+import com.roomx.infrastructure.multitenancy.security.oauth.JwtAuthenticationEntryPoint;
+import com.roomx.infrastructure.multitenancy.security.oauth.MultiTenantJwtDecoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -41,6 +42,13 @@ public class SecurityConfig {
             "/api/v1/test",
             "/api/v1/demo/public/**",
             "/test/**",
+            "/actuator/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/swagger-resources/**",
+            "/webjars/**"
+
     };
 
 
@@ -70,8 +78,6 @@ public class SecurityConfig {
                                 .decoder(multiTenantJwtDecoder)
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint));//new JwtAuthenticationEntryPoint()
-
-
 
 
         // Thêm TenantContextFilter trước BearerTokenAuthenticationFilter để filter lấy ra tenantid xác định jwkissuer
@@ -160,8 +166,29 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.addAll(Objects.requireNonNull(keycloakRealmRoleConverter.convert(jwt)));
-            authorities.addAll(Objects.requireNonNull(keycloakClientRoleConverter.convert(jwt)));
+            Map<String, Object> claims = jwt.getClaims();
+
+            // Nếu cần quản lý realm
+            /*authorities.addAll(Objects.requireNonNull(keycloakRealmRoleConverter.convert(jwt)));
+            authorities.addAll(Objects.requireNonNull(keycloakClientRoleConverter.convert(jwt)));*/
+
+            // Roles Permissons của hệ thống
+
+
+            // Xử lý roles
+            Optional.ofNullable(claims.get("roles"))
+                    .filter(List.class::isInstance)
+                    .map(List.class::cast)
+                    .ifPresent(roles -> roles.forEach(role ->
+                            authorities.add(new SimpleGrantedAuthority(role.toString().toUpperCase()))));
+
+            // Xử lý permissions
+            Optional.ofNullable(claims.get("permissions"))
+                    .filter(List.class::isInstance)
+                    .map(List.class::cast)
+                    .ifPresent(permissions -> permissions.forEach(permission ->
+                            authorities.add(new SimpleGrantedAuthority("PERMISSION_" + permission.toString().toUpperCase()))));
+
             return authorities;
         });
         return converter;

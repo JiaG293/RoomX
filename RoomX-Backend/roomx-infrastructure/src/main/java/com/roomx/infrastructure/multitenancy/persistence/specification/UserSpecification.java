@@ -1,6 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.specification;
 
-import com.roomx.domain.employee.enums.UserType;
+import com.roomx.domain.model.enums.UserType;
 import com.roomx.infrastructure.multitenancy.persistence.dto.UserFilter;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
 import jakarta.persistence.criteria.Predicate;
@@ -19,8 +19,8 @@ public class UserSpecification {
             if (filter.getEmail() != null && !filter.getEmail().isEmpty()) {
                 predicates.add(criteriaBuilder.like(root.get("email"), "%" + filter.getEmail() + "%"));
             }
-            if (filter.getEmployeeId() != null && !filter.getEmployeeId().isEmpty()) {
-                predicates.add(criteriaBuilder.equal(root.get("employeeId"), filter.getEmployeeId()));
+            if (filter.getUserCode() != null && !filter.getUserCode().isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("employeeId"), filter.getUserCode()));
             }
             if (filter.getUserType() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("userType"), UserType.fromDisplayName(filter.getUserType())));

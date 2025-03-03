@@ -6,11 +6,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface JpaUserEntityRepository extends JpaRepository<UserEntity, String >, JpaSpecificationExecutor<UserEntity> {
+public interface JpaUserEntityRepository extends JpaRepository<UserEntity, UUID>, JpaSpecificationExecutor<UserEntity> {
 
-    Optional<UserEntity> findByEmployeeId(String employeeId);
+    Optional<UserEntity> findByUserCode(String userCode);
 
     Optional<UserEntity> findByEmail(String email);
 }

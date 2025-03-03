@@ -39,8 +39,11 @@ public enum ErrorCode {
     TENANT_NOT_FOUND(1013, "error.tenant_not_found", HttpStatus.NOT_FOUND),
     EMPLOYEE_ID_EXISTED(1000, "error.employee_id_conflict", HttpStatus.CONFLICT),
     CREATE_USER_FAILED(1000, "error.employee_create_keycloak_failed", HttpStatus.BAD_REQUEST),
-    ROLLBACK_FAILED(1000, "error.roll_back_data_failed", HttpStatus.INTERNAL_SERVER_ERROR);
-
+    ROLLBACK_FAILED(1000, "error.roll_back_data_failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    ROLE_CONFLICT(1000, "error.role_conflict", HttpStatus.CONFLICT),
+    ROLE_CREATE_FAILED(1000, "error.role_create_failed", HttpStatus.BAD_REQUEST),
+    PERMISSION_CREATE_FAILED(1000, "error.permission_create_failed", HttpStatus.BAD_REQUEST),
+    PERMISSION_CONFLICT(1000, "error.permission_conflict", HttpStatus.CONFLICT);
 
 
 

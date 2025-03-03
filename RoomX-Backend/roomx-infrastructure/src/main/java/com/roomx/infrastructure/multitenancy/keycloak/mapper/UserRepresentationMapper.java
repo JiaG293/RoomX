@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.multitenancy.keycloak.mapper;
 
-import com.roomx.domain.employee.model.User;
+
+import com.roomx.domain.model.aggrerate.User;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -11,7 +12,7 @@ public interface UserRepresentationMapper {
 
     UserRepresentationMapper INSTANCE = Mappers.getMapper(UserRepresentationMapper.class);
 
-    UserRepresentation toEntity(User user);
+    UserRepresentation toEntity(User user1);
 
 
    /* @Mappings({

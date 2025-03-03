@@ -22,7 +22,7 @@ FROM eclipse-temurin:21-jre AS production
 WORKDIR app
 #
 ## Copy file JAR từ build stage
-COPY --from=app /build/build/libs/*.jar roomx_be.jar
+COPY --from=app /app/build/libs/*.jar roomx_be.jar
 #
 ## Chạy ứng dụng
 ENTRYPOINT ["java", "-jar", "roomx_be.jar"]

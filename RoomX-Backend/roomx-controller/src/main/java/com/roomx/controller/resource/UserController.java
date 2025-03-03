@@ -1,18 +1,16 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.request.UserQueryFilterRequest;
-import com.roomx.application.dto.request.UserCreateRequest;
-import com.roomx.application.dto.response.UserCreateResponse;
-import com.roomx.application.dto.response.UserPageResponse;
-import com.roomx.application.dto.response.UserResponse;
-import com.roomx.application.service.employee.UserApplicationService;
+import com.roomx.application.dto.user.request.UserCreateRequest;
+import com.roomx.application.dto.user.request.UserQueryFilterRequest;
+import com.roomx.application.dto.user.response.UserCreateResponse;
+import com.roomx.application.dto.user.response.UserPageResponse;
+import com.roomx.application.service.user.UserAppService;
 import com.roomx.shared.exception.ResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,10 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -35,26 +30,38 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-    UserApplicationService userApplicationService;
+    UserAppService userAppService;
+
+
+
 
 
 
     @PostMapping
     public ResultResponse<?> createUser(@RequestBody UserCreateRequest request) {
-        return ResultResponse.<UserCreateResponse>builder().result(userApplicationService.createUser(request)).build();
+        return ResultResponse.<UserCreateResponse>builder().result(userAppService.createUser(request)).build();
     }
 
 
-   /* @GetMapping("/info")
-    public ResultResponse<?> getCurrentUser() {
-        return ResultResponse.<UserApp>builder().result(userApplicationService.getUser()).build();
-    }*/
-  /*  @PreAuthorize("HAS_ROLE_SUPER_ADMIN")
-    @PostMapping
-    public ResultResponse<?> createUser(@RequestBody UserCreationRequest request) {
-        log.info("request:  {}", request);
-        return ResultResponse.<UserResponse>builder().result(keycloakUserService.createUser(request)).build();
-    }*/
+    @GetMapping("/test")
+    public ResultResponse<?> test() {
+        return ResultResponse.<List<String>>builder().result(userAppService.getTest()).build();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @GetMapping("/taolao")
     public Map<String, Object> getAuthInfo() {
@@ -94,9 +101,9 @@ public class UserController {
 
     @GetMapping("/tenant/{data}")
     public ResultResponse<?> getTenantCurrent(@PathVariable String data) {
-        log.info("getTenantCurrent: {}", userApplicationService.getUserDetail(data));
+        log.info("getTenantCurrent: {}", userAppService.getUserDetail(data));
 
-        return ResultResponse.<String>builder().result(userApplicationService.getTenant()).build();
+        return ResultResponse.<String>builder().result(userAppService.getTenant()).build();
     }
 
     @GetMapping
@@ -110,7 +117,7 @@ public class UserController {
 
 
         return ResultResponse.<UserPageResponse>builder()
-                .result(userApplicationService.getListUserPages(filter, page, size, sortBy, direction))
+                .result(userAppService.getListUserPages(filter, page, size, sortBy, direction))
                 .build();
     }
 

@@ -1,61 +1,82 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
-import com.roomx.domain.employee.enums.UserType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.ColumnDefault;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.time.Instant;
+import java.util.UUID;
 
 @Builder
-@Entity
-@Table(name = "users")
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@Entity
+@Table(name = UserEntity.TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(name = "unq_nguoi_dung", columnNames = {"user_code", "email", "phone_number"})
+})
 public class UserEntity {
+    public static final String TABLE_NAME = "\"user\"";
+    public static final String COLUMN_ID_NAME = "user_id";
+    public static final String COLUMN_FIRSTNAME_NAME = "first_name";
+    public static final String COLUMN_LASTNAME_NAME = "last_name";
+    public static final String COLUMN_PHONENUMBER_NAME = "phone_number";
+    public static final String COLUMN_EMAIL_NAME = "email";
+    public static final String COLUMN_GENDER_NAME = "gender";
+    public static final String COLUMN_AVATARIMAGE_NAME = "avatar_image";
+    public static final String COLUMN_USERTYPE_NAME = "user_type";
+    public static final String COLUMN_USERCODE_NAME = "user_code";
+    public static final String COLUMN_CREATEDAT_NAME = "created_at";
+    public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
+
+
     @Id
-    @Column(name = "user_id")
-    String id;
+    @Column(name = COLUMN_ID_NAME, nullable = false)
+    private UUID id;
 
-    @Column(name = "ma_nhan_vien", columnDefinition = "varchar(32)")
-    String employeeId;
+    @Size(max = 128)
+    @Column(name = COLUMN_FIRSTNAME_NAME, length = 128)
+    private String firstName;
 
-    @Column(name = "email", columnDefinition = "varchar(255)")
-    String email;
+    @Size(max = 64)
+    @Column(name = COLUMN_LASTNAME_NAME, length = 64)
+    private String lastName;
 
-    @Column(name = "ho", columnDefinition = "varchar(255)")
-    String firstName;
+    @Size(max = 10)
+    @Column(name = COLUMN_PHONENUMBER_NAME, length = 10)
+    private String phoneNumber;
 
-    @Column(name = "ten", columnDefinition = "varchar(255)")
-    String lastName;
+    @Size(max = 500)
+    @NotNull
+    @Column(name = COLUMN_EMAIL_NAME, nullable = false, length = 500)
+    private String email;
 
-    @Column(name = "gioi_tinh", columnDefinition = "boolean")
-    boolean gender;
+    @Column(name = COLUMN_GENDER_NAME)
+    private Boolean gender;
 
-    @Column(name = "trang_thai", columnDefinition = "varchar(15)")
-    boolean status;
+    @Column(name = COLUMN_AVATARIMAGE_NAME, length = Integer.MAX_VALUE)
+    private String avatarImage;
 
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Column(name = "danh_sach_so_dien_thoai")
-    Set<PhoneEntity> phones = new HashSet<>();
+    @Size(max = 32)
+    @NotNull
+    @Column(name = COLUMN_USERTYPE_NAME, nullable = false, length = 32)
+    private String userType;
 
-    @Column(name = "phong_ban_id", columnDefinition = "varchar(32)")
-    String departmentId;
+    @Size(max = 32)
+    @NotNull
+    @Column(name = COLUMN_USERCODE_NAME, nullable = false, length = 32)
+    private String userCode;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "loai_nguoi_dung", columnDefinition = "varchar(32)")
-    UserType userType;
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = COLUMN_CREATEDAT_NAME)
+    private Instant createdAt;
 
-
-
-    // RELATIONSHIP
-
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
-    Set<GroupEntity> groups = new HashSet<>();
-
-
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = COLUMN_UPDATEDAT_NAME)
+    private Instant updatedAt;
 
 }

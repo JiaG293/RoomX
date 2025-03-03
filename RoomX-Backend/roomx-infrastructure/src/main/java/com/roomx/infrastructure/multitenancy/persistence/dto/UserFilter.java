@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserFilter {
     String userId;
-    String employeeId;
+    String userCode;
     String email;
     String userType;
     String status;

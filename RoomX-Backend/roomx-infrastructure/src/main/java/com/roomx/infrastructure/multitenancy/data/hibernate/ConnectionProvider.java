@@ -1,7 +1,6 @@
 package com.roomx.infrastructure.multitenancy.data.hibernate;
 
 import com.roomx.infrastructure.multitenancy.tenantdetails.TenantDetailsService;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;

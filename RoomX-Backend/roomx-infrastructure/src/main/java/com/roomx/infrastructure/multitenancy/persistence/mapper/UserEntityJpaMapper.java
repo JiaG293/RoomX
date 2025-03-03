@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.multitenancy.persistence.mapper;
 
-import com.roomx.domain.employee.model.User;
+
+import com.roomx.domain.model.aggrerate.User;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

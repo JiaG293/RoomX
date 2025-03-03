@@ -1,44 +1,46 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
-import com.roomx.domain.employee.enums.GroupScopeType;
-import com.roomx.domain.employee.enums.GroupType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.UUID;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 @Entity
-@Table(name = "groups")
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = GroupEntity.TABLE_NAME)
 public class GroupEntity {
+    public static final String TABLE_NAME = "\"group\"";
+    public static final String COLUMN_ID_NAME = "group_id";
+    public static final String COLUMN_NAME_NAME = "name";
+    public static final String COLUMN_GROUPTYPE_NAME = "group_type";
+
+
     @Id
-    @Column(name = "group_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    @Column(name = COLUMN_ID_NAME, nullable = false)
+    private UUID id;
 
-    @Column(name = "ten_nhom")
-    String name;
+    @Size(max = 500)
+    @Column(name = COLUMN_NAME_NAME, length = 500)
+    private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "pham_vi_nhom")
-    GroupScopeType groupScopeType;
+    @Size(max = 32)
+    @NotNull
+    @Column(name = COLUMN_GROUPTYPE_NAME, nullable = false, length = 32)
+    private String groupType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "loai_nhom")
-    GroupType groupType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "branch_id")
+    private BranchEntity branch;
 
-
-
-    // RELATIONSHIP
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "group_users",  // Tên bảng n-n
-            joinColumns = @JoinColumn(name = "group_id"),  // FK - GroupEntity
-            inverseJoinColumns = @JoinColumn(name = "user_id")   // FK - UserEntity
-    )
-    Set<UserEntity> users = new HashSet<>();
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
 }
