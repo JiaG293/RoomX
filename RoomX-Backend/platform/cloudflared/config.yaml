@@ -1,0 +1,2 @@
+tunnel: roomx-vps
+credentials-file: /etc/cloudflared/roomx-vps.json

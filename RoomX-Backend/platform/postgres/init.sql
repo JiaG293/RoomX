@@ -1,0 +1,2 @@
+CREATE DATABASE roomx;
+CREATE DATABASE grafana;
