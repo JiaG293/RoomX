@@ -1,3 +1,4 @@
+/*
 package com.roomx.infrastructure.multitenancy.keycloak.model;
 
 import lombok.AllArgsConstructor;
@@ -13,3 +14,4 @@ public class KeycloakPermission {
     private String name;
     private String description;
 }
+*/

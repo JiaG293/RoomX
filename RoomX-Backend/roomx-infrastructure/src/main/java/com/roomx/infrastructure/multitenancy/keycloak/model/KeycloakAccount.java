@@ -1,3 +1,4 @@
+/*
 package com.roomx.infrastructure.multitenancy.keycloak.model;
 
 import lombok.AllArgsConstructor;
@@ -21,3 +22,4 @@ public class KeycloakAccount {
     private Set<KeycloakRole> roles = new HashSet<>();
 
 }
+*/

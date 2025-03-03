@@ -4,6 +4,8 @@ package com.roomx.infrastructure.multitenancy.keycloak.mapper;
 import com.roomx.domain.model.aggrerate.User;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
@@ -15,9 +17,5 @@ public interface UserRepresentationMapper {
     UserRepresentation toEntity(User user1);
 
 
-   /* @Mappings({
-            @Mapping(target = "username", source = "username"),
-            @Mapping(target = "email", source = "email")
-    })*/
     User toDomain(UserRepresentation userRepresentation);
 }

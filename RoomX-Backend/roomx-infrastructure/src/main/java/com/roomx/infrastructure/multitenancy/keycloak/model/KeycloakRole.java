@@ -1,3 +1,4 @@
+/*
 package com.roomx.infrastructure.multitenancy.keycloak.model;
 
 
@@ -18,3 +19,4 @@ public class KeycloakRole {
     private String description;
     private Set<KeycloakPermission> permissions = new HashSet<>();
 }
+*/
