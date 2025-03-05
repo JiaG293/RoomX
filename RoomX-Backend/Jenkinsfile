@@ -80,8 +80,8 @@ pipeline {
             stage('Load ENV File') {
                 steps {
                     script {
-                        withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: 'ENV_DEV')]) {
-                            sh 'cp $ENV_FILE RoomX-Backend/.env'
+                        withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: 'ENV_FILE_DEV')]) {
+                            sh 'cp $ENV_FILE_DEV RoomX-Backend/.env'
                         }
                     }
                 }
