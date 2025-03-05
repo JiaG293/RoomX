@@ -1,0 +1,379 @@
+networks:
+  roomx_network:
+    external: true
+services:
+  roomx:
+    build:
+      context: ./roomx
+      dockerfile: ../Dockerfile
+    container_name: roomx_app
+    ports:
+      - 8888:8888
+    environment:
+    - .env
+
+
+  # Cloudflared tunnel
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared_tunnel_roomx
+    restart: always
+    command: tunnel --no-autoupdate run
+    #environment:
+    #TUNNEL_TOKEN: <TOKEN_CLOUDFLARED_TUNNEL>
+    #TUNNEL_ORIGIN_CERT: /etc/cloudflared/cert.pem
+    volumes:
+      - ./platform/cloudflared:/etc/cloudflared
+      - ./platform/cloudflared/cert.pem:/home/nonroot/.cloudflared/cert.pem
+    networks:
+      - roomx_network
+
+  # JENKINS Custom
+  jenkins:
+    image: jenkins_app:lts-jdk21
+    container_name: jenkins_roomx
+    restart: unless-stopped
+    user: root
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - ./storage/jenkins/jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - roomx_network
+
+  # NGINX PROXY
+  nginx:
+    image: nginx:latest
+    container_name: nginx_roomx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./platform/nginx/html:/usr/share/nginx/html
+      #- ./platform/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./platform/nginx/conf.d:/etc/nginx/conf.d
+      - ./platform/ssl:/etc/letsencrypt
+    networks:
+      - roomx_network
+
+  #CERTBOT SSL Certificate
+  certbot:
+    image: certbot/certbot
+    container_name: certbot_roomx
+    volumes:
+      - ./platform/ssl:/etc/letsencrypt
+      - ./platform/nginx/html:/usr/share/nginx/html
+    entrypoint: >
+      /bin/sh -c "trap exit TERM;
+      while :; do
+        certbot renew --webroot -w /usr/share/nginx/html --quiet --no-self-upgrade;
+        nginx -s reload;
+        sleep 1d & wait $${!};
+      done;"
+
+  # KEYCLOAK
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1.0
+    container_name: keycloak_roomx
+    environment:
+      # Keycloak Admin Configuration
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+
+      # Database Configuration
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/roomx
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: root
+
+      # Keycloak DevOps Configuration
+      KC_DEVELOPER_MODE: true               # true | false : dev | production
+      #KC_HOSTNAME_STRICT: false            # Required match hostname port 80 http
+      #KC_HOSTNAME_STRICT_HTTPS: false      # Required match hostname port 443 https
+      #KC_HTTP_ENABLED: true                # true | false : Support port 80 http | Support port 443 https
+      #KC_HTTPS_CLIENT_AUTH: none           # NONE | REQUEST | REQUIRED : No SSL/TLS client authentication required | Client SSL/TLS, server not required. | SSL/TLS client-server valid required
+      #KC_PROXY_HEADERS: xforwarded          # Forward to hostname configuration
+      #KC_HOSTNAME: https://kc.jiag.id.vn    # Config hostname alternative localhost
+
+    ports:
+      - 5555:8080  # Changed to 5555 for external access to Keycloak
+    command: start-dev # development
+    restart: unless-stopped
+    volumes:
+      - ./storage/keycloak/data:/opt/keycloak/data  # Optional: bind mount for Keycloak data
+    networks:
+      - roomx_network
+    depends_on:
+      - postgres
+
+
+
+
+# POSTGRESQL 17
+  postgres:
+    image: postgres:17
+    container_name: postgres_roomx
+    volumes:
+      - ./platform/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./storage/postgres/data:/var/lib/postgresql/data       # Need remove folder if run init.sql
+    environment:
+      #POSTGRES_DB: roomx
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+
+    networks:
+      - roomx_network
+#  volumes:
+#    postgres-data:
+
+# REDIS
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis_roomx
+    ports:
+      - 6379:6379
+      - 8001:8001 # UI
+    environment:
+      REDIS_PASSWORD: root
+      ALLOW_EMPTY_PASSWORD: no
+    volumes:
+      - ./storage/redis/data:/data
+    restart: unless-stopped
+    networks:
+      - roomx_network
+
+# MINIO OBJECT STORAGE
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio_roomx
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin123
+    command: server /data --console-address ":9001"
+    ports:
+      - 9000:9000                                    # API
+      - 9001:9001                                    # Web UI
+    volumes:
+      - ./storage/minio/data:/data
+    restart: unless-stopped
+    networks:
+      - roomx_network
+
+
+# KAFKA
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka_roomx
+    ports:
+      - 9092:9092                  # Broker Port
+      - 9094:9094                  # Controller Port
+    environment:
+      # General Configuration
+      KAFKA_ENABLE_KRAFT: yes
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094        # Define Kafka server-side socket listening ports
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT          # Define security protocols
+      KAFKA_CFG_ADVERTISED_LISTENERS: EXTERNAL://192.168.1.115:9193,PLAINTEXT://kafka1:9092         # Set advertised listener
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT         # Interbroker listener name
+      KAFKA_KRAFT_CLUSTER_ID: LelM2dIFQkiUFvXCEcqRWA        # Cluster ID for Kafka, must be the same across the cluster. Use a generated UUID
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093         # Cluster address
+      ALLOW_PLAINTEXT_LISTENER: yes          # Allow PLAINTEXT listener (default is false; not recommended for production)
+      KAFKA_HEAP_OPTS: -Xmx512M -Xms256M          # Set maximum and initial memory for the broker
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true         # Enable auto-creation of topics
+      KAFKA_LOG_RETENTION_MS: 604800000        # Message retention period (in milliseconds), set to 7 days
+
+      ### Broker configurations
+      # Define external access address (host IP and port) -> get Ip: run docker inspect kafka
+      # KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_IP}:9092
+      # Broker ID, must be unique
+      KAFKA_BROKER_ID: 1
+      KAFKA_CFG_NODE_ID: 1
+    volumes:
+      - ./storage/kafka/data:/bitnami/kafka
+    networks:
+      - roomx_network
+
+# KAFKA UI
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui_roomx
+    ports:
+      - 9999:8080
+    environment:
+      KAFKA_CLUSTER_0_NAME: roomx
+      KAFKA_CLUSTER_0_BOOTSTRAPSERVERS: kafka:9092
+      DYNAMIC_CONFIG_ENABLED: true
+    networks:
+      - roomx_network
+    depends_on:
+      - kafka
+
+# PROMETHUS
+# prometheus:
+#    image: prom/prometheus:latest
+#    container_name: prometheus_roomx
+#    restart: unless-stopped
+#    volumes:
+#      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#      - ./prometheus/data:/prometheus
+#    command:
+#      - "--config.file=/etc/prometheus/prometheus.yml"
+#      - "--storage.tsdb.path=/prometheus"
+#      - "--web.console.libraries=/etc/prometheus/console_libraries"
+#      - "--web.console.templates=/etc/prometheus/consoles"
+#      - "--web.enable-lifecycle"
+#    extra_hosts:
+#      - host.docker.internal:host-gateway
+#    ports:
+#      - 9090:9090
+#    networks:
+#      - roomx_network
+
+# GRAFANA ENTERPRISE
+#  grafana:
+#    image: grafana/grafana
+#    container_name: grafana_roomx
+#    hostname: grafana
+#    environment:
+#      GF_SECURITY_ADMIN_USER: user
+#      GF_SECURITY_ADMIN_PASSWORD: admin
+#      GF_USERS_ALLOW_SIGN_UP: false
+#      GF_SERVER_DOMAIN: localhost
+#      GF_AUTH_ANONYMOUS_ENABLED: true
+#      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+#      GF_LOG_MODE: console file  #enable logger
+#      GF_LOG_FILTERS: alerting.notifier.slack:debug alermanager:debug ngalert:debug
+#    volumes:
+#      - ./grafana/data:/var/lib/grafana
+#    ports:
+#      - 3000:3000
+#    networks:
+#      - roomx_network
+
+
+#### 
+# GRAFANA OPEN-SOURCE
+  grafana:
+    image: grafana/grafana-oss:11.3.4
+    container_name: grafana_roomx
+    depends_on:
+      - loki
+      - prometheus
+      - tempo
+      - postgres
+    ports:
+      - 3000:3000
+    hostname: ${HOST_NAME:-localhost}
+    user: '0'
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_DATABASE_USER: root
+      GF_DATABASE_PASSWORD: root
+      GF_DATABASE_PORT: 5432
+      GF_DATABASE_NAME: grafana
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./platform/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./platform/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./platform/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+      - ./storage/grafana/data:/var/lib/grafana
+    restart: unless-stopped
+    networks:
+      - roomx_network
+
+
+
+# LOKI
+  loki:
+    image: grafana/loki:3.4
+    container_name: loki_roomx
+    command: -config.file=/etc/config/loki.yml
+    ports:
+      - 3100:3100
+    hostname: ${HOST_NAME:-localhost}
+    volumes:
+      - ./platform/loki/loki.yml:/etc/config/loki.yml
+    restart: unless-stopped
+    networks:
+      - roomx_network
+
+
+# PROMETHEUS
+  prometheus:
+    image: quay.io/prometheus/prometheus:v3.2.0
+    container_name: prometheus_roomx
+    command:
+      - "--config.file=/etc/config/prometheus.yml"
+      - "--enable-feature=otlp-write-receiver"
+      - "--enable-feature=exemplar-storage"
+      - "--web.enable-remote-write-receiver"
+    ports:
+      - 9090
+    hostname: ${HOST_NAME:-localhost}
+    volumes:
+      - ./platform/prometheus/prometheus.yml:/etc/config/prometheus.yml
+    restart: unless-stopped
+    networks:
+      - roomx_network
+
+
+# TEMPO
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo_roomx
+    command: -config.file /etc/tempo-config.yml
+    ports:
+      - 3110     # Tempo
+      - 4317     # OTLP gRPC
+      - 4318     # OTLP HTTP
+      - 9411     # Zipkin
+    hostname: ${HOST_NAME:-localhost}
+    volumes:
+      - ./platform/tempo/tempo.yml:/etc/tempo-config.yml
+    restart: unless-stopped
+    networks:
+      - roomx_network
+
+# ALLOY
+  alloy:
+    image: grafana/alloy:v1.7.0
+    container_name: alloy_roomx
+    command:
+      - "run"
+      - "--server.http.listen-addr=0.0.0.0:12345"
+      - "--storage.path=/data-alloy"
+      - "--disable-reporting"
+      - "/etc/alloy/config.alloy"
+    depends_on:
+      - loki
+      - prometheus
+      - tempo
+    hostname: ${HOST_NAME:-localhost}
+    environment:
+      ENVIRONMENT: dev
+      LOKI_URL: http://loki:3100/loki/api/v1/push
+      PROMETHEUS_URL: http://prometheus:9090/api/v1/write
+      TEMPO_URL: http://tempo:4317
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - 12345:12345
+      - 4317:4317
+      - 4318:4318
+    volumes:
+      - ./platform/alloy/config.alloy:/etc/alloy/config.alloy
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./storage/alloy/data:/data-alloy
+    restart: unless-stopped
+    networks:
+      - roomx_network

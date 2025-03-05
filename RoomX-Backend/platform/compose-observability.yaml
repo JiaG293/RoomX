@@ -1,0 +1,118 @@
+####
+# GRAFANA OPEN-SOURCE
+grafana:
+  image: grafana/grafana-oss:11.3.4
+  container_name: grafana_roomx
+  depends_on:
+    - loki
+    - prometheus
+    - tempo
+    - postgres
+  ports:
+    - 3000:3000
+  hostname: ${HOST_NAME:-localhost}
+  user: '0'
+  environment:
+    GF_AUTH_ANONYMOUS_ENABLED: true
+    GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    GF_DATABASE_USER: root
+    GF_DATABASE_PASSWORD: root
+    GF_DATABASE_PORT: 5432
+    GF_DATABASE_NAME: grafana
+    GF_SECURITY_ADMIN_USER: admin
+    GF_SECURITY_ADMIN_PASSWORD: admin
+  volumes:
+    - ./platform/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    - ./platform/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    - ./platform/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+    - ./storage/grafana/data:/var/lib/grafana
+  restart: unless-stopped
+  networks:
+    - roomx_network
+
+
+
+# LOKI
+loki:
+  image: grafana/loki:3.4
+  container_name: loki_roomx
+  command: -config.file=/etc/config/loki.yml
+  ports:
+    - 3100:3100
+  hostname: ${HOST_NAME:-localhost}
+  volumes:
+    - ./platform/loki/loki.yml:/etc/config/loki.yml
+  restart: unless-stopped
+  networks:
+    - roomx_network
+
+
+# PROMETHEUS
+prometheus:
+  image: quay.io/prometheus/prometheus:v3.2.0
+  container_name: prometheus_roomx
+  command:
+    - "--config.file=/etc/config/prometheus.yml"
+    - "--enable-feature=otlp-write-receiver"
+    - "--enable-feature=exemplar-storage"
+    - "--web.enable-remote-write-receiver"
+  ports:
+    - 9090
+  hostname: ${HOST_NAME:-localhost}
+  volumes:
+    - ./platform/prometheus/prometheus.yml:/etc/config/prometheus.yml
+  restart: unless-stopped
+  networks:
+    - roomx_network
+
+
+# TEMPO
+tempo:
+  image: grafana/tempo:latest
+  container_name: tempo_roomx
+  command: -config.file /etc/tempo-config.yml
+  ports:
+    - 3110     # Tempo
+    - 4317     # OTLP gRPC
+    - 4318     # OTLP HTTP
+    - 9411     # Zipkin
+  hostname: ${HOST_NAME:-localhost}
+  volumes:
+    - ./platform/tempo/tempo.yml:/etc/tempo-config.yml
+  restart: unless-stopped
+  networks:
+    - roomx_network
+
+# ALLOY
+alloy:
+  image: grafana/alloy:v1.7.0
+  container_name: alloy_roomx
+  command:
+    - "run"
+    - "--server.http.listen-addr=0.0.0.0:12345"
+    - "--storage.path=/data-alloy"
+    - "--disable-reporting"
+    - "/etc/alloy/config.alloy"
+  depends_on:
+    - loki
+    - prometheus
+    - tempo
+  hostname: ${HOST_NAME:-localhost}
+  environment:
+    ENVIRONMENT: dev
+    LOKI_URL: http://loki:3100/loki/api/v1/push
+    PROMETHEUS_URL: http://prometheus:9090/api/v1/write
+    TEMPO_URL: http://tempo:4317
+    POSTGRES_USER: root
+    POSTGRES_PASSWORD: root
+  ports:
+    - 12345:12345
+    - 4317:4317
+    - 4318:4318
+  volumes:
+    - ./platform/alloy/config.alloy:/etc/alloy/config.alloy
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./storage/alloy/data:/data-alloy
+  restart: unless-stopped
+  networks:
+    - roomx_network

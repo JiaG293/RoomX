@@ -7,7 +7,8 @@ pipeline {
 //         DOCKER_USERNAME = credentials('docker-username')
 //         DOCKER_PASSWORD = credentials('docker-password')
     }
-
+/*
+    // Stage build with docker
     stages {
 
         stage('Clone Repository') {
@@ -44,15 +45,48 @@ pipeline {
             }
         }
 
-        /* stage('Push Docker Image to Docker Hub') {
-            steps {
-                script {
-                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                    sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
+//          stage('Push Docker Image to Docker Hub') {
+//             steps {
+//                 script {
+//                     sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+//                     sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
+//                 }
+//             }
+//         }
+    }
+*/
+
+    // stage with docker compose
+    stages {
+
+            stage('Clone Repository') {
+                steps {
+                    git branch: 'dev-be', url: 'https://github.com/JiaG293/RoomX.git'
                 }
             }
-        } */
-    }
+
+            stage('Build Docker Image') {
+                steps {
+                    script {
+                        // stop and remove container older
+                        sh 'docker compose rm -f roomx-be || true'
+
+                        // build docker
+                        sh 'docker compose build roomx-be'
+                    }
+                }
+            }
+
+            stage('Restart roomx-be Container') {
+                steps {
+                    script {
+                        // Only restart roomx-be container none restart depend container
+                        sh 'docker compose up -d --no-deps roomx-be'
+                    }
+                }
+            }
+        }
+
 
     post {
         always {
