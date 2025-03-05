@@ -68,10 +68,11 @@ pipeline {
             stage('Load ENV File') {
                 steps {
                     script {
-                        withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: 'ENV_FILE_DEV')]) {
-                            sh 'rm -f RoomX-Backend/.env || true'
-                            sh 'cp $ENV_FILE_DEV RoomX-Backend/.env || true'
-                        }
+//                         withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: 'ENV_FILE_DEV')]) {
+//                             sh 'rm -f RoomX-Backend/.env || true'
+//                             sh 'cp $ENV_FILE_DEV RoomX-Backend/.env || true'
+//                         }
+                        sh 'ls -la RoomX-Backend/'
                     }
                 }
             }
