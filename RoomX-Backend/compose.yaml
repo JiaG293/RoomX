@@ -65,7 +65,7 @@ services:
 
       # Database Configuration
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/roomx
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: root
       KC_DB_PASSWORD: root
 
@@ -77,7 +77,8 @@ services:
       #KC_HTTPS_CLIENT_AUTH: none           # NONE | REQUEST | REQUIRED : No SSL/TLS client authentication required | Client SSL/TLS, server not required. | SSL/TLS client-server valid required
       #KC_PROXY_HEADERS: xforwarded          # Forward to hostname configuration
       #KC_HOSTNAME: https://kc.jiag.id.vn    # Config hostname alternative localhost
-
+      KC_PROXY_HEADERS: xforwarded
+      KC_HOSTNAME: https://keycloak.jiag.id.vn
     ports:
       - 5555:8080  # Changed to 5555 for external access to Keycloak
     command: start-dev # development

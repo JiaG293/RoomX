@@ -1,2 +1,3 @@
 CREATE DATABASE roomx;
 CREATE DATABASE grafana;
+CREATE DATABASE keycloak;
