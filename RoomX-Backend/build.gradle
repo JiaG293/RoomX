@@ -13,7 +13,7 @@ allprojects {
     apply plugin: 'io.spring.dependency-management'
 
     group = 'com.roomx'
-    version = '0.0.1-SNAPSHOT'
+    version = '0.0.1'
 
     repositories {
         mavenCentral()
@@ -71,6 +71,10 @@ allprojects {
     tasks.named('test') {
         useJUnitPlatform()
     }
+
+    tasks.named('bootJar') {
+        mainClass = 'com.roomx.start.StartApplication'
+    }
 }
 
 //root project
@@ -86,6 +90,8 @@ project(':start') {
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     }
+
+
 }
 
 //shared Module
@@ -148,7 +154,6 @@ project(':domain') {
 
     }
 }
-
 
 
 

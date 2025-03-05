@@ -3,7 +3,7 @@ package com.roomx.domain.model.aggrerate;
 import com.roomx.domain.model.entity.EquipmentRequest;
 import com.roomx.domain.model.entity.ServiceRequest;
 import com.roomx.domain.model.enums.ApprovalStatusType;
-import com.roomx.domain.model.vo.ServiceRequestVuId;
+import com.roomx.domain.model.vo.ServiceRequestId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,8 +43,8 @@ public class BookingRequest {
 
     //Behavior
     public void addServiceRequest(Service service, Short quantity, BigDecimal unitPrice){
-        ServiceRequestVuId serviceRequestVuId = new ServiceRequestVuId(this.id, service.getId());
-        ServiceRequest serviceRequest = new ServiceRequest(serviceRequestVuId, this, service, unitPrice, quantity);
+        ServiceRequestId serviceRequestId = new ServiceRequestId(this.id, service.getId());
+        ServiceRequest serviceRequest = new ServiceRequest(serviceRequestId, this, service, unitPrice, quantity);
         this.serviceRequests.add(serviceRequest);
     }
     /*//Domain Event example

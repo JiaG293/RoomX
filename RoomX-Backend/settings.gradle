@@ -1,4 +1,4 @@
-rootProject.name = 'Roomx'
+rootProject.name = 'roomx'
 
 include 'start'
 include 'controller'

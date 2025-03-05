@@ -1,3 +1,4 @@
+/*
 package com.roomx.infrastructure.multitenancy.keycloak.mapper;
 
 
@@ -14,8 +15,9 @@ public interface UserRepresentationMapper {
 
     UserRepresentationMapper INSTANCE = Mappers.getMapper(UserRepresentationMapper.class);
 
-    UserRepresentation toEntity(User user1);
+    UserRepresentation toEntity(User user);
 
 
     User toDomain(UserRepresentation userRepresentation);
 }
+*/

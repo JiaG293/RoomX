@@ -133,12 +133,12 @@ keycloak:
     secret: ${KEYCLOAK_CREDENTIALS_SECRET:NE5P98sS61cQ8bBBofe4kveX8rUEZ7Hy}
   use-resource-role-mappings: true
   bearer-only: true
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
+#logging:
+#  level:
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+#    org.springframework.security: DEBUG
+#    org.springframework.security.oauth2: DEBUG
 
 multitenancy:
   tenants:

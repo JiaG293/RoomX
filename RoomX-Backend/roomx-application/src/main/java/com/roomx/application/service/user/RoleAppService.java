@@ -96,7 +96,6 @@ public class RoleAppService {
             var role = roleDomainService.assignPermission(roleName, permisisonName);
 
             keycloakPermissonService.assignPermissonToRole(permisisonName, roleName);
-            log.info("role assign: {}", role);
             return roleAppMapper.toResponse(role);
         } catch (Exception e) {
             // Rollback keycloak nếu có lỗi

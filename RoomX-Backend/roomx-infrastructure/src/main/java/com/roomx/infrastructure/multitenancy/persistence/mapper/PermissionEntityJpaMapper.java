@@ -11,7 +11,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface PermissionEntityJpaMapper {
 
     @Mappings({
-            @Mapping(target = "id", source = "permissionId"),
+            @Mapping(target = "id", source = "permissionId")
     })
     Permission toDomain(PermissonEntity entity);
 

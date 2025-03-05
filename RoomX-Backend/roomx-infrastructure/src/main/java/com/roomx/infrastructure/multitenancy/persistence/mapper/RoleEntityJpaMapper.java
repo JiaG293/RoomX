@@ -16,7 +16,8 @@ public interface RoleEntityJpaMapper {
     RoleEntity toEntity(Role domain);
 
     @Mappings({
-            @Mapping(target = "id", source = "roleId")
+            @Mapping(target = "id", source = "roleId"),
+            @Mapping(target = "permissions", ignore = true)
     })
     Role toDomain(RoleEntity entity);
 }

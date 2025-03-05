@@ -30,8 +30,8 @@ public class RoleController {
     @PostMapping("/{roleName}/permissions/{permissionName}")
     public ResultResponse<?> assignPermissionToRole(@PathVariable String roleName, @PathVariable String permissionName) {
         return ResultResponse.<RoleResponse>builder()
-               .result(roleAppService.assignPermission(roleName, permissionName))
-               .build();
+                .result(roleAppService.assignPermission(roleName, permissionName))
+                .build();
     }
 
 
