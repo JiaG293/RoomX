@@ -4,7 +4,7 @@ networks:
 services:
   roomx-be:
     build:
-      context: ./RoomX-Backend
+#      context: ./RoomX-Backend
       dockerfile: Dockerfile
     container_name: be_roomx
     ports:
