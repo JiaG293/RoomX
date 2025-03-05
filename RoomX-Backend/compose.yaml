@@ -83,8 +83,8 @@ services:
       - 5555:8080  # Changed to 5555 for external access to Keycloak
     command: start-dev # development
     restart: unless-stopped
-    volumes:
-      - ./storage/keycloak/data:/opt/keycloak/data  # Optional: bind mount for Keycloak data
+#    volumes:
+#      - ./storage/keycloak/data:/opt/keycloak/data  # Optional: bind mount for Keycloak data
     networks:
       - roomx_network
     depends_on:
@@ -175,8 +175,8 @@ services:
       # Broker ID, must be unique
       KAFKA_BROKER_ID: 1
       KAFKA_CFG_NODE_ID: 1
-    volumes:
-      - ./storage/kafka/data:/bitnami/kafka
+#    volumes:
+#      - ./storage/kafka/data:/bitnami/kafka
     networks:
       - roomx_network
 
