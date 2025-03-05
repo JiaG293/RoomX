@@ -91,8 +91,24 @@ pipeline {
                             docker compose rm -f roomx-be || true
                             docker rmi -f roomx-be:latest || true
                             docker compose build roomx-be
-                            docker compose up -d
                         '''
+                    }
+                }
+            }
+
+            stage('Start/Restart Container/Update env') {
+                steps {
+                    script {
+                        withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: 'ENV_FILE')]) {
+                            sh '''
+                                chmod 644 $ENV_FILE
+                                rm -f RoomX-Backend/.env || true
+                                cp $ENV_FILE RoomX-Backend/.env || true
+
+                                cd RoomX-Backend
+                                docker compose up -d --force-recreate roomx-be || true                                                  docker compose up -d roomx-be
+                            '''
+                        }
                     }
                 }
             }
