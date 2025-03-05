@@ -19,6 +19,8 @@ services:
       - redis
       - minio
       - kafka
+    networks:
+      - roomx_network
 
 
 #  # NGINX PROXY
