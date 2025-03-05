@@ -68,12 +68,15 @@ pipeline {
             stage('Load ENV File') {
                 steps {
                     script {
-                         withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: 'ENV_FILE_DEV')]) {
+                         withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: 'ENV_FILE')]) {
                              sh '''
-                                rm -f RoomX-Backend/.env || true
-                                cp $ENV_FILE_DEV RoomX-Backend/.env || true
-                                ls -la RoomX-Backend/
+                                    set -x
+                                    ls -la $ENV_FILE
+
                              '''
+                             //                                 rm -f RoomX-Backend/.env || true
+                             //                                 cp $ENV_FILE RoomX-Backend/.env || true
+                             //                                 ls -la RoomX-Backend/
                          }
                     }
                 }
