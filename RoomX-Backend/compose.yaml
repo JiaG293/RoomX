@@ -15,27 +15,11 @@ services:
       - .env
     depends_on:
       - postgres
-      - cloudflared
       - keycloak
       - redis
       - minio
       - kafka
 
-
-  # Cloudflared tunnel
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: cloudflared_tunnel_roomx
-    restart: always
-    command: tunnel --no-autoupdate run
-    #environment:
-    #TUNNEL_TOKEN: <TOKEN_CLOUDFLARED_TUNNEL>
-    #TUNNEL_ORIGIN_CERT: /etc/cloudflared/cert.pem
-    volumes:
-      - ./platform/cloudflared:/etc/cloudflared
-      - ./platform/cloudflared/cert.pem:/home/nonroot/.cloudflared/cert.pem
-    networks:
-      - roomx_network
 
 #  # NGINX PROXY
 #  nginx:
