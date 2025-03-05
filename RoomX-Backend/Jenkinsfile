@@ -69,10 +69,10 @@ pipeline {
                 steps {
                     script {
                         // stop and remove container older
-                        sh 'cd RoomX/RoomX-Backend && docker compose rm -f roomx-be || true'
+                        sh 'cd RoomX-Backend && docker compose rm -f roomx-be || true'
 
                         // build docker
-                        sh 'cd RoomX/RoomX-Backend && docker compose build roomx-be'
+                        sh 'cd RoomX-Backend && docker compose build roomx-be'
                     }
                 }
             }
@@ -81,7 +81,7 @@ pipeline {
                 steps {
                     script {
                         // Only restart roomx-be container none restart depend container
-                        sh 'cd RoomX/RoomX-Backend && docker compose up -d --no-deps roomx-be'
+                        sh 'cd RoomX-Backend && docker compose up -d --no-deps roomx-be'
                     }
                 }
             }
