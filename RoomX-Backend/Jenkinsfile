@@ -91,22 +91,7 @@ pipeline {
                             docker compose rm -f roomx-be || true
                             docker rmi -f roomx-be:latest || true
                             docker compose build roomx-be
-                        '''
-                    }
-                }
-            }
-
-            stage('Restart roomx-be Container') {
-                steps {
-                    script {
-                        // Only restart roomx-be container none restart depend container
-                        sh '''
-                            cd RoomX-Backend
-                            if [ "$(docker ps -q -f name=roomx-be)" ]; then
-                            docker compose restart roomx-be
-                            else
-                            docker compose up -d --no-deps roomx-be
-                            fi
+                            docker compose up -d
                         '''
                     }
                 }
