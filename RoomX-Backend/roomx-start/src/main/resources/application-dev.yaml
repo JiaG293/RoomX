@@ -16,7 +16,7 @@ spring:
   messages: # Cấu hình message chuận utf8 tránh lỗi font tiếng việt
     encoding: UTF-8
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:roomx}
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:roomx}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     driver-class-name: org.postgresql.Driver
@@ -32,7 +32,7 @@ spring:
     locations: classpath:db/migration/default
     schemas: public
     enabled: true
-#    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:roomx}
+#    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:roomx}
 #    driver-class-name: org.postgresql.Driver
   jpa:
     database: postgresql
@@ -62,8 +62,8 @@ spring:
 #    oauth2:
 #      resourceserver:
 #        jwt:
-#          issuer-uri: ${OAUTH2_RESOURCESERVER_JWT_ISSUER:http://localhost:5555/realms/roomx}
-#          jwk-set-uri: ${OAUTH2_RESOURCESERVER_JWT_JWK:http://localhost:5555/realms/roomx/protocol/openid-connect/certs}
+#          issuer-uri: ${OAUTH2_RESOURCESERVER_JWT_ISSUER:http://keycloak:5555/realms/roomx}
+#          jwk-set-uri: ${OAUTH2_RESOURCESERVER_JWT_JWK:http://keycloak:5555/realms/roomx/protocol/openid-connect/certs}
   mail:
     port: 587
     host: ${MAIL_HOST:smtp.gmail.com}
@@ -127,7 +127,7 @@ management:
 keycloak:
   client-default: ${KEYCLOAK_CLIENT_DEFAULT:roomx-fe} # client mặc định cho app roomx
   realm: master
-  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:5555} # địa chỉ của keycloak server
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:5555} # địa chỉ của keycloak server
   resource: ${KEYCLOAK_RESOURCE:roomx-backend-admin} # Client ID của ứng dụng liên lạc với backend
   credentials:
     secret: ${KEYCLOAK_CREDENTIALS_SECRET:NE5P98sS61cQ8bBBofe4kveX8rUEZ7Hy}
