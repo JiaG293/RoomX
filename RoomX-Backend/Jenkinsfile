@@ -77,6 +77,16 @@ pipeline {
                 }
             }
 
+            stage('Load ENV File') {
+                steps {
+                    script {
+                        withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: 'ENV_DEV')]) {
+                            sh 'cp $ENV_FILE RoomX-Backend/.env'
+                        }
+                    }
+                }
+            }
+
             stage('Restart roomx-be Container') {
                 steps {
                     script {

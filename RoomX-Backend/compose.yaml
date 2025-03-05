@@ -12,7 +12,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
     env_file:
-      - ./RoomX-Backend/.env
+      - .env
     depends_on:
       - postgres
       - cloudflared
