@@ -65,24 +65,28 @@ pipeline {
                 }
             }
 
-            stage('Build Docker Image') {
+            stage('Load ENV File') {
                 steps {
                     script {
-                        // stop and remove container older
-                        sh 'cd RoomX-Backend && docker compose rm -f roomx-be || true'
-
-                        // build docker
-                        sh 'cd RoomX-Backend && docker compose build roomx-be'
+                        withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: '.env')]) {
+                            sh 'rm -f RoomX-Backend/.env'
+                            sh 'cp $ENV_FILE_DEV RoomX-Backend/.env'
+                        }
                     }
                 }
             }
 
-            stage('Load ENV File') {
+            stage('Build Docker Image') {
                 steps {
                     script {
-                        withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: 'ENV_FILE_DEV')]) {
-                            sh 'cp $ENV_FILE_DEV RoomX-Backend/.env'
-                        }
+                        // stop and remove container older
+                        // build docker
+                        sh '''
+                            cd RoomX-Backend
+                            docker compose rm -f roomx-be || true
+                            docker rmi -f roomx-be:latest || true
+                            docker compose build roomx-be
+                        '''
                     }
                 }
             }
@@ -91,7 +95,14 @@ pipeline {
                 steps {
                     script {
                         // Only restart roomx-be container none restart depend container
-                        sh 'cd RoomX-Backend && docker compose up -d --no-deps roomx-be'
+                        sh '''
+                            cd RoomX-Backend
+                            if [ "$(docker ps -q -f name=roomx-be)" ]; then
+                            docker compose restart roomx-be
+                            else
+                            docker compose up -d --no-deps roomx-be
+                            fi
+                        '''
                     }
                 }
             }
