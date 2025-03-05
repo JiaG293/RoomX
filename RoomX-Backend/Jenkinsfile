@@ -69,9 +69,8 @@ pipeline {
                 steps {
                     script {
                         withCredentials([file(credentialsId: 'roomx-be-dev-env', variable: 'ENV_FILE_DEV')]) {
-                            sh 'echo "File path: $ENV_FILE_DEV"'
-//                                sh 'rm -f RoomX-Backend/.env'
-//                             sh 'cp $ENV_FILE_DEV RoomX-Backend/.env'
+                            sh 'rm -f RoomX-Backend/.env || true'
+                            sh 'cp $ENV_FILE_DEV RoomX-Backend/.env || true'
                         }
                     }
                 }
