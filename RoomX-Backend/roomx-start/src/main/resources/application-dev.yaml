@@ -142,15 +142,15 @@ keycloak:
 
 multitenancy:
   tenants:
-    - identifier: giau
-      enabled: true
-      schema: giau
-      issuer: http://192.168.1.251:5555/realms/giau
-    - identifier: sang
-      enabled: true
-      schema: sang
-      issuer: http://192.168.1.251:5555/realms/sang
-    - identifier: hiep
-      enabled: true
-      schema: hiep
-      issuer: http://192.168.1.251:5555/realms/hiep
+    - identifier: ${MULTITENANCY_GIAU_IDENITIFIER:giau}
+      enabled: ${MULTITENANCY_GIAU_ENABLED:true}
+      schema: ${MULTITENANCY_GIAU_SCHEMA:giau}
+      issuer: ${MULTITENANCY_GIAU_ISSUER:http://192.168.1.251:5555/realms/giau}
+    - identifier: ${MULTITENANCY_SANG_IDENTIFIER:sang}
+      enabled: ${MULTITENANCY_SANG_ENABLED:false}
+      schema: ${MULTITENANCY_SANG_SCHEMA:sang}
+      issuer: ${MULTITENANCY_SANG_ISSUER:http://192.168.1.251:5555/realms/sang}
+    - identifier: ${MULTITENANCY_HIEP_IDENTIFIER:hiep}
+      enabled: ${MULTITENANCY_HIEP_ENABLED:false}
+      schema: ${MULTITENANCY_HIEP_SCHEMA:hiep}
+      issuer: ${MULTITENANCY_HIEP_ISSUER:http://192.168.1.251:5555/realms/hiep}
