@@ -7,6 +7,7 @@ services:
 #      context: ./RoomX-Backend
       dockerfile: Dockerfile
     container_name: be_roomx
+    restart: always
     ports:
       - 8888:8888
     environment:
@@ -150,6 +151,7 @@ services:
   kafka:
     image: bitnami/kafka:latest
     container_name: kafka_roomx
+    restart: unless-stopped
     ports:
       - 9092:9092                  # Broker Port
       - 9094:9094                  # Controller Port
@@ -190,6 +192,7 @@ services:
       KAFKA_CLUSTER_0_NAME: roomx
       KAFKA_CLUSTER_0_BOOTSTRAPSERVERS: kafka:9092
       DYNAMIC_CONFIG_ENABLED: true
+    restart: unless-stopped
     networks:
       - roomx_network
     depends_on:

@@ -89,7 +89,7 @@ pipeline {
                         sh '''
                             cd RoomX-Backend
                             docker compose rm -f roomx-be || true
-                            docker rmi -f roomx-be:latest || true
+                            docker rmi -f roomx-backend-roomx-be:latest || true
                             docker compose build roomx-be
                         '''
                     }
