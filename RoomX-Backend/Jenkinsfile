@@ -56,7 +56,7 @@ pipeline {
     }
 */
 
-    // stage with docker compose
+    stage with docker compose
     stages {
 
             stage('Clone Repository') {
@@ -112,7 +112,7 @@ pipeline {
                     }
                 }
             }
-        }
+    }
 
 
     post {
