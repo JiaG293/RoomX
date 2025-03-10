@@ -9,12 +9,10 @@ import java.util.List;
 
 @Builder
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class UserPageResponse {
-    private List<UserResponse> users;
-    private int totalPages;
-    private long totalElements;
-    private int currentPage;
-    private int pageSize;
+@AllArgsConstructor
+public class UserRoleResponse {
+    private String userId;
+    private String userCode;
+    private List<RoleResponse> roles;
 }

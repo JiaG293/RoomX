@@ -3,14 +3,17 @@ package com.roomx.controller.resource;
 import com.roomx.application.dto.user.request.UserCreateRequest;
 import com.roomx.application.dto.user.request.UserQueryFilterRequest;
 import com.roomx.application.dto.user.response.UserCreateResponse;
-import com.roomx.application.dto.user.response.UserPageResponse;
+import com.roomx.application.dto.user.response.UserResponse;
+import com.roomx.application.dto.user.response.UserRoleResponse;
+import com.roomx.application.service.user.RoleAppService;
 import com.roomx.application.service.user.UserAppService;
-import com.roomx.shared.exception.ResultResponse;
+import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,6 +34,42 @@ import java.util.stream.Collectors;
 public class UserController {
 
     UserAppService userAppService;
+    RoleAppService roleAppService;
+
+    @PostMapping("/{userId}/roles/{roleName}")
+//    @PreAuthorize("hasRole('ADMIN')")
+    public ResultResponse<?> addUserRoles(@PathVariable String userId, @PathVariable String roleName) {
+        var result = roleAppService.addRoleForUser(UUID.fromString(userId), roleName);
+        return ResultResponse.<UserRoleResponse>builder()
+                .result(result).build();
+    }
+
+    @DeleteMapping("/{userId}/roles/{roleName}")
+    public ResultResponse<?> removeUserRoles(@PathVariable String userId, @PathVariable String roleName) {
+        var result = roleAppService.removeRoleForUser(UUID.fromString(userId), roleName);
+        return ResultResponse.<UserRoleResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping
+    public ResultResponse<?> getListPageUser(
+            @ModelAttribute UserQueryFilterRequest filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+
+        var result = userAppService.getListUserPages(filter, page, size, sortBy, direction);
+
+        return ResultResponse.<Page<UserResponse>>builder()
+                .result(result)
+                .build();
+    }
+
+
+
 
 
 
@@ -63,7 +102,7 @@ public class UserController {
 
 
 
-    @GetMapping("/taolao")
+    @GetMapping("/auth-info")
     public Map<String, Object> getAuthInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -74,6 +113,7 @@ public class UserController {
 
         Locale locale = LocaleContextHolder.getLocale();
         log.info("Current locale: {}", locale);
+        System.out.println("user id current: " + authentication.getName());
 
         return Map.of("message", "No JWT found");
     }
@@ -106,20 +146,7 @@ public class UserController {
         return ResultResponse.<String>builder().result(userAppService.getTenant()).build();
     }
 
-    @GetMapping
-    public ResultResponse<?> getListPageUser(
-            @ModelAttribute UserQueryFilterRequest filter,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
-            ) {
 
-
-        return ResultResponse.<UserPageResponse>builder()
-                .result(userAppService.getListUserPages(filter, page, size, sortBy, direction))
-                .build();
-    }
 
 
 }

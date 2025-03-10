@@ -2,7 +2,7 @@ package com.roomx.infrastructure.multitenancy.security.oauth;
 
 import com.roomx.infrastructure.multitenancy.security.context.TenantContextHolder;
 import com.roomx.infrastructure.multitenancy.tenantdetails.TenantDetailsService;
-import com.roomx.shared.exception.TenantNotFoundException;
+import com.roomx.shared.exception.exception.TenantNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;

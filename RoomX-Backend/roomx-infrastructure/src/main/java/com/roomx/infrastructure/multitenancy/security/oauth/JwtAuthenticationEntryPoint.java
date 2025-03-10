@@ -1,8 +1,8 @@
 package com.roomx.infrastructure.multitenancy.security.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.roomx.shared.exception.ErrorCode;
-import com.roomx.shared.exception.ResultResponse;
+import com.roomx.shared.exception.exception.code.ErrorCode;
+import com.roomx.shared.exception.api.ResultResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserInfoReponse {
     private String userId;
-    private String employeeId;
+    private String userCode;
 }

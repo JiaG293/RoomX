@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = PermissionEntityJpaMapper.class)
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface RoleEntityJpaMapper {
 
     @Mappings({
@@ -16,8 +16,7 @@ public interface RoleEntityJpaMapper {
     RoleEntity toEntity(Role domain);
 
     @Mappings({
-            @Mapping(target = "id", source = "roleId"),
-            @Mapping(target = "permissions", ignore = true)
+            @Mapping(target = "id", source = "roleId")
     })
     Role toDomain(RoleEntity entity);
 }

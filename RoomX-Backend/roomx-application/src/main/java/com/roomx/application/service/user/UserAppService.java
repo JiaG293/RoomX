@@ -4,8 +4,8 @@ import com.roomx.application.dto.user.request.UserCreateRequest;
 import com.roomx.application.dto.user.request.UserQueryFilterRequest;
 import com.roomx.application.dto.user.response.UserCreateResponse;
 import com.roomx.application.dto.user.response.UserInfoReponse;
-import com.roomx.application.dto.user.response.UserPageResponse;
 import com.roomx.application.dto.user.response.UserResponse;
+import com.roomx.application.mapper.UserAppMapper;
 import com.roomx.domain.model.aggrerate.User;
 import com.roomx.domain.model.enums.UserType;
 import com.roomx.domain.repository.UserRepository;
@@ -13,16 +13,17 @@ import com.roomx.infrastructure.multitenancy.keycloak.service.impl.KeycloakRoleS
 import com.roomx.infrastructure.multitenancy.keycloak.service.impl.KeycloakUserServiceImpl;
 import com.roomx.infrastructure.multitenancy.persistence.dto.UserFilter;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
-import com.roomx.infrastructure.multitenancy.persistence.repository.page.UserEntityQueryRepository;
-import com.roomx.infrastructure.multitenancy.persistence.specification.UserSpecification;
+import com.roomx.infrastructure.multitenancy.persistence.repository.specification.UserEntityQueryRepository;
+import com.roomx.infrastructure.multitenancy.persistence.repository.specification.UserSpecification;
 import com.roomx.infrastructure.multitenancy.security.context.TenantContextHolder;
-import com.roomx.shared.exception.AppException;
-import com.roomx.shared.exception.ErrorCode;
-import com.roomx.shared.exception.KeycloakNotFoundException;
+import com.roomx.shared.exception.exception.AppException;
+import com.roomx.shared.exception.exception.code.ErrorCode;
+import com.roomx.shared.exception.exception.KeycloakNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -42,12 +43,13 @@ public class UserAppService{
     private final Keycloak keycloak;
     private final UserEntityQueryRepository userEntityQueryRepository;
     private final KeycloakRoleServiceImpl keycloakRoleServiceImpl;
+    private final UserAppMapper userAppMapper;
 
     public UserInfoReponse getUserInfo() {
         return null;
     }
 
-    public UserPageResponse getListUserPages(UserQueryFilterRequest filterRequest, int page, int size, String sortBy, String direction) {
+    public Page<UserResponse> getListUserPages(UserQueryFilterRequest filterRequest, int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -61,22 +63,7 @@ public class UserAppService{
         );
         var userEntities = userEntityQueryRepository.findAll(specification, pageable);
 
-        List<UserResponse> users = userEntities.getContent().stream()
-                .map(entity -> UserResponse.builder()
-                        .userId(entity.getId().toString())
-                        .userCode(entity.getUserCode())
-                        .email(entity.getEmail())
-                        .userType(entity.getUserType())
-                        .build()
-                ).toList();
-
-        return UserPageResponse.builder()
-                .users(users)
-                .totalPages(userEntities.getTotalPages())
-                .totalElements(userEntities.getTotalElements())
-                .currentPage(userEntities.getNumber())
-                .pageSize(userEntities.getSize())
-                .build();
+        return userEntities.map(userAppMapper::toUserResponse);
     }
 
     @Transactional

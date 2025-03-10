@@ -11,7 +11,6 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper(
         componentModel = "spring",
-        uses = PermissionAppMapper.class,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
@@ -25,7 +24,8 @@ public interface RoleAppMapper {
     RoleCreateRequest toApp(Role role);
 
     @Mapping(target = "roleName", source = "id")
-    @Mapping(target = "permissions", source = "permissions")
     RoleResponse toResponse(Role domain);
+
+
 
 }

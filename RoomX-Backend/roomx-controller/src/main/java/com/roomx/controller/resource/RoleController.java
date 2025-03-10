@@ -3,12 +3,13 @@ package com.roomx.controller.resource;
 import com.roomx.application.dto.user.request.RoleCreateRequest;
 import com.roomx.application.dto.user.response.RoleResponse;
 import com.roomx.application.service.user.RoleAppService;
-import com.roomx.shared.exception.ResultResponse;
+import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
 
 @Slf4j
 @RestController
@@ -20,6 +21,13 @@ public class RoleController {
     RoleAppService roleAppService;
 
 
+    @GetMapping
+    public ResultResponse<?> getPageRole() {
+        return ResultResponse.<String>builder()
+                .result("Get page role")
+                .build();
+    }
+
     @PostMapping
     public ResultResponse<?> createRole(@RequestBody RoleCreateRequest roleCreateRequest) {
         return ResultResponse.<RoleResponse>builder()
@@ -27,12 +35,25 @@ public class RoleController {
                 .build();
     }
 
+    @DeleteMapping("/{roleName}")
+    public ResultResponse<?> deleteRole(@PathVariable String roleName){
+        return ResultResponse.<String>builder().result("deleteRole").build();
+    }
+
+    @PutMapping("/{roleName}")
+    public ResultResponse<?> updateRole(){
+        return ResultResponse.<String>builder().result("updateRole").build();
+    }
+
+
     @PostMapping("/{roleName}/permissions/{permissionName}")
-    public ResultResponse<?> assignPermissionToRole(@PathVariable String roleName, @PathVariable String permissionName) {
-        return ResultResponse.<RoleResponse>builder()
-                .result(roleAppService.assignPermission(roleName, permissionName))
+    public ResultResponse<?> removePermissionFromRole(@PathVariable String roleName, @PathVariable String permissionName) {
+        return ResultResponse.<String>builder()
+                .result("remove permission from role")
                 .build();
     }
+
+
 
 
 }

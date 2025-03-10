@@ -1,25 +1,24 @@
 package com.roomx.domain.service;
 
-import com.roomx.domain.model.entity.Permission;
 import com.roomx.domain.model.aggrerate.Role;
-import com.roomx.domain.repository.PermissionRepository;
 import com.roomx.domain.repository.RoleRepository;
+import com.roomx.domain.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
 
 @Service
 public class RoleDomainService {
 
     private final RoleRepository roleRepository;
-    private final PermissionRepository permissionRepository;
+    private final UserRepository userRepository;
 
-    public RoleDomainService(RoleRepository roleRepository, PermissionRepository permissionRepository) {
+    public RoleDomainService(RoleRepository roleRepository,
+                             UserRepository userRepository) {
         this.roleRepository = roleRepository;
-        this.permissionRepository = permissionRepository;
+        this.userRepository = userRepository;
     }
 
-    public Role createRole(String id, String description, Set<Permission> permissions) {
+    public Role createRole(String id, String description) {
         String roleName = id.toUpperCase();
         roleRepository.findById(roleName).ifPresent(role -> {
             throw new IllegalArgumentException("Role already exists");
@@ -29,21 +28,18 @@ public class RoleDomainService {
                 .description(description)
                 .build();
         roleRepository.save(role);
-
         return role;
     }
 
-    public Role assignPermission(String roleName, String permissionName) {
-        var roleDomain = roleRepository.findById(roleName)
-                        .orElseThrow(()-> new RuntimeException("Not found role domain"));
-        var permissionDomain = permissionRepository.findById(permissionName)
-                .orElseThrow(() -> new RuntimeException("Not found permission domain"));
+    public Role deleteRole(String id) {
+        var role = roleRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Role not found")
+        );
 
-        roleDomain.addPermission(permissionDomain);
 
-        roleRepository.save(roleDomain);
+        roleRepository.save(role);
 
-        return roleDomain;
+        return role;
     }
 
 

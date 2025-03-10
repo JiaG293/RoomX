@@ -1,3 +1,4 @@
+
 CREATE  TABLE branch (
                          branch_id            uuid  NOT NULL  ,
                          name                 varchar(500)    ,
@@ -26,12 +27,6 @@ CREATE  TABLE exception_date (
                                  CONSTRAINT pk_ngay_ngoai_le PRIMARY KEY ( exception_date_id )
 );
 
-CREATE  TABLE permisson (
-                            permission_id        varchar(64)  NOT NULL  ,
-                            description          text    ,
-                            CONSTRAINT pk_permisson PRIMARY KEY ( permission_id )
-);
-
 CREATE  TABLE place (
                         place_id             uuid  NOT NULL  ,
                         branch_id            uuid    ,
@@ -47,13 +42,8 @@ CREATE  TABLE place (
 CREATE  TABLE "role" (
                          role_id              varchar(64)  NOT NULL  ,
                          description          text    ,
+                         "level"              smallint    ,
                          CONSTRAINT pk_tbl PRIMARY KEY ( role_id )
-);
-
-CREATE  TABLE role_permission (
-                                  role_id              varchar(64)  NOT NULL  ,
-                                  permission_id        varchar(64)  NOT NULL  ,
-                                  CONSTRAINT pk_role_permission PRIMARY KEY ( role_id, permission_id )
 );
 
 CREATE  TABLE room_class (
@@ -227,10 +217,6 @@ ALTER TABLE group_member ADD CONSTRAINT fk_thanh_vien_nhom_nhom FOREIGN KEY ( gr
 ALTER TABLE place ADD CONSTRAINT fk_vi_tri_chi_nhanh FOREIGN KEY ( branch_id ) REFERENCES branch( branch_id );
 
 ALTER TABLE recurrence ADD CONSTRAINT fk_chu_ky_yeu_cau_dat_phong FOREIGN KEY ( booking_request_id ) REFERENCES booking_request( booking_request_id );
-
-ALTER TABLE role_permission ADD CONSTRAINT fk_role_permission_permisson FOREIGN KEY ( permission_id ) REFERENCES permisson( permission_id );
-
-ALTER TABLE role_permission ADD CONSTRAINT fk_role_permission_role FOREIGN KEY ( role_id ) REFERENCES "role"( role_id );
 
 ALTER TABLE room ADD CONSTRAINT fk_phong_hop_vi_tri FOREIGN KEY ( place_id ) REFERENCES place( place_id );
 

@@ -1,4 +1,4 @@
-package com.roomx.shared.exception;
+package com.roomx.shared.exception.exception;
 
 public class TenantResolutionException extends IllegalStateException {
 

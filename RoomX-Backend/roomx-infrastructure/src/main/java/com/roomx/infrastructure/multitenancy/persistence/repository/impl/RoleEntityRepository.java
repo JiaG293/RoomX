@@ -3,7 +3,7 @@ package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 import com.roomx.domain.model.aggrerate.Role;
 import com.roomx.domain.repository.RoleRepository;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.RoleEntityJpaMapper;
-import com.roomx.infrastructure.multitenancy.persistence.repository.JpaRoleEntityRepository;
+import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaRoleEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -39,5 +39,10 @@ public class RoleEntityRepository implements RoleRepository {
     @Override
     public void deleteById(String roleId) {
         jpaRoleEntityRepository.deleteById(roleId);
+    }
+
+    @Override
+    public int findLevelByRole(String roleId) {
+        return jpaRoleEntityRepository.findById(roleId).orElseThrow().getLevel();
     }
 }

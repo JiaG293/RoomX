@@ -2,6 +2,7 @@ package com.roomx.controller.resource;
 
 
 import com.roomx.application.service.event.impl.EventAppServiceImpl;
+import com.roomx.shared.exception.api.ResultResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -10,6 +11,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +29,7 @@ public class TestController {
     EventAppServiceImpl eventAppService;
     @NonFinal
     RestTemplate restTemplate = new RestTemplate();
+
 
     public String fallbackRateLimiter(Throwable throwable) {
         return "To manny request: " + throwable.getMessage();
@@ -61,6 +65,15 @@ public class TestController {
     public String testRateLimiter4() {
         int id = new Random().nextInt(10) + 1;
         return restTemplate.getForObject("https://jsonplaceholder.typicode.com/posts/" + id, String.class);
+    }
+
+    @GetMapping("/test")
+    public ResultResponse<?> test() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        var targetId = "ea4e9c4c-a317-4064-8a5b-da2b338e4180";
+        var result = "";
+        System.out.println("authentication: " + authentication);
+        return ResultResponse.<String>builder().result(result).build();
     }
 
   /*  @Operation(summary = "Lấy thông tin TEST", description = "Trả về thông tin TEST")

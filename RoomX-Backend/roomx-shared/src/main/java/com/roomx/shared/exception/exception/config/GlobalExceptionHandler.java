@@ -1,8 +1,12 @@
-package com.roomx.shared.exception;
+package com.roomx.shared.exception.exception.config;
 
+import com.roomx.shared.exception.api.ResultResponse;
+import com.roomx.shared.exception.exception.AppException;
+import com.roomx.shared.exception.exception.code.ErrorCode;
+import com.roomx.shared.exception.exception.TenantNotFoundException;
+import com.roomx.shared.exception.exception.TenantResolutionException;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
@@ -99,8 +103,11 @@ public class GlobalExceptionHandler {
         return message.replace("{" + MIN_ATTRIBUTE + "}", minValue);
     }*/
 
-    @Autowired
-    MessageSource messageSource;
+    private final MessageSource messageSource;
+
+    public GlobalExceptionHandler(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ResultResponse> handlingRuntimeException(Exception exception) {
@@ -109,7 +116,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ResultResponse> handlingAppException(AppException exception) {
-        return buildErrorResponse(exception, exception.getErrorCode());
+        return buildErrorResponse(exception, exception.getErrorCode(), exception.getArgs());
     }
 
     @ExceptionHandler(value = AccessDeniedException.class)
@@ -157,8 +164,6 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ResultResponse> buildErrorResponse(Exception ex, ErrorCode errorCode) {
-        Locale locale = LocaleContextHolder.getLocale();
-        System.out.println("Current Locale in ExceptionHandler: " + locale); // Log để kiểm tra
         String message = getMessage(errorCode.getMessageKey(), null);
 
         ResultResponse<Object> resultResponse = ResultResponse.builder()

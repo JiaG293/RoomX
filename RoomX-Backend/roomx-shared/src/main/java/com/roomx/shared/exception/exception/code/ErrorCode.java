@@ -1,4 +1,4 @@
-package com.roomx.shared.exception;
+package com.roomx.shared.exception.exception.code;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -43,11 +43,14 @@ public enum ErrorCode {
     ROLE_CONFLICT(1000, "error.role_conflict", HttpStatus.CONFLICT),
     ROLE_CREATE_FAILED(1000, "error.role_create_failed", HttpStatus.BAD_REQUEST),
     PERMISSION_CREATE_FAILED(1000, "error.permission_create_failed", HttpStatus.BAD_REQUEST),
-    PERMISSION_CONFLICT(1000, "error.permission_conflict", HttpStatus.CONFLICT);
+    PERMISSION_CONFLICT(1000, "error.permission_conflict", HttpStatus.CONFLICT),
+    ROLE_REMOVED_FAILED(1000, "error_removed_failed", HttpStatus.NOT_FOUND);
 
 
 
-
+    private final int code;
+    private final String messageKey;
+    private final HttpStatusCode statusCode;
 
 
     ErrorCode(int code, String messageKey, HttpStatusCode statusCode) {
@@ -56,7 +59,4 @@ public enum ErrorCode {
         this.statusCode = statusCode;
     }
 
-    private final int code;
-    private final String messageKey;
-    private final HttpStatusCode statusCode;
 }

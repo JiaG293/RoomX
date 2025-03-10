@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -18,6 +20,10 @@ public class RoleEntity {
     public static final String TABLE_NAME = "role";
     public static final String COLUMN_ROLEID_NAME = "role_id";
     public static final String COLUMN_DESCRIPTION_NAME = "description";
+    public static final String COLUMN_LEVEL_NAME = "level";
+    public static final String JOINTABLE_USERS_NAME = "user_role";
+    public static final String JOINCOLUMNS_JOINCOLUMN_USERS_NAME = "role_id";
+    public static final String INVERSEJOINCOLUMNS_JOINCOLUMN_USERS_NAME = "user_id";
 
     @Id
     @Size(max = 64)
@@ -26,6 +32,15 @@ public class RoleEntity {
 
     @Column(name = COLUMN_DESCRIPTION_NAME, length = Integer.MAX_VALUE)
     private String description;
+
+    @Column(name = COLUMN_LEVEL_NAME, length = Integer.MAX_VALUE)
+    private int level;
+
+    @ManyToMany
+    @JoinTable(name = JOINTABLE_USERS_NAME,
+            joinColumns = @JoinColumn(name = JOINCOLUMNS_JOINCOLUMN_USERS_NAME),
+            inverseJoinColumns = @JoinColumn(name = INVERSEJOINCOLUMNS_JOINCOLUMN_USERS_NAME))
+    private Set<UserEntity> users = new LinkedHashSet<>();
 
 
 }

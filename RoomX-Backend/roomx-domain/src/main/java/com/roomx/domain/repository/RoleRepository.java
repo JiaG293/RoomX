@@ -9,4 +9,5 @@ public interface RoleRepository {
     void save(Role role);
     void delete(Role role);
     void deleteById(String roleId);
+    int findLevelByRole(String roleId);
 }

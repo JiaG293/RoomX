@@ -1,12 +1,16 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.*;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Builder
@@ -32,6 +36,9 @@ public class UserEntity {
     public static final String COLUMN_USERCODE_NAME = "user_code";
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
+    public static final String JOINTABLE_ROLES_NAME = "user_role";
+    public static final String JOINCOLUMNS_JOINCOLUMN_ROLES_NAME = "user_id";
+    public static final String INVERSEJOINCOLUMNS_JOINCOLUMN_ROLES_NAME = "role_id";
 
 
     @Id
@@ -78,5 +85,15 @@ public class UserEntity {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_UPDATEDAT_NAME)
     private Instant updatedAt;
+
+
+    // RELATIONSHIP
+    @Fetch(FetchMode.SUBSELECT)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = JOINTABLE_ROLES_NAME,
+            joinColumns = @JoinColumn(name = JOINCOLUMNS_JOINCOLUMN_ROLES_NAME),
+            inverseJoinColumns = @JoinColumn(name = INVERSEJOINCOLUMNS_JOINCOLUMN_ROLES_NAME))
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<RoleEntity> roles = new HashSet<>();
 
 }

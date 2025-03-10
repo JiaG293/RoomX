@@ -1,4 +1,4 @@
-package com.roomx.infrastructure.multitenancy.persistence.specification;
+package com.roomx.infrastructure.multitenancy.persistence.repository.specification;
 
 import com.roomx.domain.model.enums.UserType;
 import com.roomx.infrastructure.multitenancy.persistence.dto.UserFilter;

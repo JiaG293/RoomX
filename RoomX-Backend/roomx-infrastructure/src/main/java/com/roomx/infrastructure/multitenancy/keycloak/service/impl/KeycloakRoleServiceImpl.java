@@ -2,12 +2,9 @@ package com.roomx.infrastructure.multitenancy.keycloak.service.impl;
 
 import com.roomx.infrastructure.multitenancy.keycloak.service.KeycloakRoleService;
 import com.roomx.infrastructure.multitenancy.security.context.TenantContextHolder;
-import com.roomx.shared.exception.ErrorCode;
-import com.roomx.shared.exception.KeycloakNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.RoleResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.springframework.stereotype.Service;

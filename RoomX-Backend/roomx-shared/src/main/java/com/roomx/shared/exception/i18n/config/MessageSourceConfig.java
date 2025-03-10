@@ -1,4 +1,4 @@
-package com.roomx.shared.exception.config;
+package com.roomx.shared.exception.i18n.config;
 
 
 import org.springframework.context.annotation.Bean;
