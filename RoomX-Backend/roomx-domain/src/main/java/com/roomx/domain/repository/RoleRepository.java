@@ -2,6 +2,7 @@ package com.roomx.domain.repository;
 
 import com.roomx.domain.model.aggrerate.Role;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RoleRepository {
@@ -10,4 +11,6 @@ public interface RoleRepository {
     void delete(Role role);
     void deleteById(String roleId);
     int findLevelByRole(String roleId);
+
+    List<Role> findAll();
 }

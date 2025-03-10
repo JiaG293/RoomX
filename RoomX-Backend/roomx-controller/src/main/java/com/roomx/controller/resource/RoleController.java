@@ -2,6 +2,7 @@ package com.roomx.controller.resource;
 
 import com.roomx.application.dto.user.request.RoleCreateRequest;
 import com.roomx.application.dto.user.response.RoleResponse;
+import com.roomx.application.dto.user.response.UserResponse;
 import com.roomx.application.service.user.RoleAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Slf4j
@@ -27,6 +30,26 @@ public class RoleController {
                 .result("Get page role")
                 .build();
     }
+
+    @GetMapping("/all")
+    public ResultResponse<?> getAllRole() {
+        var result = roleAppService.findAllRole();
+        return ResultResponse.<List<RoleResponse>>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/{userId}/not-assigned")
+    public ResultResponse<?> getRolesNotAssignToUser(@PathVariable String userId) {
+        var result = roleAppService.findRolesNotAssignedToUser(userId);
+        return ResultResponse.<List<RoleResponse>>builder()
+                .result(result)
+                .build();
+    }
+
+
+
+
 
     @PostMapping
     public ResultResponse<?> createRole(@RequestBody RoleCreateRequest roleCreateRequest) {

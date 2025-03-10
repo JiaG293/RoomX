@@ -1,7 +1,9 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 
+import com.roomx.domain.model.aggrerate.Role;
 import com.roomx.domain.model.aggrerate.User;
 import com.roomx.domain.repository.UserRepository;
+import com.roomx.domain.repository.UserRoleRepository;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.UserEntityJpaMapper;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaUserEntityRepository;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class UserEntityRepository implements UserRepository, UserEntityQueryRepository {
+public class UserEntityRepository implements UserRepository, UserEntityQueryRepository{
 
     private final JpaUserEntityRepository jpaUserEntityRepository;
     private final UserEntityJpaMapper userEntityJpaMapper;
@@ -58,4 +60,5 @@ public class UserEntityRepository implements UserRepository, UserEntityQueryRepo
     public Page<UserEntity> findAll(Specification specification, Pageable pageable) {
         return jpaUserEntityRepository.findAll(specification, pageable);
     }
+
 }

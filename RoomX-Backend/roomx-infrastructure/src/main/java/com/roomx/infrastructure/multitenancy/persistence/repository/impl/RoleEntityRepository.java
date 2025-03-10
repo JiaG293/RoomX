@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -25,10 +26,7 @@ public class RoleEntityRepository implements RoleRepository {
 
     @Override
     public void save(Role role) {
-        log.info("role inpurt: {}", role);
-        var roleMap = roleEntityJpaMapper.toEntity(role);
-        log.info("role entity: {}", roleMap);
-        jpaRoleEntityRepository.save(roleMap);
+        jpaRoleEntityRepository.save(roleEntityJpaMapper.toEntity(role));
     }
 
     @Override
@@ -44,5 +42,10 @@ public class RoleEntityRepository implements RoleRepository {
     @Override
     public int findLevelByRole(String roleId) {
         return jpaRoleEntityRepository.findById(roleId).orElseThrow().getLevel();
+    }
+
+    @Override
+    public List<Role> findAll() {
+        return jpaRoleEntityRepository.findAll().stream().map(roleEntityJpaMapper::toDomain).toList();
     }
 }

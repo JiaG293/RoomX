@@ -7,17 +7,21 @@ import com.roomx.application.mapper.RoleAppMapper;
 import com.roomx.application.mapper.UserAppMapper;
 import com.roomx.domain.repository.RoleRepository;
 import com.roomx.domain.repository.UserRepository;
+import com.roomx.domain.repository.UserRoleRepository;
 import com.roomx.domain.service.RoleDomainService;
 import com.roomx.infrastructure.multitenancy.keycloak.service.KeycloakRoleService;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,8 +33,19 @@ public class RoleAppService {
     private final KeycloakRoleService keycloakRoleService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
+
+    public List<RoleResponse> findAllRole(){
+        return roleRepository.findAll().stream().map(roleAppMapper::toResponse).toList();
+    }
+
+    public List<RoleResponse> findRolesNotAssignedToUser(String userId){
+        return userRoleRepository.findRolesByUserId(UUID.fromString(userId)).stream().map(roleAppMapper::toResponse).collect(Collectors.toList());
+    };
+
 
     @Transactional
+    @PreAuthorize("hasRole('OWNER')")
     public RoleResponse createRole(RoleCreateRequest roleCreateRequest) {
 
         try {
@@ -54,7 +69,7 @@ public class RoleAppService {
     }
 
     @Transactional
-    @PreAuthorize("@roleEvaluator.hasHigherRole(#userId)")
+    @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN') && @roleEvaluator.hasHigherRole(#userId)")
     public UserRoleResponse addRoleForUser(UUID userId, String roleName) {
         var userDomain = userRepository.findById(userId).orElseThrow(
                 () -> new RuntimeException("User not found")
@@ -73,7 +88,7 @@ public class RoleAppService {
 
 
     @Transactional
-    @PreAuthorize("@roleEvaluator.hasHigherRole(#userId)")
+    @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN') && @roleEvaluator.hasHigherRole(#userId)")
     public UserRoleResponse removeRoleForUser(UUID userId, String roleName) {
         var userDomain = userRepository.findById(userId).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED, userId.toString())

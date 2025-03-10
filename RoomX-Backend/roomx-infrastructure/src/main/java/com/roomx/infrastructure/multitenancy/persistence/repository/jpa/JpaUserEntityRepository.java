@@ -1,5 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.jpa;
 
+import com.roomx.infrastructure.multitenancy.persistence.model.entity.RoleEntity;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -14,4 +15,5 @@ public interface JpaUserEntityRepository extends JpaRepository<UserEntity, UUID>
     Optional<UserEntity> findByUserCode(String userCode);
 
     Optional<UserEntity> findByEmail(String email);
+
 }
