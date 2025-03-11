@@ -1,7 +1,6 @@
 package com.roomx.controller.resource;
 
 
-import com.roomx.application.service.event.impl.EventAppServiceImpl;
 import com.roomx.shared.exception.api.ResultResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -26,7 +25,6 @@ import java.util.Random;
 @RequestMapping("/api/v1")
 @OpenAPIDefinition(info = @Info(title = "TEST API", version = "v1", description = "API TEST"))
 public class TestController {
-    EventAppServiceImpl eventAppService;
     @NonFinal
     RestTemplate restTemplate = new RestTemplate();
 
@@ -38,14 +36,14 @@ public class TestController {
     @GetMapping("/1")
     @RateLimiter(name = "test1", fallbackMethod = "fallbackRateLimiter")
     public String testRateLimiter1() {
-        return eventAppService.testApplication("hello application 1");
+        return "heelo 1";
     }
 
 
     @GetMapping("/2")
     @RateLimiter(name = "test2", fallbackMethod = "fallbackRateLimiter")
     public String testRateLimiter2() {
-        return eventAppService.testApplication("hello application 2");
+        return "hello application 2";
     }
 
 

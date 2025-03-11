@@ -1,13 +1,14 @@
 package com.roomx.application.dto.user.request;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 @Builder
-@Value
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class UserCreateRequest {
-    String userCode;
-    String password;
-    String email;
-    String type;
+    private String userCode;
+    private String password;
+    private String email;
+    private String type;
 }
