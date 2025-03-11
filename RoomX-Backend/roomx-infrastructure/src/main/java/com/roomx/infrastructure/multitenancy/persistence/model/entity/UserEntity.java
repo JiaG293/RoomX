@@ -87,6 +87,7 @@ public class UserEntity {
     private Instant updatedAt;
 
 
+
     // RELATIONSHIP
     @Fetch(FetchMode.SUBSELECT)
     @ManyToMany(fetch = FetchType.LAZY)

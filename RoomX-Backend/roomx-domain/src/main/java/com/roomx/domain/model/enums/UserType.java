@@ -25,4 +25,8 @@ public enum UserType {
     public static UserType fromDisplayName(String displayName) {
         return DISPLAY_NAME_MAP.get(displayName);
     }
+
+    public static UserType getDefault() {
+        return EMPLOYEE;
+    }
 }

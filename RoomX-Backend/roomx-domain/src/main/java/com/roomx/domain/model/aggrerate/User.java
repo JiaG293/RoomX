@@ -23,8 +23,7 @@ public class User {
     private String email;
     private Boolean gender;
     private String avatarImage;
-    @Builder.Default
-    private String userType = UserType.EMPLOYEE.toString();
+    private String userType;
     private String userCode;
     @Builder.Default
     private Instant createdAt = Instant.now();

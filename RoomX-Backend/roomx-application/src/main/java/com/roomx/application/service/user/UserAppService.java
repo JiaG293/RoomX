@@ -7,7 +7,9 @@ import com.roomx.application.dto.user.response.UserInfoReponse;
 import com.roomx.application.dto.user.response.UserResponse;
 import com.roomx.application.mapper.UserAppMapper;
 import com.roomx.domain.model.aggrerate.User;
+import com.roomx.domain.model.enums.RoleType;
 import com.roomx.domain.model.enums.UserType;
+import com.roomx.domain.repository.RoleRepository;
 import com.roomx.domain.repository.UserRepository;
 import com.roomx.infrastructure.multitenancy.keycloak.service.impl.KeycloakRoleServiceImpl;
 import com.roomx.infrastructure.multitenancy.keycloak.service.impl.KeycloakUserServiceImpl;
@@ -31,8 +33,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,10 +42,12 @@ public class UserAppService{
 
     private final KeycloakUserServiceImpl keycloakUserServiceImpl;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final Keycloak keycloak;
     private final UserEntityQueryRepository userEntityQueryRepository;
     private final KeycloakRoleServiceImpl keycloakRoleServiceImpl;
     private final UserAppMapper userAppMapper;
+
 
     public UserInfoReponse getUserInfo() {
         return null;
@@ -66,7 +70,7 @@ public class UserAppService{
         return userEntities.map(userAppMapper::toUserResponse);
     }
 
-    @Transactional
+
     public UserCreateResponse createUser(UserCreateRequest request) {
         if (keycloakUserServiceImpl.findUserByEmail(request.getEmail()).isPresent()) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
@@ -103,12 +107,31 @@ public class UserAppService{
             var userKeycloak = userKeycloakOpt.get();
             userKeycloakId = userKeycloak.getId();
 
+            // Lấy role có tồn tại
+            var roles = Optional.ofNullable(request.getRoles())
+                    .filter(roleIds -> !roleIds.isEmpty())
+                    .map(roleIds -> roleIds.stream()
+                            .map(roleRepository::findById)
+                            .flatMap(Optional::stream)
+                            .collect(Collectors.toSet())
+                    ).orElseGet(() -> roleRepository.findById(RoleType.USER.toString())
+                            .map(Set::of)
+                            .orElseGet(HashSet::new)
+                    );
+
+
             // Lưu user vào database
             var user = User.builder()
                     .id(UUID.fromString(userKeycloak.getId()))
                     .userCode(userKeycloak.getUsername())
                     .email(userKeycloak.getEmail())
-                    .userType(UserType.EMPLOYEE.toString())
+                    .userType(request.getType() != null ? request.getType() : UserType.getDefault().toString())
+                    .firstName(request.getFirstName())
+                    .lastName(request.getLastName())
+                    .phoneNumber(request.getPhoneNumber())
+                    .gender(request.isGender())
+                    .avatarImage(request.getAvatarImage())
+                    .roles(roles)
                     .build();
 
             userRepository.save(user);
@@ -121,7 +144,7 @@ public class UserAppService{
         } catch (KeycloakNotFoundException ex) {
             // Nếu không tìm thấy user trong Keycloak sau khi tạo, ném lỗi ngay lập tức
             throw new AppException(ErrorCode.CREATE_USER_FAILED);
-        } catch (RuntimeException ex) {
+        } catch (Exception ex) {
             // Nếu có lỗi khi lưu database, xóa user khỏi Keycloak để rollback
             if (userKeycloakId != null) {
                 try {

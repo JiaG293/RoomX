@@ -30,4 +30,6 @@ public interface UserAppMapper {
 
     @Mapping(target = "userId", source = "id")
     UserResponse toUserResponse(UserEntity entity);
+
+
 }
