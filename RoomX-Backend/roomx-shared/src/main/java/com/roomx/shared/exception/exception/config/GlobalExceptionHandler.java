@@ -11,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -110,7 +111,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ResultResponse> handlingRuntimeException(Exception exception) {
+     ResponseEntity<ResultResponse> handlingRuntimeException(Exception exception) {
         return buildErrorResponse(exception, ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
 
@@ -125,33 +126,31 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<ResultResponse> handlingValidation(MethodArgumentNotValidException exception) {
-        ErrorCode errorCode = ErrorCode.INVALID_KEY;
-        Object[] messageArgs = null;
-
+    public ResponseEntity<ResultResponse> handlingValidation(MethodArgumentNotValidException exception) {
+        String errorMessage = "Validation failed";
         try {
-            ConstraintViolation<?> constraintViolation = exception.getBindingResult().getAllErrors().get(0).unwrap(ConstraintViolation.class);
-            String messageTemplate = constraintViolation.getMessageTemplate();
+            FieldError fieldError = exception.getBindingResult().getFieldErrors().get(0);
+            String messageKey = fieldError.getDefaultMessage();
 
-            if (messageTemplate.contains("username")) {
-                errorCode = ErrorCode.USERNAME_INVALID;
-            } else if (messageTemplate.contains("password")) {
-                errorCode = ErrorCode.INVALID_PASSWORD;
-            } else if (messageTemplate.contains("email")) {
-                errorCode = ErrorCode.EMAIL_EXISTED;
-            }
+            Locale locale = LocaleContextHolder.getLocale();
+            errorMessage = messageSource.getMessage(messageKey, null, locale);
 
-            Map<String, Object> attributes = constraintViolation.getConstraintDescriptor().getAttributes();
-            if (attributes != null && !attributes.isEmpty()) {
-                messageArgs = attributes.values().toArray();
-            }
+            log.info("ErrorMessage: {}", errorMessage);
 
         } catch (Exception e) {
+            log.error("Error during validation handling: ", e);
             return buildErrorResponse(e, ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
 
-        return buildErrorResponse(exception, errorCode, messageArgs);
+        ResultResponse<Object> resultResponse = ResultResponse.builder()
+                .code(ErrorCode.INVALID_KEY.getCode())
+                .message(errorMessage)
+                .build();
+
+        return new ResponseEntity<>(resultResponse, ErrorCode.INVALID_KEY.getStatusCode());
     }
+
+
 
     @ExceptionHandler(TenantResolutionException.class)
     public ResponseEntity<ResultResponse> handleTenantResolutionException(TenantResolutionException ex) {
