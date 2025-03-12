@@ -44,7 +44,9 @@ public enum ErrorCode {
     ROLE_CREATE_FAILED(1000, "error.role_create_failed", HttpStatus.BAD_REQUEST),
     PERMISSION_CREATE_FAILED(1000, "error.permission_create_failed", HttpStatus.BAD_REQUEST),
     PERMISSION_CONFLICT(1000, "error.permission_conflict", HttpStatus.CONFLICT),
-    ROLE_REMOVED_FAILED(1000, "error_removed_failed", HttpStatus.NOT_FOUND);
+    ROLE_REMOVED_FAILED(1000, "error_removed_failed", HttpStatus.NOT_FOUND),
+    BRANCH_CONFLICT(1000, "error_branch_conflict", HttpStatus.CONFLICT),
+    BRANCH_NOT_FOUND(1000, "error_branch_not_found", HttpStatus.NOT_FOUND );
 
 
 
