@@ -1,11 +1,12 @@
-
 CREATE  TABLE branch (
                          branch_id            uuid  NOT NULL  ,
                          name                 varchar(500)    ,
                          phone_number         varchar(500)    ,
                          email                varchar(500)    ,
                          address              varchar(500)    ,
-                         CONSTRAINT pk_chi_nhanh PRIMARY KEY ( branch_id )
+                         branch_code          varchar(32)    ,
+                         CONSTRAINT pk_chi_nhanh PRIMARY KEY ( branch_id ),
+                         CONSTRAINT unq_branch UNIQUE ( branch_code )
 );
 
 CREATE  TABLE equipment (
@@ -110,7 +111,9 @@ CREATE  TABLE "group" (
                           group_type           varchar(32)  NOT NULL  ,
                           branch_id            uuid    ,
                           user_id              uuid    ,
-                          CONSTRAINT pk_nhom PRIMARY KEY ( group_id )
+                          group_code           varchar(32)    ,
+                          CONSTRAINT pk_nhom PRIMARY KEY ( group_id ),
+                          CONSTRAINT unq_group UNIQUE ( group_code )
 );
 
 CREATE  TABLE group_member (
