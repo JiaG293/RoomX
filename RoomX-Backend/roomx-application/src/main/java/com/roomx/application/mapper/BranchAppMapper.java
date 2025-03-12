@@ -1,11 +1,11 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.resource.response.BranchReponse;
+import com.roomx.application.dto.resource.request.BranchCreateRequest;
+import com.roomx.application.dto.resource.request.BranchUpdateRequest;
+import com.roomx.application.dto.resource.response.BranchResponse;
 import com.roomx.domain.model.aggrerate.Branch;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.BranchEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
@@ -13,11 +13,15 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface BranchAppMapper {
 
-    Branch toDomain(BranchEntity entity);
+    Branch toDomain(BranchCreateRequest request);
 
 
     BranchEntity toEntity(Branch domain);
 
 
-    BranchReponse toReponse(Branch domain);
+    @Mapping(target = "branchId", source = "id")
+    BranchResponse toResponse(Branch domain);
+
+    @Mapping(target = "id", ignore = true)
+    void updateDomainFromDto(BranchUpdateRequest request, @MappingTarget Branch domain);
 }

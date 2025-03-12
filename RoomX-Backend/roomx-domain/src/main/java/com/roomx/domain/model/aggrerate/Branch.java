@@ -6,12 +6,13 @@ import java.util.UUID;
 
 
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @EqualsAndHashCode
 public class Branch {
     private UUID id;
+    private String branchCode;
     private String name;
     private String phoneNumber;
     private String email;

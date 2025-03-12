@@ -1,4 +1,4 @@
-package com.roomx.application.dto.resource.response;
+package com.roomx.application.dto.resource.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class BranchReponse {
-    private String branchId;
+public class BranchCreateRequest {
+
     private String name;
+    private String branchCode;
+    private String phoneNumber;
     private String email;
     private String address;
-
 }
