@@ -15,7 +15,7 @@ import com.roomx.infrastructure.multitenancy.keycloak.service.impl.KeycloakRoleS
 import com.roomx.infrastructure.multitenancy.keycloak.service.impl.KeycloakUserServiceImpl;
 import com.roomx.infrastructure.multitenancy.persistence.dto.UserFilter;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
-import com.roomx.infrastructure.multitenancy.persistence.repository.specification.UserEntityQueryRepository;
+import com.roomx.infrastructure.multitenancy.persistence.repository.specification.UserEntitySpecRepository;
 import com.roomx.infrastructure.multitenancy.persistence.repository.specification.UserSpecification;
 import com.roomx.infrastructure.multitenancy.security.context.TenantContextHolder;
 import com.roomx.shared.exception.exception.AppException;
@@ -31,7 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,7 +44,7 @@ public class UserAppService{
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final Keycloak keycloak;
-    private final UserEntityQueryRepository userEntityQueryRepository;
+    private final UserEntitySpecRepository userEntitySpecRepository;
     private final KeycloakRoleServiceImpl keycloakRoleServiceImpl;
     private final UserAppMapper userAppMapper;
 
@@ -65,7 +65,7 @@ public class UserAppService{
                         .userCode(filterRequest.getUserCode())
                         .build()
         );
-        var userEntities = userEntityQueryRepository.findAll(specification, pageable);
+        var userEntities = userEntitySpecRepository.findAll(specification, pageable);
 
         return userEntities.map(userAppMapper::toUserResponse);
     }

@@ -1,13 +1,10 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 
-import com.roomx.domain.model.aggrerate.Role;
 import com.roomx.domain.model.aggrerate.User;
 import com.roomx.domain.repository.UserRepository;
-import com.roomx.domain.repository.UserRoleRepository;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.UserEntityJpaMapper;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaUserEntityRepository;
-import com.roomx.infrastructure.multitenancy.persistence.repository.specification.UserEntityQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class UserEntityRepository implements UserRepository, UserEntityQueryRepository{
+public class UserEntitySpecRepository implements UserRepository, com.roomx.infrastructure.multitenancy.persistence.repository.specification.UserEntitySpecRepository {
 
     private final JpaUserEntityRepository jpaUserEntityRepository;
     private final UserEntityJpaMapper userEntityJpaMapper;

@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UserFilter {
-    String userId;
-    String userCode;
-    String email;
-    String userType;
-    String status;
+    private String userId;
+    private String userCode;
+    private String email;
+    private String userType;
+    private String status;
 }
