@@ -1,4 +1,4 @@
-INSERT INTO role (role_id, description, level)
+INSERT INTO ${schema}."role" (role_id, description, level)
 VALUES ('USER', 'Default role for employees', 1),
        ('OWNER', 'Role for owners with full access', 4),
        ('ADMIN', 'Administrator role with system-wide privileges', 3),
@@ -22,13 +22,13 @@ ON CONFLICT (role_id) DO NOTHING;
 -- ON CONFLICT (role_id, permission_id) DO NOTHING;
 
 -- DATA
-INSERT INTO "user" (first_name, last_name, phone_number, email, gender, avatar_image, user_type, user_code, user_id, created_at, updated_at)
+INSERT INTO ${schema}."user" (first_name, last_name, phone_number, email, gender, avatar_image, user_type, user_code, user_id, created_at, updated_at)
 VALUES  ('nguyen van', 'admin', '1111111111', 'asgy2002@gmail.com', true, null, 'EMPLOYEE', '20053331', '374e33ed-1d51-4298-a3be-b51b4d7529a3', '2025-03-10 11:24:31.000000', '2025-03-10 11:24:33.000000'),
         ('tran van', 'manager', '1111111112', '821377326.jiag@gmail.com', true, null, 'EMPLOYEE', '20053332', 'f4a6a4ba-ffb4-4ce5-8125-97be4fa7cd91', '2025-03-10 11:24:48.000000', '2025-03-10 11:24:47.000000'),
         ('huynh van', 'user', '1111111113', 'user001.roomx@gmail.com', true, null, 'EMPLOYEE', '20053333', 'ea4e9c4c-a317-4064-8a5b-da2b338e4180', '2025-03-10 11:26:25.000000', '2025-03-10 11:26:26.000000')
 ON CONFLICT (user_id) DO NOTHING;
 
-INSERT INTO user_role(user_id, role_id)
+INSERT INTO  ${schema}.user_role(user_id, role_id)
 VALUES ('374e33ed-1d51-4298-a3be-b51b4d7529a3', 'ADMIN'),
        ('374e33ed-1d51-4298-a3be-b51b4d7529a3', 'APPROVER'),
        ('374e33ed-1d51-4298-a3be-b51b4d7529a3', 'SUPPORTER'),
@@ -39,14 +39,14 @@ VALUES ('374e33ed-1d51-4298-a3be-b51b4d7529a3', 'ADMIN'),
 ON CONFLICT (user_id, role_id) DO NOTHING;
 
 -- BRANCH
-INSERT INTO branch (branch_id, name, phone_number, email, address, branch_code, created_at, updated_at)
+INSERT INTO  ${schema}.branch (branch_id, name, phone_number, email, address, branch_code, created_at, updated_at)
 VALUES  ('09668544-dec1-4b2c-ba73-e98254d645c9', 'Test User SaJF7Sh6', '0482651944', 'satGqATXjT@example.com', 'RhYZFJOlOROhc4nSfsgq', 'QQD', '2025-03-14 14:27:18.400829', '2025-03-14 14:27:18.400829'),
         ('65bf3c85-66e8-4045-8fef-790f4e847c38', 'Test User 8GkR2EGU', '0381752240', 'GJw9qZMz9y@example.com', 'ztSnONndbGp7ABizbcua', 'HXZ', '2025-03-14 14:40:04.668431', '2025-03-14 14:40:04.668431'),
         ('5f2e4c5f-62ee-46bd-a90b-65907c084e42', 'Test User Kf5exVwZ', '0430230564', 'LdOxL8HseI@example.com', 'pmem5nV4sHEv0hrNZJtq', 'HSG', '2025-03-14 14:58:36.417671', '2025-03-14 14:58:36.417671')
 ON CONFLICT (branch_id) DO NOTHING;
 
 -- PLACE
-INSERT INTO place (place_id, branch_id, slug, floor, building, name, layout, place_type)
+INSERT INTO  ${schema}.place (place_id, branch_id, slug, floor, building, name, layout, place_type)
 VALUES  ('b029923f-1cb3-4b31-9a66-6a1552520864', '09668544-dec1-4b2c-ba73-e98254d645c9', 'slug-r2e1q', '5', 'D', 'Tòa D Tầng 5', 'layout-ewu7h7x', 'BRANCH'),
         ('7eb5ef0f-8fd4-48e8-b6f4-a3870496d4ff', '09668544-dec1-4b2c-ba73-e98254d645c9', 'slug-ammcyd', '8', 'C', 'Tòa C Tầng 8', 'layout-70i7qxaqi', 'BRANCH'),
         ('92359dc1-b0fa-4ce2-8452-ea2c06e0517c', '09668544-dec1-4b2c-ba73-e98254d645c9', 'slug-d0d3db', '7', 'N', 'Tòa N Tầng 7', 'layout-ksfkt9ww', 'ROOM'),
@@ -158,7 +158,7 @@ ON CONFLICT (place_id) DO NOTHING;
 
 
 -- EQUIPMENT
-INSERT INTO equipment (equipment_id, name, brand, description, unit_price, created_at, updated_at, equipment_code)
+INSERT INTO  ${schema}.equipment (equipment_id, name, brand, description, unit_price, created_at, updated_at, equipment_code)
 VALUES  ('1359307f-88f4-4c02-ba7f-7ab9ead0af18', 'Camera hội nghị không dây', 'Shure', 'Desc_CE7BMH5JX1N', 84220, '2025-03-14 16:26:54.015763', '2025-03-14 16:26:54.015763', 'EQUIPMENT_52IQ5G'),
         ('65142753-d084-401a-bfd1-c9a6d3b9e4d9', 'Camera hội nghị', 'Jabra', 'Desc_A27MG7UIVTK', 90283, '2025-03-14 16:26:55.663984', '2025-03-14 16:26:55.663984', 'EQUIPMENT_0ZITO0'),
         ('796f5afb-276b-4144-abc4-336f70ae5fa8', 'Máy scan tài liệu', 'Bose', 'Desc_F6DJ6Z84II8', 80322, '2025-03-14 16:26:56.941869', '2025-03-14 16:26:56.941869', 'EQUIPMENT_L29GSS'),
@@ -233,7 +233,7 @@ VALUES  ('1359307f-88f4-4c02-ba7f-7ab9ead0af18', 'Camera hội nghị không dâ
 ON CONFLICT (equipment_id) DO NOTHING;
 
 -- SERVICE
-INSERT INTO service (service_id, name, description, note, unit_price, created_at, updated_at, service_code)
+INSERT INTO  ${schema}.service (service_id, name, description, note, unit_price, created_at, updated_at, service_code)
 VALUES ('5a737bda-4353-4577-9d01-7678349736fd', 'Sinh tố bơ', 'Mô tả desc_3ukCQ84hxdf4sReoaqFBdojNnKLRfFtMBMf1EeoqNteBmYhyuX8erHs4MEc26bvcDFguIbzLnO7aUfV3Dk00uCmm1JFIuQMgEHxUrUDH3AkEfHZFGQfMFi3nopmQiPTiSA6qnQY4Ewjfm1Iz3iIA34AddvIQgOyATrYr9nMcKb17YIGprFslMh3wa7OVWhRMx1Bsdn0B', 'Ghi chú note_1LKEwupidZkdgwpTTWfUYiUAYHeaTHUt4NzNDu2fxmtXKpXCq24WtJkyJxZn0bBHVDHwlJGpMfgfQ1UfaaFTTbRZ8V9lQmRpgEaF', 32357, '2025-03-14 16:41:05.935883', '2025-03-14 16:41:05.935883', 'SERVICE__Q85vSXsc'),
         ('38e163e3-70a8-4c21-8e91-7656bec1edd4', 'Sinh tố xoài', 'Mô tả desc_aFUYb7q6Jyc9v2zTZMdVYC954Vo6uT4BRokkjQ1FOTxGqe9gcHtGaQaCvve1SZNST7FxvAZSNbFZAE8Au5YCu9PUxyXAIuZxQ7Po66EIW6IeZz1n4gAllnWXjnEqQ7p6zX5EoTxsrlTWFpzhEkY39u0a6aQQp3XNuwRZ4S7TwAG1frgdt4HAgafqbW1iDhBJdRCNkrnR', 'Ghi chú note_XZ217fvzDUcR3UcWRj7Sir4hWmNCHbE5GH9D9UJzNMEu6Sc7wHcxS2xK7yWFrftpHPRTbiP0PyGGgfUpetsMjZMKQeQeon1cTZWW', 68668, '2025-03-14 16:41:07.462939', '2025-03-14 16:41:07.462939', 'SERVICE__Mvmvg1uE'),
         ('8a94accb-888d-4d08-acbc-a30e4e7bdfc1', 'Bánh mì pate', 'Mô tả desc_WIDLeOQAm21tA4cJLuqc8w99RtRnGIMnKAAUggQirLyGWYaCPt4TPZDE7vfGF3WGjDAiinR4lxx2HRK4ENVa5bDmDq5z6fS2qCRSHZmpCX0IAvb7CUNsHMjCRkcyrNZ8Fbh70qUelywOLIIF8IsXeXwhHx3fle4RyogT6cRRBSFsplEFp5U5UO3Oudj9hMcE2FXGTrgm', 'Ghi chú note_kmezczVkilCkj6PTvIZeK93wLsKEVKVlTT0RYsk4YmWfd22GfIroTvE1gbdx51uRPpdZjGTtM60GtF4evYCWiTLqJ3yp9V2Qrg1r', 63257, '2025-03-14 16:41:08.650040', '2025-03-14 16:41:08.650040', 'SERVICE__XvXYi14f'),
