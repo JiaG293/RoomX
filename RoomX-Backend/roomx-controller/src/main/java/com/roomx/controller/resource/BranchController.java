@@ -33,7 +33,7 @@ public class BranchController {
                 .build();
     }
 
-    @GetMapping("/search")
+    /*@GetMapping("/search")
     public ResultResponse<?> searchBranchByName(
             @RequestParam String name,
             @RequestParam String code
@@ -41,10 +41,17 @@ public class BranchController {
         return ResultResponse.<List<BranchResponse>>builder()
                 .result(branchAppService.searchBranchByNameOrBranchCode(name, code))
                 .build();
+    }*/
+
+    @DeleteMapping("/{branchId}")
+    public ResultResponse<?> deleteBranch(@PathVariable String branchId) {
+        branchAppService.deleteBranchById(branchId);
+        return ResultResponse.<Void>builder()
+                .build();
     }
 
     @PatchMapping("/{branchId}")
-    public ResultResponse<?> searchBranchByName(
+    public ResultResponse<?> updateBranchById(
             @PathVariable String branchId,
             @Validated @RequestBody BranchUpdateRequest branchUpdateRequest
     ) {

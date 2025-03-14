@@ -85,4 +85,5 @@ public class BranchAppService {
         var listBranchDomain = branchRepository.searchBranchByNameOrBranchCode(name, code);
         return listBranchDomain.stream().map(branchAppMapper::toResponse).toList();
     }
+
 }
