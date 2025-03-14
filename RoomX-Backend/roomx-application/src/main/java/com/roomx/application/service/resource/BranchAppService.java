@@ -2,7 +2,7 @@ package com.roomx.application.service.resource;
 
 import com.roomx.application.dto.resource.request.BranchCreateRequest;
 
-import com.roomx.application.dto.resource.request.BranchQueryFilterRequest;
+import com.roomx.application.dto.resource.request.BranchQueryRequest;
 import com.roomx.application.dto.resource.request.BranchUpdateRequest;
 import com.roomx.application.dto.resource.response.BranchResponse;
 import com.roomx.application.mapper.BranchAppMapper;
@@ -64,10 +64,15 @@ public class BranchAppService {
     }
 
 
-    public Page<BranchResponse> getListBranchPages(BranchQueryFilterRequest filterRequest, int page, int size, String sortBy, String direction) {
+    public Page<BranchResponse> getListBranchPages(
+            BranchQueryRequest filterRequest,
+            int page,
+            int size,
+            String sortBy,
+            String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-       log.info("data la: {}", filterRequest);
+        log.info("data la: {}", filterRequest);
         BranchFilter branchFilter = BranchFilter.builder()
                 .branchCode(filterRequest.getBranchCode())
                 .name(filterRequest.getName())

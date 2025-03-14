@@ -8,7 +8,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@Data
 @EqualsAndHashCode
 public class Branch {
     private UUID id;

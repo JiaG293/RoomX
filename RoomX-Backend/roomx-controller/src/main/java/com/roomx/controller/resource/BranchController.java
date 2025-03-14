@@ -1,11 +1,9 @@
 package com.roomx.controller.resource;
 
 import com.roomx.application.dto.resource.request.BranchCreateRequest;
-import com.roomx.application.dto.resource.request.BranchQueryFilterRequest;
+import com.roomx.application.dto.resource.request.BranchQueryRequest;
 import com.roomx.application.dto.resource.request.BranchUpdateRequest;
 import com.roomx.application.dto.resource.response.BranchResponse;
-import com.roomx.application.dto.user.request.UserQueryFilterRequest;
-import com.roomx.application.dto.user.response.UserResponse;
 import com.roomx.application.service.resource.BranchAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
@@ -16,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -60,9 +57,9 @@ public class BranchController {
                 .build();
     }
 
-    @GetMapping("/filter")
+    @GetMapping("/filters")
     public ResultResponse<?> getListPageBranch(
-            @ModelAttribute BranchQueryFilterRequest filter,
+            @ModelAttribute BranchQueryRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "branchCode") String sortBy,

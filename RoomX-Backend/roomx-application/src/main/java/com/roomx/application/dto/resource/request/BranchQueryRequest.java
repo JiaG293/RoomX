@@ -1,6 +1,5 @@
 package com.roomx.application.dto.resource.request;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.*;
 
 @Getter
@@ -8,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class BranchQueryFilterRequest {
+public class BranchQueryRequest {
     private String branchCode = null;
     private String name = null;
     private String phoneNumber = null;
