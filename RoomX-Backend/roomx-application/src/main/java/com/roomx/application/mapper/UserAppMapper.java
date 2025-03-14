@@ -2,15 +2,16 @@ package com.roomx.application.mapper;
 
 import com.roomx.application.dto.model.UserApp;
 import com.roomx.application.dto.user.request.UserCreateRequest;
+import com.roomx.application.dto.user.request.UserUpdateRequest;
 import com.roomx.application.dto.user.response.UserResponse;
 import com.roomx.application.dto.user.response.UserRoleResponse;
+import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.domain.model.aggrerate.User;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+
+import java.time.Instant;
 
 @Mapper(componentModel = "spring",
         uses = RoleAppMapper.class,
@@ -31,5 +32,12 @@ public interface UserAppMapper {
     @Mapping(target = "userId", source = "id")
     UserResponse toUserResponse(UserEntity entity);
 
+    @Mapping(target = "userId", ignore = true)
+    void updateDomainFromDto(UserUpdateRequest request, @MappingTarget User domain);
+
+    @AfterMapping
+    default void setUpdatedAt(@MappingTarget Equipment domain) {
+        domain.setUpdatedAt(Instant.now());
+    }
 
 }
