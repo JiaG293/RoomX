@@ -44,7 +44,7 @@ public class EquipmentController {
             @ModelAttribute EquipmentQueryRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "branchCode") String sortBy,
+            @RequestParam(defaultValue = "updatedAt") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
         var result = equipmentAppService.getListEquipmentPages(filter, page, size, sortBy, direction);

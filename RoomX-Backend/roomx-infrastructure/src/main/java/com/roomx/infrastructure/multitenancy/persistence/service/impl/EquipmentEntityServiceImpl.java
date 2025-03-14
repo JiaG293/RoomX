@@ -37,7 +37,7 @@ public class EquipmentEntityServiceImpl implements EquipmentEntityService {
                         new AbstractMap.SimpleEntry<>("id", filter.getId()),
                         new AbstractMap.SimpleEntry<>("equipmentCode", filter.getEquipmentCode()),
                         new AbstractMap.SimpleEntry<>("name", filter.getName()),
-                        new AbstractMap.SimpleEntry<>("brancd", filter.getBrand()),
+                        new AbstractMap.SimpleEntry<>("brand", filter.getBrand()),
                         new AbstractMap.SimpleEntry<>("unitPrice", filter.getUnitPrice()),
                         new AbstractMap.SimpleEntry<>("createdAt", filter.getCreatedAt()),
                         new AbstractMap.SimpleEntry<>("updatedAt", filter.getUpdatedAt())

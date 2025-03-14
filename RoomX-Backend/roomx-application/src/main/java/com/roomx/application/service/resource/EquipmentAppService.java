@@ -69,7 +69,13 @@ public class EquipmentAppService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         EquipmentFilter equipmentFilter = EquipmentFilter.builder()
-
+                .equipmentCode(filterRequest.getEquipmentCode())
+                .brand(filterRequest.getBrand())
+                .id(filterRequest.getId())
+                .name(filterRequest.getName())
+                .createdAt(filterRequest.getCreatedAt())
+                .updatedAt(filterRequest.getUpdatedAt())
+                .unitPrice(filterRequest.getUnitPrice())
                 .build();
 
         var equipmentDomainPage = equipmentEntityService.filterPageEquipments(equipmentFilter, pageable, filterRequest.isCompareType());
