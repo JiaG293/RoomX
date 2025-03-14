@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,5 +53,15 @@ public class PlaceEntityRepository implements PlaceRepository {
     @Override
     public boolean checkPlaceExistsBySlug(String slug) {
         return jpaPlaceEntityRepository.existsBySlug(slug);
+    }
+
+    @Override
+    public boolean checkPlaceExistsBySlugBuildingFloorBranchId(String slug, String building, String floor, String branchId) {
+        return jpaPlaceEntityRepository.existsBySlugAndBuildingAndFloorAndAndBranch_Id(slug, building, floor, UUID.fromString(branchId));
+    }
+
+    @Override
+    public List<String> customFindPlaceSelectBox(String branchId, String building, String floor, String placeType) {
+        return jpaPlaceEntityRepository.customFindPlaceSelectBox(UUID.fromString(branchId), building, floor, placeType);
     }
 }

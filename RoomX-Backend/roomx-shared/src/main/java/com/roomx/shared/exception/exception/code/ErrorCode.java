@@ -49,7 +49,10 @@ public enum ErrorCode {
     BRANCH_NOT_FOUND(1000, "error.branch.not_found", HttpStatus.NOT_FOUND ),
     SERVICE_NOT_FOUND(1000, "error.service.not_found", HttpStatus.NOT_FOUND),
     SERVICE_SERVICE_CODE_CONFLICT(1000, "error.service.conflict", HttpStatus.CONFLICT ),
-    PLACE_SLUG_NOT_FOUND(1000, "error.place.slug.not_found", HttpStatus.CONFLICT);
+    PLACE_SLUG_NOT_FOUND(1000, "error.place.slug.not_found", HttpStatus.CONFLICT),
+    PLACE_SLUG_CONFLICT(1000, "error.place.slug.conflict", HttpStatus.CONFLICT),
+    PLACE_NOT_FOUND(1000, "error.place.not_found", HttpStatus.NOT_FOUND),
+    PLACE_CONFLICT(1000, "error.place.conflict" , HttpStatus.CONFLICT);
 
 
 
