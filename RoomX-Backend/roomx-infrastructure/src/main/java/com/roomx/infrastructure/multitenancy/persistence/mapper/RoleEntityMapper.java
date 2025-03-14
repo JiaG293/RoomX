@@ -7,7 +7,7 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface RoleEntityJpaMapper {
+public interface RoleEntityMapper {
 
     @Mappings({
             @Mapping(target = "roleId", source = "id")

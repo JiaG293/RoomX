@@ -6,6 +6,8 @@ import com.roomx.application.dto.resource.response.ServiceResponse;
 import com.roomx.domain.model.aggrerate.Service;
 import org.mapstruct.*;
 
+import java.time.Instant;
+
 @Mapper(
         componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
@@ -20,5 +22,10 @@ public interface ServiceAppMapper {
 
     @Mapping(target = "id", ignore = true)
     void updateDomainFromDto(ServiceUpdateRequest request, @MappingTarget Service domain);
+
+    @AfterMapping
+    default void setUpdatedAt(@MappingTarget Service domain) {
+        domain.setUpdatedAt(Instant.now());
+    }
 
 }

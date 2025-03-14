@@ -16,7 +16,9 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
-@Table(name = ServiceEntity.TABLE_NAME)
+@Table(name = ServiceEntity.TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(name = "unq_service", columnNames = {"service_code"})
+})
 public class ServiceEntity {
     public static final String TABLE_NAME = "service";
     public static final String COLUMN_ID_NAME = "service_id";
@@ -26,12 +28,17 @@ public class ServiceEntity {
     public static final String COLUMN_UNITPRICE_NAME = "unit_price";
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
+    public static final String COLUMN_SERVICECODE_NAME = "service_code";
 
 
     @Id
     @Column(name = COLUMN_ID_NAME, nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Size(max = 32)
+    @Column(name = COLUMN_SERVICECODE_NAME, length = 32)
+    private String serviceCode;
 
     @Size(max = 500)
     @Column(name = COLUMN_NAME_NAME, length = 500)

@@ -2,13 +2,12 @@ package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 
 import com.roomx.domain.model.aggrerate.Service;
 import com.roomx.domain.repository.ServiceRepository;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.ServiceEntityJpaMapper;
+import com.roomx.infrastructure.multitenancy.persistence.mapper.ServiceEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaServiceEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,24 +16,24 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ServiceEntityRepository implements ServiceRepository {
     private final JpaServiceEntityRepository jpaServiceEntityRepository;
-    private final ServiceEntityJpaMapper serviceEntityJpaMapper;
+    private final ServiceEntityMapper serviceEntityMapper;
 
 
     @Override
     public Optional<Service> findById(String id) {
-        return jpaServiceEntityRepository.findById(UUID.fromString(id)).map(serviceEntityJpaMapper::toDomain);
+        return jpaServiceEntityRepository.findById(UUID.fromString(id)).map(serviceEntityMapper::toDomain);
     }
 
     @Override
     public Service save(Service service) {
-        var serviceEntity = serviceEntityJpaMapper.toEntity(service);
+        var serviceEntity = serviceEntityMapper.toEntity(service);
         var savedServiceEntity = jpaServiceEntityRepository.save(serviceEntity);
-        return serviceEntityJpaMapper.toDomain(savedServiceEntity);
+        return serviceEntityMapper.toDomain(savedServiceEntity);
     }
 
     @Override
     public void delete(Service service) {
-        jpaServiceEntityRepository.delete(serviceEntityJpaMapper.toEntity(service));
+        jpaServiceEntityRepository.delete(serviceEntityMapper.toEntity(service));
     }
 
     @Override
@@ -49,7 +48,7 @@ public class ServiceEntityRepository implements ServiceRepository {
 
     @Override
     public Optional<Service> findByServiceName(String serviceName) {
-        return jpaServiceEntityRepository.findByName(serviceName).map(serviceEntityJpaMapper::toDomain);
+        return jpaServiceEntityRepository.findByName(serviceName).map(serviceEntityMapper::toDomain);
     }
 
 

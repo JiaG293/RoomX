@@ -26,6 +26,8 @@ public class User {
     private String userType;
     private String userCode;
     @Builder.Default
+    private boolean enable = true;
+    @Builder.Default
     private Instant createdAt = Instant.now();
     @Builder.Default
     private Instant updatedAt = Instant.now();

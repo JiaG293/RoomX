@@ -7,12 +7,12 @@ import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring",
-        uses = RoleEntityJpaMapper.class,
+        uses = RoleEntityMapper.class,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface UserEntityJpaMapper {
+public interface UserEntityMapper {
 
-    UserEntityJpaMapper INSTANCE = Mappers.getMapper(UserEntityJpaMapper.class);
+    UserEntityMapper INSTANCE = Mappers.getMapper(UserEntityMapper.class);
 
     @Mapping(target = "roles", source = "roles")
     User toDomain(UserEntity entity);

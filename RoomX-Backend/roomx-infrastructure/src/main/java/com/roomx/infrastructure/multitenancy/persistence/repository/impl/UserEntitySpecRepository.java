@@ -2,7 +2,7 @@ package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 
 import com.roomx.domain.model.aggrerate.User;
 import com.roomx.domain.repository.UserRepository;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.UserEntityJpaMapper;
+import com.roomx.infrastructure.multitenancy.persistence.mapper.UserEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaUserEntityRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,31 +21,31 @@ import java.util.stream.Collectors;
 public class UserEntitySpecRepository implements UserRepository, com.roomx.infrastructure.multitenancy.persistence.repository.specification.UserEntitySpecRepository {
 
     private final JpaUserEntityRepository jpaUserEntityRepository;
-    private final UserEntityJpaMapper userEntityJpaMapper;
+    private final UserEntityMapper userEntityMapper;
 
     @Override
     public Optional<User> findById(UUID id) {
-        return jpaUserEntityRepository.findById(id).map(userEntityJpaMapper::toDomain);
+        return jpaUserEntityRepository.findById(id).map(userEntityMapper::toDomain);
     }
 
     @Override
     public Optional<User> findByUserCode(String userCode) {
-        return jpaUserEntityRepository.findByUserCode(userCode).map(userEntityJpaMapper::toDomain);
+        return jpaUserEntityRepository.findByUserCode(userCode).map(userEntityMapper::toDomain);
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return jpaUserEntityRepository.findByEmail(email).map(userEntityJpaMapper::toDomain);
+        return jpaUserEntityRepository.findByEmail(email).map(userEntityMapper::toDomain);
     }
 
     @Override
     public List<User> findAll() {
-        return jpaUserEntityRepository.findAll().stream().map(userEntityJpaMapper::toDomain).collect(Collectors.toList());
+        return jpaUserEntityRepository.findAll().stream().map(userEntityMapper::toDomain).collect(Collectors.toList());
     }
 
     @Override
     public void save(User user) {
-        jpaUserEntityRepository.save(userEntityJpaMapper.toEntity(user));
+        jpaUserEntityRepository.save(userEntityMapper.toEntity(user));
     }
 
     @Override

@@ -12,7 +12,7 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
-public interface ServiceEntityJpaMapper {
+public interface ServiceEntityMapper {
 
     @Mapping(target = "id", source = "id")
     Service toDomain(ServiceEntity entity);

@@ -3,22 +3,20 @@ package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 import com.roomx.domain.model.aggrerate.Role;
 import com.roomx.domain.model.aggrerate.User;
 import com.roomx.domain.repository.UserRoleRepository;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.RoleEntityJpaMapper;
+import com.roomx.infrastructure.multitenancy.persistence.mapper.RoleEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaRoleEntityRepository;
-import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaUserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
 public class UserRoleEntityRepository implements UserRoleRepository {
     private final JpaRoleEntityRepository jpaRoleEntityRepository;
-    private final RoleEntityJpaMapper roleEntityJpaMapper;
+    private final RoleEntityMapper roleEntityMapper;
 
     @Override
     public Optional<User> findUserWithRole() {
@@ -27,7 +25,7 @@ public class UserRoleEntityRepository implements UserRoleRepository {
 
     @Override
     public List<Role> findRolesByUserId(UUID userId) {
-        return jpaRoleEntityRepository.findRolesNotAssignedUser(userId).stream().map(roleEntityJpaMapper::toDomain).toList();
+        return jpaRoleEntityRepository.findRolesNotAssignedUser(userId).stream().map(roleEntityMapper::toDomain).toList();
     }
 
 }

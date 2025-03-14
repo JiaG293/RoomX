@@ -14,6 +14,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class Service {
     private UUID id;
+    private String serviceCode;
     private String name;
     private String description;
     private String note;

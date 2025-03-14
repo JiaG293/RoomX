@@ -13,11 +13,11 @@ import java.time.Instant;
 @AllArgsConstructor
 @Data
 public class ServiceQueryRequest {
-    private String name;
-    private String description;
-    private String note;
-    private BigDecimal unitPrice;
-    private Instant createdAt;
-    private Instant updatedAt;
-    private boolean compareType;
+    private String name = null;
+    private String description = null;
+    private String note = null;
+    private BigDecimal unitPrice = null;
+    private Instant createdAt = null;
+    private Instant updatedAt = null;
+    private boolean compareType = false;
 }

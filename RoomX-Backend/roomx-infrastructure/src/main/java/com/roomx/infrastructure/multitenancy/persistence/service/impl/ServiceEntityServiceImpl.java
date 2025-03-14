@@ -1,16 +1,11 @@
 package com.roomx.infrastructure.multitenancy.persistence.service.impl;
 
-import com.roomx.domain.model.aggrerate.Branch;
 import com.roomx.domain.model.aggrerate.Service;
-import com.roomx.infrastructure.multitenancy.persistence.dto.BranchFilter;
 import com.roomx.infrastructure.multitenancy.persistence.dto.ServiceFilter;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.BranchEntityJpaMapper;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.ServiceEntityJpaMapper;
+import com.roomx.infrastructure.multitenancy.persistence.mapper.ServiceEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.model.base.GenericSpecification;
 import com.roomx.infrastructure.multitenancy.persistence.model.base.SearchCriteria;
-import com.roomx.infrastructure.multitenancy.persistence.model.entity.BranchEntity;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.ServiceEntity;
-import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaBranchEntityRepository;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaServiceEntityRepository;
 import com.roomx.infrastructure.multitenancy.persistence.service.ServiceEntityService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +23,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class ServiceEntityServiceImpl implements ServiceEntityService {
     private final JpaServiceEntityRepository jpaServiceEntityRepository;
-    private final ServiceEntityJpaMapper serviceEntityJpaMapper;
+    private final ServiceEntityMapper serviceEntityMapper;
 
     @Override
     public Page<Service> filterPageServices(ServiceFilter filter, Pageable pageable, boolean typeCompare) {
@@ -54,7 +49,7 @@ public class ServiceEntityServiceImpl implements ServiceEntityService {
         var serviceEntityPage = jpaServiceEntityRepository.findAll(spec, pageable);
 
 
-        return serviceEntityPage.map(serviceEntityJpaMapper::toDomain);
+        return serviceEntityPage.map(serviceEntityMapper::toDomain);
     }
 
 

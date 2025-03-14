@@ -16,6 +16,7 @@ import java.util.UUID;
 @Getter
 public class RoomClass {
     private UUID id;
+    private String roomClassCode;
     private BigDecimal basePrice;
     private Integer capacity;
 
