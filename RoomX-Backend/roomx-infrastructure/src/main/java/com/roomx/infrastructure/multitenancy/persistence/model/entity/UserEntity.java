@@ -39,6 +39,8 @@ public class UserEntity {
     public static final String JOINTABLE_ROLES_NAME = "user_role";
     public static final String JOINCOLUMNS_JOINCOLUMN_ROLES_NAME = "user_id";
     public static final String INVERSEJOINCOLUMNS_JOINCOLUMN_ROLES_NAME = "role_id";
+    public static final String COLUMN_ENABLE_NAME = "enable";
+
 
 
     @Id
@@ -85,6 +87,10 @@ public class UserEntity {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_UPDATEDAT_NAME)
     private Instant updatedAt;
+
+
+    @Column(name = COLUMN_ENABLE_NAME)
+    private Boolean enable;
 
 
 

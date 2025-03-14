@@ -16,7 +16,9 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
-@Table(name = BookingRequestEntity.TABLE_NAME)
+@Table(name = BookingRequestEntity.TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(name = "unq_booking_request", columnNames = {"booking_request_code"})
+})
 public class BookingRequestEntity {
     public static final String TABLE_NAME = "booking_request";
     public static final String COLUMN_ID_NAME = "booking_request_id";
@@ -26,11 +28,16 @@ public class BookingRequestEntity {
     public static final String COLUMN_ENDDATE_NAME = "end_date";
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
+    public static final String COLUMN_BOOKINGREQUESTCODE_NAME = "booking_request_code";
 
 
     @Id
     @Column(name = COLUMN_ID_NAME, nullable = false)
     private UUID id;
+
+    @Size(max = 32)
+    @Column(name = COLUMN_BOOKINGREQUESTCODE_NAME, length = 32)
+    private String bookingRequestCode;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

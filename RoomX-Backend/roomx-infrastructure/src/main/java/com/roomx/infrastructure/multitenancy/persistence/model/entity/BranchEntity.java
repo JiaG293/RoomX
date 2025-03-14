@@ -3,7 +3,9 @@ package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Builder
@@ -24,6 +26,8 @@ public class BranchEntity {
     public static final String COLUMN_PHONENUMBER_NAME = "phone_number";
     public static final String COLUMN_EMAIL_NAME = "email";
     public static final String COLUMN_ADDRESS_NAME = "address";
+    public static final String COLUMN_CREATEDAT_NAME = "created_at";
+    public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
 
 
     @Id
@@ -50,5 +54,13 @@ public class BranchEntity {
     @Size(max = 500)
     @Column(name = COLUMN_ADDRESS_NAME, length = 500)
     private String address;
+
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = COLUMN_CREATEDAT_NAME)
+    private Instant createdAt;
+
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = COLUMN_UPDATEDAT_NAME)
+    private Instant updatedAt;
 
 }

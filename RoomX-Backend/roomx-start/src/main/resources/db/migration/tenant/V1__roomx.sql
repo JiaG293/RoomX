@@ -5,6 +5,8 @@ CREATE  TABLE branch (
                          email                varchar(500)    ,
                          address              varchar(500)    ,
                          branch_code          varchar(32)    ,
+                         created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
+                         updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                          CONSTRAINT pk_chi_nhanh PRIMARY KEY ( branch_id ),
                          CONSTRAINT unq_branch UNIQUE ( branch_code )
 );
@@ -15,7 +17,11 @@ CREATE  TABLE equipment (
                             brand                varchar    ,
                             description          text    ,
                             unit_price           numeric    ,
-                            CONSTRAINT pk_thiet_bi PRIMARY KEY ( equipment_id )
+                            created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
+                            updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
+                            equipment_code       varchar(32)    ,
+                            CONSTRAINT pk_thiet_bi PRIMARY KEY ( equipment_id ),
+                            CONSTRAINT unq_equipment UNIQUE ( equipment_code )
 );
 
 CREATE  TABLE exception_date (
@@ -53,7 +59,9 @@ CREATE  TABLE room_class (
                              room_class_id        uuid  NOT NULL  ,
                              created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                              updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
-                             CONSTRAINT pk_loai_phong PRIMARY KEY ( room_class_id )
+                             room_class_code      varchar(32)    ,
+                             CONSTRAINT pk_loai_phong PRIMARY KEY ( room_class_id ),
+                             CONSTRAINT unq_room_class UNIQUE ( room_class_code )
 );
 
 CREATE  TABLE service (
@@ -64,7 +72,9 @@ CREATE  TABLE service (
                           unit_price           numeric    ,
                           created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                           updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
-                          CONSTRAINT pk_dich_vu PRIMARY KEY ( service_id )
+                          service_code         varchar(32)    ,
+                          CONSTRAINT pk_dich_vu PRIMARY KEY ( service_id ),
+                          CONSTRAINT unq_service UNIQUE ( service_code )
 );
 
 CREATE  TABLE service_room_class (
@@ -87,6 +97,7 @@ CREATE  TABLE "user" (
                          user_id              uuid  NOT NULL  ,
                          created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                          updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
+                         enable               boolean    ,
                          CONSTRAINT pk_nguoi_dung PRIMARY KEY ( user_id ),
                          CONSTRAINT unq_nguoi_dung UNIQUE ( user_code, email, phone_number )
 );
@@ -143,7 +154,9 @@ CREATE  TABLE booking_request (
                                   end_date             timestamp    ,
                                   created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                                   updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
-                                  CONSTRAINT pk_yeu_cau_dat_phong PRIMARY KEY ( booking_request_id )
+                                  booking_request_code varchar(32)    ,
+                                  CONSTRAINT pk_yeu_cau_dat_phong PRIMARY KEY ( booking_request_id ),
+                                  CONSTRAINT unq_booking_request UNIQUE ( booking_request_code )
 );
 
 CREATE  TABLE booking_request_participant (
@@ -236,4 +249,3 @@ ALTER TABLE service_room_class ADD CONSTRAINT fk_loai_phong_dich_vu_dich_vu FORE
 ALTER TABLE user_role ADD CONSTRAINT fk_user_role_role FOREIGN KEY ( role_id ) REFERENCES "role"( role_id );
 
 ALTER TABLE user_role ADD CONSTRAINT fk_user_role_user FOREIGN KEY ( user_id ) REFERENCES "user"( user_id );
-
