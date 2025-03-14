@@ -24,7 +24,7 @@ public interface EquipmentAppMapper {
     void updateDomainFromDto(EquipmentUpdateRequest request, @MappingTarget Equipment domain);
 
     @AfterMapping
-    default void setUpdatedAt(@MappingTarget Service domain) {
+    default void setUpdatedAt(@MappingTarget Equipment domain) {
         domain.setUpdatedAt(Instant.now());
     }
 
