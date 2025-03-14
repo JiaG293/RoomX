@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Data
 public class ServiceCreateRequest {
+    private String serviceCode;
     private String name;
     private String description;
     private String note;

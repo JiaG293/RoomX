@@ -12,6 +12,7 @@ import java.util.UUID;
 @Data
 public class ServiceResponse {
     private String id;
+    private String serviceCode;
     private String name;
     private String description;
     private String note;

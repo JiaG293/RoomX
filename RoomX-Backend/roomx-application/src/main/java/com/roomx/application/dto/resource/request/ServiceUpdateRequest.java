@@ -15,6 +15,9 @@ import java.math.BigDecimal;
 @Data
 public class ServiceUpdateRequest {
 
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private String serviceCode;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String name;
     @JsonSetter(nulls = Nulls.AS_EMPTY)

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class BranchResponse {
-    private String branchId;
+    private String id;
     private String branchCode;
     private String name;
     private String phoneNumber;

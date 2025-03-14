@@ -22,7 +22,7 @@ public interface BranchAppMapper {
     BranchEntity toEntity(Branch domain);
 
 
-    @Mapping(target = "branchId", source = "id")
+
     BranchResponse toResponse(Branch domain);
 
     @Mapping(target = "id", ignore = true)
