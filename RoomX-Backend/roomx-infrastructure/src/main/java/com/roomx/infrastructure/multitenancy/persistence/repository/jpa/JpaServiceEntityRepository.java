@@ -18,4 +18,6 @@ public interface JpaServiceEntityRepository extends JpaRepository<ServiceEntity,
     Optional<ServiceEntity> findByName(String serviceName);
 
     Page<ServiceEntity> findAll(Specification<ServiceEntity> spec, Pageable pageable);
+
+    boolean existsByServiceCode(String serviceCode);
 }

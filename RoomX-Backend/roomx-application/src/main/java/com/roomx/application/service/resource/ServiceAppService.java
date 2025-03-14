@@ -29,8 +29,12 @@ public class ServiceAppService {
 
 
     @Transactional
-    public ServiceResponse createService(ServiceCreateRequest serviceCreateRequest){
-        var serviceDomain = serviceAppMapper.toDomain(serviceCreateRequest);
+    public ServiceResponse createService(ServiceCreateRequest request){
+        if(serviceRepository.checkServiceCodeIsExists(request.getServiceCode())){
+            throw new AppException(ErrorCode.SERVICE_SERVICE_CODE_CONFLICT, request.getServiceCode());
+        }
+
+        var serviceDomain = serviceAppMapper.toDomain(request);
 
         var savedService = serviceRepository.save(serviceDomain);
 

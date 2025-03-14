@@ -47,7 +47,8 @@ public enum ErrorCode {
     ROLE_REMOVED_FAILED(1000, "error_removed_failed", HttpStatus.NOT_FOUND),
     BRANCH_CONFLICT(1000, "error_branch_conflict", HttpStatus.CONFLICT),
     BRANCH_NOT_FOUND(1000, "error_branch_not_found", HttpStatus.NOT_FOUND ),
-    SERVICE_NOT_FOUND(1000, "err_service_not_found", HttpStatus.NOT_FOUND);
+    SERVICE_NOT_FOUND(1000, "error_service_not_found", HttpStatus.NOT_FOUND),
+    SERVICE_SERVICE_CODE_CONFLICT(1000, "error_service_conflict", HttpStatus.CONFLICT );
 
 
 
