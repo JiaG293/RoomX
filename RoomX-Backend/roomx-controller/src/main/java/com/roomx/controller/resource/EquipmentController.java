@@ -5,6 +5,7 @@ import com.roomx.application.dto.resource.request.EquipmentCreateRequest;
 import com.roomx.application.dto.resource.request.EquipmentQueryRequest;
 import com.roomx.application.dto.resource.request.EquipmentUpdateRequest;
 import com.roomx.application.dto.resource.response.EquipmentResponse;
+import com.roomx.application.service.resource.EquipmentAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class EquipmentController {
-    com.roomx.application.equipment.resource.EquipmentAppService equipmentAppService;
+    EquipmentAppService equipmentAppService;
 
     @PostMapping
     public ResultResponse<?> createEquipment(@Validated @RequestBody EquipmentCreateRequest request) {

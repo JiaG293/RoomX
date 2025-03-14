@@ -1,4 +1,4 @@
-package com.roomx.application.equipment.resource;
+package com.roomx.application.service.resource;
 
 import com.roomx.application.dto.resource.request.EquipmentCreateRequest;
 import com.roomx.application.dto.resource.request.EquipmentQueryRequest;
