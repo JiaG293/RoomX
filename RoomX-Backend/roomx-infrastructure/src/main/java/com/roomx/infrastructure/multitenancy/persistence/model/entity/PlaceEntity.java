@@ -28,25 +28,26 @@ public class PlaceEntity {
 
     @Id
     @Column(name = COLUMN_ID_NAME, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id")
     private BranchEntity branch;
 
-    @Column(name = COLUMN_SLUG_NAME, length = Integer.MAX_VALUE)
+    @Column(name = COLUMN_SLUG_NAME)
     private String slug;
 
     @Column(name = COLUMN_FLOOR_NAME)
-    private Short floor;
+    private String floor;
 
     @Column(name = COLUMN_BUILDING_NAME)
-    private Short building;
+    private String building;
 
-    @Column(name = COLUMN_NAME_NAME, length = Integer.MAX_VALUE)
+    @Column(name = COLUMN_NAME_NAME)
     private String name;
 
-    @Column(name = COLUMN_LAYOUT_NAME, length = Integer.MAX_VALUE)
+    @Column(name = COLUMN_LAYOUT_NAME)
     private String layout;
 
     @Size(max = 32)

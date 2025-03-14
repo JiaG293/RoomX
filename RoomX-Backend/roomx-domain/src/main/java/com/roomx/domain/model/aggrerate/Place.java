@@ -1,9 +1,7 @@
 package com.roomx.domain.model.aggrerate;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.roomx.domain.model.enums.PlaceType;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -11,17 +9,21 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
+@EqualsAndHashCode
 public class Place {
     private UUID id;
     private Branch branch;
     private String slug;
-    private Short floor;
-    private Short building;
+    private String floor;
+    private String building;
     private String name;
     private String layout;
-    private String placeType;
+    @Builder.Default
+    private String placeType = PlaceType.ROOM.toString();
 
-
+    public String getPlaceType() {
+        return placeType != null ? placeType : PlaceType.ROOM.toString();
+    }
 
 }
