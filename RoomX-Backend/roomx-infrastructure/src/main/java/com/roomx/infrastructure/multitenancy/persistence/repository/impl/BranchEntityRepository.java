@@ -2,8 +2,7 @@ package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 
 import com.roomx.domain.model.aggrerate.Branch;
 import com.roomx.domain.repository.BranchRepository;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.BranchEntityJpaMapper;
-import com.roomx.infrastructure.multitenancy.persistence.model.entity.BranchEntity;
+import com.roomx.infrastructure.multitenancy.persistence.mapper.BranchEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaBranchEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +17,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BranchEntityRepository implements BranchRepository {
     private final JpaBranchEntityRepository jpaBranchEntityRepository;
-    private final BranchEntityJpaMapper branchEntityJpaMapper;
+    private final BranchEntityMapper branchEntityMapper;
 
     @Override
     public Optional<Branch> findById(String id) {
         return jpaBranchEntityRepository
                 .findById(UUID.fromString(id))
-                .map(branchEntityJpaMapper::toDomain);
+                .map(branchEntityMapper::toDomain);
     }
 
     @Override
@@ -32,7 +31,7 @@ public class BranchEntityRepository implements BranchRepository {
         return jpaBranchEntityRepository
                 .findAllByNameOrBranchCode(branchName, branchCode)
                 .stream()
-                .map(branchEntityJpaMapper::toDomain)
+                .map(branchEntityMapper::toDomain)
                 .toList();
     }
 
@@ -48,14 +47,14 @@ public class BranchEntityRepository implements BranchRepository {
 
     @Override
     public Branch save(Branch branch) {
-        var branchEntity = branchEntityJpaMapper.toEntity(branch);
+        var branchEntity = branchEntityMapper.toEntity(branch);
         var savedBranchEntity = jpaBranchEntityRepository.save(branchEntity);
-        return branchEntityJpaMapper.toDomain(savedBranchEntity);
+        return branchEntityMapper.toDomain(savedBranchEntity);
     }
 
     @Override
     public void delete(Branch branch) {
-        jpaBranchEntityRepository.delete(branchEntityJpaMapper.toEntity(branch));
+        jpaBranchEntityRepository.delete(branchEntityMapper.toEntity(branch));
     }
 
     @Override

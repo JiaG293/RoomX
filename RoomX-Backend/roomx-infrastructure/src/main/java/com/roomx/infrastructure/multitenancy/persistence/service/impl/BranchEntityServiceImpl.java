@@ -2,11 +2,10 @@ package com.roomx.infrastructure.multitenancy.persistence.service.impl;
 
 import com.roomx.domain.model.aggrerate.Branch;
 import com.roomx.infrastructure.multitenancy.persistence.dto.BranchFilter;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.BranchEntityJpaMapper;
+import com.roomx.infrastructure.multitenancy.persistence.mapper.BranchEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.model.base.GenericSpecification;
 import com.roomx.infrastructure.multitenancy.persistence.model.base.SearchCriteria;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.BranchEntity;
-import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaBranchEntityRepository;
 import com.roomx.infrastructure.multitenancy.persistence.service.BranchEntityService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class BranchEntityServiceImpl implements BranchEntityService {
     private final JpaBranchEntityRepository jpaBranchEntityRepository;
-    private final BranchEntityJpaMapper branchEntityJpaMapper;
+    private final BranchEntityMapper branchEntityMapper;
 
 
 
@@ -52,6 +51,6 @@ public class BranchEntityServiceImpl implements BranchEntityService {
         var branchEntityPage = jpaBranchEntityRepository.findAll(spec, pageable);
 
 
-        return branchEntityPage.map(branchEntityJpaMapper::toDomain);
+        return branchEntityPage.map(branchEntityMapper::toDomain);
     }
 }

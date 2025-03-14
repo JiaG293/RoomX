@@ -2,6 +2,7 @@ package com.roomx.domain.model.aggrerate;
 
 import lombok.*;
 
+import java.time.Instant;
 import java.util.UUID;
 
 
@@ -17,5 +18,9 @@ public class Branch {
     private String phoneNumber;
     private String email;
     private String address;
+    @Builder.Default
+    private Instant createdAt = Instant.now();
+    @Builder.Default
+    private Instant updatedAt = Instant.now();
 }
 

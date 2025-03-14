@@ -10,7 +10,7 @@ import org.mapstruct.ReportingPolicy;
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
-public interface BranchEntityJpaMapper {
+public interface BranchEntityMapper {
 
 
     Branch toDomain(BranchEntity entity);
