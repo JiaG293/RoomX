@@ -1,28 +1,25 @@
-package com.roomx.domain.model.aggrerate;
+package com.roomx.application.dto.resource.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode
-public class Equipment {
-    private UUID id;
+public class EquipmentResponse {
+    private String id;
     private String equipmentCode;
     private String name;
     private String brand;
     private String description;
     private BigDecimal unitPrice;
-    @Builder.Default
-    private Instant createdAt = Instant.now();
-    @Builder.Default
-    private Instant updatedAt = Instant.now();
-
-
+    private Instant createdAt;
+    private Instant updatedAt;
 }

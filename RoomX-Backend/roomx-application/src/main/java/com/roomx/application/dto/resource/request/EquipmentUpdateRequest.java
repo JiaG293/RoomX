@@ -1,0 +1,20 @@
+package com.roomx.application.dto.resource.request;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class EquipmentUpdateRequest {
+    private String equipmentCode;
+    private String name;
+    private String brand;
+    private String description;
+    private BigDecimal unitPrice;
+}
