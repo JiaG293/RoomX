@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum PlaceType {
-    BRACNH(""),
-    DEPARTMENT(""),
-    ROOM("");
+    BRANCH("Chi nhánh"),
+    DEPARTMENT("Phòng ban"),
+    ROOM("Phòng họp");
     private static final Map<String, PlaceType> DISPLAY_NAME_MAP = Stream.of(values())
             .collect(Collectors.toMap(PlaceType::getDisplayName, e -> e));
 
@@ -23,5 +23,9 @@ public enum PlaceType {
 
     public static PlaceType fromDisplayName(String displayName) {
         return DISPLAY_NAME_MAP.getOrDefault(displayName, null);
+    }
+
+    public static PlaceType getDefault(){
+        return ROOM;
     }
 }

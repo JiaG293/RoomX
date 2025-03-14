@@ -1,10 +1,14 @@
 package com.roomx.controller.resource;
 
+import com.roomx.application.dto.resource.request.PlaceCreateRequest;
+import com.roomx.application.dto.resource.response.PlaceResponse;
+import com.roomx.application.service.resource.PlaceAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -13,10 +17,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PlaceController {
-    @PostMapping
-    public ResultResponse<?> createPlace() {
+    PlaceAppService placeAppService;
 
-        return ResultResponse.<Void>builder().build();
+    @PostMapping
+    public ResultResponse<?> createPlace(@Validated @RequestBody PlaceCreateRequest request) {
+        var result = placeAppService.createPlace(request);
+        return ResultResponse.<PlaceResponse>builder()
+                .result(result)
+                .build();
     }
 
     @GetMapping("/filters")

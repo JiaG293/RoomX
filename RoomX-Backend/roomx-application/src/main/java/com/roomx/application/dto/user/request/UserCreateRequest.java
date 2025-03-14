@@ -42,12 +42,11 @@ public class UserCreateRequest {
     private String avatarImage;
 
 
-    @Pattern(regexp = "^(PARTNER|EMPLOYEE)$", message = "valid.user.create.type")
+    @Pattern(regexp = "^(PARTNER|EMPLOYEE)$", message = "valid.user.create_type")
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String type;
 
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-
     private Set<String> roles;
 }
