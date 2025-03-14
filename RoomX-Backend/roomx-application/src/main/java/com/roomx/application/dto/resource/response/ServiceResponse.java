@@ -1,4 +1,4 @@
-package com.roomx.domain.model.aggrerate;
+package com.roomx.application.dto.resource.response;
 
 import lombok.*;
 
@@ -6,23 +6,16 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode
-public class Service {
-    private UUID id;
+public class ServiceResponse {
+    private String id;
     private String name;
     private String description;
     private String note;
     private BigDecimal unitPrice;
-    @Builder.Default
-    private Instant createdAt = Instant.now();
-    @Builder.Default
-    private Instant updatedAt = Instant.now();
-
-
-
+    private Instant createdAt;
+    private Instant updatedAt;
 }
