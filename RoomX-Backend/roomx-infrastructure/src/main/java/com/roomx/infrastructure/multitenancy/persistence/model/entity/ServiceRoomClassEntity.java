@@ -25,7 +25,7 @@ public class ServiceRoomClassEntity {
     @MapsId("roomClassId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_class_id", nullable = false)
-    private RoomClassEntity roomClassEntity;
+    private RoomClassEntity roomClass;
 
     @MapsId("serviceId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

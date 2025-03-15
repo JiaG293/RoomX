@@ -3,10 +3,7 @@ package com.roomx.domain.model.entity;
 import com.roomx.domain.model.aggrerate.RoomClass;
 import com.roomx.domain.model.aggrerate.Service;
 import com.roomx.domain.model.vo.ServiceRoomClassId;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -14,7 +11,8 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
+@EqualsAndHashCode
 public class ServiceRoomClass {
     private ServiceRoomClassId id;
     private RoomClass roomClass;

@@ -3,12 +3,11 @@ package com.roomx.controller.resource;
 import com.roomx.application.dto.resource.request.EquipmentRoomClassCreateRequest;
 import com.roomx.application.dto.resource.request.RoomClassCreateRequest;
 import com.roomx.application.dto.resource.request.RoomClassUpdateRequest;
-import com.roomx.application.dto.resource.response.EquipmentRoomClassDetailResponse;
-import com.roomx.application.dto.resource.response.EquipmentRoomClassResponse;
-import com.roomx.application.dto.resource.response.RoomClassDetailResponse;
-import com.roomx.application.dto.resource.response.RoomClassResponse;
+import com.roomx.application.dto.resource.request.ServiceRoomClassCreateRequest;
+import com.roomx.application.dto.resource.response.*;
 import com.roomx.application.service.resource.EquipmentRoomClassAppService;
 import com.roomx.application.service.resource.RoomClassAppService;
+import com.roomx.application.service.resource.ServiceRoomClassAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,7 @@ import java.util.List;
 public class RoomClassController {
     RoomClassAppService roomClassAppService;
     EquipmentRoomClassAppService equipmentRoomClassAppService;
+    ServiceRoomClassAppService serviceRoomClassAppService;
 
     @PostMapping
     public ResultResponse<?> createRoomClass(@Validated @RequestBody RoomClassCreateRequest request) {
@@ -70,6 +70,17 @@ public class RoomClassController {
         log.info("data: {}", request);
         var result = equipmentRoomClassAppService.addEquipmentToRoomClass(roomClassId, request);
         return ResultResponse.<List<EquipmentRoomClassDetailResponse>>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/{roomClassId}/services")
+    public ResultResponse<?> addServiceRoomClass(
+            @PathVariable String roomClassId,
+            @Validated @RequestBody List<ServiceRoomClassCreateRequest> request) {
+        log.info("data: {}", request);
+        var result = serviceRoomClassAppService.addServiceToRoomClass(roomClassId, request);
+        return ResultResponse.<List<ServiceRoomClassDetailResponse>>builder()
                 .result(result)
                 .build();
     }
