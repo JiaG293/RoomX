@@ -25,17 +25,19 @@ public class EquipmentRoomClassEntity {
     @MapsId("roomClassId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_class_id", nullable = false)
-    private RoomClassEntity roomClassEntity;
+    private RoomClassEntity roomClass;
 
     @MapsId("equipmentId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "equipment_id", nullable = false)
     private EquipmentEntity equipment;
 
+    @Builder.Default
     @Column(name = COLUMN_QUANTITY_NAME)
-    private Short quantity;
+    private Short quantity = 1;
 
+    @Builder.Default
     @Column(name = COLUMN_UNITPRICE_NAME)
-    private BigDecimal unitPrice;
+    private BigDecimal unitPrice = BigDecimal.ZERO;
 
 }

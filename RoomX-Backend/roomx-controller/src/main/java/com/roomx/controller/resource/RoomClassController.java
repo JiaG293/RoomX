@@ -1,8 +1,13 @@
 package com.roomx.controller.resource;
 
+import com.roomx.application.dto.resource.request.EquipmentRoomClassCreateRequest;
 import com.roomx.application.dto.resource.request.RoomClassCreateRequest;
 import com.roomx.application.dto.resource.request.RoomClassUpdateRequest;
+import com.roomx.application.dto.resource.response.EquipmentRoomClassDetailResponse;
+import com.roomx.application.dto.resource.response.EquipmentRoomClassResponse;
+import com.roomx.application.dto.resource.response.RoomClassDetailResponse;
 import com.roomx.application.dto.resource.response.RoomClassResponse;
+import com.roomx.application.service.resource.EquipmentRoomClassAppService;
 import com.roomx.application.service.resource.RoomClassAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
@@ -12,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/room-classes")
@@ -19,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoomClassController {
     RoomClassAppService roomClassAppService;
+    EquipmentRoomClassAppService equipmentRoomClassAppService;
 
     @PostMapping
     public ResultResponse<?> createRoomClass(@Validated @RequestBody RoomClassCreateRequest request) {
@@ -38,4 +46,32 @@ public class RoomClassController {
                 .result(result)
                 .build();
     }
+
+    @GetMapping("/{roomClassId}")
+    public ResultResponse<?> getDetailRoomClassById(@PathVariable String roomClassId) {
+        var result = roomClassAppService.getDetailRoomClassById(roomClassId);
+        return ResultResponse.<RoomClassDetailResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/room-class-code/{roomClassCode}")
+    public ResultResponse<?> getDetailRoomClassByRoomClassCode(@PathVariable String roomClassCode) {
+        var result = roomClassAppService.getDetailRoomClassByRoomClassCode(roomClassCode);
+        return ResultResponse.<RoomClassDetailResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/{roomClassId}/equipments")
+    public ResultResponse<?> addEquipmentRoomClass(
+            @PathVariable String roomClassId,
+            @Validated @RequestBody List<EquipmentRoomClassCreateRequest> request) {
+        log.info("data: {}", request);
+        var result = equipmentRoomClassAppService.addEquipmentToRoomClass(roomClassId, request);
+        return ResultResponse.<List<EquipmentRoomClassDetailResponse>>builder()
+                .result(result)
+                .build();
+    }
+
 }

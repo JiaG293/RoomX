@@ -56,7 +56,7 @@ public enum ErrorCode {
     ROOM_CLASS_CONFLICT(1000, "error.room_class.room_class_code.conflict", HttpStatus.CONFLICT),
     ROOM_CLASS_NOT_FOUND(1000, "error.room_class.not_found", HttpStatus.NOT_FOUND),
     ROOM_CLASS_NOT_ACTIVE(1000, "error.room_class.not_active", HttpStatus.FORBIDDEN),
-    ;
+    EQUIPMENT_ROOM_CLASS_CONFLICT(1000, "error.equipment_room_class.conflict", HttpStatus.CONFLICT);
 
 
 

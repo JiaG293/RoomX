@@ -1,18 +1,19 @@
 package com.roomx.application.dto.resource.response;
 
-import com.roomx.domain.model.entity.EquipmentRoomClass;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
+import java.math.BigDecimal;
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class RoomClassDetailResponse {
+public class EquipmentRoomClassDetailResponse {
     private RoomClassResponse roomClass;
-    private List<EquipmentRoomClassResponse> equipmentRoomClasses;
+    private EquipmentResponse equipment;
+    private BigDecimal unitPrice;
+    private int quantity;
+    private BigDecimal totalPrice;
 }

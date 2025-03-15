@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Builder
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -39,7 +40,7 @@ public class RoleEntity {
     @JoinTable(name = JOINTABLE_USERS_NAME,
             joinColumns = @JoinColumn(name = JOINCOLUMNS_JOINCOLUMN_USERS_NAME),
             inverseJoinColumns = @JoinColumn(name = INVERSEJOINCOLUMNS_JOINCOLUMN_USERS_NAME))
-    private Set<UserEntity> users = new LinkedHashSet<>();
+    private Set<UserEntity> users = new HashSet<>();
 
 
 }
