@@ -6,6 +6,7 @@ import com.roomx.application.dto.resource.response.RoomClassDetailResponse;
 import com.roomx.application.dto.resource.response.RoomClassResponse;
 import com.roomx.application.mapper.EquipmentRoomClassAppMapper;
 import com.roomx.application.mapper.RoomClassAppMapper;
+import com.roomx.domain.model.entity.EquipmentRoomClass;
 import com.roomx.domain.repository.EquipmentRoomClassRepository;
 import com.roomx.domain.repository.RoomClassRepository;
 import com.roomx.shared.exception.exception.AppException;
@@ -15,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -54,13 +57,16 @@ public class RoomClassAppService {
         var roomClassDomain = roomClassRepository.findById(roomClassId)
                 .orElseThrow(() -> new AppException(ErrorCode.ROOM_CLASS_NOT_FOUND, roomClassId));
 
-        var equipmentRoomClassList = equipmentRoomClassRepository.findAllByRoomClassId(roomClassId);
+        var equipmentRoomClassList = new HashSet<>(equipmentRoomClassRepository.findAllByRoomClassId(roomClassId));
+        roomClassDomain.setEquipments(equipmentRoomClassList);
 
         return RoomClassDetailResponse.builder()
                 .roomClass(roomClassAppMapper.toResponse(roomClassDomain))
-                .equipmentRoomClasses(equipmentRoomClassList.stream()
-                        .map(equipmentRoomClassAppMapper::toResponse)
-                        .collect(Collectors.toList()))
+                .equipments(equipmentRoomClassList.stream()
+                        .map(equipmentRoomClassAppMapper::toResponseDetailWithoutRoomClass)
+                        .toList())
+                .services(List.of())
+                .totalPrice(roomClassDomain.getTotalPrice())
                 .build();
     }
 

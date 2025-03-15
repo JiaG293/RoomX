@@ -28,7 +28,7 @@ public interface RoomClassAppMapper {
 
     /*@Mapping(target = "roomClass", source = "domain")
     @Mapping(target = "equipmentRoomClasses", source = "listEquipmentRoomClass")*/
-    void toResponseDetail(RoomClass domain, List<EquipmentRoomClass> listEquipmentRoomClass, @MappingTarget RoomClassDetailResponse response);
+//    void toResponseDetail(RoomClass domain, List<EquipmentRoomClass> listEquipmentRoomClass, @MappingTarget RoomClassDetailResponse response);
 
     @Mapping(target = "id", ignore = true)
     void updateDomainFromDto(RoomClassUpdateRequest request, @MappingTarget RoomClass domain);

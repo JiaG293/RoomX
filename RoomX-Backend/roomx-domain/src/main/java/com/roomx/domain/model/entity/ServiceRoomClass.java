@@ -22,5 +22,9 @@ public class ServiceRoomClass {
     private Short quantity;
     private BigDecimal unitPrice;
 
+    public BigDecimal getTotalPrice() {
+        return BigDecimal.valueOf(quantity).multiply(unitPrice);
+    }
+
 
 }
