@@ -1,16 +1,13 @@
-package com.roomx.application.dto.resource.request;
+package com.roomx.application.dto.resource.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class RoomClassUpdateRequest {
-    private BigDecimal basePrice;
+public class RoomClassDetailResponse {
 }
