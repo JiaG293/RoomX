@@ -59,9 +59,9 @@ public class EquipmentRoomClassAppService {
                 .flatMap(Optional::stream)
                 .toList();
 
-        var savedEntities = equipmentRoomClassRepository.saveAll(equipmentCanAdd);
+        var savedEntity = equipmentRoomClassRepository.saveAll(equipmentCanAdd);
 
-        return savedEntities.stream()
+        return savedEntity.stream()
                 .map(equipmentRoomClassAppMapper::toResponseDetail)
                 .toList();
 

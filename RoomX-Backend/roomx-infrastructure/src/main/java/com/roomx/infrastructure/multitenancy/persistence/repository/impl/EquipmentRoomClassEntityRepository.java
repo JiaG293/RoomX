@@ -5,7 +5,7 @@ import com.roomx.domain.model.vo.EquipmentRoomClassId;
 import com.roomx.domain.repository.EquipmentRoomClassRepository;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentRoomClassEntityIdMapper;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentRoomClassEntityMapper;
-import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaEquipmentRoomClassEntity;
+import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaEquipmentRoomClassEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -18,20 +18,20 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 public class EquipmentRoomClassEntityRepository implements EquipmentRoomClassRepository {
-    private final JpaEquipmentRoomClassEntity jpaEquipmentRoomClassEntity;
+    private final JpaEquipmentRoomClassEntityRepository jpaEquipmentRoomClassEntityRepository;
     private final EquipmentRoomClassEntityMapper equipmentRoomClassEntityMapper;
     private final EquipmentRoomClassEntityIdMapper equipmentRoomClassEntityIdMapper;
 
     @Override
     public boolean checkExistsByEquipmentRoomClassId(EquipmentRoomClassId id) {
         var equipmentRoomClassEntityId = equipmentRoomClassEntityIdMapper.toEntity(id);
-        return jpaEquipmentRoomClassEntity.existsById(equipmentRoomClassEntityId);
+        return jpaEquipmentRoomClassEntityRepository.existsById(equipmentRoomClassEntityId);
     }
 
     @Override
     public EquipmentRoomClass save(EquipmentRoomClass equipmentRoomClass) {
         var equipmentRoomClassEntity = equipmentRoomClassEntityMapper.toEntity(equipmentRoomClass);
-        var savedEquipmentRoomClassEntity = jpaEquipmentRoomClassEntity.save(equipmentRoomClassEntity);
+        var savedEquipmentRoomClassEntity = jpaEquipmentRoomClassEntityRepository.save(equipmentRoomClassEntity);
         return equipmentRoomClassEntityMapper.toDomain(savedEquipmentRoomClassEntity);
     }
 
@@ -41,7 +41,7 @@ public class EquipmentRoomClassEntityRepository implements EquipmentRoomClassRep
                 .map(equipmentRoomClassEntityMapper::toEntity)
                 .collect(Collectors.toList());
 
-        var savedEquipmentRoomClassEntityList = jpaEquipmentRoomClassEntity
+        var savedEquipmentRoomClassEntityList = jpaEquipmentRoomClassEntityRepository
                 .saveAll(equipmentRoomClassEntityList);
 
         return savedEquipmentRoomClassEntityList
@@ -51,7 +51,7 @@ public class EquipmentRoomClassEntityRepository implements EquipmentRoomClassRep
 
     @Override
     public List<EquipmentRoomClass> findAllByRoomClassId(String roomClassId) {
-        return jpaEquipmentRoomClassEntity
+        return jpaEquipmentRoomClassEntityRepository
                 .findAllByRoomClassId(UUID.fromString(roomClassId))
                 .stream().map(equipmentRoomClassEntityMapper::toDomain)
                 .collect(Collectors.toList());
