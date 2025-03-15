@@ -1,9 +1,6 @@
 package com.roomx.domain.model.aggrerate;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -13,7 +10,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
+@EqualsAndHashCode
 public class RoomClass {
     private UUID id;
     private String roomClassCode;

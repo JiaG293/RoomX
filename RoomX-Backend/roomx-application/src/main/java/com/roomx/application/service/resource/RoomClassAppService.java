@@ -1,11 +1,34 @@
 package com.roomx.application.service.resource;
 
+import com.roomx.application.dto.resource.request.RoomClassCreateRequest;
+import com.roomx.application.dto.resource.response.RoomClassResponse;
+import com.roomx.application.mapper.RoomClassAppMapper;
+import com.roomx.domain.repository.RoomClassRepository;
+import com.roomx.shared.exception.exception.AppException;
+import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class RoomClassAppService {
+    private final RoomClassRepository roomClassRepository;
+    private final RoomClassAppMapper roomClassAppMapper;
+
+    @Transactional
+    public RoomClassResponse createRoomClass(RoomClassCreateRequest request) {
+        if(roomClassRepository.checkExistsRoomClassCode(request.getRoomClassCode())){
+            throw new AppException(ErrorCode.ROOM_CLASS_CONFLICT, request.getRoomClassCode());
+        }
+
+        var roomClassDomain = roomClassAppMapper.toDomain(request);
+
+
+        var savedRoomClass = roomClassRepository.save(roomClassDomain);
+
+        return roomClassAppMapper.toResponse(savedRoomClass);
+    }
 }
