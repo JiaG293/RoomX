@@ -24,7 +24,7 @@ import java.util.Random;
 @RestController
 @RequestMapping("/api/v1")
 @OpenAPIDefinition(info = @Info(title = "TEST API", version = "v1", description = "API TEST"))
-public class TestController {
+public class RateLimitTestController {
     @NonFinal
     RestTemplate restTemplate = new RestTemplate();
 

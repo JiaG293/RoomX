@@ -6,9 +6,11 @@ import com.roomx.application.dto.resource.response.RoomClassDetailResponse;
 import com.roomx.application.dto.resource.response.RoomClassResponse;
 import com.roomx.application.mapper.EquipmentRoomClassAppMapper;
 import com.roomx.application.mapper.RoomClassAppMapper;
+import com.roomx.application.mapper.ServiceRoomClassAppMapper;
 import com.roomx.domain.model.entity.EquipmentRoomClass;
 import com.roomx.domain.repository.EquipmentRoomClassRepository;
 import com.roomx.domain.repository.RoomClassRepository;
+import com.roomx.domain.repository.ServiceRoomClassRepository;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +26,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RoomClassAppService {
+    private final ServiceRoomClassAppMapper serviceRoomClassAppMapper;
     private final EquipmentRoomClassAppMapper equipmentRoomClassAppMapper;
     private final RoomClassRepository roomClassRepository;
     private final RoomClassAppMapper roomClassAppMapper;
     private final EquipmentRoomClassRepository equipmentRoomClassRepository;
+    private final ServiceRoomClassRepository serviceRoomClassRepository;
 
     @Transactional
     public RoomClassResponse createRoomClass(RoomClassCreateRequest request) {
@@ -60,12 +64,17 @@ public class RoomClassAppService {
         var equipmentRoomClassList = new HashSet<>(equipmentRoomClassRepository.findAllByRoomClassId(roomClassId));
         roomClassDomain.setEquipments(equipmentRoomClassList);
 
+        var serviceRoomClassList = new HashSet<>(serviceRoomClassRepository.findAllByRoomClassId(roomClassId));
+        roomClassDomain.setServices(serviceRoomClassList);
+
         return RoomClassDetailResponse.builder()
                 .roomClass(roomClassAppMapper.toResponse(roomClassDomain))
                 .equipments(equipmentRoomClassList.stream()
                         .map(equipmentRoomClassAppMapper::toResponseDetailWithoutRoomClass)
                         .toList())
-                .services(List.of())
+                .services(serviceRoomClassList.stream()
+                        .map(serviceRoomClassAppMapper::toResponseDetailWithoutRoomClass)
+                        .toList())
                 .totalPrice(roomClassDomain.getTotalPrice())
                 .build();
     }

@@ -1,6 +1,7 @@
 package com.roomx.application.dto.resource.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class ServiceRoomClassDetailResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private RoomClassResponse roomClass;
     private ServiceResponse service;
-    private BigDecimal unitPrice;
+    private BigDecimal unitPriceCurrent;
     private int quantity;
     private BigDecimal totalPrice;
 }
