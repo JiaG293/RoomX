@@ -13,7 +13,7 @@ import org.mapstruct.ReportingPolicy;
                 BranchEntityMapper.class
         }
 )
-public interface PlaceEntityJpaMapper {
+public interface PlaceEntityMapper {
 
     Place toDomain(PlaceEntity entity);
 

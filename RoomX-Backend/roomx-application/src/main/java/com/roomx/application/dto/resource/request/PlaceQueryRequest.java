@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class PlaceQueryRequest {
-    private Branch branch = null;
+    private String id = null;
+    private String branchCode = null;
     private String slug = null;
     private String floor = null;
     private String building = null;
     private String name = null;
-    private String layout = null;
     private boolean compareType = false;
 }

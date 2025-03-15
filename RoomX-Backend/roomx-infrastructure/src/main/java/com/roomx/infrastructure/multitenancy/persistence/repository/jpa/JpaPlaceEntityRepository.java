@@ -1,7 +1,11 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.jpa;
 
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.PlaceEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface JpaPlaceEntityRepository extends JpaRepository<PlaceEntity, UUID> {
+public interface JpaPlaceEntityRepository extends JpaRepository<PlaceEntity, UUID>, JpaSpecificationExecutor<PlaceEntity> {
     Optional<PlaceEntity> findBySlug(String slug);
 
     Optional<PlaceEntity> findByName(String name);
@@ -49,4 +53,5 @@ public interface JpaPlaceEntityRepository extends JpaRepository<PlaceEntity, UUI
             """)
     List<String> customFindPlaceSelectBox(UUID branchId, String building, String floor, String placeType);
 
+//    Page<PlaceEntity> findAll(Specification<PlaceEntity> spec, Pageable pageable);
 }

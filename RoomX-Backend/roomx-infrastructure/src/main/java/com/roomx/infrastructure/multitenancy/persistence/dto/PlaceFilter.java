@@ -1,5 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.dto;
 
+import com.roomx.domain.model.aggrerate.Branch;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,5 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PlaceFilter {
+    private String id;
+    private String branchCode;
     private String slug;
+    private String floor;
+    private String building;
+    private String name;
 }

@@ -2,7 +2,7 @@ package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 
 import com.roomx.domain.model.aggrerate.Place;
 import com.roomx.domain.repository.PlaceRepository;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.PlaceEntityJpaMapper;
+import com.roomx.infrastructure.multitenancy.persistence.mapper.PlaceEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaPlaceEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,37 +17,37 @@ import java.util.UUID;
 @Repository
 public class PlaceEntityRepository implements PlaceRepository {
     private final JpaPlaceEntityRepository jpaPlaceEntityRepository;
-    private final PlaceEntityJpaMapper placeEntityJpaMapper;
+    private final PlaceEntityMapper placeEntityMapper;
 
 
     @Override
     public Optional<Place> findById(String id) {
         return jpaPlaceEntityRepository
                 .findById(UUID.fromString(id))
-                .map(placeEntityJpaMapper::toDomain);
+                .map(placeEntityMapper::toDomain);
     }
 
     @Override
     public Optional<Place> findBySlug(String slug) {
         return jpaPlaceEntityRepository
                 .findBySlug(slug)
-                .map(placeEntityJpaMapper::toDomain);
+                .map(placeEntityMapper::toDomain);
     }
 
     @Override
     public Optional<Place> findByName(String name) {
         return jpaPlaceEntityRepository
                 .findByName(name)
-                .map(placeEntityJpaMapper::toDomain);
+                .map(placeEntityMapper::toDomain);
     }
 
     @Override
     public Place save(Place place) {
-        var placeEntity = placeEntityJpaMapper.toEntity(place);
+        var placeEntity = placeEntityMapper.toEntity(place);
 
         var savedPlaceEntity = jpaPlaceEntityRepository.save(placeEntity);
 
-        return placeEntityJpaMapper.toDomain(savedPlaceEntity);
+        return placeEntityMapper.toDomain(savedPlaceEntity);
     }
 
     @Override

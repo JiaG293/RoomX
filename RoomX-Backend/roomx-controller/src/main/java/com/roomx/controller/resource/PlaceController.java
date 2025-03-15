@@ -1,8 +1,7 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.resource.request.PlaceCreateRequest;
-import com.roomx.application.dto.resource.request.PlaceSelectBoxRequest;
-import com.roomx.application.dto.resource.request.PlaceUpdateRequest;
+import com.roomx.application.dto.resource.request.*;
+import com.roomx.application.dto.resource.response.BranchResponse;
 import com.roomx.application.dto.resource.response.PlaceResponse;
 import com.roomx.application.service.resource.PlaceAppService;
 import com.roomx.shared.exception.api.ResultResponse;
@@ -10,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,9 +43,19 @@ public class PlaceController {
     }
 
     @GetMapping("/filters")
-    public ResultResponse<?> getListPagePlace() {
+    public ResultResponse<?> getListPagePlace(
+            @ModelAttribute PlaceQueryRequest filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "branch.branchCode") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
 
-        return ResultResponse.<Void>builder().build();
+        var result = placeAppService.getListPlacePages(filter, page, size, sortBy, direction);
+
+        return ResultResponse.<Page<PlaceResponse>>builder()
+                .result(result)
+                .build();
     }
 
     @GetMapping("/{placeId}")
@@ -70,9 +80,4 @@ public class PlaceController {
                 .build();
     }
 
-    @GetMapping("/buildings/{building}")
-    public ResultResponse<?> getListBuildings(@PathVariable String building) {
-
-        return ResultResponse.<Void>builder().build();
-    }
 }
