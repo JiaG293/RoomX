@@ -1,7 +1,6 @@
 package com.roomx.infrastructure.multitenancy.security.oauth;
 
 import com.roomx.domain.model.aggrerate.Role;
-import com.roomx.domain.repository.RoleRepository;
 import com.roomx.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

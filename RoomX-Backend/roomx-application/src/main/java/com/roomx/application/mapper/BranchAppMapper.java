@@ -4,7 +4,6 @@ import com.roomx.application.dto.resource.request.BranchCreateRequest;
 import com.roomx.application.dto.resource.request.BranchUpdateRequest;
 import com.roomx.application.dto.resource.response.BranchResponse;
 import com.roomx.domain.model.aggrerate.Branch;
-import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.BranchEntity;
 import org.mapstruct.*;
 

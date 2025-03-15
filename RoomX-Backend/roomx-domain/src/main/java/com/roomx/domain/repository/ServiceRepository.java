@@ -3,7 +3,6 @@ package com.roomx.domain.repository;
 
 import com.roomx.domain.model.aggrerate.Service;
 
-
 import java.util.Optional;
 
 public interface ServiceRepository {

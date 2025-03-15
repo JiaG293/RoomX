@@ -1,8 +1,8 @@
 package com.roomx.application.service.user;
 
-import com.roomx.application.dto.user.response.UserRoleResponse;
 import com.roomx.application.dto.user.request.RoleCreateRequest;
 import com.roomx.application.dto.user.response.RoleResponse;
+import com.roomx.application.dto.user.response.UserRoleResponse;
 import com.roomx.application.mapper.RoleAppMapper;
 import com.roomx.application.mapper.UserAppMapper;
 import com.roomx.domain.repository.RoleRepository;
@@ -14,7 +14,6 @@ import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

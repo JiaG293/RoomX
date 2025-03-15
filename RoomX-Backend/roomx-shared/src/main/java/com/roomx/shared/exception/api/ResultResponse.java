@@ -3,7 +3,6 @@ package com.roomx.shared.exception.api;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
 
 @Data
 @Builder

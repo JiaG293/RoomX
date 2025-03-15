@@ -1,7 +1,9 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.resource.request.*;
-import com.roomx.application.dto.resource.response.BranchResponse;
+import com.roomx.application.dto.resource.request.PlaceCreateRequest;
+import com.roomx.application.dto.resource.request.PlaceQueryRequest;
+import com.roomx.application.dto.resource.request.PlaceSelectBoxRequest;
+import com.roomx.application.dto.resource.request.PlaceUpdateRequest;
 import com.roomx.application.dto.resource.response.PlaceResponse;
 import com.roomx.application.service.resource.PlaceAppService;
 import com.roomx.shared.exception.api.ResultResponse;

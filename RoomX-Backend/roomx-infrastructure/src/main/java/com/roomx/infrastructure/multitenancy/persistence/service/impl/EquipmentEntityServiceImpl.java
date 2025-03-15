@@ -6,7 +6,6 @@ import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentEntityM
 import com.roomx.infrastructure.multitenancy.persistence.model.base.GenericSpecification;
 import com.roomx.infrastructure.multitenancy.persistence.model.base.SearchCriteria;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.EquipmentEntity;
-import com.roomx.infrastructure.multitenancy.persistence.model.entity.ServiceEntity;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaEquipmentEntityRepository;
 import com.roomx.infrastructure.multitenancy.persistence.service.EquipmentEntityService;
 import lombok.RequiredArgsConstructor;

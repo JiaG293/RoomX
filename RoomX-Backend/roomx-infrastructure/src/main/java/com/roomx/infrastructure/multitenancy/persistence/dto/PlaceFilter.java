@@ -1,6 +1,5 @@
 package com.roomx.infrastructure.multitenancy.persistence.dto;
 
-import com.roomx.domain.model.aggrerate.Branch;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

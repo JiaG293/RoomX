@@ -6,7 +6,6 @@ import com.roomx.application.dto.resource.request.EquipmentUpdateRequest;
 import com.roomx.application.dto.resource.response.EquipmentResponse;
 import com.roomx.application.mapper.EquipmentAppMapper;
 import com.roomx.domain.repository.EquipmentRepository;
-
 import com.roomx.infrastructure.multitenancy.persistence.dto.EquipmentFilter;
 import com.roomx.infrastructure.multitenancy.persistence.service.EquipmentEntityService;
 import com.roomx.shared.exception.exception.AppException;

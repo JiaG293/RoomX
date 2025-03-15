@@ -1,13 +1,11 @@
 package com.roomx.infrastructure.multitenancy.persistence.service.impl;
 
-import com.roomx.domain.model.aggrerate.Branch;
 import com.roomx.domain.model.aggrerate.Place;
 import com.roomx.infrastructure.multitenancy.persistence.dto.PlaceFilter;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.PlaceEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.model.base.GenericSpecification;
 import com.roomx.infrastructure.multitenancy.persistence.model.base.SearchCriteria;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.PlaceEntity;
-import com.roomx.infrastructure.multitenancy.persistence.model.entity.ServiceEntity;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaPlaceEntityRepository;
 import com.roomx.infrastructure.multitenancy.persistence.service.PlaceEntityService;
 import lombok.RequiredArgsConstructor;

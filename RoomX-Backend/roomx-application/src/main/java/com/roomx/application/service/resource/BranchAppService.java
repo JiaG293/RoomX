@@ -1,7 +1,6 @@
 package com.roomx.application.service.resource;
 
 import com.roomx.application.dto.resource.request.BranchCreateRequest;
-
 import com.roomx.application.dto.resource.request.BranchQueryRequest;
 import com.roomx.application.dto.resource.request.BranchUpdateRequest;
 import com.roomx.application.dto.resource.response.BranchResponse;

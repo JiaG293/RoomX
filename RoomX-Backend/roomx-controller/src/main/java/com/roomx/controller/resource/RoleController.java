@@ -2,7 +2,6 @@ package com.roomx.controller.resource;
 
 import com.roomx.application.dto.user.request.RoleCreateRequest;
 import com.roomx.application.dto.user.response.RoleResponse;
-import com.roomx.application.dto.user.response.UserResponse;
 import com.roomx.application.service.user.RoleAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;

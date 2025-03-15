@@ -1,6 +1,5 @@
 package com.roomx.domain.model.aggrerate;
 
-import com.roomx.domain.model.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
