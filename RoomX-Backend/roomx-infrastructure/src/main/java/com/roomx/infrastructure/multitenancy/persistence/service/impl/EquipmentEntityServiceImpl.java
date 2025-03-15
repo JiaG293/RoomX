@@ -5,6 +5,7 @@ import com.roomx.infrastructure.multitenancy.persistence.dto.EquipmentFilter;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.model.base.GenericSpecification;
 import com.roomx.infrastructure.multitenancy.persistence.model.base.SearchCriteria;
+import com.roomx.infrastructure.multitenancy.persistence.model.entity.EquipmentEntity;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.ServiceEntity;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaEquipmentEntityRepository;
 import com.roomx.infrastructure.multitenancy.persistence.service.EquipmentEntityService;
@@ -47,11 +48,11 @@ public class EquipmentEntityServiceImpl implements EquipmentEntityService {
 
         log.info("Searching data: {}", filters);
 
-        Specification<ServiceEntity> spec = new GenericSpecification<>(filters);
+        Specification<EquipmentEntity> spec = new GenericSpecification<>(filters);
 
-        var serviceEntityPage = jpaEquipmentEntityRepository.findAll(spec, pageable);
+        var equipmentEntityPage = jpaEquipmentEntityRepository.findAll(spec, pageable);
 
 
-        return serviceEntityPage.map(equipmentEntityMapper::toDomain);
+        return equipmentEntityPage.map(equipmentEntityMapper::toDomain);
     }
 }
