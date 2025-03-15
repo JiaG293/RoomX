@@ -103,3 +103,18 @@
 .fc-daygrid-body {
   padding-right: 16px !important; 
 }
+
+/* Thêm vào CSS của bạn */
+.fc .fc-button-primary {
+  background-color: #A3D9B1; /* Màu nền nhẹ nhàng, hơi xanh lá cây */
+  color: #3C4A54; /* Màu chữ hơi tối để dễ đọc */
+  border: none; /* Bỏ viền mặc định */
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #8ABF92; /* Màu nền khi hover, đậm hơn chút */
+  color: #2F3D44; /* Màu chữ khi hover, tối hơn chút để nổi bật */
+}
+

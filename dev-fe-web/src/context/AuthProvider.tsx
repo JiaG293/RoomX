@@ -7,7 +7,7 @@ import { jwtDecode } from "jwt-decode";
 interface AuthContextType {
   isAuthenticated: boolean;
   token: string | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<any>;
   logout: () => Promise<void>;
   getUserInfo: () => { email?: string; username?: string } | null;
   resetPassword: (email: string) => Promise<void>;
@@ -88,6 +88,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         secure: true,
         sameSite: "Strict",
       });
+      const decodedToken: any = jwtDecode(data.access_token);
+      const roles = decodedToken.aud || [];
+      console.log(roles);
+
+      const userInfo = {
+        email: decodedToken?.email,
+        username: decodedToken?.preferred_username,
+        roles,
+      };
+
+      return userInfo;
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -146,11 +157,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const resetPassword = async (email: string): Promise<void> => {
     ///
   };
-  
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, token, login, logout, getUserInfo, resetPassword }}
+      value={{
+        isAuthenticated,
+        token,
+        login,
+        logout,
+        getUserInfo,
+        resetPassword,
+      }}
     >
       {children}
     </AuthContext.Provider>

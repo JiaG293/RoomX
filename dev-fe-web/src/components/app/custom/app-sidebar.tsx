@@ -8,75 +8,43 @@ import {
   Bell,
   User,
   Settings,
+  Hourglass,
+  LogOut,
 } from "lucide-react";
-
 import { NavMain } from "@/components/app/custom/nav-main";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-} from "@/components/ui/sidebar";
-import { NavUser } from "@/components/app/custom/nav-user";
-import { useAuth } from "@/context/AuthProvider";
-import { useTranslation } from "react-i18next";
+import { Sidebar, SidebarContent, SidebarMenuButton } from "@/components/ui/sidebar";
 
-export function UserSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { getUserInfo } = useAuth();
-  const { t } = useTranslation();
-
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const data = {
     navMain: [
-      {
-        title: t("menu_lich_cua_toi"),
-        url: "/user/schedule",
-        icon: CalendarCheck,
-      },
-      {
-        title: t("menu_dat_lich"),
-        url: "/user/booking",
-        icon: Clock,
-      },
-      {
-        title: t("menu_ho_so"),
-        url: "/user/profile",
-        icon: User,
-      },
-      {
-        title: t("menu_nhom"),
-        url: "/user/groups",
-        icon: Users,
-      },
-      {
-        title: t("menu_goi_y_dat_lich"),
-        url: "/user/suggestions",
-        icon: Bell,
-      },
-      {
-        title: t("menu_cai_dat"),
-        url: "/user/settings",
-        icon: Settings,
-      },
+      { title: "Lịch của tôi", url: "/portal/home", icon: CalendarCheck },
+      { title: "Đặt lịch", url: "/portal/booking", icon: Clock },
+      { title: "Lịch chờ duyệt", url: "/portal/pending", icon: Hourglass },
+      { title: "Gợi ý đặt lịch", url: "/portal/suggestions", icon: Bell },
+      { title: "Nhóm", url: "/portal/groups", icon: Users },
+      { title: "Hồ sơ", url: "/portal/profile", icon: User },
+      { title: "Cài đặt", url: "/portal/settings", icon: Settings },
     ],
   };
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        {/* <TeamSwitcher /> */}
-      </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="mt-16 bg-gradient-to-b from-blue-100 via-purple-100 to-pink-200 text-white shadow-lg h-[calc(100vh-4rem)] font-poppins flex flex-col">
+        {/* Các mục menu */}
         <NavMain items={data.navMain} />
+        
+        {/* Phần Đăng xuất được tách biệt và đẩy xuống cuối cùng */}
+        <div className="mt-auto">
+          <SidebarMenuButton asChild>
+            <a href="/logout" className=" flex items-center space-x-3 p-6 text-red-500 hover:bg-opacity-80 transition rounded-lg bg-red-100">
+              <LogOut className="w-6 h-6" />
+              <span className="text-sm font-semibold">Đăng xuất</span>
+            </a>
+          </SidebarMenuButton>
+        </div>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser
-          user={{
-            name: getUserInfo()?.username + "",
-            email: getUserInfo()?.email + "",
-            avatar: "",
-          }}
-        />
-      </SidebarFooter>
     </Sidebar>
   );
 }
+
+export default AppSidebar;

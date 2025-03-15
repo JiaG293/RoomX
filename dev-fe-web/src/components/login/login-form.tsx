@@ -1,4 +1,4 @@
-import {useState } from "react";
+import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -17,8 +17,15 @@ const LoginForm = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(username, password);
-      window.location.href = "/admin/home";
+      const userInfo = await login(username, password);
+
+      console.log("User info:", userInfo);
+
+      if (userInfo?.roles?.includes("realm-management")) {
+        window.location.href = "/admin/home";
+      } else {
+        window.location.href = "/portal/home";
+      }
     } catch (error) {
       console.error("Login failed", error);
     }

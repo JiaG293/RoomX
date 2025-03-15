@@ -97,11 +97,11 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem className="h-10">
                 <BadgeCheck />
-                Account
+                Tài khoản
               </DropdownMenuItem>
               <DropdownMenuItem className="h-10">
                 <User />
-                Profile
+                Hồ sơ
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -131,7 +131,7 @@ export function NavUser({
               style={{ color: "hsl(0, 85%, 50%)", fontWeight: "500" }}
             >
               <LogOut />
-              <span>Log out</span>
+              <span>Đăng xuất</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

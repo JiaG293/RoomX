@@ -106,10 +106,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           //   title: t("menu_danh_sach_phong_ban"),
           //   url: "#",
           // },
-          {
+          /* {
             title: t("menu_phan_bo_ngan_sach"),
             url: "#",
-          },
+          }, */
         ],
       },
       {
@@ -144,21 +144,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: t("menu_phe_duyet_cuoc_hop"),
             url: "/admin/meetings/room-approvals",
           },
-          {
-            title: t("menu_cau_hinh_cuoc_hop"),
-            url: "#",
-          },
-          {
-            title: t("menu_yeu_cau_dich_vu"),
-            url: "#",
-          },
-          {
-            title: t("menu_phan_hoi_nhanh"),
-            url: "#",
-          },
+          // {
+          //   title: t("menu_cau_hinh_cuoc_hop"),
+          //   url: "#",
+          // },
+          // {
+          //   title: t("menu_yeu_cau_dich_vu"),
+          //   url: "#",
+          // },
+          // {
+          //   title: t("menu_phan_hoi_nhanh"),
+          //   url: "#",
+          // },
         ],
       },
-      {
+      /* {
         title: t("menu_hoat_dong"),
         url: "#",
         icon: Activity,
@@ -172,8 +172,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: "#",
           },
         ],
-      },
-      {
+      }, */
+      /* {
         title: t("menu_thong_tin"),
         url: "#",
         icon: BookOpen,
@@ -195,7 +195,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: "#",
           },
         ],
-      },
+      }, */
     ],
   };
 
