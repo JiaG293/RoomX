@@ -4,6 +4,8 @@ package com.roomx.infrastructure.multitenancy.persistence.model.base;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -114,6 +116,21 @@ public class GenericSpecification<T> implements Specification<T> {
                 case "<=" -> criteriaBuilder.lessThanOrEqualTo(path.as(String.class), value.toString());
                 case "like", "contains", "%" -> criteriaBuilder.like(path.as(String.class), "%" + value + "%");
                 case "in" -> (value instanceof List<?>) ? path.in((List<?>) value) : null;
+                case "between" -> {
+                    if (value instanceof List<?> list && list.size() == 2) {
+                        Object min = list.get(0);
+                        Object max = list.get(1);
+
+                        if (min instanceof Integer && max instanceof Integer) {
+                            yield criteriaBuilder.between(root.get(key).as(Integer.class), (Integer) min, (Integer) max);
+                        } else if (min instanceof BigDecimal && max instanceof BigDecimal) {
+                            yield criteriaBuilder.between(root.get(key).as(BigDecimal.class), (BigDecimal) min, (BigDecimal) max);
+                        } else if (min instanceof LocalDate && max instanceof LocalDate) {
+                            yield criteriaBuilder.between(root.get(key).as(LocalDate.class), (LocalDate) min, (LocalDate) max);
+                        }
+                    }
+                    yield null;
+                }
                 default -> null;
             };
 

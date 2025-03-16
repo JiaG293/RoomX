@@ -27,6 +27,7 @@ public class RoomEntity {
 
     @Id
     @Column(name = COLUMN_ID_NAME, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Size(max = 32)
@@ -48,7 +49,7 @@ public class RoomEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_class_id", nullable = false)
-    private RoomClassEntity roomClassEntity;
+    private RoomClassEntity roomClass;
 
 
 }

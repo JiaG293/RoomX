@@ -3,7 +3,6 @@ package com.roomx.application.mapper;
 import com.roomx.application.dto.resource.request.ServiceRoomClassCreateRequest;
 import com.roomx.application.dto.resource.response.ServiceRoomClassDetailResponse;
 import com.roomx.application.dto.resource.response.ServiceRoomClassResponse;
-import com.roomx.domain.model.aggrerate.Service;
 import com.roomx.domain.model.entity.ServiceRoomClass;
 import org.mapstruct.*;
 

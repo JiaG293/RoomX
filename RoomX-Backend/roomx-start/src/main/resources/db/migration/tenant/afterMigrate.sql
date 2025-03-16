@@ -1,4 +1,6 @@
-INSERT INTO ${schema}."role" (role_id, description, level)
+
+-- ROLE
+INSERT INTO ${schema}.role (role_id, description, level)
 VALUES ('USER', 'Default role for employees', 1),
        ('OWNER', 'Role for owners with full access', 4),
        ('ADMIN', 'Administrator role with system-wide privileges', 3),
@@ -21,8 +23,8 @@ ON CONFLICT (role_id) DO NOTHING;
 --        ('ADMIN', 'CREATE-USER')
 -- ON CONFLICT (role_id, permission_id) DO NOTHING;
 
--- DATA
-INSERT INTO ${schema}."user" (first_name, last_name, phone_number, email, gender, avatar_image, user_type, user_code, user_id, created_at, updated_at)
+-- USER
+INSERT INTO ${schema}.user (first_name, last_name, phone_number, email, gender, avatar_image, user_type, user_code, user_id, created_at, updated_at)
 VALUES  ('nguyen van', 'admin', '1111111111', 'asgy2002@gmail.com', true, null, 'EMPLOYEE', '20053331', '374e33ed-1d51-4298-a3be-b51b4d7529a3', '2025-03-10 11:24:31.000000', '2025-03-10 11:24:33.000000'),
         ('tran van', 'manager', '1111111112', '821377326.jiag@gmail.com', true, null, 'EMPLOYEE', '20053332', 'f4a6a4ba-ffb4-4ce5-8125-97be4fa7cd91', '2025-03-10 11:24:48.000000', '2025-03-10 11:24:47.000000'),
         ('huynh van', 'user', '1111111113', 'user001.roomx@gmail.com', true, null, 'EMPLOYEE', '20053333', 'ea4e9c4c-a317-4064-8a5b-da2b338e4180', '2025-03-10 11:26:25.000000', '2025-03-10 11:26:26.000000')
@@ -340,3 +342,22 @@ VALUES  ('8e9abe68-7837-4425-82f6-8986296c65ab', '1359307f-88f4-4c02-ba7f-7ab9ea
 ON CONFLICT (room_class_id, equipment_id) DO NOTHING;
 
 
+-- ROOM
+INSERT INTO ${schema}.room (room_id, place_id, status, description, room_class_id, room_code)
+VALUES  ('0e238ecd-a698-428f-bc2e-70cc77758867', 'ad66cf3f-6820-4418-ae17-2c88a261f0a2', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', '48b9b182-88dc-45c2-924f-9a57debc4768', 'RC_162'),
+        ('f923bea3-2d8b-4a7a-8231-8f5a1fc0ff56', 'b029923f-1cb3-4b31-9a66-6a1552520864', 'AVAILABLE', 'Phòng tiêu chuẩn với đầy đủ tiện nghi', '48b9b182-88dc-45c2-924f-9a57debc4768', 'RC_852'),
+        ('78cbde3c-ee35-4fee-87e7-7821e9629da4', '92359dc1-b0fa-4ce2-8452-ea2c06e0517c', 'AVAILABLE', 'Phòng họp nhỏ, phù hợp cho nhóm dưới 10 người', '48b9b182-88dc-45c2-924f-9a57debc4768', 'RC_383'),
+        ('10a9a25e-bed5-403f-9758-9285c5e0b191', '0318eab7-913a-4772-afed-950dfd8e4449', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', 'ee2c026b-9da6-4b20-9be0-1b989146e60b', 'RC_444'),
+        ('a3ab6064-4f94-4f9d-a87c-637f63d4f688', '6b919be4-335a-4c1a-bc3c-0f724f3a2e2a', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', 'b371cc4f-c656-4871-8774-ebbaba874984', 'RC_372'),
+        ('ed942b1a-4126-4af8-bdde-6473c668c56a', 'ad66cf3f-6820-4418-ae17-2c88a261f0a2', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', '8e27c5ee-3787-4ebb-8d3d-944b20509cc5', 'RC_365'),
+        ('ef69b8b4-9a38-4e4f-b41b-8e8584c688d1', '8ba7e83b-a927-4da6-be3d-839126726bfd', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', '48b9b182-88dc-45c2-924f-9a57debc4768', 'RC_3'),
+        ('ce0dbad8-f164-436b-baf7-8409a9ddf69e', 'ad66cf3f-6820-4418-ae17-2c88a261f0a2', 'AVAILABLE', 'Phòng tiêu chuẩn với đầy đủ tiện nghi', '8c3d9692-fbe2-4d76-a410-a6f808eb7ab7', 'RC_359'),
+        ('1a91ded9-1b96-47d6-9e06-385d3de2d5a2', '92359dc1-b0fa-4ce2-8452-ea2c06e0517c', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', '8c3d9692-fbe2-4d76-a410-a6f808eb7ab7', 'RC_916'),
+        ('24c5843b-26f5-41e0-adef-d847b4255ed3', 'b029923f-1cb3-4b31-9a66-6a1552520864', 'AVAILABLE', 'Phòng tiêu chuẩn với đầy đủ tiện nghi', 'ee2c026b-9da6-4b20-9be0-1b989146e60b', 'RC_979'),
+        ('f7389e0a-4f4f-4e93-8912-fcdf62b83baf', '7eb5ef0f-8fd4-48e8-b6f4-a3870496d4ff', 'AVAILABLE', 'Phòng họp nhỏ, phù hợp cho nhóm dưới 10 người', 'b371cc4f-c656-4871-8774-ebbaba874984', 'RC_972'),
+        ('6a5260da-c41f-4235-b914-bd1f578db0c7', 'b029923f-1cb3-4b31-9a66-6a1552520864', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', 'ee2c026b-9da6-4b20-9be0-1b989146e60b', 'RC_421'),
+        ('410d8336-a384-4d5a-a53a-257066c18f94', '7eb5ef0f-8fd4-48e8-b6f4-a3870496d4ff', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', 'ee2c026b-9da6-4b20-9be0-1b989146e60b', 'RC_913'),
+        ('9f3a75ca-1f3a-484e-a1c3-5e29b67b6e45', 'ad66cf3f-6820-4418-ae17-2c88a261f0a2', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', '8c3d9692-fbe2-4d76-a410-a6f808eb7ab7', 'RC_338'),
+        ('4f0b96e2-3b22-44b1-9c7c-d47f8fcb38cc', 'b029923f-1cb3-4b31-9a66-6a1552520864', 'AVAILABLE', 'Phòng tiêu chuẩn với đầy đủ tiện nghi', '48b9b182-88dc-45c2-924f-9a57debc4768', 'RC_142'),
+        ('23b01a4d-ea4b-419f-a86e-711826001c27', 'b029923f-1cb3-4b31-9a66-6a1552520864', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', 'ee2c026b-9da6-4b20-9be0-1b989146e60b', 'RC_743')
+ON CONFLICT (room_id) DO NOTHING;
