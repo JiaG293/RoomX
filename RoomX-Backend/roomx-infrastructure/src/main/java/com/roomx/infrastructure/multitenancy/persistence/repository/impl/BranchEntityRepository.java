@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -60,5 +61,12 @@ public class BranchEntityRepository implements BranchRepository {
     @Override
     public void deleteById(String id) {
         jpaBranchEntityRepository.deleteById(UUID.fromString(id));
+    }
+
+    @Override
+    public List<Branch> findAll() {
+        return jpaBranchEntityRepository.findAll()
+                .stream().map(branchEntityMapper::toDomain)
+                .toList();
     }
 }

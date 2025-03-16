@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @Slf4j
 @RestController
@@ -39,6 +41,13 @@ public class BranchController {
                 .result(branchAppService.searchBranchByNameOrBranchCode(name, code))
                 .build();
     }*/
+
+    @GetMapping("/all")
+    public ResultResponse<?> getBranchSelectBox() {
+        return ResultResponse.<List<BranchResponse>>builder()
+                .result(branchAppService.getAllBranch())
+                .build();
+    }
 
     @DeleteMapping("/{branchId}")
     public ResultResponse<?> deleteBranch(@PathVariable String branchId) {

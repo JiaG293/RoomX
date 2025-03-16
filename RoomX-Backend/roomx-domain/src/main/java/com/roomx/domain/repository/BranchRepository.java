@@ -13,4 +13,5 @@ public interface BranchRepository {
     Branch save(Branch branch);
     void delete(Branch branch);
     void deleteById(String id);
+    List<Branch> findAll();
 }

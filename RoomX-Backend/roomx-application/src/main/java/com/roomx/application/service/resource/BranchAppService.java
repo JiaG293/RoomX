@@ -90,4 +90,9 @@ public class BranchAppService {
         return listBranchDomain.stream().map(branchAppMapper::toResponse).toList();
     }
 
+    public List<BranchResponse> getAllBranch() {
+        var listBranchDomain = branchRepository.findAll();
+        return listBranchDomain.stream().map(branchAppMapper::toResponse).toList();
+    }
+
 }
