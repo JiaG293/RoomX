@@ -1,10 +1,7 @@
 package com.roomx.domain.model.entity;
 
 import com.roomx.domain.model.aggrerate.BookingRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -13,7 +10,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
+@EqualsAndHashCode
 public class Recurrence {
     private UUID id;
     private BookingRequest bookingRequest;

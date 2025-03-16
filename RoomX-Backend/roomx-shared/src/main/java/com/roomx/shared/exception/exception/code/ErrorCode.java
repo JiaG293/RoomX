@@ -60,7 +60,8 @@ public enum ErrorCode {
     SERVICE_ROOM_CLASS_CONFLICT(1000, "error.service_room_class.conflict", HttpStatus.CONFLICT),
     SERVICE_ROOM_CLASS_NOTFOUND(1000, "error.service_room_class.not_found", HttpStatus.NOT_FOUND),
     ROOM_CONFLICT(1000, "error.room.room_code.conflict", HttpStatus.CONFLICT),
-    ROOM_NOT_FOUND(1000, "error.room.not_found", HttpStatus.NOT_FOUND);
+    ROOM_NOT_FOUND(1000, "error.room.not_found", HttpStatus.NOT_FOUND),
+    BOOKING_REQUEST_NOT_FOUND(1000, "error.booking_request_not_found", HttpStatus.NOT_FOUND);
 
 
 

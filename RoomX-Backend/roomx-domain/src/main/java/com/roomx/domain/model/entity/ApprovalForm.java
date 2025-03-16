@@ -3,10 +3,7 @@ package com.roomx.domain.model.entity;
 import com.roomx.domain.model.aggrerate.BookingRequest;
 import com.roomx.domain.model.aggrerate.User;
 import com.roomx.domain.model.enums.ApprovalStatusType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -15,7 +12,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
+@EqualsAndHashCode
 public class ApprovalForm {
     private UUID id;
     private User approver;

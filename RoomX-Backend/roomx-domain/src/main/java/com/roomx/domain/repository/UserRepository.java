@@ -20,4 +20,5 @@ public interface UserRepository {
     void delete(String id);
 
 
+    List<User> findAllUserWithRole(String roleName);
 }

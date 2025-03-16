@@ -6,11 +6,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum ApprovalStatusType {
-    PENDING(""),
-    APPROVED(""),
-    REJECTED(""),
-    CANCELLED(""),
-    MOVED("");
+    PENDING("Đang chờ duyệt"),
+    APPROVED("Đã duyệt"),
+    REJECTED("Từ chối"),
+    CANCELLED("Hủy");
     private static final Map<String, ApprovalStatusType> DISPLAY_NAME_MAP = Stream.of(values())
             .collect(Collectors.toMap(ApprovalStatusType::getDisplayName, e -> e));
 

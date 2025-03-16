@@ -176,4 +176,11 @@ public class UserAppService{
 
         return keycloakRoleServiceImpl.findAll();
     }
+
+    public User findApproverWithFree(){
+        var listUserRoleApproverDomain = userRepository.findAllUserWithRole(RoleType.APPROVER.toString());
+        //Implement logic assign approver free
+        Random random = new Random();
+        return listUserRoleApproverDomain.get(random.nextInt(listUserRoleApproverDomain.size()));
+    }
 }

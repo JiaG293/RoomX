@@ -54,6 +54,14 @@ public class UserEntitySpecRepository implements UserRepository, com.roomx.infra
     }
 
     @Override
+    public List<User> findAllUserWithRole(String roleName) {
+        return jpaUserEntityRepository
+                .findAllByRoleId(roleName)
+                .stream().map(userEntityMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public Page<UserEntity> findAll(Specification specification, Pageable pageable) {
         return jpaUserEntityRepository.findAll(specification, pageable);
     }

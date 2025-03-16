@@ -5,6 +5,7 @@ import com.roomx.infrastructure.multitenancy.keycloak.config.KeycloakRealmRoleCo
 import com.roomx.infrastructure.multitenancy.security.context.filter.TenantContextFilter;
 import com.roomx.infrastructure.multitenancy.security.oauth.JwtAuthenticationEntryPoint;
 import com.roomx.infrastructure.multitenancy.security.oauth.MultiTenantJwtDecoder;
+import com.roomx.infrastructure.multitenancy.security.oauth.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -198,6 +199,10 @@ public class SecurityConfig {
         return converter;
     }
 
+    @Bean
+    public SecurityUtil securityUtil() {
+        return new SecurityUtil();
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {

@@ -2,10 +2,7 @@ package com.roomx.domain.model.aggrerate;
 
 import com.roomx.domain.model.entity.GroupMember;
 import com.roomx.domain.model.enums.GroupType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +12,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
+@EqualsAndHashCode
 public class Group {
     private UUID id;
     private String name;

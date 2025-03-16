@@ -4,10 +4,7 @@ import com.roomx.domain.model.entity.EquipmentRequest;
 import com.roomx.domain.model.entity.ServiceRequest;
 import com.roomx.domain.model.enums.ApprovalStatusType;
 import com.roomx.domain.model.vo.ServiceRequestId;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -18,7 +15,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
+@EqualsAndHashCode
 public class BookingRequest {
     private UUID id;
     private Room room;
@@ -26,8 +24,6 @@ public class BookingRequest {
     private String approvalStatus = ApprovalStatusType.PENDING.toString();
     private User requester;
     private Short priority;
-    private Instant startDate;
-    private Instant endDate;
 
     @Builder.Default
     private Instant createdAt = Instant.now();

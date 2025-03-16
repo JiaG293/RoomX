@@ -106,4 +106,12 @@ public class RoomAppService {
 
         return roomDomainPage.map(roomAppMapper::toResponse);
     }
+
+    public Room getRoomFree(String roomId) {
+        var roomDomain = roomRepository.findById(roomId)
+                .orElseThrow(()-> new AppException(ErrorCode.ROOM_NOT_FOUND, roomId));
+
+
+        return roomDomain;
+    }
 }
