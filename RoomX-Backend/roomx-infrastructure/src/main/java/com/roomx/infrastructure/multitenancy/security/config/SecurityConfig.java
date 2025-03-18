@@ -119,6 +119,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173", // origin cho web app
                 "http://localhost:5173",
+                "https://roomx.jiag.id.vn",
+                "https://devroomx.jiag.id.vn",
                 "exp://192.168.1.127:8088", // Origin của expo app
                 "com.roomx.mobile://" // fetch api from axios))
         ));
