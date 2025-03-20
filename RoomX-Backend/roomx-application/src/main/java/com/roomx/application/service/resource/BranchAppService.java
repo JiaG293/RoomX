@@ -8,6 +8,7 @@ import com.roomx.application.mapper.BranchAppMapper;
 import com.roomx.domain.repository.BranchRepository;
 import com.roomx.infrastructure.multitenancy.persistence.dto.BranchFilter;
 import com.roomx.infrastructure.multitenancy.persistence.service.BranchEntityService;
+import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,11 @@ public class BranchAppService {
     @Transactional
     public BranchResponse createBranch(BranchCreateRequest request) {
         var branchDomain = branchAppMapper.toDomain(request);
+
+        branchDomain.setStatus(DeleteStatusType.getDefaultString());
+
         var checkExistBranchCode = branchRepository.checkBranchCodeExists(request.getBranchCode());
+
         if (checkExistBranchCode) {
             throw new AppException(ErrorCode.BRANCH_CONFLICT, request.getBranchCode());
         }

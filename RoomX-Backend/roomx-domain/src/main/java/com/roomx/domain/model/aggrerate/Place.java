@@ -1,5 +1,6 @@
 package com.roomx.domain.model.aggrerate;
 
+import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.PlaceType;
 import lombok.*;
 
@@ -18,7 +19,8 @@ public class Place {
     private String name;
     private String code;
     private String layout;
-    private String status;
+    @Builder.Default
+    private String status = DeleteStatusType.getDefaultString();
     @Builder.Default
     private String placeType = PlaceType.BRANCH.toString();
 
@@ -26,5 +28,4 @@ public class Place {
     public String getPlaceTypeDefault() {
         return placeType != null ? placeType : PlaceType.BRANCH.toString();
     }
-
 }

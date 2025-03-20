@@ -4,6 +4,7 @@ import com.roomx.domain.model.aggrerate.Branch;
 import com.roomx.domain.repository.BranchRepository;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.BranchEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaBranchEntityRepository;
+import com.roomx.shared.enums.DeleteStatusType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -23,7 +24,7 @@ public class BranchEntityRepository implements BranchRepository {
     @Override
     public Optional<Branch> findById(String id) {
         return jpaBranchEntityRepository
-                .findById(UUID.fromString(id))
+                .findByIdAndStatus(UUID.fromString(id), DeleteStatusType.getDefaultString())
                 .map(branchEntityMapper::toDomain);
     }
 
@@ -43,7 +44,7 @@ public class BranchEntityRepository implements BranchRepository {
 
     @Override
     public boolean checkBranchCodeExists(String branchCode) {
-        return jpaBranchEntityRepository.existsByBranchCode(branchCode);
+        return jpaBranchEntityRepository.existsByBranchCodeAndStatus(branchCode, DeleteStatusType.getDefaultString());
     }
 
     @Override

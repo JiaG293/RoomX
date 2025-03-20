@@ -1,5 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
+import com.roomx.shared.enums.DeleteStatusType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -56,7 +57,8 @@ public class BranchEntity {
     @Column(name = COLUMN_ADDRESS_NAME, length = 500)
     private String address;
 
-    @Column(name = COLUMN_STATUS_NAME, length = Integer.MAX_VALUE)
+    @Size(max = 32)
+    @Column(name = COLUMN_STATUS_NAME)
     private String status;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
