@@ -66,7 +66,7 @@ public class BranchEntityRepository implements BranchRepository {
 
     @Override
     public List<Branch> findAll() {
-        return jpaBranchEntityRepository.findAll()
+        return jpaBranchEntityRepository.findAllByStatus(DeleteStatusType.getDefaultString())
                 .stream().map(branchEntityMapper::toDomain)
                 .toList();
     }
