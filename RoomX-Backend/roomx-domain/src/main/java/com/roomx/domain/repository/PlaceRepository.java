@@ -8,10 +8,24 @@ import java.util.Optional;
 
 public interface PlaceRepository {
     Optional<Place> findById(String id);
-    Optional<Place> findBySlug(String slug);
     Optional<Place> findByName(String name);
     Place save(Place place);
-    boolean checkPlaceExistsBySlug(String slug);
-    boolean checkPlaceExistsBySlugBuildingFloorBranchId(String BranchId, String slug, String Building, String floor);
-    List<String> customFindPlaceSelectBox(String branchId, String building, String floor, String placeType);
+    Optional<Place> findByNameAndPlaceTypeAndBranchId(String name, String placeType, String branchId);
+    Optional<Place> findByPlaceTypeAndBranchId(String placeType, String branchId);
+    List<Place> saveAll(List<Place> listPlace);
+
+    Optional<Place> findByPlaceTypeAndParentId(String placeType, String parentId);
+
+    List<Place> findAll();
+
+    Optional<Place> findByPlaceTypeAndParentIdAndCode(String placeType, String parentId, String code);
+
+    Optional<Place> findAllByPlaceTypeAndStatus(String placeType, String status);
+
+    List<Place> findRootPlace();
+
+    List<Place> findChildrenPlace(String notPlaceType);
+//    boolean checkPlaceExistsBySlug(String slug);
+//    boolean checkPlaceExistsBySlugBuildingFloorBranchId(String BranchId, String slug, String Building, String floor);
+//    List<String> customFindPlaceSelectBox(String branchId, String building, String floor, String placeType);
 }

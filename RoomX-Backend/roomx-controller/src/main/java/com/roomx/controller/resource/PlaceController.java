@@ -1,10 +1,11 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.resource.request.PlaceCreateRequest;
-import com.roomx.application.dto.resource.request.PlaceQueryRequest;
-import com.roomx.application.dto.resource.request.PlaceSelectBoxRequest;
-import com.roomx.application.dto.resource.request.PlaceUpdateRequest;
-import com.roomx.application.dto.resource.response.PlaceResponse;
+import com.roomx.shared.dto.resource.request.PlaceCreateBuildingWithFloorRequest;
+import com.roomx.shared.dto.resource.request.PlaceCreateRequest;
+import com.roomx.shared.dto.resource.request.PlaceQueryRequest;
+import com.roomx.shared.dto.resource.request.PlaceUpdateRequest;
+import com.roomx.shared.dto.resource.response.PlaceHierarchyResponse;
+import com.roomx.shared.dto.resource.response.PlaceResponse;
 import com.roomx.application.service.resource.PlaceAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
@@ -32,6 +33,15 @@ public class PlaceController {
                 .result(result)
                 .build();
     }
+
+    @PostMapping("/{placeBranchId}/buildings")
+    public ResultResponse<?> createPlaceBuildingWithFloors(@PathVariable String placeBranchId, @Validated @RequestBody PlaceCreateBuildingWithFloorRequest request) {
+        var result = placeAppService.createPlaceBuildingWithFloors(placeBranchId, request);
+        return ResultResponse.<PlaceHierarchyResponse>builder()
+                .result(result)
+                .build();
+    }
+
 
     @PatchMapping("/{placeId}")
     public ResultResponse<?> updatePlaceById(
@@ -73,11 +83,9 @@ public class PlaceController {
     }
 
     @GetMapping("/hierarchy")
-    public ResultResponse<?> getListFloors(
-            @ModelAttribute PlaceSelectBoxRequest request
-            ) {
-        var result = placeAppService.getListPlaceSelectBox(request);
-        return ResultResponse.<List<String>>builder()
+    public ResultResponse<?> getAllPlacesHierarchy() {
+        var result = placeAppService.getAllPlacesHierarchy();
+        return ResultResponse.<List<PlaceHierarchyResponse>>builder()
                 .result(result)
                 .build();
     }

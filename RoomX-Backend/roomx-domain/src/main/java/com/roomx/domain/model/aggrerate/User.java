@@ -24,6 +24,9 @@ public class User {
     private String avatarImage;
     private String userType;
     private String userCode;
+
+    private String status;
+
     @Builder.Default
     private boolean enable = true;
     @Builder.Default

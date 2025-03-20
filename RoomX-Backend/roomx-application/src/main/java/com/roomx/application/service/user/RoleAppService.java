@@ -1,8 +1,8 @@
 package com.roomx.application.service.user;
 
-import com.roomx.application.dto.user.request.RoleCreateRequest;
-import com.roomx.application.dto.user.response.RoleResponse;
-import com.roomx.application.dto.user.response.UserRoleResponse;
+import com.roomx.shared.dto.user.request.RoleCreateRequest;
+import com.roomx.shared.dto.user.response.RoleResponse;
+import com.roomx.shared.dto.user.response.UserRoleResponse;
 import com.roomx.application.mapper.RoleAppMapper;
 import com.roomx.application.mapper.UserAppMapper;
 import com.roomx.domain.repository.RoleRepository;

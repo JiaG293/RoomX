@@ -1,11 +1,12 @@
 package com.roomx.application.service.resource;
 
-import com.roomx.application.dto.resource.request.PlaceCreateRequest;
-import com.roomx.application.dto.resource.request.PlaceQueryRequest;
-import com.roomx.application.dto.resource.request.PlaceSelectBoxRequest;
-import com.roomx.application.dto.resource.request.PlaceUpdateRequest;
-import com.roomx.application.dto.resource.response.PlaceResponse;
+import com.roomx.shared.dto.resource.request.*;
+import com.roomx.shared.dto.resource.response.PlaceHierarchyResponse;
+import com.roomx.shared.dto.resource.response.PlaceResponse;
 import com.roomx.application.mapper.PlaceAppMapper;
+import com.roomx.domain.model.aggrerate.Place;
+import com.roomx.shared.enums.DeleteStatusType;
+import com.roomx.shared.enums.PlaceType;
 import com.roomx.domain.repository.BranchRepository;
 import com.roomx.domain.repository.PlaceRepository;
 import com.roomx.infrastructure.multitenancy.persistence.dto.PlaceFilter;
@@ -21,7 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,35 +36,81 @@ public class PlaceAppService {
 
     @Transactional
     public PlaceResponse createPlace(PlaceCreateRequest request) {
+        Place savedPlace = null;
 
-        if (placeRepository.checkPlaceExistsBySlugBuildingFloorBranchId(
-                request.getSlug(),
-                request.getBuilding(),
-                request.getFloor(),
-                request.getBranchId())) {
-            throw new AppException(ErrorCode.PLACE_CONFLICT,
-                    request.getSlug(),
-                    request.getBuilding(),
-                    request.getFloor(),
-                    request.getBranchId());
+        var branchDomain = branchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));
+
+        switch (request.getPlaceType()) {
+            case "BRANCH": {
+                savedPlace = placeEntityService.createPlaceBranch(branchDomain, request);
+                break;
+            }
+            case "BUILDING": {
+                savedPlace = placeEntityService.createPlaceBuilding(branchDomain, request);
+                break;
+            }
+            case "FLOOR": {
+                savedPlace = placeEntityService.createPlaceFloor(branchDomain, request);
+                break;
+            }
+            default:
+                throw new AppException(ErrorCode.PLACE_INVALID);
         }
-
-        if (placeRepository.checkPlaceExistsBySlug(request.getSlug())) {
-            throw new AppException(ErrorCode.PLACE_SLUG_CONFLICT, request.getSlug());
-        }
-
-        var placeDomain = placeAppMapper.toDomain(request);
-
-        if (request.getBranchId() != null) {
-            var branchDomain = branchRepository.findById(request.getBranchId())
-                    .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND, request.getBranchId()));
-            placeDomain.setBranch(branchDomain);
-        }
-
-        var savedPlace = placeRepository.save(placeDomain);
 
         return placeAppMapper.toResponse(savedPlace);
+
     }
+
+
+    @Transactional
+    public PlaceHierarchyResponse createPlaceBuildingWithFloors(String placeBranchId, PlaceCreateBuildingWithFloorRequest request) {
+        List<Place> placeAllDomain = new ArrayList<>();
+
+        var placeBranchDomain = placeRepository.findById(placeBranchId)
+                .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, placeBranchId));
+
+        var placeBuildingDomain = Place.builder()
+                .placeType(PlaceType.BUILDING.toString())
+                .code(request.getCode())
+                .branch(placeBranchDomain.getBranch())
+                .name(PlaceType.BUILDING.getDisplayName() + " " + request.getCode())
+                .layout(request.getLayout())
+                .status(DeleteStatusType.getDefaultString())
+                .parentId(placeBranchDomain.getId())
+                .build();
+
+
+        placeBuildingDomain = placeRepository.save(placeBuildingDomain);
+
+        placeAllDomain.add(placeBuildingDomain);
+
+
+        for (int i = 1; i <= request.getNumberFloor(); i++) {
+            if (request.getExceptions() != null && request.getExceptions().contains(i)) {
+                continue;
+            }
+
+            String floorCode = String.valueOf(i);
+
+            String layout = (i <= request.getLayouts().size()) ? request.getLayouts().get(i - 1) : null;
+
+            PlaceCreateRequest floorRequest = PlaceCreateRequest.builder()
+                    .placeType(PlaceType.FLOOR.toString())
+                    .parentId(placeBuildingDomain.getId().toString())
+                    .branchId(placeBranchDomain.getBranch().getId().toString())
+                    .layout(layout)
+                    .code(floorCode)
+                    .build();
+            var savedPlaceFloorDomain = placeEntityService.createPlaceFloor(placeBranchDomain.getBranch(), floorRequest);
+            placeAllDomain.add(savedPlaceFloorDomain);
+        }
+
+
+        return placeAppMapper.toResponseHierarchy(placeBranchDomain, placeAllDomain);
+
+    }
+
 
     @Transactional
     public PlaceResponse updatePlaceById(String placeId, PlaceUpdateRequest request) {
@@ -82,21 +130,22 @@ public class PlaceAppService {
     }
 
     public List<String> getListPlaceSelectBox(PlaceSelectBoxRequest request) {
-        log.info("place type : {}", request.getPlaceType());
+       /* log.info("place type : {}", request.getPlaceType());
         return placeRepository.customFindPlaceSelectBox(
                 request.getBranchId(),
                 request.getBuilding(),
                 request.getFloor(),
                 request.getPlaceType()
-        );
+        );*/
+        return null;
     }
 
 
     public Page<PlaceResponse> getListPlacePages(PlaceQueryRequest request,
-                                          int page,
-                                          int size,
-                                          String sortBy,
-                                          String direction) {
+                                                 int page,
+                                                 int size,
+                                                 String sortBy,
+                                                 String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         log.info("data la: {}", request);
@@ -113,4 +162,31 @@ public class PlaceAppService {
 
         return placeDomainPage.map(placeAppMapper::toResponse);
     }
+
+    @Transactional
+    public List<PlaceHierarchyResponse> getAllPlacesHierarchy() {
+        var placeParentListDomain = placeRepository.findRootPlace();
+        var placeChildrenListDomain = placeRepository.findChildrenPlace(PlaceType.BRANCH.toString());
+
+
+        var listResponse = new ArrayList<PlaceHierarchyResponse>();
+
+
+        List<Place> places = new ArrayList<>();
+        places.addAll(placeParentListDomain);
+        places.addAll(placeChildrenListDomain);
+
+
+        for (Place place : places) {
+            if (place.getParentId() == null) {
+
+                listResponse.add(placeAppMapper.toResponseHierarchy(place, places));
+            }
+        }
+
+        return listResponse;
+
+    }
+
+
 }

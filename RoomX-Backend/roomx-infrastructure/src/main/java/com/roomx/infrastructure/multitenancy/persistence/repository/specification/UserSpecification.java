@@ -1,6 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.specification;
 
-import com.roomx.domain.model.enums.UserType;
+import com.roomx.shared.enums.UserType;
 import com.roomx.infrastructure.multitenancy.persistence.dto.UserFilter;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
 import jakarta.persistence.criteria.Predicate;

@@ -28,6 +28,7 @@ public class BranchEntity {
     public static final String COLUMN_ADDRESS_NAME = "address";
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
+    public static final String COLUMN_STATUS_NAME = "status";
 
 
     @Id
@@ -54,6 +55,9 @@ public class BranchEntity {
     @Size(max = 500)
     @Column(name = COLUMN_ADDRESS_NAME, length = 500)
     private String address;
+
+    @Column(name = COLUMN_STATUS_NAME, length = Integer.MAX_VALUE)
+    private String status;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_CREATEDAT_NAME)

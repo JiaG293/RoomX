@@ -1,8 +1,8 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.resource.request.RoomCreateRequest;
-import com.roomx.application.dto.resource.response.RoomDetailResponse;
-import com.roomx.application.dto.resource.response.RoomResponse;
+import com.roomx.shared.dto.resource.request.RoomCreateRequest;
+import com.roomx.shared.dto.resource.response.RoomDetailResponse;
+import com.roomx.shared.dto.resource.response.RoomResponse;
 import com.roomx.domain.model.aggrerate.Room;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,7 +25,7 @@ public interface RoomAppMapper {
     Room toDomain(RoomCreateRequest request);
 
 //    @Mapping(target = "roomName", expression = "java(domain.getRoomName())")
-    @Mapping(target = "totalPrice", expression = "java(domain.getTotalPrice())")
+//    @Mapping(target = "totalPrice", expression = "java(domain.getTotalPrice())")
     @Mapping(target = "roomClassId", source = "roomClass.id")
     @Mapping(target = "placeId", source = "place.id")
     RoomResponse toResponse(Room domain);

@@ -1,13 +1,12 @@
 package com.roomx.application.service.resource;
 
-import com.roomx.application.dto.resource.request.RoomClassCreateRequest;
-import com.roomx.application.dto.resource.request.RoomClassUpdateRequest;
-import com.roomx.application.dto.resource.response.RoomClassDetailResponse;
-import com.roomx.application.dto.resource.response.RoomClassResponse;
+import com.roomx.shared.dto.resource.request.RoomClassCreateRequest;
+import com.roomx.shared.dto.resource.request.RoomClassUpdateRequest;
+import com.roomx.shared.dto.resource.response.RoomClassDetailResponse;
+import com.roomx.shared.dto.resource.response.RoomClassResponse;
 import com.roomx.application.mapper.EquipmentRoomClassAppMapper;
 import com.roomx.application.mapper.RoomClassAppMapper;
 import com.roomx.application.mapper.ServiceRoomClassAppMapper;
-import com.roomx.domain.model.entity.EquipmentRoomClass;
 import com.roomx.domain.repository.EquipmentRoomClassRepository;
 import com.roomx.domain.repository.RoomClassRepository;
 import com.roomx.domain.repository.ServiceRoomClassRepository;
@@ -19,8 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -75,7 +72,6 @@ public class RoomClassAppService {
                 .services(serviceRoomClassList.stream()
                         .map(serviceRoomClassAppMapper::toResponseDetailWithoutRoomClass)
                         .toList())
-                .totalPrice(roomClassDomain.getTotalPrice())
                 .build();
     }
 

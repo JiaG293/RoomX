@@ -1,53 +1,45 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.jpa;
 
+import com.roomx.domain.model.aggrerate.Place;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.PlaceEntity;
+import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface JpaPlaceEntityRepository extends JpaRepository<PlaceEntity, UUID>, JpaSpecificationExecutor<PlaceEntity> {
-    Optional<PlaceEntity> findBySlug(String slug);
+//    Optional<PlaceEntity> findBySlug(String slug);
+//    boolean existsBySlugAndBuildingAndFloorAndAndBranch_Id(String slug, String building, String floor, UUID branchId);
+
+//    Page<PlaceEntity> findAll(Specification<PlaceEntity> spec, Pageable pageable);
 
     Optional<PlaceEntity> findByName(String name);
 
-    boolean existsBySlug(String slug);
+    Optional<PlaceEntity> findByNameAndPlaceTypeAndBranchId(String name, String placeType, UUID branchId);
 
-    boolean existsBySlugAndBuildingAndFloorAndAndBranch_Id(String slug, String building, String floor, UUID branchId);
+    Optional<PlaceEntity> findByPlaceTypeAndBranchId(String placeType, UUID branchId);
 
-    @Query("""
-            SELECT DISTINCT p.floor FROM PlaceEntity p 
-            WHERE p.building = :building AND p.placeType = :placeType
-            """)
-    List<String> customFindPlaceFloorByBuilding(String floor, String placeType);
+    Optional<PlaceEntity> findByPlaceTypeAndParentId(String placeType, UUID uuid);
 
-    @Query("""
-            SELECT DISTINCT p.floor FROM PlaceEntity p 
-            WHERE p.branch.id = :branchId AND p.placeType = :placeType
-            """)
-    List<String> customFindPlaceBuildingByBranchId(UUID branchId, String placeType);
+    List<PlaceEntity> findAllByStatus(String status);
 
-    @Query("""
-                SELECT
-                    CASE 
-                        WHEN :floor IS NOT NULL THEN FUNCTION('TEXT', p.id)
-                        WHEN :building IS NOT NULL THEN p.floor
-                        WHEN :branchId IS NOT NULL THEN p.building
-                        ELSE FUNCTION('TEXT', p.branch.id)
-                    END 
-                FROM PlaceEntity p 
-                WHERE (:branchId IS NULL OR p.branch.id = :branchId)
-                AND (:building IS NULL OR p.building = :building)
-                AND (:floor IS NULL OR p.floor = :floor)
-                AND (:placeType IS NULL OR p.placeType = :placeType)
-                GROUP BY p.id, p.floor, p.building, p.branch.id
-            """)
-    List<String> customFindPlaceSelectBox(UUID branchId, String building, String floor, String placeType);
+    Optional<PlaceEntity> findByPlaceTypeAndParentIdAndCode(String placeType, UUID uuid, String code);
 
-//    Page<PlaceEntity> findAll(Specification<PlaceEntity> spec, Pageable pageable);
+    Optional<PlaceEntity> findAllByPlaceTypeAndStatus(String placeType, String status);
+
+    @Query("SELECT p FROM PlaceEntity p WHERE p.parentId IS NULL")
+    List<PlaceEntity> findRootPlaces();
+
+    @Query("SELECT p FROM PlaceEntity p WHERE p.placeType <> :placeType")
+    List<PlaceEntity> findChildren(@Param("placeType") String placeType);
+
+
 }

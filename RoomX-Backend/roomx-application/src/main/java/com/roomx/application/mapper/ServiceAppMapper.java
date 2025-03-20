@@ -1,8 +1,8 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.resource.request.ServiceCreateRequest;
-import com.roomx.application.dto.resource.request.ServiceUpdateRequest;
-import com.roomx.application.dto.resource.response.ServiceResponse;
+import com.roomx.shared.dto.resource.request.ServiceCreateRequest;
+import com.roomx.shared.dto.resource.request.ServiceUpdateRequest;
+import com.roomx.shared.dto.resource.response.ServiceResponse;
 import com.roomx.domain.model.aggrerate.Service;
 import org.mapstruct.*;
 

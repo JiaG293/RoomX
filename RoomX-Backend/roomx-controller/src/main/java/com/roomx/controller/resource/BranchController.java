@@ -1,9 +1,9 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.resource.request.BranchCreateRequest;
-import com.roomx.application.dto.resource.request.BranchQueryRequest;
-import com.roomx.application.dto.resource.request.BranchUpdateRequest;
-import com.roomx.application.dto.resource.response.BranchResponse;
+import com.roomx.shared.dto.resource.request.BranchCreateRequest;
+import com.roomx.shared.dto.resource.request.BranchQueryRequest;
+import com.roomx.shared.dto.resource.request.BranchUpdateRequest;
+import com.roomx.shared.dto.resource.response.BranchResponse;
 import com.roomx.application.service.resource.BranchAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;

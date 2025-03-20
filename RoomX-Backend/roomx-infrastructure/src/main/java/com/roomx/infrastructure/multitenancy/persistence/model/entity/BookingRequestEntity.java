@@ -24,8 +24,6 @@ public class BookingRequestEntity {
     public static final String COLUMN_ID_NAME = "booking_request_id";
     public static final String COLUMN_APPROVALSTATUS_NAME = "approval_status";
     public static final String COLUMN_PRIORITY_NAME = "priority";
-    public static final String COLUMN_STARTDATE_NAME = "start_date";
-    public static final String COLUMN_ENDDATE_NAME = "end_date";
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
     public static final String COLUMN_BOOKINGREQUESTCODE_NAME = "booking_request_code";
@@ -56,12 +54,6 @@ public class BookingRequestEntity {
 
     @Column(name = COLUMN_PRIORITY_NAME)
     private Short priority;
-
-    @Column(name = COLUMN_STARTDATE_NAME)
-    private Instant startDate;
-
-    @Column(name = COLUMN_ENDDATE_NAME)
-    private Instant endDate;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_CREATEDAT_NAME)

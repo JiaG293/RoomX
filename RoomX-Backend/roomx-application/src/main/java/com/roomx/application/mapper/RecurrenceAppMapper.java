@@ -1,7 +1,7 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.booking.request.RecurrenceCreateRequest;
-import com.roomx.application.dto.booking.response.RecurrenceResponse;
+import com.roomx.shared.dto.booking.request.RecurrenceCreateRequest;
+import com.roomx.shared.dto.booking.response.RecurrenceResponse;
 import com.roomx.domain.model.entity.Recurrence;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;

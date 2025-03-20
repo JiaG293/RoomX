@@ -1,9 +1,9 @@
 package com.roomx.application.service.resource;
 
-import com.roomx.application.dto.resource.request.BranchCreateRequest;
-import com.roomx.application.dto.resource.request.BranchQueryRequest;
-import com.roomx.application.dto.resource.request.BranchUpdateRequest;
-import com.roomx.application.dto.resource.response.BranchResponse;
+import com.roomx.shared.dto.resource.request.BranchCreateRequest;
+import com.roomx.shared.dto.resource.request.BranchQueryRequest;
+import com.roomx.shared.dto.resource.request.BranchUpdateRequest;
+import com.roomx.shared.dto.resource.response.BranchResponse;
 import com.roomx.application.mapper.BranchAppMapper;
 import com.roomx.domain.repository.BranchRepository;
 import com.roomx.infrastructure.multitenancy.persistence.dto.BranchFilter;

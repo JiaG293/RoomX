@@ -1,6 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.mapper;
 
-import com.roomx.domain.model.entity.ApprovalForm;
+import com.roomx.domain.model.aggrerate.ApprovalForm;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.ApprovalFormEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;

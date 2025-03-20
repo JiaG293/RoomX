@@ -1,8 +1,6 @@
 package com.roomx.infrastructure.multitenancy.security.oauth;
 
 import com.roomx.domain.model.aggrerate.Role;
-import com.roomx.domain.model.aggrerate.User;
-import com.roomx.domain.model.enums.RoleType;
 import com.roomx.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -11,10 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component("roleEvaluator")
 @RequiredArgsConstructor

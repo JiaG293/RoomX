@@ -1,9 +1,9 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.resource.request.ServiceCreateRequest;
-import com.roomx.application.dto.resource.request.ServiceQueryRequest;
-import com.roomx.application.dto.resource.request.ServiceUpdateRequest;
-import com.roomx.application.dto.resource.response.ServiceResponse;
+import com.roomx.shared.dto.resource.request.ServiceCreateRequest;
+import com.roomx.shared.dto.resource.request.ServiceQueryRequest;
+import com.roomx.shared.dto.resource.request.ServiceUpdateRequest;
+import com.roomx.shared.dto.resource.response.ServiceResponse;
 import com.roomx.application.service.resource.ServiceAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;

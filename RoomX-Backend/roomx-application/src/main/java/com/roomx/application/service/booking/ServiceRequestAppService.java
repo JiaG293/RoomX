@@ -1,7 +1,6 @@
 package com.roomx.application.service.booking;
 
-import com.roomx.application.dto.booking.request.ServiceBookingRequest;
-import com.roomx.application.dto.resource.response.ServiceResponse;
+import com.roomx.shared.dto.booking.request.ServiceBookingRequest;
 import com.roomx.application.mapper.ServiceRequestAppMapper;
 import com.roomx.domain.model.aggrerate.BookingRequest;
 import com.roomx.domain.model.aggrerate.Service;
@@ -42,7 +41,6 @@ public class ServiceRequestAppService {
                             .id(new ServiceRequestId(UUID.fromString(bookingRequestId), UUID.fromString(request.getServiceId())))
                             .bookingRequest(bookingRequest)
                             .service(serviceDomain)
-                            .unitPrice(serviceDomain.getUnitPrice())
                             .quantity((short) request.getQuantity())
                             .build();
                 })

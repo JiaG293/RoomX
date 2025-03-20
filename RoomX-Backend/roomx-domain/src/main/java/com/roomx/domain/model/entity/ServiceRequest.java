@@ -19,7 +19,6 @@ public class ServiceRequest {
     private ServiceRequestId id;
     private BookingRequest bookingRequest;
     private Service service;
-    private BigDecimal unitPrice;
     private Short quantity;
 
 

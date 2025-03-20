@@ -1,8 +1,8 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.booking.request.BookingRequestAdminCreateRequest;
-import com.roomx.application.dto.booking.request.BookingRequestCreateRequest;
-import com.roomx.application.dto.booking.response.BookingRequestResponse;
+import com.roomx.shared.dto.booking.request.BookingRequestAdminCreateRequest;
+
+import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.application.service.booking.BookingAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;

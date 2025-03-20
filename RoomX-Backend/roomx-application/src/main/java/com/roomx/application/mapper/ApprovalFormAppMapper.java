@@ -1,8 +1,8 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.booking.request.ApprovalFormCreateRequest;
-import com.roomx.application.dto.booking.response.ApprovalFormResponse;
-import com.roomx.domain.model.entity.ApprovalForm;
+import com.roomx.shared.dto.booking.request.ApprovalFormCreateRequest;
+import com.roomx.shared.dto.booking.response.ApprovalFormResponse;
+import com.roomx.domain.model.aggrerate.ApprovalForm;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;

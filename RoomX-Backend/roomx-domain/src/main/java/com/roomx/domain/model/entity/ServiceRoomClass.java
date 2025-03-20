@@ -18,11 +18,6 @@ public class ServiceRoomClass {
     private RoomClass roomClass;
     private Service service;
     private Short quantity;
-    private BigDecimal unitPrice;
-
-    public BigDecimal getTotalPrice() {
-        return BigDecimal.valueOf(quantity).multiply(unitPrice);
-    }
 
 
 }

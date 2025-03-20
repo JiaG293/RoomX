@@ -17,11 +17,5 @@ public class EquipmentRoomClass {
     private RoomClass roomClass;
     private Equipment equipment;
     private Short quantity;
-    private BigDecimal unitPrice;
-
-    public BigDecimal getTotalPrice() {
-        return BigDecimal.valueOf(quantity).multiply(unitPrice);
-    }
-
 
 }

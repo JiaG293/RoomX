@@ -1,8 +1,7 @@
 package com.roomx.application.service.resource;
 
-import com.roomx.application.dto.resource.request.EquipmentRoomClassCreateRequest;
-import com.roomx.application.dto.resource.response.EquipmentRoomClassDetailResponse;
-import com.roomx.application.dto.resource.response.EquipmentRoomClassResponse;
+import com.roomx.shared.dto.resource.request.EquipmentRoomClassCreateRequest;
+import com.roomx.shared.dto.resource.response.EquipmentRoomClassDetailResponse;
 import com.roomx.application.mapper.EquipmentRoomClassAppMapper;
 import com.roomx.domain.model.entity.EquipmentRoomClass;
 import com.roomx.domain.model.vo.EquipmentRoomClassId;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +52,6 @@ public class EquipmentRoomClassAppService {
                                 .roomClass(roomClassDomain)
                                 .equipment(equipment)
                                 .quantity(entry.getValue().shortValue())
-                                .unitPrice(equipment.getUnitPrice())
                                 .build()))
                 .flatMap(Optional::stream)
                 .toList();

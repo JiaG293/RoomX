@@ -1,10 +1,10 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.model.UserApp;
-import com.roomx.application.dto.user.request.UserCreateRequest;
-import com.roomx.application.dto.user.request.UserUpdateRequest;
-import com.roomx.application.dto.user.response.UserResponse;
-import com.roomx.application.dto.user.response.UserRoleResponse;
+import com.roomx.shared.dto.model.UserApp;
+import com.roomx.shared.dto.user.request.UserCreateRequest;
+import com.roomx.shared.dto.user.request.UserUpdateRequest;
+import com.roomx.shared.dto.user.response.UserResponse;
+import com.roomx.shared.dto.user.response.UserRoleResponse;
 import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.domain.model.aggrerate.User;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;

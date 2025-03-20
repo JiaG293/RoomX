@@ -18,7 +18,7 @@ public class Equipment {
     private String name;
     private String brand;
     private String description;
-    private BigDecimal unitPrice;
+    private String status;
     @Builder.Default
     private Instant createdAt = Instant.now();
     @Builder.Default

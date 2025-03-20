@@ -1,18 +1,16 @@
 package com.roomx.application.service.resource;
 
-import com.roomx.application.dto.resource.request.RoomQueryRequest;
-import com.roomx.application.dto.resource.request.RoomCreateRequest;
-import com.roomx.application.dto.resource.request.RoomUpdateStatusRequest;
-import com.roomx.application.dto.resource.response.EquipmentResponse;
-import com.roomx.application.dto.resource.response.RoomDetailResponse;
-import com.roomx.application.dto.resource.response.RoomResponse;
+import com.roomx.shared.dto.resource.request.RoomQueryRequest;
+import com.roomx.shared.dto.resource.request.RoomCreateRequest;
+import com.roomx.shared.dto.resource.request.RoomUpdateStatusRequest;
+import com.roomx.shared.dto.resource.response.RoomDetailResponse;
+import com.roomx.shared.dto.resource.response.RoomResponse;
 import com.roomx.application.mapper.RoomAppMapper;
 import com.roomx.domain.model.aggrerate.Room;
-import com.roomx.domain.model.enums.RoomStatusType;
+import com.roomx.shared.enums.RoomStatusType;
 import com.roomx.domain.repository.PlaceRepository;
 import com.roomx.domain.repository.RoomClassRepository;
 import com.roomx.domain.repository.RoomRepository;
-import com.roomx.infrastructure.multitenancy.persistence.dto.EquipmentFilter;
 import com.roomx.infrastructure.multitenancy.persistence.dto.RoomFilter;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaRoomEntityRepository;
 import com.roomx.infrastructure.multitenancy.persistence.service.RoomEntityService;
@@ -62,7 +60,7 @@ public class RoomAppService {
         var savedRoom = roomRepository.save(roomDomain);
 
         var response = roomAppMapper.toResponseDetail(savedRoom);
-        response.setTotalPrice(roomDomain.getRoomClass().getTotalPrice());
+//        response.setTotalPrice(roomDomain.getRoomClass().getTotalPrice());
         return response;
     }
 

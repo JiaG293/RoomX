@@ -1,7 +1,7 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.user.request.RoleCreateRequest;
-import com.roomx.application.dto.user.response.RoleResponse;
+import com.roomx.shared.dto.user.request.RoleCreateRequest;
+import com.roomx.shared.dto.user.response.RoleResponse;
 import com.roomx.domain.model.aggrerate.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

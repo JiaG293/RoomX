@@ -25,10 +25,10 @@ public class ServiceEntity {
     public static final String COLUMN_NAME_NAME = "name";
     public static final String COLUMN_DESCRIPTION_NAME = "description";
     public static final String COLUMN_NOTE_NAME = "note";
-    public static final String COLUMN_UNITPRICE_NAME = "unit_price";
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
     public static final String COLUMN_SERVICECODE_NAME = "service_code";
+    public static final String COLUMN_STATUS_NAME = "status";
 
 
     @Id
@@ -52,8 +52,8 @@ public class ServiceEntity {
     @Column(name = COLUMN_NOTE_NAME, length = 500)
     private String note;
 
-    @Column(name = COLUMN_UNITPRICE_NAME)
-    private BigDecimal unitPrice;
+    @Column(name = COLUMN_STATUS_NAME, length = Integer.MAX_VALUE)
+    private String status;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_CREATEDAT_NAME)

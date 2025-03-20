@@ -1,10 +1,10 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.resource.request.RoomCreateRequest;
-import com.roomx.application.dto.resource.request.RoomQueryRequest;
-import com.roomx.application.dto.resource.request.RoomUpdateStatusRequest;
-import com.roomx.application.dto.resource.response.RoomDetailResponse;
-import com.roomx.application.dto.resource.response.RoomResponse;
+import com.roomx.shared.dto.resource.request.RoomCreateRequest;
+import com.roomx.shared.dto.resource.request.RoomQueryRequest;
+import com.roomx.shared.dto.resource.request.RoomUpdateStatusRequest;
+import com.roomx.shared.dto.resource.response.RoomDetailResponse;
+import com.roomx.shared.dto.resource.response.RoomResponse;
 import com.roomx.application.service.resource.RoomAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;

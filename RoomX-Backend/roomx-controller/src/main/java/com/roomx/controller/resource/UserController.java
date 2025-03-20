@@ -1,10 +1,10 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.user.request.UserCreateRequest;
-import com.roomx.application.dto.user.request.UserQueryFilterRequest;
-import com.roomx.application.dto.user.response.UserCreateResponse;
-import com.roomx.application.dto.user.response.UserResponse;
-import com.roomx.application.dto.user.response.UserRoleResponse;
+import com.roomx.shared.dto.user.request.UserCreateRequest;
+import com.roomx.shared.dto.user.request.UserQueryFilterRequest;
+import com.roomx.shared.dto.user.response.UserCreateResponse;
+import com.roomx.shared.dto.user.response.UserResponse;
+import com.roomx.shared.dto.user.response.UserRoleResponse;
 import com.roomx.application.service.user.RoleAppService;
 import com.roomx.application.service.user.UserAppService;
 import com.roomx.shared.exception.api.ResultResponse;

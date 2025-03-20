@@ -1,14 +1,14 @@
 package com.roomx.application.service.user;
 
-import com.roomx.application.dto.user.request.UserCreateRequest;
-import com.roomx.application.dto.user.request.UserQueryFilterRequest;
-import com.roomx.application.dto.user.response.UserCreateResponse;
-import com.roomx.application.dto.user.response.UserInfoReponse;
-import com.roomx.application.dto.user.response.UserResponse;
+import com.roomx.shared.dto.user.request.UserCreateRequest;
+import com.roomx.shared.dto.user.request.UserQueryFilterRequest;
+import com.roomx.shared.dto.user.response.UserCreateResponse;
+import com.roomx.shared.dto.user.response.UserInfoReponse;
+import com.roomx.shared.dto.user.response.UserResponse;
 import com.roomx.application.mapper.UserAppMapper;
 import com.roomx.domain.model.aggrerate.User;
-import com.roomx.domain.model.enums.RoleType;
-import com.roomx.domain.model.enums.UserType;
+import com.roomx.shared.enums.RoleType;
+import com.roomx.shared.enums.UserType;
 import com.roomx.domain.repository.RoleRepository;
 import com.roomx.domain.repository.UserRepository;
 import com.roomx.infrastructure.multitenancy.keycloak.service.impl.KeycloakRoleServiceImpl;

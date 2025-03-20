@@ -1,14 +1,17 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.dto.resource.request.EquipmentRoomClassCreateRequest;
-import com.roomx.application.dto.resource.request.RoomClassCreateRequest;
-import com.roomx.application.dto.resource.request.RoomClassUpdateRequest;
-import com.roomx.application.dto.resource.request.ServiceRoomClassCreateRequest;
-import com.roomx.application.dto.resource.response.*;
+import com.roomx.shared.dto.resource.request.EquipmentRoomClassCreateRequest;
+import com.roomx.shared.dto.resource.request.RoomClassCreateRequest;
+import com.roomx.shared.dto.resource.request.RoomClassUpdateRequest;
+import com.roomx.shared.dto.resource.request.ServiceRoomClassCreateRequest;
 import com.roomx.application.service.resource.EquipmentRoomClassAppService;
 import com.roomx.application.service.resource.RoomClassAppService;
 import com.roomx.application.service.resource.ServiceRoomClassAppService;
 import com.roomx.shared.exception.api.ResultResponse;
+import com.roomx.shared.dto.resource.response.EquipmentRoomClassDetailResponse;
+import com.roomx.shared.dto.resource.response.RoomClassDetailResponse;
+import com.roomx.shared.dto.resource.response.RoomClassResponse;
+import com.roomx.shared.dto.resource.response.ServiceRoomClassDetailResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

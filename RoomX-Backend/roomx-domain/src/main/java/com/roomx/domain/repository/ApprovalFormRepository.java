@@ -1,6 +1,6 @@
 package com.roomx.domain.repository;
 
-import com.roomx.domain.model.entity.ApprovalForm;
+import com.roomx.domain.model.aggrerate.ApprovalForm;
 
 import java.util.Optional;
 

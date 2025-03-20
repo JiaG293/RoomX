@@ -18,6 +18,8 @@ public class Branch {
     private String phoneNumber;
     private String email;
     private String address;
+
+    private String status;
     @Builder.Default
     private Instant createdAt = Instant.now();
     @Builder.Default

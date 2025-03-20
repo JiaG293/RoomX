@@ -1,6 +1,6 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.booking.request.EquipmentBookingRequest;
+import com.roomx.shared.dto.booking.request.EquipmentBookingRequest;
 import com.roomx.domain.model.entity.EquipmentRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;

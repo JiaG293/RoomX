@@ -1,6 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 
-import com.roomx.domain.model.entity.ApprovalForm;
+import com.roomx.domain.model.aggrerate.ApprovalForm;
 import com.roomx.domain.repository.ApprovalFormRepository;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.ApprovalFormEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaApprovalFormEntityRepository;

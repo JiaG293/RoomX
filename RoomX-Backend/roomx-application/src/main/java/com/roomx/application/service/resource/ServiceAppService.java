@@ -1,9 +1,9 @@
 package com.roomx.application.service.resource;
 
-import com.roomx.application.dto.resource.request.ServiceCreateRequest;
-import com.roomx.application.dto.resource.request.ServiceQueryRequest;
-import com.roomx.application.dto.resource.request.ServiceUpdateRequest;
-import com.roomx.application.dto.resource.response.ServiceResponse;
+import com.roomx.shared.dto.resource.request.ServiceCreateRequest;
+import com.roomx.shared.dto.resource.request.ServiceQueryRequest;
+import com.roomx.shared.dto.resource.request.ServiceUpdateRequest;
+import com.roomx.shared.dto.resource.response.ServiceResponse;
 import com.roomx.application.mapper.ServiceAppMapper;
 import com.roomx.domain.repository.ServiceRepository;
 import com.roomx.infrastructure.multitenancy.persistence.dto.ServiceFilter;

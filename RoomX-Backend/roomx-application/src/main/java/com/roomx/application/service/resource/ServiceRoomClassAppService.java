@@ -1,7 +1,7 @@
 package com.roomx.application.service.resource;
 
-import com.roomx.application.dto.resource.request.ServiceRoomClassCreateRequest;
-import com.roomx.application.dto.resource.response.ServiceRoomClassDetailResponse;
+import com.roomx.shared.dto.resource.request.ServiceRoomClassCreateRequest;
+import com.roomx.shared.dto.resource.response.ServiceRoomClassDetailResponse;
 import com.roomx.application.mapper.ServiceRoomClassAppMapper;
 import com.roomx.domain.model.entity.ServiceRoomClass;
 import com.roomx.domain.model.vo.ServiceRoomClassId;
@@ -51,7 +51,6 @@ public class ServiceRoomClassAppService {
                                 .roomClass(roomClassDomain)
                                 .service(service)
                                 .quantity(entry.getValue().shortValue())
-                                .unitPrice(service.getUnitPrice())
                                 .build()))
                 .flatMap(Optional::stream)
                 .toList();

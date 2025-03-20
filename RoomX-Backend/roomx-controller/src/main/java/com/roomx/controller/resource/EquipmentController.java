@@ -1,10 +1,10 @@
 package com.roomx.controller.resource;
 
 
-import com.roomx.application.dto.resource.request.EquipmentCreateRequest;
-import com.roomx.application.dto.resource.request.EquipmentQueryRequest;
-import com.roomx.application.dto.resource.request.EquipmentUpdateRequest;
-import com.roomx.application.dto.resource.response.EquipmentResponse;
+import com.roomx.shared.dto.resource.request.EquipmentCreateRequest;
+import com.roomx.shared.dto.resource.request.EquipmentQueryRequest;
+import com.roomx.shared.dto.resource.request.EquipmentUpdateRequest;
+import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.application.service.resource.EquipmentAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;

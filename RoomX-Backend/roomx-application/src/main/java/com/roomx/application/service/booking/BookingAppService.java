@@ -1,17 +1,16 @@
 package com.roomx.application.service.booking;
 
-import com.roomx.application.dto.booking.request.ApprovalFormAdminCreateRequest;
-import com.roomx.application.dto.booking.request.BookingRequestAdminCreateRequest;
-import com.roomx.application.dto.booking.response.BookingRequestResponse;
+import com.roomx.shared.dto.booking.request.ApprovalFormAdminCreateRequest;
+import com.roomx.shared.dto.booking.request.BookingRequestAdminCreateRequest;
+import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.application.mapper.BookingRequestAppMapper;
 import com.roomx.application.mapper.EquipmentRequestAppMapper;
 import com.roomx.application.mapper.ServiceRequestAppMapper;
 import com.roomx.application.service.resource.RoomAppService;
 import com.roomx.domain.model.aggrerate.BookingRequest;
-import com.roomx.domain.model.enums.ApprovalStatusType;
+import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.BookingRequestEntityMapper;
-import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaServiceRequestEntityRepository;
 import com.roomx.infrastructure.multitenancy.security.oauth.SecurityUtil;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
@@ -20,9 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

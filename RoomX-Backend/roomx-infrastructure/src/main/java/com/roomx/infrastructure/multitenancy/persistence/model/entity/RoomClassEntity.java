@@ -23,8 +23,8 @@ public class RoomClassEntity {
     public static final String TABLE_NAME = "room_class";
     public static final String COLUMN_ID_NAME = "room_class_id";
     public static final String COLUMN_ROOMCLASSCODE_NAME = "room_class_code";
-    public static final String COLUMN_BASEPRICE_NAME = "base_price";
     public static final String COLUMN_CAPACITY_NAME = "capacity";
+    public static final String COLUMN_STATUS_NAME = "status";
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
 
@@ -38,11 +38,13 @@ public class RoomClassEntity {
     @Column(name = COLUMN_ROOMCLASSCODE_NAME, length = 32)
     private String roomClassCode;
 
-    @Column(name = COLUMN_BASEPRICE_NAME)
-    private BigDecimal basePrice;
 
     @Column(name = COLUMN_CAPACITY_NAME)
     private Integer capacity;
+
+    @Size(max = 32)
+    @Column(name = COLUMN_STATUS_NAME, length = 32)
+    private String status;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_CREATEDAT_NAME)

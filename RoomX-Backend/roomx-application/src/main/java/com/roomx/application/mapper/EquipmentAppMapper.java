@@ -1,8 +1,8 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.resource.request.EquipmentCreateRequest;
-import com.roomx.application.dto.resource.request.EquipmentUpdateRequest;
-import com.roomx.application.dto.resource.response.EquipmentResponse;
+import com.roomx.shared.dto.resource.request.EquipmentCreateRequest;
+import com.roomx.shared.dto.resource.request.EquipmentUpdateRequest;
+import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.domain.model.aggrerate.Equipment;
 import org.mapstruct.*;
 

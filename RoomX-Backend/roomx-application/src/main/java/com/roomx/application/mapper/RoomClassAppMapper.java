@@ -1,16 +1,12 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.resource.request.RoomClassCreateRequest;
-import com.roomx.application.dto.resource.request.RoomClassUpdateRequest;
-import com.roomx.application.dto.resource.response.EquipmentRoomClassResponse;
-import com.roomx.application.dto.resource.response.RoomClassDetailResponse;
-import com.roomx.application.dto.resource.response.RoomClassResponse;
+import com.roomx.shared.dto.resource.request.RoomClassCreateRequest;
+import com.roomx.shared.dto.resource.request.RoomClassUpdateRequest;
+import com.roomx.shared.dto.resource.response.RoomClassResponse;
 import com.roomx.domain.model.aggrerate.RoomClass;
-import com.roomx.domain.model.entity.EquipmentRoomClass;
 import org.mapstruct.*;
 
 import java.time.Instant;
-import java.util.List;
 
 @Mapper(
         componentModel = "spring",

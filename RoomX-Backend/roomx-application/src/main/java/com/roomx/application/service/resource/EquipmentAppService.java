@@ -1,9 +1,9 @@
 package com.roomx.application.service.resource;
 
-import com.roomx.application.dto.resource.request.EquipmentCreateRequest;
-import com.roomx.application.dto.resource.request.EquipmentQueryRequest;
-import com.roomx.application.dto.resource.request.EquipmentUpdateRequest;
-import com.roomx.application.dto.resource.response.EquipmentResponse;
+import com.roomx.shared.dto.resource.request.EquipmentCreateRequest;
+import com.roomx.shared.dto.resource.request.EquipmentQueryRequest;
+import com.roomx.shared.dto.resource.request.EquipmentUpdateRequest;
+import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.application.mapper.EquipmentAppMapper;
 import com.roomx.domain.repository.EquipmentRepository;
 import com.roomx.infrastructure.multitenancy.persistence.dto.EquipmentFilter;

@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 @Table(name = ServiceRequestEntity.TABLE_NAME)
 public class ServiceRequestEntity {
     public static final String TABLE_NAME = "service_request";
-    public static final String COLUMN_UNITPRICE_NAME = "unit_price";
     public static final String COLUMN_QUANTITY_NAME = "quantity";
 
     @EmbeddedId
@@ -31,9 +30,6 @@ public class ServiceRequestEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "service_id", nullable = false)
     private ServiceEntity service;
-
-    @Column(name = COLUMN_UNITPRICE_NAME)
-    private BigDecimal unitPrice;
 
     @Column(name = COLUMN_QUANTITY_NAME)
     private Short quantity;

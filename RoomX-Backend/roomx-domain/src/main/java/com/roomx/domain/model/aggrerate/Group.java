@@ -1,7 +1,7 @@
 package com.roomx.domain.model.aggrerate;
 
 import com.roomx.domain.model.entity.GroupMember;
-import com.roomx.domain.model.enums.GroupType;
+import com.roomx.shared.enums.GroupType;
 import lombok.*;
 
 import java.util.ArrayList;

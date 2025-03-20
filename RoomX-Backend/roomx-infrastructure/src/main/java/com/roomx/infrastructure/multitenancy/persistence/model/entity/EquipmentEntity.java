@@ -27,7 +27,7 @@ public class EquipmentEntity {
     public static final String COLUMN_NAME_NAME = "name";
     public static final String COLUMN_BRAND_NAME = "brand";
     public static final String COLUMN_DESCRIPTION_NAME = "description";
-    public static final String COLUMN_UNITPRICE_NAME = "unit_price";
+    public static final String COLUMN_STATUS_NAME = "status";
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
 
@@ -51,9 +51,6 @@ public class EquipmentEntity {
 
     @Column(name = COLUMN_DESCRIPTION_NAME, length = Integer.MAX_VALUE)
     private String description;
-
-    @Column(name = COLUMN_UNITPRICE_NAME)
-    private BigDecimal unitPrice;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_CREATEDAT_NAME)

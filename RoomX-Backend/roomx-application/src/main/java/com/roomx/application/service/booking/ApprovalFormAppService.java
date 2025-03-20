@@ -1,11 +1,11 @@
 package com.roomx.application.service.booking;
 
-import com.roomx.application.dto.booking.request.ApprovalFormAdminCreateRequest;
+import com.roomx.shared.dto.booking.request.ApprovalFormAdminCreateRequest;
 import com.roomx.application.mapper.ApprovalFormAppMapper;
 import com.roomx.application.service.user.UserAppService;
-import com.roomx.domain.model.entity.ApprovalForm;
-import com.roomx.domain.model.enums.ApprovalStatusType;
-import com.roomx.domain.model.enums.RoleType;
+import com.roomx.domain.model.aggrerate.ApprovalForm;
+import com.roomx.shared.enums.ApprovalStatusType;
+import com.roomx.shared.enums.RoleType;
 import com.roomx.domain.repository.ApprovalFormRepository;
 import com.roomx.domain.repository.BookingRequestRepository;
 import com.roomx.infrastructure.multitenancy.security.oauth.RoleEvaluator;

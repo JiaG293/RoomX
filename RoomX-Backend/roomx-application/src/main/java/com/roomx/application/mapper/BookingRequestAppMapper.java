@@ -1,7 +1,7 @@
 package com.roomx.application.mapper;
 
-import com.roomx.application.dto.booking.request.BookingRequestCreateRequest;
-import com.roomx.application.dto.booking.response.BookingRequestResponse;
+import com.roomx.shared.dto.booking.request.BookingRequestCreateRequest;
+import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.domain.model.aggrerate.BookingRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
