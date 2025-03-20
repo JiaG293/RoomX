@@ -64,7 +64,8 @@ public class BranchAppService {
         var branchDomain = branchRepository.findById(branchId)
                 .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND, branchId));
 
-        branchRepository.delete(branchDomain);
+        branchDomain.setStatus(DeleteStatusType.INACTIVE.toString());
+        branchRepository.save(branchDomain);
     }
 
 
