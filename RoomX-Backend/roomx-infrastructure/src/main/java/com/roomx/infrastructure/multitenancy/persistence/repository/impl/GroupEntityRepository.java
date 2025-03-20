@@ -19,7 +19,7 @@ public class GroupEntityRepository implements GroupRepository {
     private final GroupEntityMapper groupEntityMapper;
 
     @Override
-    public Optional<Group> findById(String id) {
+    public Optional<Group> findById(String id, String status) {
         return jpaGroupEntityRepository
                 .findById(UUID.fromString(id))
                 .map(groupEntityMapper::toDomain);
@@ -31,4 +31,13 @@ public class GroupEntityRepository implements GroupRepository {
         var savedGroupEntity = jpaGroupEntityRepository.save(groupEntity);
         return groupEntityMapper.toDomain(savedGroupEntity);
     }
+
+    @Override
+    public Optional<Group> findByGroupCodeAndStatus(String groupCode, String status) {
+        return jpaGroupEntityRepository
+                .findByGroupCodeAndStatus(groupCode, status)
+                .map(groupEntityMapper::toDomain);
+    }
+
+
 }

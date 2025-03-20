@@ -42,4 +42,5 @@ public interface JpaPlaceEntityRepository extends JpaRepository<PlaceEntity, UUI
     List<PlaceEntity> findChildren(@Param("placeType") String placeType);
 
 
+    Optional<PlaceEntity> findByPlaceTypeAndStatusAndBranchId(String placeType, String status, UUID branchId);
 }

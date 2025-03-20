@@ -14,12 +14,15 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
-@Table(name = GroupEntity.TABLE_NAME)
+@Table(name = GroupEntity.TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(name = "unq_group", columnNames = {"group_code"})})
 public class GroupEntity {
     public static final String TABLE_NAME = "\"group\"";
     public static final String COLUMN_ID_NAME = "group_id";
     public static final String COLUMN_NAME_NAME = "name";
     public static final String COLUMN_GROUPTYPE_NAME = "group_type";
+    public static final String COLUMN_GROUPCODE_NAME = "group_code";
+    public static final String COLUMN_STATUS_NAME = "status";
 
 
     @Id
@@ -30,6 +33,14 @@ public class GroupEntity {
     @Size(max = 500)
     @Column(name = COLUMN_NAME_NAME, length = 500)
     private String name;
+
+    @Size(max = 32)
+    @Column(name = COLUMN_GROUPCODE_NAME)
+    private String groupCode;
+
+    @Size(max = 32)
+    @Column(name = COLUMN_STATUS_NAME)
+    private String status;
 
     @Size(max = 32)
     @NotNull

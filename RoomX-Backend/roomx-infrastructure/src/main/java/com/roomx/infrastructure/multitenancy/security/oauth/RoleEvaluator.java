@@ -23,13 +23,13 @@ public class RoleEvaluator {
         if (authentication == null || authentication.getName() == null) {
             return false; // Không có user nào đăng nhập
         }
-        int userLevel = userRepository.findById(UUID.fromString(authentication.getName()))
+        int userLevel = userRepository.findById(UUID.fromString(authentication.getName()), true)
                 .map(user -> user.getRoles().stream()
                         .mapToInt(Role::getLevel)
                         .max()
                         .orElse(0))
                 .orElse(0);
-        int targetLevel = userRepository.findById(UUID.fromString(targetId))
+        int targetLevel = userRepository.findById(UUID.fromString(targetId), true)
                 .map(user -> user.getRoles().stream().mapToInt(Role::getLevel).max().orElse(0))
                 .orElse(0);
 
@@ -43,7 +43,7 @@ public class RoleEvaluator {
             return false;
         }
 
-        return userRepository.findById(UUID.fromString(authentication.getName()))
+        return userRepository.findById(UUID.fromString(authentication.getName()), true)
                 .map(user -> user.getRoles().stream()
                         .map(Role::getId)
                         .anyMatch(roleNames::contains))

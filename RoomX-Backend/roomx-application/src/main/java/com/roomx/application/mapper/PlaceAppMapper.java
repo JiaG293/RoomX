@@ -2,6 +2,7 @@ package com.roomx.application.mapper;
 
 import com.roomx.shared.dto.resource.request.PlaceCreateRequest;
 import com.roomx.shared.dto.resource.request.PlaceUpdateRequest;
+import com.roomx.shared.dto.resource.response.PlaceBranchResponse;
 import com.roomx.shared.dto.resource.response.PlaceHierarchyResponse;
 import com.roomx.shared.dto.resource.response.PlaceResponse;
 import com.roomx.domain.model.aggrerate.Place;
@@ -27,6 +28,9 @@ public interface PlaceAppMapper {
     @Mapping(target = "branch", expression = "java(place.getParentId() == null ? branchAppMapper.toResponse(place.getBranch()) : null)")
     PlaceHierarchyResponse toResponseHierarchy(Place place, List<Place> places);
 
+    @Mapping(target = "branchId", source = "branch.id")
+    PlaceBranchResponse toResponseBranch(Place domain);
+
     @Mapping(target = "id", ignore = true)
     void updateDomainFromDto(PlaceUpdateRequest request, @MappingTarget Place domain);
 
@@ -50,6 +54,4 @@ public interface PlaceAppMapper {
         }
         return rootPlaces;
     }
-
-
 }

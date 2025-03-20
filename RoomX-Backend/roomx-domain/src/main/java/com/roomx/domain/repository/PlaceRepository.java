@@ -25,6 +25,8 @@ public interface PlaceRepository {
     List<Place> findRootPlace();
 
     List<Place> findChildrenPlace(String notPlaceType);
+
+    Optional<Place> findByBranchIdAndPlaceTypeAndStatus(String branchId, String placeType, String status);
 //    boolean checkPlaceExistsBySlug(String slug);
 //    boolean checkPlaceExistsBySlugBuildingFloorBranchId(String BranchId, String slug, String Building, String floor);
 //    List<String> customFindPlaceSelectBox(String branchId, String building, String floor, String placeType);

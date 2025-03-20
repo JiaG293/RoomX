@@ -2,6 +2,7 @@ package com.roomx.domain.model.aggrerate;
 
 import com.roomx.domain.model.entity.GroupMember;
 import com.roomx.shared.enums.GroupType;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -20,8 +21,13 @@ public class Group {
 
     @Builder.Default
     private String groupType = GroupType.SELF.toString();
+
+    private String groupCode;
+
     private Branch branch;
-    private User userId;
+    private User user;
+    private String status;
+
     @Builder.Default
     private List<GroupMember> groupMembers = new ArrayList<>();
 

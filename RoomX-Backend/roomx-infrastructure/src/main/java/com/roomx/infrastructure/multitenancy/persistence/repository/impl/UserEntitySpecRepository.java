@@ -24,8 +24,8 @@ public class UserEntitySpecRepository implements UserRepository, com.roomx.infra
     private final UserEntityMapper userEntityMapper;
 
     @Override
-    public Optional<User> findById(UUID id) {
-        return jpaUserEntityRepository.findById(id).map(userEntityMapper::toDomain);
+    public Optional<User> findById(UUID id, boolean enabled) {
+        return jpaUserEntityRepository.findByIdAndEnable(id, true).map(userEntityMapper::toDomain);
     }
 
     @Override

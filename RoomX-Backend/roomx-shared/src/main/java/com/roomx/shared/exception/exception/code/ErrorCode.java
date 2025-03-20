@@ -63,7 +63,8 @@ public enum ErrorCode {
     ROOM_NOT_FOUND(1000, "error.room.not_found", HttpStatus.NOT_FOUND),
     BOOKING_REQUEST_NOT_FOUND(1000, "error.booking_request_not_found", HttpStatus.NOT_FOUND),
     RECURRENCE_DATE_INVALID(1000, "valid.recurrence.invalid", HttpStatus.BAD_REQUEST),
-    PLACE_INVALID(1000, "valid.place.place_type", HttpStatus.BAD_REQUEST);
+    PLACE_INVALID(1000, "valid.place.place_type", HttpStatus.BAD_REQUEST),
+    GROUP_CONFLICT(1000, "error.group.conflict", HttpStatus.CONFLICT);
 
 
 

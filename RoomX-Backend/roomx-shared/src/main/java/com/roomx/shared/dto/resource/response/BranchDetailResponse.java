@@ -1,6 +1,5 @@
 package com.roomx.shared.dto.resource.response;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,11 +8,11 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 import java.util.List;
 
-@Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class BranchResponse {
+@Builder
+public class BranchDetailResponse {
     private String id;
     private String branchCode;
     private String name;
@@ -22,5 +21,5 @@ public class BranchResponse {
     private String address;
     private Instant createdAt;
     private Instant updatedAt;
-
+    private PlaceBranchResponse places;
 }

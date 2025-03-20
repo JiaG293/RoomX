@@ -45,7 +45,7 @@ public class BookingAppService {
 
         var roomDomain = roomAppService.getRoomFree(request.getRoomId());
 
-        var userRequestDomain = userRepository.findById(UUID.fromString(securityUtil.getCurrentUserId()))
+        var userRequestDomain = userRepository.findById(UUID.fromString(securityUtil.getCurrentUserId()), true)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         var statusApproval = request.getApprovalStatus() == null || request.getApprovalStatus().isEmpty()

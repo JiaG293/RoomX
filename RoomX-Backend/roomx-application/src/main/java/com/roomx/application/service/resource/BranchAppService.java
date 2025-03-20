@@ -1,16 +1,21 @@
 package com.roomx.application.service.resource;
 
+import com.roomx.application.mapper.PlaceAppMapper;
+import com.roomx.domain.repository.PlaceRepository;
 import com.roomx.shared.dto.resource.request.BranchCreateRequest;
 import com.roomx.shared.dto.resource.request.BranchQueryRequest;
 import com.roomx.shared.dto.resource.request.BranchUpdateRequest;
+import com.roomx.shared.dto.resource.response.BranchDetailResponse;
 import com.roomx.shared.dto.resource.response.BranchResponse;
 import com.roomx.application.mapper.BranchAppMapper;
 import com.roomx.domain.repository.BranchRepository;
 import com.roomx.infrastructure.multitenancy.persistence.dto.BranchFilter;
 import com.roomx.infrastructure.multitenancy.persistence.service.BranchEntityService;
 import com.roomx.shared.enums.DeleteStatusType;
+import com.roomx.shared.enums.PlaceType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
+import jakarta.ws.rs.DELETE;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,6 +34,8 @@ public class BranchAppService {
     private final BranchRepository branchRepository;
     private final BranchAppMapper branchAppMapper;
     private final BranchEntityService branchEntityService;
+    private final PlaceRepository placeRepository;
+    private final PlaceAppMapper placeAppMapper;
 
     @Transactional
     public BranchResponse createBranch(BranchCreateRequest request) {
@@ -101,4 +108,21 @@ public class BranchAppService {
         return listBranchDomain.stream().map(branchAppMapper::toResponse).toList();
     }
 
+    public BranchDetailResponse getBranchDetail(String branchId) {
+        var branchDomain = branchRepository.findById(branchId)
+                .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND, branchId));
+
+        var placeDomain = placeRepository
+                .findByBranchIdAndPlaceTypeAndStatus(
+                        branchId,
+                        PlaceType.BRANCH.toString(),
+                        DeleteStatusType.getDefaultString()
+                );
+        var response = branchAppMapper.toDetailResponse(branchDomain);
+        if (placeDomain.isPresent()) {
+            response.setPlaces(placeAppMapper.toResponseBranch(placeDomain.get()));
+        }
+
+        return response;
+    }
 }

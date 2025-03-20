@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository {
-    Optional<User> findById(UUID id);
+    Optional<User> findById(UUID id, boolean enabled);
 
     Optional<User> findByUserCode(String userCode);
 

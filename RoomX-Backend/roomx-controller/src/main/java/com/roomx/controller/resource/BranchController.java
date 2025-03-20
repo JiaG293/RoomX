@@ -3,6 +3,7 @@ package com.roomx.controller.resource;
 import com.roomx.shared.dto.resource.request.BranchCreateRequest;
 import com.roomx.shared.dto.resource.request.BranchQueryRequest;
 import com.roomx.shared.dto.resource.request.BranchUpdateRequest;
+import com.roomx.shared.dto.resource.response.BranchDetailResponse;
 import com.roomx.shared.dto.resource.response.BranchResponse;
 import com.roomx.application.service.resource.BranchAppService;
 import com.roomx.shared.exception.api.ResultResponse;
@@ -46,6 +47,13 @@ public class BranchController {
     public ResultResponse<?> getBranchSelectBox() {
         return ResultResponse.<List<BranchResponse>>builder()
                 .result(branchAppService.getAllBranch())
+                .build();
+    }
+
+    @GetMapping("/{branchId}")
+    public ResultResponse<?> getBranchDetail(@PathVariable String branchId) {
+        return ResultResponse.<BranchDetailResponse>builder()
+                .result(branchAppService.getBranchDetail(branchId))
                 .build();
     }
 

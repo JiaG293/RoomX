@@ -5,12 +5,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum GroupType {
-    DEPARTMENT(""),
-    COMPANY(""),
-    BRANCH(""),
-    PARTNER(""),
-    SELF(""),
-    BOOKING("");
+    DEPARTMENT("Phòng ban"),
+    PARTNER("Đối tác"),
+    SELF("Cá nhân");
 
     private static final Map<String, GroupType> DISPLAY_NAME_MAP = Stream.of(values())
             .collect(Collectors.toMap(GroupType::getDisplayName, e -> e));
