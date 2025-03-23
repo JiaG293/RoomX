@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.jpa;
 
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.ServiceEntity;
+import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,4 +21,6 @@ public interface JpaServiceEntityRepository extends JpaRepository<ServiceEntity,
     Page<ServiceEntity> findAll(Specification<ServiceEntity> spec, Pageable pageable);
 
     boolean existsByServiceCode(String serviceCode);
+
+    Optional<ServiceEntity> findByServiceCode(String serviceCode);
 }

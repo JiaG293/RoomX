@@ -48,7 +48,7 @@ public enum ErrorCode {
     BRANCH_CONFLICT(1000, "error.branch.conflict", HttpStatus.CONFLICT),
     BRANCH_NOT_FOUND(1000, "error.branch.not_found", HttpStatus.NOT_FOUND ),
     SERVICE_NOT_FOUND(1000, "error.service.not_found", HttpStatus.NOT_FOUND),
-    SERVICE_SERVICE_CODE_CONFLICT(1000, "error.service.conflict", HttpStatus.CONFLICT ),
+    SERVICE_CONFLICT(1000, "error.service.conflict", HttpStatus.CONFLICT ),
     PLACE_SLUG_NOT_FOUND(1000, "error.place.slug.not_found", HttpStatus.CONFLICT),
     PLACE_SLUG_CONFLICT(1000, "error.place.slug.conflict", HttpStatus.CONFLICT),
     PLACE_NOT_FOUND(1000, "error.place.not_found", HttpStatus.NOT_FOUND),
@@ -72,7 +72,8 @@ public enum ErrorCode {
     EQUIPMENT_FORBIDDEN(1000, "error.equipment.forbidden", HttpStatus.FORBIDDEN),
     EQUIPMENT_NOT_FOUND(1000, "error.equipment.not_found", HttpStatus.NOT_FOUND),
     EQUIPMENT_INVALID_TIME(1000, "valid.equipment.time_invalid", HttpStatus.BAD_REQUEST),
-    EQUIPMENT_PRICE_TIME_CONFLICT(1000, "error.equipment.price_time.conflict", HttpStatus.CONFLICT);
+    EQUIPMENT_PRICE_TIME_CONFLICT(1000, "error.equipment.price_time.conflict", HttpStatus.CONFLICT),
+    SERVICE_FORBIDDEN(1000, "error.service.forbidden", HttpStatus.CONFLICT);
 
 
 

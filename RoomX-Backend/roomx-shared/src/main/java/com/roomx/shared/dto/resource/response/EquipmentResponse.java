@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.List;
 
 @Builder
@@ -20,5 +18,5 @@ public class EquipmentResponse {
     private String brand;
     private String description;
     private List<String> imageUrls;
-    private EquipmentPriceHistoryResponse price;
+    private PriceHistoryResponse price;
 }

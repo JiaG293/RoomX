@@ -5,8 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.time.Instant;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -18,7 +17,6 @@ public class ServiceResponse {
     private String name;
     private String description;
     private String note;
-    private BigDecimal unitPrice;
-    private Instant createdAt;
-    private Instant updatedAt;
+    private List<String> imageUrls;
+    private PriceHistoryResponse price;
 }

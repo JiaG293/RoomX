@@ -1,4 +1,4 @@
-package com.roomx.shared.dto.resource.response;
+package com.roomx.shared.dto.resource.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,14 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EquipmentPriceHistoryResponse {
+public class ServicePriceHistoryCreateRequest {
     private BigDecimal unitPrice;
-    private Instant validFrom;
 }

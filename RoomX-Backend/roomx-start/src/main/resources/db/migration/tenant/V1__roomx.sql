@@ -1,4 +1,3 @@
-
 CREATE  TABLE branch (
                          branch_id            uuid  NOT NULL  ,
                          name                 varchar(500)    ,
@@ -126,7 +125,7 @@ CREATE  TABLE service_price_history (
                                         service_price_history_id uuid  NOT NULL  ,
                                         service_id           uuid  NOT NULL  ,
                                         unit_price           numeric    ,
-                                        valid_start          timestamp    ,
+                                        valid_from           timestamp    ,
                                         valid_end            timestamp    ,
                                         active               boolean    ,
                                         CONSTRAINT pk_service_price_history PRIMARY KEY ( service_price_history_id )

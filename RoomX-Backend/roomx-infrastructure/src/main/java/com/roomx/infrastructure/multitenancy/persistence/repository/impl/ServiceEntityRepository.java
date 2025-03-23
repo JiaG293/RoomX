@@ -56,5 +56,11 @@ public class ServiceEntityRepository implements ServiceRepository {
         return jpaServiceEntityRepository.existsByServiceCode(serviceCode);
     }
 
+    @Override
+    public Optional<Service> findByServiceCode(String serviceCode) {
+        return jpaServiceEntityRepository.findByServiceCode(serviceCode)
+                .map(serviceEntityMapper::toDomain);
+    }
+
 
 }

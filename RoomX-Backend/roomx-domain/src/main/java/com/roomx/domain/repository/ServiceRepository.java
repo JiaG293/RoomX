@@ -13,4 +13,6 @@ public interface ServiceRepository {
     boolean checkServiceNameExists(String serviceName);
     Optional<Service> findByServiceName(String serviceName);
     boolean checkServiceCodeIsExists(String serviceCode);
+
+    Optional<Service> findByServiceCode(String serviceCode);
 }

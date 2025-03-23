@@ -1,5 +1,6 @@
 package com.roomx.domain.model.aggrerate;
 
+import com.roomx.domain.model.entity.ServicePriceHistory;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -26,6 +27,8 @@ public class Service {
     private Instant createdAt = Instant.now();
     @Builder.Default
     private Instant updatedAt = Instant.now();
+
+    private ServicePriceHistory price;
 
     @Builder.Default
     private List<String> imageUrls = new ArrayList<>();

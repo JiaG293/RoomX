@@ -23,7 +23,7 @@ public class RoomClassPriceHistoryEntity {
     public static final String COLUMN_BASEPRICE_NAME = "base_price";
     public static final String COLUMN_TOTALPRICE_NAME = "total_price";
     public static final String COLUMN_VALIDEND_NAME = "valid_end";
-    public static final String COLUMN_ISACTIVE_NAME = "active";
+    public static final String COLUMN_ACTIVE_NAME = "active";
 
 
     @Id
@@ -48,7 +48,7 @@ public class RoomClassPriceHistoryEntity {
     @Column(name = COLUMN_VALIDEND_NAME)
     private Instant validEnd;
 
-    @Column(name = COLUMN_ISACTIVE_NAME)
+    @Column(name = COLUMN_ACTIVE_NAME)
     private boolean active;
 
 }

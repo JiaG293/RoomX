@@ -1,5 +1,8 @@
 package com.roomx.application.service.resource;
 
+import com.roomx.domain.model.entity.EquipmentPriceHistory;
+import com.roomx.domain.model.entity.ServicePriceHistory;
+import com.roomx.domain.repository.ServicePriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.ServiceCreateRequest;
 import com.roomx.shared.dto.resource.request.ServiceQueryRequest;
 import com.roomx.shared.dto.resource.request.ServiceUpdateRequest;
@@ -8,6 +11,7 @@ import com.roomx.application.mapper.ServiceAppMapper;
 import com.roomx.domain.repository.ServiceRepository;
 import com.roomx.infrastructure.multitenancy.persistence.dto.ServiceFilter;
 import com.roomx.infrastructure.multitenancy.persistence.service.ServiceEntityService;
+import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,18 +32,34 @@ public class ServiceAppService {
     private final ServiceRepository serviceRepository;
     private final ServiceAppMapper serviceAppMapper;
     private final ServiceEntityService serviceEntityService;
+    private final ServicePriceHistoryRepository servicePriceHistoryRepository;
 
 
     @Transactional
     public ServiceResponse createService(ServiceCreateRequest request){
-        if(serviceRepository.checkServiceCodeIsExists(request.getServiceCode())){
-            throw new AppException(ErrorCode.SERVICE_SERVICE_CODE_CONFLICT, request.getServiceCode());
+        var serviceDomainCheckCode = serviceRepository.findByServiceCode(request.getServiceCode());
+
+        if (serviceDomainCheckCode.isPresent()) {
+            if (serviceDomainCheckCode.get().getStatus().equals(DeleteStatusType.getDefaultString())) {
+                throw new AppException(ErrorCode.SERVICE_CONFLICT, serviceDomainCheckCode.get().getServiceCode());
+            }
+            throw new AppException(ErrorCode.SERVICE_FORBIDDEN, serviceDomainCheckCode.get().getServiceCode());
         }
 
         var serviceDomain = serviceAppMapper.toDomain(request);
-
+        serviceDomain.setStatus(DeleteStatusType.getDefaultString());
         var savedService = serviceRepository.save(serviceDomain);
 
+        var servicePrice = ServicePriceHistory.builder()
+                .service(savedService)
+                .validFrom(Instant.now())
+                .unitPrice(request.getUnitPrice())
+                .active(true)
+                .build();
+
+        var savedServicePrice = servicePriceHistoryRepository.save(servicePrice);
+
+        savedService.setPrice(savedServicePrice);
         return serviceAppMapper.toResponse(savedService);
     }
 

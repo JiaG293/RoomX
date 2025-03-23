@@ -20,7 +20,7 @@ public class ServicePriceHistoryEntity {
     public static final String TABLE_NAME = "service_price_history";
     public static final String COLUMN_ID_NAME = "service_price_history_id";
     public static final String COLUMN_UNITPRICE_NAME = "unit_price";
-    public static final String COLUMN_VALIDSTART_NAME = "valid_start";
+    public static final String COLUMN_VALIDFROM_NAME = "valid_from";
     public static final String COLUMN_VALIDEND_NAME = "valid_end";
     public static final String COLUMN_ACTIVE_NAME = "active";
 
@@ -38,8 +38,8 @@ public class ServicePriceHistoryEntity {
     @Column(name = COLUMN_UNITPRICE_NAME)
     private BigDecimal unitPrice;
 
-    @Column(name = COLUMN_VALIDSTART_NAME)
-    private Instant validStart;
+    @Column(name = COLUMN_VALIDFROM_NAME)
+    private Instant validFrom;
 
     @Column(name = COLUMN_VALIDEND_NAME)
     private Instant validEnd;

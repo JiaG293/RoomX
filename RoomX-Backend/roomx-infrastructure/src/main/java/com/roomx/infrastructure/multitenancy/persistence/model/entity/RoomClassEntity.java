@@ -54,4 +54,6 @@ public class RoomClassEntity {
     @Column(name = COLUMN_UPDATEDAT_NAME)
     private Instant updatedAt;
 
+
+
 }
