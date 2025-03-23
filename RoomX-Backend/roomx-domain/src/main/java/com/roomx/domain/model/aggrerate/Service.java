@@ -1,9 +1,12 @@
 package com.roomx.domain.model.aggrerate;
 
+import com.roomx.domain.model.entity.ImageUrl;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -24,6 +27,9 @@ public class Service {
     private Instant createdAt = Instant.now();
     @Builder.Default
     private Instant updatedAt = Instant.now();
+
+    @Builder.Default
+    private List<String> imageUrls = new ArrayList<>();
 
 
 

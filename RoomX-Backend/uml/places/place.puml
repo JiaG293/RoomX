@@ -1,0 +1,42 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+user -> client: Chọn trong select box các branch
+client -> backend: GET /branchs/{{branch_id_detail}}
+backend -> client: JSON branchDetailResponse
+    alt không tồn tại branchId
+        backend -> client: return: ERROR NOT FOUND
+        client -> user: Thông báo người dùng không tìm thấy vui lòng tạo branch
+    else Tìm thấy
+        backend -> database: getBranchDetail(branch_id_detail)
+        database -> backend: branch
+        backend -> client: branchDetailResponse
+alt Tồn tại
+    client -> client: checkPlace(branchDetailResponse)
+    client -> user: Hiển thị form nhập thông tin cung cấp building, floor
+else Là null
+    client -> client: Hiển thị yêu cầu tạo place cho branch
+    user -> client: Xác nhận tạo
+    client -> backend: POST /places BODY: { branchId, layout:<URL>, placeType:BRANCH }
+    end
+end
+backend -> client:
+user -> client: Chọn chi nhánh và lấy thông tin PlaceBranchId kèm building, floor
+client -> backend: POST /places/{{place_branch_id}}/buildings
+backend -> backend: validated(PlaceCreateBuildingWithFloorRequest)
+backend --> backend: createPlaceBuildingWithFloors(placeBranchId, PlaceCreateBuildingWithFloorRequest)
+backend -> backend: checkExisting(placeBranchId, building, floor)
+backend -> backend: PlaceMapper.toDomain()
+backend -> backend: save(List<Place>)
+backend -> database: Lưu dữ liệu vào bảng place
+alt Đúng
+    database -> backend: List<placeSaved>
+    backend -> client: OK: Trả về building và danh sách floor
+else Sai
+    database -> backend: null
+    backend -> client: BAD: Lỗi tạo
+end
+client -> user: Hiển thị thông tin
+@enduml

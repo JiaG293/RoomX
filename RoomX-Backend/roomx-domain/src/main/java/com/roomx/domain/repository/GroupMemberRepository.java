@@ -13,4 +13,6 @@ public interface GroupMemberRepository {
     Optional<GroupMember> findByUserId(String userId);
     GroupMember save(GroupMember groupMember);
     List<GroupMember> saveAll(List<GroupMember> listGroupMembers);
+
+    List<GroupMember> findAllByGroupId(String groupId);
 }

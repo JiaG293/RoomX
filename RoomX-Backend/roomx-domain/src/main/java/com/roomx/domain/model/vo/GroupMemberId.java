@@ -8,4 +8,6 @@ public record GroupMemberId(UUID userId, UUID groupId) {
         this.userId = Objects.requireNonNull(userId, "ID người dùng không được null");
         this.groupId = Objects.requireNonNull(groupId, "ID nhóm không được null");
     }
+
+
 }

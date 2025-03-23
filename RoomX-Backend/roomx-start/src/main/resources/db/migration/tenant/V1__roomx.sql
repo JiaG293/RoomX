@@ -1,4 +1,3 @@
-
 CREATE  TABLE branch (
                          branch_id            uuid  NOT NULL  ,
                          name                 varchar(500)    ,
@@ -22,6 +21,7 @@ CREATE  TABLE equipment (
                             updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                             equipment_code       varchar(32)    ,
                             status               varchar(32)    ,
+                            image_urls           varchar[]    ,
                             CONSTRAINT pk_thiet_bi PRIMARY KEY ( equipment_id ),
                             CONSTRAINT unq_equipment UNIQUE ( equipment_code )
 );
@@ -45,6 +45,15 @@ CREATE  TABLE exception_date (
                                  CONSTRAINT pk_ngay_ngoai_le PRIMARY KEY ( exception_date_id )
 );
 
+CREATE  TABLE image_url (
+                            image_url_id         uuid  NOT NULL  ,
+                            "type"               varchar(64)    ,
+                            entity_id            uuid    ,
+                            url                  varchar    ,
+                            "order"              integer    ,
+                            CONSTRAINT pk_image_url PRIMARY KEY ( image_url_id )
+);
+
 CREATE  TABLE place (
                         place_id             uuid  NOT NULL  ,
                         branch_id            uuid    ,
@@ -52,8 +61,8 @@ CREATE  TABLE place (
                         layout               varchar    ,
                         place_type           varchar(32)  NOT NULL  ,
                         parent_id            uuid    ,
-                        code                 varchar(32)    ,
                         status               varchar(32)    ,
+                        code                 varchar(32)    ,
                         CONSTRAINT pk_vi_tri PRIMARY KEY ( place_id )
 );
 
@@ -108,6 +117,7 @@ CREATE  TABLE service (
                           updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                           service_code         varchar(32)    ,
                           status               varchar    ,
+                          image_urls           varchar[]    ,
                           CONSTRAINT pk_dich_vu PRIMARY KEY ( service_id ),
                           CONSTRAINT unq_service UNIQUE ( service_code )
 );
@@ -193,14 +203,15 @@ CREATE  TABLE booking (
                           booking_code         varchar(32)  NOT NULL  ,
                           booking_request_id   uuid  NOT NULL  ,
                           room_id              uuid  NOT NULL  ,
-                          meeting_start        timestamp    ,
-                          meeting_end          timestamp    ,
+                          meeting_start        time    ,
+                          meeting_end          time    ,
                           "count"              smallint    ,
                           total_price          numeric    ,
                           status               varchar(32)    ,
                           created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                           updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                           previous_room_id     uuid    ,
+                          meeting_date         date    ,
                           CONSTRAINT pk_booking_order PRIMARY KEY ( booking_id ),
                           CONSTRAINT unq_booking_room_id UNIQUE ( room_id ) ,
                           CONSTRAINT unq_booking UNIQUE ( booking_code )
@@ -230,6 +241,7 @@ CREATE  TABLE booking_request (
                                   created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                                   updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                                   booking_request_code varchar(32)    ,
+                                  end_date_approval    timestamp    ,
                                   CONSTRAINT pk_yeu_cau_dat_phong PRIMARY KEY ( booking_request_id ),
                                   CONSTRAINT unq_booking_request UNIQUE ( booking_request_code )
 );
@@ -261,6 +273,7 @@ CREATE  TABLE room (
                        description          text    ,
                        room_class_id        uuid  NOT NULL  ,
                        room_code            varchar(32)    ,
+                       image_urls           varchar[]    ,
                        CONSTRAINT pk_phong_hop PRIMARY KEY ( room_id ),
                        CONSTRAINT unq_phong_hop_ma_phong UNIQUE ( room_code )
 );

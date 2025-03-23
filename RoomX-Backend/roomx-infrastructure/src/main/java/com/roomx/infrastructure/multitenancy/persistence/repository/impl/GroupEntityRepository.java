@@ -39,5 +39,10 @@ public class GroupEntityRepository implements GroupRepository {
                 .map(groupEntityMapper::toDomain);
     }
 
+    @Override
+    public boolean checkGroupExistWithStatusAndGroupCode(String groupCode, String defaultString) {
+        return false;
+    }
+
 
 }

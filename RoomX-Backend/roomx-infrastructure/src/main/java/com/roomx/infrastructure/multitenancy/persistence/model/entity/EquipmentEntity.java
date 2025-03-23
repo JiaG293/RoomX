@@ -6,8 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -49,6 +50,10 @@ public class EquipmentEntity {
     @Column(name = COLUMN_BRAND_NAME, length = Integer.MAX_VALUE)
     private String brand;
 
+    @Size(max = 32)
+    @Column(name = COLUMN_STATUS_NAME)
+    private String status;
+
     @Column(name = COLUMN_DESCRIPTION_NAME, length = Integer.MAX_VALUE)
     private String description;
 
@@ -60,4 +65,9 @@ public class EquipmentEntity {
     @Column(name = COLUMN_UPDATEDAT_NAME)
     private Instant updatedAt;
 
+    @ElementCollection
+    @CollectionTable(name = "image_url", joinColumns = @JoinColumn(name = "entity_id"))
+    @Column(name = "image_urls")
+    @OrderColumn(name="image_order")
+    private List<String> imageUrls = new ArrayList<>();
 }

@@ -35,7 +35,9 @@ public class PlaceController {
     }
 
     @PostMapping("/{placeBranchId}/buildings")
-    public ResultResponse<?> createPlaceBuildingWithFloors(@PathVariable String placeBranchId, @Validated @RequestBody PlaceCreateBuildingWithFloorRequest request) {
+    public ResultResponse<?> createPlaceBuildingWithFloors(
+            @PathVariable String placeBranchId,
+            @Validated @RequestBody PlaceCreateBuildingWithFloorRequest request) {
         var result = placeAppService.createPlaceBuildingWithFloors(placeBranchId, request);
         return ResultResponse.<PlaceHierarchyResponse>builder()
                 .result(result)
@@ -47,7 +49,7 @@ public class PlaceController {
     public ResultResponse<?> updatePlaceById(
             @PathVariable String placeId,
             @Validated @RequestBody PlaceUpdateRequest request
-            ) {
+    ) {
         var result = placeAppService.updatePlaceById(placeId, request);
         return ResultResponse.<PlaceResponse>builder()
                 .result(result)

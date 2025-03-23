@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -23,6 +25,7 @@ public class RoomEntity {
     public static final String COLUMN_ID_NAME = "room_id";
     public static final String COLUMN_STATUS_NAME = "status";
     public static final String COLUMN_DESCRIPTION_NAME = "description";
+    public static final String COLUMN_IMAGEORDER_NAME = "image_order";
 
 
     @Id
@@ -50,6 +53,15 @@ public class RoomEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_class_id", nullable = false)
     private RoomClassEntity roomClass;
+
+
+
+
+    @ElementCollection
+    @CollectionTable(name = "image_url", joinColumns = @JoinColumn(name = "entity_id"))
+    @Column(name = "image_urls")
+    @OrderColumn(name="image_order")
+    private List<String> imageUrls = new ArrayList<>();
 
 
 }

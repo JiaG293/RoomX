@@ -1,8 +1,11 @@
 package com.roomx.domain.model.aggrerate;
 
+import com.roomx.domain.model.entity.ImageUrl;
 import com.roomx.shared.enums.RoomStatusType;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -20,5 +23,7 @@ public class Room {
     private Place place;
     private RoomClass roomClass;
 
+    @Builder.Default
+    private List<String> imageUrls = new ArrayList<>();
 
 }

@@ -4,6 +4,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Builder
@@ -17,8 +19,9 @@ public class Booking {
     private BookingRequest bookingRequest;
     private Room room;
     private Room previousRoom;
-    private Instant meetingStart;
-    private Instant meetingEnd;
+    private LocalTime meetingStart;
+    private LocalTime meetingEnd;
+    private LocalDate meetingDate;
     private int count;
     private BigDecimal totalPrice;
     private Instant createdAt;

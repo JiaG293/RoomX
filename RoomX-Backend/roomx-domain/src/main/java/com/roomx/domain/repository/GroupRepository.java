@@ -13,4 +13,5 @@ public interface GroupRepository {
 
     Optional<Group> findByGroupCodeAndStatus(String groupCode, String status);
 
+    boolean checkGroupExistWithStatusAndGroupCode(String groupCode, String defaultString);
 }

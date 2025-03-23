@@ -8,6 +8,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Builder
@@ -36,10 +38,12 @@ public class BookingEntity {
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
     public static final String COLUMN_PREVIOUSROOMID_NAME = "previous_room_id";
+    public static final String COLUMN_MEETINGDATE_NAME = "meeting_date";
 
 
     @Id
     @Column(name = COLUMN_ID_NAME, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Size(max = 32)
@@ -57,10 +61,13 @@ public class BookingEntity {
     private UUID roomId;
 
     @Column(name = COLUMN_MEETINGSTART_NAME)
-    private Instant meetingStart;
+    private LocalTime meetingStart;
 
     @Column(name = COLUMN_MEETINGEND_NAME)
-    private Instant meetingEnd;
+    private LocalTime meetingEnd;
+
+    @Column(name = COLUMN_MEETINGDATE_NAME)
+    private LocalDate meetingDate;
 
     @Column(name = COLUMN_COUNT_NAME)
     private Short count;

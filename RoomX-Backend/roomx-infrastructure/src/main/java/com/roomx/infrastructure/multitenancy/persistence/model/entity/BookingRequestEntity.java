@@ -27,6 +27,7 @@ public class BookingRequestEntity {
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
     public static final String COLUMN_BOOKINGREQUESTCODE_NAME = "booking_request_code";
+    public static final String COLUMN_ENDDATEAPPROVAL_NAME = "end_date_approval";
 
 
     @Id
@@ -62,5 +63,9 @@ public class BookingRequestEntity {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_UPDATEDAT_NAME)
     private Instant updatedAt;
+
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = COLUMN_ENDDATEAPPROVAL_NAME)
+    private Instant endDateApproval;
 
 }

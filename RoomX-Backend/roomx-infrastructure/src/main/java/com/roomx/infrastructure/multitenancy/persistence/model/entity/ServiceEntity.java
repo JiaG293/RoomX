@@ -7,6 +7,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -29,6 +31,7 @@ public class ServiceEntity {
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
     public static final String COLUMN_SERVICECODE_NAME = "service_code";
     public static final String COLUMN_STATUS_NAME = "status";
+    public static final String COLUMN_IMAGEORDER_NAME = "image_order";
 
 
     @Id
@@ -62,5 +65,11 @@ public class ServiceEntity {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_UPDATEDAT_NAME)
     private Instant updatedAt;
+
+    @ElementCollection
+    @CollectionTable(name = "image_url", joinColumns = @JoinColumn(name = "entity_id"))
+    @Column(name = "image_urls")
+    @OrderColumn(name="image_order")
+    private List<String> imageUrls = new ArrayList<>();
 
 }

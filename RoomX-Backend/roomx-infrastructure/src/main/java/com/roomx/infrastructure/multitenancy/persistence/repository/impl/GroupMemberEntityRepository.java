@@ -3,7 +3,9 @@ package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 import com.roomx.domain.model.entity.GroupMember;
 import com.roomx.domain.model.vo.GroupMemberId;
 import com.roomx.domain.repository.GroupMemberRepository;
+import com.roomx.infrastructure.multitenancy.persistence.mapper.GroupMemberEntityIdMapper;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.GroupMemberEntityMapper;
+import com.roomx.infrastructure.multitenancy.persistence.model.ids.GroupMemberEntityId;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaGroupMemberRepository;
 import com.roomx.shared.enums.DeleteStatusType;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +22,12 @@ import java.util.stream.Collectors;
 public class GroupMemberEntityRepository implements GroupMemberRepository {
     private final JpaGroupMemberRepository jpaGroupMemberRepository;
     private final GroupMemberEntityMapper groupMemberEntityMapper;
+    private final GroupMemberEntityIdMapper groupMemberEntityIdMapper;
 
     @Override
     public Optional<GroupMember> findById(GroupMemberId groupMemberId) {
         return jpaGroupMemberRepository
-                .findByIdAndGroupStatus(groupMemberId, DeleteStatusType.getDefaultString())
+                .findByIdAndGroupStatus(groupMemberEntityIdMapper.toEntity(groupMemberId), DeleteStatusType.getDefaultString())
                 .map(groupMemberEntityMapper::toDomain);
     }
 
@@ -61,5 +64,13 @@ public class GroupMemberEntityRepository implements GroupMemberRepository {
         return savedGroupMemberEntityList
                 .stream().map(groupMemberEntityMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<GroupMember> findAllByGroupId(String groupId) {
+        return jpaGroupMemberRepository
+                .findAllByGroupId(UUID.fromString(groupId))
+                .stream()
+                .map(groupMemberEntityMapper::toDomain).toList();
     }
 }
