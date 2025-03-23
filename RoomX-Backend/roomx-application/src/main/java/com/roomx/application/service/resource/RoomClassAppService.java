@@ -1,5 +1,8 @@
 package com.roomx.application.service.resource;
 
+import com.roomx.domain.model.aggrerate.Room;
+import com.roomx.domain.model.entity.RoomClassPriceHistory;
+import com.roomx.domain.repository.RoomClassPriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.RoomClassCreateRequest;
 import com.roomx.shared.dto.resource.request.RoomClassUpdateRequest;
 import com.roomx.shared.dto.resource.response.RoomClassDetailResponse;
@@ -10,6 +13,7 @@ import com.roomx.application.mapper.ServiceRoomClassAppMapper;
 import com.roomx.domain.repository.EquipmentRoomClassRepository;
 import com.roomx.domain.repository.RoomClassRepository;
 import com.roomx.domain.repository.ServiceRoomClassRepository;
+import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.HashSet;
 
 @Slf4j
@@ -29,18 +34,33 @@ public class RoomClassAppService {
     private final RoomClassAppMapper roomClassAppMapper;
     private final EquipmentRoomClassRepository equipmentRoomClassRepository;
     private final ServiceRoomClassRepository serviceRoomClassRepository;
+    private final RoomClassPriceHistoryRepository roomClassPriceHistoryRepository;
 
     @Transactional
     public RoomClassResponse createRoomClass(RoomClassCreateRequest request) {
-        if (roomClassRepository.checkExistsRoomClassCode(request.getRoomClassCode())) {
-            throw new AppException(ErrorCode.ROOM_CLASS_CONFLICT, request.getRoomClassCode());
+        var roomClassCheckCode = roomClassRepository.findByRoomClassCode(request.getRoomClassCode());
+
+        if (roomClassCheckCode.isPresent()) {
+            if (roomClassCheckCode.get().getStatus().equals(DeleteStatusType.getDefaultString())) {
+                throw new AppException(ErrorCode.ROOM_CLASS_CONFLICT, roomClassCheckCode.get().getRoomClassCode());
+            }
+            throw new AppException(ErrorCode.ROOM_CLASS_FORBIDDEN, roomClassCheckCode.get().getRoomClassCode());
         }
 
         var roomClassDomain = roomClassAppMapper.toDomain(request);
-
-
+        roomClassDomain.setStatus(DeleteStatusType.getDefaultString());
         var savedRoomClass = roomClassRepository.save(roomClassDomain);
 
+        var roomClassPriceHistory = RoomClassPriceHistory.builder()
+                .roomClass(savedRoomClass)
+                .validFrom(Instant.now())
+                .basePrice(request.getBasePrice())
+                .totalPrice(request.getBasePrice())
+                .active(true)
+                .build();
+
+        var savedRoomClassPrice = roomClassPriceHistoryRepository.save(roomClassPriceHistory);
+        savedRoomClass.setPrice(savedRoomClassPrice);
         return roomClassAppMapper.toResponse(savedRoomClass);
     }
 

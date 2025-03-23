@@ -13,7 +13,8 @@ import java.time.Instant;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {
-                EquipmentRoomClassAppMapper.class
+                EquipmentRoomClassAppMapper.class,
+                RoomClassPriceHistoryAppMapper.class
         }
 )
 public interface RoomClassAppMapper {

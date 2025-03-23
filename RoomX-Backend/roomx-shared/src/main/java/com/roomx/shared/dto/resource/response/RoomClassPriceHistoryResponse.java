@@ -12,9 +12,8 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class RoomClassResponse {
-    private String id;
-    private String roomClassCode;
-    private RoomClassPriceHistoryResponse price;
-    private int capacity;
+public class RoomClassPriceHistoryResponse {
+    private BigDecimal basePrice;
+    private BigDecimal totalPrice;
+    private Instant validFrom;
 }

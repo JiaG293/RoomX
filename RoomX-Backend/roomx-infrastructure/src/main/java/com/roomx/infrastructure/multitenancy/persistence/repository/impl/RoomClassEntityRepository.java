@@ -38,4 +38,11 @@ public class RoomClassEntityRepository implements RoomClassRepository {
         return jpaRoomClassEntityRepository.existsByRoomClassCode(roomClassCode);
     }
 
+    @Override
+    public Optional<RoomClass> findByRoomClassCode(String roomClassCode) {
+        return jpaRoomClassEntityRepository
+                .findByRoomClassCode(roomClassCode)
+                .map(roomClassEntityMapper::toDomain);
+    }
+
 }

@@ -30,6 +30,8 @@ public class RoomClass {
     @Builder.Default
     private Set<ServiceRoomClass> services = new HashSet<>();
 
+    private RoomClassPriceHistory price;
+
     @Builder.Default
     private Instant createdAt = Instant.now();
     @Builder.Default

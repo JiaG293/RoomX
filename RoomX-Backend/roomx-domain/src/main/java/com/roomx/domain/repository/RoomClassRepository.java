@@ -9,4 +9,6 @@ public interface RoomClassRepository {
     RoomClass save(RoomClass roomClass);
 
     boolean checkExistsRoomClassCode(String roomClassCode);
+
+    Optional<RoomClass> findByRoomClassCode(String roomClassCode);
 }
