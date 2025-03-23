@@ -1,0 +1,20 @@
+package com.roomx.shared.dto.resource.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.UUID;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class EquipmentPriceHistoryResponse {
+    private BigDecimal unitPrice;
+    private Instant validFrom;
+    private Instant validEnd;
+}

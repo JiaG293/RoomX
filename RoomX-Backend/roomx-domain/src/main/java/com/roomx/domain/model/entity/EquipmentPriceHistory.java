@@ -16,6 +16,8 @@ public class EquipmentPriceHistory {
     private UUID id;
     private Equipment equipment;
     private BigDecimal unitPrice;
-    private Instant validStart;
+    private Instant validFrom;
     private Instant validEnd;
+    @Builder.Default
+    private boolean isActive = true;
 }

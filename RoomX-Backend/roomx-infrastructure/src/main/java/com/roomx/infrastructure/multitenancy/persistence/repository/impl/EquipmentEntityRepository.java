@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -47,5 +49,12 @@ public class EquipmentEntityRepository implements EquipmentRepository {
     @Override
     public void deleteById(String id) {
         jpaEquipmentEntityRepository.deleteById(UUID.fromString(id));
+    }
+
+    @Override
+    public List<Equipment> saveAll(List<Equipment> listEquipmentDeleted) {
+        var listEquipmentEntity = listEquipmentDeleted.stream().map(equipmentEntityMapper::toEntity).toList();
+        var savedEquipmentEntity = jpaEquipmentEntityRepository.saveAll(listEquipmentEntity);
+        return savedEquipmentEntity.stream().map(equipmentEntityMapper::toDomain).toList();
     }
 }

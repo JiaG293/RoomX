@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -18,7 +19,6 @@ public class EquipmentResponse {
     private String name;
     private String brand;
     private String description;
-    private BigDecimal unitPrice;
-    private Instant createdAt;
-    private Instant updatedAt;
+    private List<String> imageUrls;
+    private EquipmentPriceHistoryResponse price;
 }

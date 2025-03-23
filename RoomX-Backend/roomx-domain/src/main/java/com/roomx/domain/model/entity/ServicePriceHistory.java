@@ -16,6 +16,8 @@ public class ServicePriceHistory {
     private UUID id;
     private Service service;
     private BigDecimal unitPrice;
-    private Instant validStart;
+    private Instant validFrom;
     private Instant validEnd;
+    @Builder.Default
+    private boolean isActive = true;
 }

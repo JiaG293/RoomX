@@ -21,7 +21,6 @@ CREATE  TABLE equipment (
                             updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                             equipment_code       varchar(32)    ,
                             status               varchar(32)    ,
-                            image_urls           varchar[]    ,
                             CONSTRAINT pk_thiet_bi PRIMARY KEY ( equipment_id ),
                             CONSTRAINT unq_equipment UNIQUE ( equipment_code )
 );
@@ -32,6 +31,7 @@ CREATE  TABLE equipment_price_history (
                                           valid_from           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                                           unit_price           numeric    ,
                                           valid_end            timestamp    ,
+                                          is_active            boolean DEFAULT true   ,
                                           CONSTRAINT pk_equipment_price_history PRIMARY KEY ( equipment_price_history_id )
 );
 
@@ -46,12 +46,11 @@ CREATE  TABLE exception_date (
 );
 
 CREATE  TABLE image_url (
-                            image_url_id         uuid  NOT NULL  ,
-                            "type"               varchar(64)    ,
-                            entity_id            uuid    ,
+                            entity_id            uuid  NOT NULL  ,
+                            image_order          integer  NOT NULL  ,
+                            entity_type          varchar(64)    ,
                             url                  varchar    ,
-                            "order"              integer    ,
-                            CONSTRAINT pk_image_url PRIMARY KEY ( image_url_id )
+                            CONSTRAINT pk_image_url PRIMARY KEY ( entity_id, image_order )
 );
 
 CREATE  TABLE place (
@@ -105,6 +104,7 @@ CREATE  TABLE room_class_price_history (
                                            base_price           numeric    ,
                                            total_price          numeric    ,
                                            valid_end            timestamp    ,
+                                           is_active            boolean DEFAULT true   ,
                                            CONSTRAINT pk_room_class_price_history PRIMARY KEY ( room_class_price_history )
 );
 
@@ -117,7 +117,6 @@ CREATE  TABLE service (
                           updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                           service_code         varchar(32)    ,
                           status               varchar    ,
-                          image_urls           varchar[]    ,
                           CONSTRAINT pk_dich_vu PRIMARY KEY ( service_id ),
                           CONSTRAINT unq_service UNIQUE ( service_code )
 );
@@ -128,6 +127,7 @@ CREATE  TABLE service_price_history (
                                         unit_price           numeric    ,
                                         valid_start          timestamp    ,
                                         valid_end            timestamp    ,
+                                        is_active            boolean DEFAULT true   ,
                                         CONSTRAINT pk_service_price_history PRIMARY KEY ( service_price_history_id )
 );
 
@@ -213,8 +213,8 @@ CREATE  TABLE booking (
                           previous_room_id     uuid    ,
                           meeting_date         date    ,
                           CONSTRAINT pk_booking_order PRIMARY KEY ( booking_id ),
-                          CONSTRAINT unq_booking_room_id UNIQUE ( room_id ) ,
-                          CONSTRAINT unq_booking UNIQUE ( booking_code )
+                          CONSTRAINT unq_booking UNIQUE ( booking_code ) ,
+                          CONSTRAINT unq_booking_room_id UNIQUE ( room_id )
 );
 
 CREATE INDEX idx_booking ON booking USING  btree ( meeting_start, meeting_end );
@@ -273,7 +273,6 @@ CREATE  TABLE room (
                        description          text    ,
                        room_class_id        uuid  NOT NULL  ,
                        room_code            varchar(32)    ,
-                       image_urls           varchar[]    ,
                        CONSTRAINT pk_phong_hop PRIMARY KEY ( room_id ),
                        CONSTRAINT unq_phong_hop_ma_phong UNIQUE ( room_code )
 );

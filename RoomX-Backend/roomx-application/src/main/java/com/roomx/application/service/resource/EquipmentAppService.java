@@ -1,5 +1,9 @@
 package com.roomx.application.service.resource;
 
+
+import com.roomx.domain.model.aggrerate.Equipment;
+import com.roomx.domain.model.entity.EquipmentPriceHistory;
+import com.roomx.domain.repository.EquipmentPriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.EquipmentCreateRequest;
 import com.roomx.shared.dto.resource.request.EquipmentQueryRequest;
 import com.roomx.shared.dto.resource.request.EquipmentUpdateRequest;
@@ -8,6 +12,7 @@ import com.roomx.application.mapper.EquipmentAppMapper;
 import com.roomx.domain.repository.EquipmentRepository;
 import com.roomx.infrastructure.multitenancy.persistence.dto.EquipmentFilter;
 import com.roomx.infrastructure.multitenancy.persistence.service.EquipmentEntityService;
+import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +24,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 
 @Slf4j
 @Service
@@ -27,35 +36,71 @@ public class EquipmentAppService {
     private final EquipmentRepository equipmentRepository;
     private final EquipmentAppMapper equipmentAppMapper;
     private final EquipmentEntityService equipmentEntityService;
+    private final EquipmentPriceHistoryRepository equipmentPriceHistoryRepository;
 
     @Transactional
-    public EquipmentResponse createEquipment(EquipmentCreateRequest equipmentCreateRequest){
-        var equipmentDomain = equipmentAppMapper.toDomain(equipmentCreateRequest);
+    public EquipmentResponse createEquipment(EquipmentCreateRequest request) {
+        var equipmentCheckCode = equipmentRepository.findByEquipmentCode(request.getEquipmentCode());
 
+        if (equipmentCheckCode.isPresent()) {
+            if (equipmentCheckCode.get().getStatus().equals(DeleteStatusType.getDefaultString())) {
+                throw new AppException(ErrorCode.EQUIPMENT_CONFLICT, equipmentCheckCode.get().getEquipmentCode());
+            }
+            throw new AppException(ErrorCode.EQUIPMENT_FORBIDDEN, equipmentCheckCode.get().getEquipmentCode());
+        }
+
+        var equipmentDomain = equipmentAppMapper.toDomain(request);
         var savedEquipment = equipmentRepository.save(equipmentDomain);
+
+
+        var equipmentPrice = EquipmentPriceHistory.builder()
+                .equipment(savedEquipment)
+                .validFrom(request.getValidFrom())
+                .validEnd(request.getValidEnd())
+                .unitPrice(request.getUnitPrice())
+                .isActive(true)
+                .build();
+        var savedEquipmentPrice = equipmentPriceHistoryRepository.save(equipmentPrice);
+
+        savedEquipment.setPrice(savedEquipmentPrice);
 
         return equipmentAppMapper.toResponse(savedEquipment);
     }
 
     @Transactional
-    public EquipmentResponse updateEquipmentById(String equipmentId, EquipmentUpdateRequest request){
+    public EquipmentResponse updateEquipmentById(String equipmentId, EquipmentUpdateRequest request) {
         var equipmentDomain = equipmentRepository.findById(equipmentId)
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND, equipmentId));
 
-        log.info("domain: {}", equipmentDomain.getName());
         equipmentAppMapper.updateDomainFromDto(request, equipmentDomain);
-        log.info("domainUpdate: {}", equipmentDomain.getName());
+
 
         var savedEquipment = equipmentRepository.save(equipmentDomain);
         return equipmentAppMapper.toResponse(savedEquipment);
     }
 
     @Transactional
-    public void deleteEquipmentById(String equipmentId){
+    public void deleteEquipmentById(String equipmentId) {
         var equipmentDomain = equipmentRepository.findById(equipmentId)
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND, equipmentId));
+        equipmentDomain.setStatus(DeleteStatusType.INACTIVE.toString());
+        equipmentRepository.save(equipmentDomain);
+    }
 
-        equipmentRepository.delete(equipmentDomain);
+    @Transactional
+    public Map<String, List<String>> deleteListEquipmentById(List<String> equipments) {
+        var listEquipmentDeleted = new ArrayList<Equipment>();
+        var equipmentFailedDelete = equipments.stream().map(equipment -> {
+            var equipmentFind = equipmentRepository.findById(equipment);
+            if (equipmentFind.isPresent()) {
+                var equipmentDomain = equipmentFind.get();
+                equipmentDomain.setStatus(DeleteStatusType.INACTIVE.toString());
+                listEquipmentDeleted.add(equipmentDomain);
+            }
+            return equipment;
+        }).toList();
+        equipmentRepository.saveAll(listEquipmentDeleted);
+        return Map.of("listEquipmentDeleteFailed", equipmentFailedDelete);
     }
 
     public Page<EquipmentResponse> getListEquipmentPages(
@@ -63,7 +108,7 @@ public class EquipmentAppService {
             int page,
             int size,
             String sortBy,
-            String direction){
+            String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 

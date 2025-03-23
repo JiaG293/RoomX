@@ -1,9 +1,8 @@
 package com.roomx.domain.model.aggrerate;
 
-import com.roomx.domain.model.entity.ImageUrl;
+import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +26,9 @@ public class Equipment {
     @Builder.Default
     private Instant updatedAt = Instant.now();
 
-
     @Builder.Default
     private List<String> imageUrls = new ArrayList<>();
 
+    private EquipmentPriceHistory price;
 
 }

@@ -8,7 +8,6 @@ import com.roomx.domain.repository.GroupMemberRepository;
 import com.roomx.domain.repository.GroupRepository;
 import com.roomx.domain.repository.UserRepository;
 import com.roomx.infrastructure.multitenancy.persistence.service.GroupEntityService;
-import com.roomx.infrastructure.multitenancy.persistence.service.GroupMemberEntityService;
 import com.roomx.infrastructure.multitenancy.security.oauth.SecurityUtil;
 import com.roomx.shared.dto.user.request.GroupCreateAdminRequest;
 import com.roomx.shared.dto.user.response.GroupResponse;

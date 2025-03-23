@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -67,7 +66,8 @@ public class EquipmentEntity {
 
     @ElementCollection
     @CollectionTable(name = "image_url", joinColumns = @JoinColumn(name = "entity_id"))
-    @Column(name = "image_urls")
+    @MapKeyColumn(name = "entity_type")
+    @Column(name = "url")
     @OrderColumn(name="image_order")
     private List<String> imageUrls = new ArrayList<>();
 }

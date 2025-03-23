@@ -2,6 +2,8 @@ package com.roomx.domain.repository;
 
 import com.roomx.domain.model.aggrerate.Equipment;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public interface EquipmentRepository {
@@ -11,4 +13,5 @@ public interface EquipmentRepository {
     void delete(Equipment equipment);
     void deleteById(String id);
 
+    List<Equipment> saveAll(List<Equipment> listEquipmentDeleted);
 }

@@ -19,4 +19,6 @@ public class RoomClassPriceHistory {
     private BigDecimal totalPrice;
     private Instant validEnd;
     private Instant validFrom;
+    @Builder.Default
+    private boolean isActive = true;
 }

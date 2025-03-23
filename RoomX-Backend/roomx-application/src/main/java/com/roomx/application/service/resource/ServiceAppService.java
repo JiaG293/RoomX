@@ -62,6 +62,7 @@ public class ServiceAppService {
         serviceRepository.delete(serviceDomain);
     }
 
+
     public Page<ServiceResponse> getListServicePages(
             ServiceQueryRequest filterRequest,
             int page,

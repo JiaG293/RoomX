@@ -15,6 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/equipments")
@@ -63,5 +66,13 @@ public class EquipmentController {
     public ResultResponse<?> deleteEquipment(@PathVariable String equipmentId) {
         equipmentAppService.deleteEquipmentById(equipmentId);
         return ResultResponse.<Void>builder().build();
+    }
+
+    @DeleteMapping
+    public ResultResponse<?> deleteEquipment(@RequestBody List<String> listEquipmentId) {
+        var result = equipmentAppService.deleteListEquipmentById(listEquipmentId);
+        return ResultResponse.<Map<String, List<String>>>builder()
+                .result(result)
+                .build();
     }
 }
