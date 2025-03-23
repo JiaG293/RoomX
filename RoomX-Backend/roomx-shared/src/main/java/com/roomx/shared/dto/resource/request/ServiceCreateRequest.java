@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -20,5 +22,8 @@ public class ServiceCreateRequest {
     private String description;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String note;
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private List<String> imageUrls;
     private BigDecimal unitPrice;
 }

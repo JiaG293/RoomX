@@ -22,7 +22,5 @@ public class EquipmentCreateRequest {
     private String description;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> imageUrls;
-    private Instant validFrom;
-    private Instant validEnd;
     private BigDecimal unitPrice;
 }
