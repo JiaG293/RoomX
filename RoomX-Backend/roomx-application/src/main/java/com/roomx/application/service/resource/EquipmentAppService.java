@@ -50,6 +50,7 @@ public class EquipmentAppService {
         }
 
         var equipmentDomain = equipmentAppMapper.toDomain(request);
+        equipmentDomain.setStatus(DeleteStatusType.getDefaultString());
         var savedEquipment = equipmentRepository.save(equipmentDomain);
 
 
@@ -58,8 +59,13 @@ public class EquipmentAppService {
                 .validFrom(request.getValidFrom())
                 .validEnd(request.getValidEnd())
                 .unitPrice(request.getUnitPrice())
-                .isActive(true)
                 .build();
+
+        if(!equipmentPrice.checkTimeValid()){
+            throw new AppException(ErrorCode.EQUIPMENT_INVALID_TIME, request.getValidFrom(), request.getValidEnd());
+        }
+        equipmentPrice.setActive(equipmentPrice.evaluateActive());
+
         var savedEquipmentPrice = equipmentPriceHistoryRepository.save(equipmentPrice);
 
         savedEquipment.setPrice(savedEquipmentPrice);

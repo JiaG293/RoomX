@@ -70,7 +70,8 @@ public enum ErrorCode {
     GROUPMEMBER_NOTFOUND(1000, "error.group_member.not_found", HttpStatus.NOT_FOUND),
     EQUIPMENT_CONFLICT(1000, "error.equipment.conflict", HttpStatus.CONFLICT),
     EQUIPMENT_FORBIDDEN(1000, "error.equipment.forbidden", HttpStatus.FORBIDDEN),
-    EQUIPMENT_NOT_FOUND(1000, "error.equipment.not_found", HttpStatus.NOT_FOUND);
+    EQUIPMENT_NOT_FOUND(1000, "error.equipment.not_found", HttpStatus.NOT_FOUND),
+    EQUIPMENT_INVALID_TIME(1000, "valid.equipment.time_invalid", HttpStatus.BAD_REQUEST);
 
 
 
