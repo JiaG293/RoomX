@@ -1,8 +1,8 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.jpa;
 
-import com.roomx.domain.model.aggrerate.Equipment;
+
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.EquipmentEntity;
-import io.micrometer.observation.ObservationFilter;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

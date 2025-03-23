@@ -13,7 +13,5 @@ import java.time.Instant;
 @AllArgsConstructor
 @Data
 public class EquipmentPriceHistoryCreateRequest {
-    private Instant validFrom;
-    private Instant validEnd;
     private BigDecimal unitPrice;
 }

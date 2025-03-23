@@ -98,7 +98,7 @@ ON CONFLICT (place_id) DO NOTHING;
 
 
 --EQUIPMENT
-insert into giau.equipment (equipment_id, name, brand, description, created_at, updated_at, equipment_code, status)
+insert into equipment (equipment_id, name, brand, description, created_at, updated_at, equipment_code, status)
 values  ('0a3b8f09-eab1-45c9-a955-1cb484ead7c7', 'Máy chấm công vân tay', 'Sennheiser', 'Desc_G44H02I7Z98', '2025-03-23 12:07:25.986213', '2025-03-23 12:07:25.986213', 'EQUIPMENT_F4XC67', 'ACTIVE'),
         ('fa34d21b-3451-4d62-9bf4-a4a61237b786', 'Camera hội nghị không dây', 'SHARP', 'Desc_R117MRC35V', '2025-03-23 12:07:26.485715', '2025-03-23 12:07:26.485715', 'EQUIPMENT_IFWTNZ', 'ACTIVE'),
         ('52102dde-95f7-4d6c-b1c0-5b5f7803e035', 'Loa âm trần', 'Shure', 'Desc_HS2546A3T9Q', '2025-03-23 12:07:27.013208', '2025-03-23 12:07:27.013208', 'EQUIPMENT_G114SU', 'ACTIVE'),
@@ -124,8 +124,8 @@ values  ('0a3b8f09-eab1-45c9-a955-1cb484ead7c7', 'Máy chấm công vân tay', '
         ('ffdb4322-f424-46ae-95d5-d26f11ff6ce1', 'Ghế họp lưới', 'Fami', 'Desc_EKXB0WXIDPB', '2025-03-23 12:07:31.303252', '2025-03-23 12:07:31.303252', 'EQUIPMENT_KM0VH3', 'ACTIVE')
 ON CONFLICT (equipment_id) DO NOTHING;
 
-insert into giau.equipment_price_history (equipment_price_history_id, equipment_id, valid_from, unit_price, valid_end, is_active)
-values  ('fe6f7a03-43c3-48aa-899b-76d58ecb4c5b', '6376ac5c-82f9-40cb-a8ef-fc4ebcee1092', '2025-03-23 08:24:42.000000', 61952, '2025-03-29 08:24:42.000000', true),
+INSERT INTO equipment_price_history (equipment_price_history_id, equipment_id, valid_from, unit_price, valid_end, active)
+VALUES  ('fe6f7a03-43c3-48aa-899b-76d58ecb4c5b', '6376ac5c-82f9-40cb-a8ef-fc4ebcee1092', '2025-03-23 08:24:42.000000', 61952, '2025-03-29 08:24:42.000000', true),
         ('66a2944d-45c9-4665-84b0-225198772da3', '5053eaf7-652b-4169-9456-9c10ac003797', '2025-03-23 08:24:42.000000', 88818, '2025-03-29 08:24:42.000000', true),
         ('23d2bf06-3f3d-4944-8b09-b530ed387777', 'b95c3e11-bc06-4ad8-aaa5-aec25d871aba', '2025-03-23 08:24:42.000000', 41957, '2025-03-29 08:24:42.000000', true),
         ('88ab982c-d1a1-478e-b8e2-e70e786981dc', 'ee070200-33d8-4b70-8290-22b9d1265d7c', '2025-03-23 08:24:42.000000', 27344, '2025-03-29 08:24:42.000000', true),
@@ -150,7 +150,7 @@ values  ('fe6f7a03-43c3-48aa-899b-76d58ecb4c5b', '6376ac5c-82f9-40cb-a8ef-fc4ebc
         ('9d7f9064-5a89-47d3-a63f-27d80efcee9a', 'ffdb4322-f424-46ae-95d5-d26f11ff6ce1', '2025-03-23 08:24:42.000000', 61553, '2025-03-29 08:24:42.000000', true)
 ON CONFLICT (equipment_price_history_id) DO NOTHING;
 
-insert into giau.image_url (entity_id, image_order, entity_type, url)
+insert into image_url (entity_id, image_order, entity_type, url)
 values  ('6376ac5c-82f9-40cb-a8ef-fc4ebcee1092', 0, null, 'http://192.168.1.251:9000/roomx/giau/equipment/Ao-Natsu.Kimi.Ni.Koi.Shita.30-Nichi.2018.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4_snapshot_00.03.56_[2022.02.04_18.58.01].png'),
         ('6376ac5c-82f9-40cb-a8ef-fc4ebcee1092', 1, null, 'http://192.168.1.251:9000/roomx/giau/equipment/Ao-Natsu.Kimi.Ni.Koi.Shita.30-Nichi.2018.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4_snapshot_01.50.32_[2022.02.04_19.02.50].png'),
         ('6376ac5c-82f9-40cb-a8ef-fc4ebcee1092', 2, null, 'http://192.168.1.251:9000/roomx/giau/equipment/Ao-Natsu.Kimi.Ni.Koi.Shita.30-Nichi.2018.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4_snapshot_01.45.05_[2022.02.04_19.02.11].png'),

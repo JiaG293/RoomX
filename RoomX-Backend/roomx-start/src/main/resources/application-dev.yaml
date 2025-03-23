@@ -153,7 +153,7 @@ multitenancy:
       enabled: ${MULTITENANCY_SANG_ENABLED:false}
       schema: ${MULTITENANCY_SANG_SCHEMA:sang}
       issuer: ${MULTITENANCY_SANG_ISSUER:http://192.168.1.251:5555/realms/sang}
-    - identifier: ${MULTITENANCY_HIEP_IDENTIFIER:hiep}
-      enabled: ${MULTITENANCY_HIEP_ENABLED:false}
-      schema: ${MULTITENANCY_HIEP_SCHEMA:hiep}
-      issuer: ${MULTITENANCY_HIEP_ISSUER:http://192.168.1.251:5555/realms/hiep}
+#    - identifier: ${MULTITENANCY_HIEP_IDENTIFIER:hiep}
+#      enabled: ${MULTITENANCY_HIEP_ENABLED:false}
+#      schema: ${MULTITENANCY_HIEP_SCHEMA:hiep}
+#      issuer: ${MULTITENANCY_HIEP_ISSUER:http://192.168.1.251:5555/realms/hiep}

@@ -5,6 +5,7 @@ import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import com.roomx.domain.repository.EquipmentPriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.EquipmentCreateRequest;
+import com.roomx.shared.dto.resource.request.EquipmentPriceHistoryCreateRequest;
 import com.roomx.shared.dto.resource.request.EquipmentQueryRequest;
 import com.roomx.shared.dto.resource.request.EquipmentUpdateRequest;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
@@ -24,9 +25,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Slf4j
@@ -56,15 +59,10 @@ public class EquipmentAppService {
 
         var equipmentPrice = EquipmentPriceHistory.builder()
                 .equipment(savedEquipment)
-                .validFrom(request.getValidFrom())
-                .validEnd(request.getValidEnd())
+                .validFrom(Instant.now())
                 .unitPrice(request.getUnitPrice())
+                .active(true)
                 .build();
-
-        if(!equipmentPrice.checkTimeValid()){
-            throw new AppException(ErrorCode.EQUIPMENT_INVALID_TIME, request.getValidFrom(), request.getValidEnd());
-        }
-        equipmentPrice.setActive(equipmentPrice.evaluateActive());
 
         var savedEquipmentPrice = equipmentPriceHistoryRepository.save(equipmentPrice);
 
@@ -139,6 +137,43 @@ public class EquipmentAppService {
 
         return equipmentDomainPage.map(equipmentAppMapper::toResponse);
     }
+
+    @Transactional
+    public EquipmentResponse addPriceNew(String equipmentId, EquipmentPriceHistoryCreateRequest request) {
+        var equipmentDomain = equipmentRepository.findByIdAndStatus(equipmentId, DeleteStatusType.getDefaultString())
+                .orElseThrow(() -> new AppException(ErrorCode.EQUIPMENT_NOT_FOUND));
+
+        var validEnd = Instant.now();
+
+        var equipmentPriceOldDomain = equipmentPriceHistoryRepository.findLatestValidFrom(equipmentId);
+
+        if (equipmentPriceOldDomain.isPresent()) {
+            var oldPriceDomain = equipmentPriceOldDomain.get();
+            oldPriceDomain.setActive(false);
+            oldPriceDomain.setValidEnd(validEnd);
+            oldPriceDomain = equipmentPriceHistoryRepository.save(oldPriceDomain);
+
+        }
+
+        var equipmentPriceNewDomain = EquipmentPriceHistory.builder()
+                .equipment(equipmentDomain)
+                .unitPrice(request.getUnitPrice())
+                .validFrom(validEnd)
+                .active(true)
+                .build();
+
+        // logic add new roomClassPriceHistory
+
+        var savedEquipmentPrice = equipmentPriceHistoryRepository.save(equipmentPriceNewDomain);
+
+        equipmentDomain.setPrice(savedEquipmentPrice);
+
+        return equipmentAppMapper.toResponse(equipmentDomain);
+    }
+
+
+
+
 
 
 }

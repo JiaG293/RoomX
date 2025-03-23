@@ -18,9 +18,9 @@ public class EquipmentPriceHistory {
     private BigDecimal unitPrice;
     private Instant validFrom;
     private Instant validEnd;
-    private boolean isActive;
+    private boolean active;
 
-    public boolean evaluateActive(){
+    /*public boolean evaluateActive(){
         Instant now = Instant.now();
         return isActive && validFrom.isBefore(now) && validEnd.isAfter(now);
     }
@@ -28,5 +28,5 @@ public class EquipmentPriceHistory {
     public boolean checkTimeValid(){
         Instant now = Instant.now();
         return validFrom.isBefore(validEnd) && !validFrom.isBefore(now);
-    }
+    }*/
 }

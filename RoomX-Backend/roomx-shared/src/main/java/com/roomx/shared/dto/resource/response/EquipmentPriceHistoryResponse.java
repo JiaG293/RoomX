@@ -16,5 +16,4 @@ import java.util.UUID;
 public class EquipmentPriceHistoryResponse {
     private BigDecimal unitPrice;
     private Instant validFrom;
-    private Instant validEnd;
 }

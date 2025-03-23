@@ -2,6 +2,7 @@ package com.roomx.controller.resource;
 
 
 import com.roomx.shared.dto.resource.request.EquipmentCreateRequest;
+import com.roomx.shared.dto.resource.request.EquipmentPriceHistoryCreateRequest;
 import com.roomx.shared.dto.resource.request.EquipmentQueryRequest;
 import com.roomx.shared.dto.resource.request.EquipmentUpdateRequest;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
@@ -35,8 +36,18 @@ public class EquipmentController {
     }
 
     @PatchMapping("/{equipmentId}")
-    public ResultResponse<?> createEquipment(@PathVariable String equipmentId, @Validated @RequestBody EquipmentUpdateRequest request) {
+    public ResultResponse<?> updateEquipment(@PathVariable String equipmentId, @Validated @RequestBody EquipmentUpdateRequest request) {
         var result = equipmentAppService.updateEquipmentById(equipmentId, request);
+        return ResultResponse.<EquipmentResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/{equipmentId}/prices")
+    public ResultResponse<?> addNewPriceForEquipment(
+            @PathVariable String equipmentId,
+            @Validated @RequestBody EquipmentPriceHistoryCreateRequest request) {
+        var result = equipmentAppService.addPriceNew(equipmentId, request);
         return ResultResponse.<EquipmentResponse>builder()
                 .result(result)
                 .build();

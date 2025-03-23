@@ -1,9 +1,12 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
+import com.roomx.domain.model.aggrerate.Booking;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -23,7 +26,7 @@ public class EquipmentPriceHistoryEntity {
     public static final String COLUMN_VALIDFROM_NAME = "valid_from";
     public static final String COLUMN_UNITPRICE_NAME = "unit_price";
     public static final String COLUMN_VALIDEND_NAME = "valid_end";
-    public static final String COLUMN_ISACTIVE_NAME = "is_active";
+    public static final String COLUMN_ISACTIVE_NAME = "active";
 
 
     @Id
@@ -40,13 +43,15 @@ public class EquipmentPriceHistoryEntity {
     @Column(name = COLUMN_VALIDFROM_NAME)
     private Instant validFrom;
 
+    @Column(name = COLUMN_ISACTIVE_NAME)
+    private boolean active;
+
     @Column(name = COLUMN_UNITPRICE_NAME)
     private BigDecimal unitPrice;
 
     @Column(name = COLUMN_VALIDEND_NAME)
     private Instant validEnd;
 
-    @Column(name = COLUMN_ISACTIVE_NAME)
-    private boolean isActive;
+
 
 }

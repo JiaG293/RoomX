@@ -1,3 +1,4 @@
+
 CREATE  TABLE branch (
                          branch_id            uuid  NOT NULL  ,
                          name                 varchar(500)    ,
@@ -31,7 +32,7 @@ CREATE  TABLE equipment_price_history (
                                           valid_from           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                                           unit_price           numeric    ,
                                           valid_end            timestamp    ,
-                                          is_active            boolean DEFAULT true   ,
+                                          active               boolean    ,
                                           CONSTRAINT pk_equipment_price_history PRIMARY KEY ( equipment_price_history_id )
 );
 
@@ -104,7 +105,7 @@ CREATE  TABLE room_class_price_history (
                                            base_price           numeric    ,
                                            total_price          numeric    ,
                                            valid_end            timestamp    ,
-                                           is_active            boolean DEFAULT true   ,
+                                           active               boolean    ,
                                            CONSTRAINT pk_room_class_price_history PRIMARY KEY ( room_class_price_history )
 );
 
@@ -127,7 +128,7 @@ CREATE  TABLE service_price_history (
                                         unit_price           numeric    ,
                                         valid_start          timestamp    ,
                                         valid_end            timestamp    ,
-                                        is_active            boolean DEFAULT true   ,
+                                        active               boolean    ,
                                         CONSTRAINT pk_service_price_history PRIMARY KEY ( service_price_history_id )
 );
 

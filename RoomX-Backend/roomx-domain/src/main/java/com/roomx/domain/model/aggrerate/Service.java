@@ -1,6 +1,5 @@
 package com.roomx.domain.model.aggrerate;
 
-import com.roomx.domain.model.entity.ImageUrl;
 import lombok.*;
 
 import java.math.BigDecimal;

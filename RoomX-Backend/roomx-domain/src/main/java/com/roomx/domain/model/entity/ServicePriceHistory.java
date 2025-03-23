@@ -18,6 +18,5 @@ public class ServicePriceHistory {
     private BigDecimal unitPrice;
     private Instant validFrom;
     private Instant validEnd;
-    @Builder.Default
-    private boolean isActive = true;
+    private boolean active;
 }
