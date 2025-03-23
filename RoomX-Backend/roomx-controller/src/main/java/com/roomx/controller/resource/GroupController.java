@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -65,6 +66,16 @@ public class GroupController {
             @PathVariable String memberId) {
         groupAppService.deleteMemberFromGroup(groupId, memberId);
         return ResultResponse.<Void>builder()
+                .build();
+    }
+
+    @DeleteMapping("/{groupId}/members")
+    public ResultResponse<?> deleteMemberFromGroup(
+            @PathVariable String groupId,
+            @Validated @RequestBody List<String> members) {
+        var result = groupAppService.deleteListMemberFromGroup(groupId, members);
+        return ResultResponse.<Map<String, List<String>>>builder()
+                .result(result)
                 .build();
     }
 }

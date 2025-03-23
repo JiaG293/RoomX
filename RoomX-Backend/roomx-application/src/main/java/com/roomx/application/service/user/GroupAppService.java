@@ -20,10 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -60,9 +57,28 @@ public class GroupAppService {
 
         groupMemberRepository
                 .findById(new GroupMemberId(UUID.fromString(memberId), groupDomain.getId()))
-                        .orElseThrow(() -> new AppException(ErrorCode.GROUPMEMBER_NOTFOUND, memberId));
+                .orElseThrow(() -> new AppException(ErrorCode.GROUPMEMBER_NOTFOUND, memberId));
 
         groupMemberRepository.deleteById(groupId, memberId);
+    }
+
+    @Transactional
+    public Map<String, List<String>> deleteListMemberFromGroup(String groupId, List<String> members) {
+        var groupDomain = groupRepository.findById(groupId, DeleteStatusType.getDefaultString())
+                .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
+        var memberExist = new ArrayList<GroupMemberId>();
+        var memberNotExist = members.stream().map(member -> {
+            var groupMemberId = new GroupMemberId(UUID.fromString(member), groupDomain.getId());
+            var memberFind = groupMemberRepository
+                    .findById(groupMemberId);
+            if (memberFind.isPresent()) {
+                memberExist.add(groupMemberId);
+            }
+            return member;
+        }).toList();
+        groupMemberRepository.deleteAllById(memberExist);
+
+        return Map.of("memberNotExist", memberNotExist);
     }
 
 

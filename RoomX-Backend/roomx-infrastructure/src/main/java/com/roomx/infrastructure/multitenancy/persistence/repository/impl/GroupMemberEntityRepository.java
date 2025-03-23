@@ -84,5 +84,12 @@ public class GroupMemberEntityRepository implements GroupMemberRepository {
                         )));
     }
 
+    @Override
+    public void deleteAllById(List<GroupMemberId> memberExist) {
+        jpaGroupMemberRepository
+                .deleteAllById(memberExist
+                        .stream().map(groupMemberEntityIdMapper::toEntity).toList());
+    }
+
 
 }
