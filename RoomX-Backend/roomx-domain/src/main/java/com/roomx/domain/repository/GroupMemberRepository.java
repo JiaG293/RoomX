@@ -15,4 +15,6 @@ public interface GroupMemberRepository {
     List<GroupMember> saveAll(List<GroupMember> listGroupMembers);
 
     List<GroupMember> findAllByGroupId(String groupId);
+
+    void deleteById(String groupId, String memberId);
 }

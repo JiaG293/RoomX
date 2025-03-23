@@ -66,7 +66,8 @@ public enum ErrorCode {
     PLACE_INVALID(1000, "valid.place.place_type", HttpStatus.BAD_REQUEST),
     GROUP_CONFLICT(1000, "error.group.conflict", HttpStatus.CONFLICT),
     GROUP_NOT_FOUND(1000, "error.group.not_found", HttpStatus.NOT_FOUND),
-    GROUPMEMBER_CONFLICT(1000, "error.group_member.conflict", HttpStatus.CONFLICT);
+    GROUPMEMBER_CONFLICT(1000, "error.group_member.conflict", HttpStatus.CONFLICT),
+    GROUPMEMBER_NOTFOUND(1000, "error.group_member.not_found", HttpStatus.NOT_FOUND);
 
 
 

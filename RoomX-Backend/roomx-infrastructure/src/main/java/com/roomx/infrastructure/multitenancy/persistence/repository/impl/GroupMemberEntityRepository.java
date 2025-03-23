@@ -73,4 +73,16 @@ public class GroupMemberEntityRepository implements GroupMemberRepository {
                 .stream()
                 .map(groupMemberEntityMapper::toDomain).toList();
     }
+
+    @Override
+    public void deleteById(String groupId, String memberId) {
+        jpaGroupMemberRepository
+                .deleteById(groupMemberEntityIdMapper
+                        .toEntity(new GroupMemberId(
+                                UUID.fromString(memberId),
+                                UUID.fromString(groupId)
+                        )));
+    }
+
+
 }

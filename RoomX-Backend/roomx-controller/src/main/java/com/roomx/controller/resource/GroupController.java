@@ -58,4 +58,13 @@ public class GroupController {
                 .result(result)
                 .build();
     }
+
+    @DeleteMapping("/{groupId}/members/{memberId}")
+    public ResultResponse<?> deleteMemberFromGroup(
+            @PathVariable String groupId,
+            @PathVariable String memberId) {
+        groupAppService.deleteMemberFromGroup(groupId, memberId);
+        return ResultResponse.<Void>builder()
+                .build();
+    }
 }

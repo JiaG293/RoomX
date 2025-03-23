@@ -53,6 +53,19 @@ public class GroupAppService {
         return groupAppMapper.toResponse(groupDomain);
     }
 
+    @Transactional
+    public void deleteMemberFromGroup(String groupId, String memberId) {
+        var groupDomain = groupRepository.findById(groupId, DeleteStatusType.getDefaultString())
+                .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
+
+        groupMemberRepository
+                .findById(new GroupMemberId(UUID.fromString(memberId), groupDomain.getId()))
+                        .orElseThrow(() -> new AppException(ErrorCode.GROUPMEMBER_NOTFOUND, memberId));
+
+        groupMemberRepository.deleteById(groupId, memberId);
+    }
+
+
     public boolean checkMemberIsExistedGroup(String groupId, String memberId) {
         var groupMemberDomain = groupMemberRepository
                 .findById(new GroupMemberId(UUID.fromString(groupId), UUID.fromString(memberId)));
