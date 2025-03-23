@@ -80,8 +80,8 @@ public class ServiceAppService {
     public void deleteServiceById(String serviceId){
         var serviceDomain = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND, serviceId));
-
-        serviceRepository.delete(serviceDomain);
+        serviceDomain.setStatus(DeleteStatusType.INACTIVE.toString());
+        serviceRepository.save(serviceDomain);
     }
 
 
