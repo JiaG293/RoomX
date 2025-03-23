@@ -14,4 +14,6 @@ public interface JpaRoomClassEntityRepository extends JpaRepository<RoomClassEnt
     boolean existsByRoomClassCode(String roomClassCode);
 
     Optional<RoomClassEntity> findByRoomClassCode(String roomClassCode);
+
+    Optional<RoomClassEntity> findByIdAndStatus(UUID roomClassId, String status);
 }

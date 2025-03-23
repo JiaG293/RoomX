@@ -12,9 +12,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EquipmentRoomClassResponse {
-    private String roomClassId;
     private String equipmentId;
-    private BigDecimal unitPrice;
     private int quantity;
+    private BigDecimal unitPrice;
     private BigDecimal totalPrice;
 }

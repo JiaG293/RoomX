@@ -1,5 +1,7 @@
 package com.roomx.application.service.resource;
 
+import com.roomx.domain.model.entity.EquipmentPriceHistory;
+import com.roomx.domain.repository.EquipmentPriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.EquipmentRoomClassCreateRequest;
 import com.roomx.shared.dto.resource.response.EquipmentRoomClassDetailResponse;
 import com.roomx.application.mapper.EquipmentRoomClassAppMapper;
@@ -8,6 +10,8 @@ import com.roomx.domain.model.vo.EquipmentRoomClassId;
 import com.roomx.domain.repository.EquipmentRepository;
 import com.roomx.domain.repository.EquipmentRoomClassRepository;
 import com.roomx.domain.repository.RoomClassRepository;
+import com.roomx.shared.dto.resource.response.EquipmentRoomClassResponse;
+import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +33,12 @@ public class EquipmentRoomClassAppService {
     private final RoomClassRepository roomClassRepository;
     private final EquipmentRoomClassRepository equipmentRoomClassRepository;
     private final EquipmentRoomClassAppMapper equipmentRoomClassAppMapper;
+    private final EquipmentPriceHistoryRepository equipmentPriceHistoryRepository;
 
     @Transactional
-    public List<EquipmentRoomClassDetailResponse> addEquipmentToRoomClass(String roomClassId, List<EquipmentRoomClassCreateRequest> request) {
+    public List<EquipmentRoomClassResponse> addEquipmentToRoomClass(String roomClassId, List<EquipmentRoomClassCreateRequest> request) {
 
-        var roomClassDomain = roomClassRepository.findById(roomClassId)
+        var roomClassDomain = roomClassRepository.findByIdAndStatus(roomClassId, DeleteStatusType.getDefaultString())
                 .orElseThrow(() -> new AppException(ErrorCode.ROOM_CLASS_NOT_FOUND, roomClassId));
 
         var equipmentCanAdd = request.stream()
@@ -58,8 +63,17 @@ public class EquipmentRoomClassAppService {
 
         var savedEntity = equipmentRoomClassRepository.saveAll(equipmentCanAdd);
 
+        var equipmentRoomClassWithPrice = savedEntity.stream()
+                .map(equipmentRoomClass -> {
+                    var equipmentPrice = equipmentPriceHistoryRepository
+                            .findLatestValidFrom(equipmentRoomClass.getEquipment().getId().toString())
+                            .orElse(null);
+                    equipmentRoomClass.setPrice(equipmentPrice);
+                    return equipmentRoomClass;
+                }).toList();
+
         return savedEntity.stream()
-                .map(equipmentRoomClassAppMapper::toResponseDetail)
+                .map(equipmentRoomClassAppMapper::toResponse)
                 .toList();
 
 

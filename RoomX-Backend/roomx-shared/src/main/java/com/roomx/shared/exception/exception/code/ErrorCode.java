@@ -74,7 +74,8 @@ public enum ErrorCode {
     EQUIPMENT_INVALID_TIME(1000, "valid.equipment.time_invalid", HttpStatus.BAD_REQUEST),
     EQUIPMENT_PRICE_TIME_CONFLICT(1000, "error.equipment.price_time.conflict", HttpStatus.CONFLICT),
     SERVICE_FORBIDDEN(1000, "error.service.forbidden", HttpStatus.CONFLICT),
-    ROOM_CLASS_FORBIDDEN(1000, "error.room_class.forbidden", HttpStatus.FORBIDDEN);
+    ROOM_CLASS_FORBIDDEN(1000, "error.room_class.forbidden", HttpStatus.FORBIDDEN),
+    EQUIPMENT_PRICE_NOT_FOUND(1000, "error.equipment.price.not_found", HttpStatus.NOT_FOUND);
 
 
 

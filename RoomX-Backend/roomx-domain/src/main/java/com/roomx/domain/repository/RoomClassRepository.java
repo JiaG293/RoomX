@@ -11,4 +11,6 @@ public interface RoomClassRepository {
     boolean checkExistsRoomClassCode(String roomClassCode);
 
     Optional<RoomClass> findByRoomClassCode(String roomClassCode);
+
+    Optional<RoomClass> findByIdAndStatus(String roomClassId, String status);
 }

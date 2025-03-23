@@ -7,11 +7,8 @@ import com.roomx.shared.dto.resource.request.ServiceRoomClassCreateRequest;
 import com.roomx.application.service.resource.EquipmentRoomClassAppService;
 import com.roomx.application.service.resource.RoomClassAppService;
 import com.roomx.application.service.resource.ServiceRoomClassAppService;
+import com.roomx.shared.dto.resource.response.*;
 import com.roomx.shared.exception.api.ResultResponse;
-import com.roomx.shared.dto.resource.response.EquipmentRoomClassDetailResponse;
-import com.roomx.shared.dto.resource.response.RoomClassDetailResponse;
-import com.roomx.shared.dto.resource.response.RoomClassResponse;
-import com.roomx.shared.dto.resource.response.ServiceRoomClassDetailResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -70,9 +67,9 @@ public class RoomClassController {
     public ResultResponse<?> addEquipmentRoomClass(
             @PathVariable String roomClassId,
             @Validated @RequestBody List<EquipmentRoomClassCreateRequest> request) {
-        log.info("data: {}", request);
+
         var result = equipmentRoomClassAppService.addEquipmentToRoomClass(roomClassId, request);
-        return ResultResponse.<List<EquipmentRoomClassDetailResponse>>builder()
+        return ResultResponse.<List<EquipmentRoomClassResponse>>builder()
                 .result(result)
                 .build();
     }

@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 public class EquipmentRoomClassEntity {
     public static final String TABLE_NAME = "equipment_room_class";
     public static final String COLUMN_QUANTITY_NAME = "quantity";
-    public static final String COLUMN_UNITPRICE_NAME = "unit_price";
 
     @EmbeddedId
     private EquipmentRoomClassEntityId id;
@@ -35,9 +34,5 @@ public class EquipmentRoomClassEntity {
     @Builder.Default
     @Column(name = COLUMN_QUANTITY_NAME)
     private Short quantity = 1;
-
-    @Builder.Default
-    @Column(name = COLUMN_UNITPRICE_NAME)
-    private BigDecimal unitPrice = BigDecimal.ZERO;
 
 }

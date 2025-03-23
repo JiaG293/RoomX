@@ -12,7 +12,8 @@ import org.mapstruct.*;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {
                 EquipmentAppMapper.class,
-                RoomClassAppMapper.class
+                RoomClassAppMapper.class,
+                RoomClassPriceHistoryAppMapper.class
         }
 )
 public interface EquipmentRoomClassAppMapper {
@@ -25,9 +26,8 @@ public interface EquipmentRoomClassAppMapper {
     EquipmentRoomClassDetailResponse toResponseDetailWithoutRoomClass(EquipmentRoomClass domain);
 
     @Mappings({
-//            @Mapping(target = "totalPrice", expression = "java(domain.getTotalPrice())"),
-            @Mapping(target = "equipmentId", source = "equipment.id"),
-            @Mapping(target = "roomClassId", source = "roomClass.id")
+            @Mapping(target = "unitPrice", source = "price.unitPrice"),
+            @Mapping(target = "equipmentId", source = "equipment.id")
     })
     EquipmentRoomClassResponse toResponse(EquipmentRoomClass domain);
 

@@ -45,4 +45,11 @@ public class RoomClassEntityRepository implements RoomClassRepository {
                 .map(roomClassEntityMapper::toDomain);
     }
 
+    @Override
+    public Optional<RoomClass> findByIdAndStatus(String roomClassId, String status) {
+        return jpaRoomClassEntityRepository
+                .findByIdAndStatus(UUID.fromString(roomClassId), status)
+                .map(roomClassEntityMapper::toDomain);
+    }
+
 }
