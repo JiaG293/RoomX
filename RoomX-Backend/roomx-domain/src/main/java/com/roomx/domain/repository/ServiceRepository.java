@@ -3,6 +3,8 @@ package com.roomx.domain.repository;
 
 import com.roomx.domain.model.aggrerate.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public interface ServiceRepository {
@@ -15,4 +17,8 @@ public interface ServiceRepository {
     boolean checkServiceCodeIsExists(String serviceCode);
 
     Optional<Service> findByServiceCode(String serviceCode);
+
+    Optional<Service> findByIdAndStatus(String serviceId, String status);
+
+    List<Service> saveAll(List<Service> services);
 }

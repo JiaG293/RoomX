@@ -1,11 +1,12 @@
 package com.roomx.application.service.resource;
 
+
+import com.roomx.domain.model.aggrerate.Service;
 import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import com.roomx.domain.model.entity.ServicePriceHistory;
 import com.roomx.domain.repository.ServicePriceHistoryRepository;
-import com.roomx.shared.dto.resource.request.ServiceCreateRequest;
-import com.roomx.shared.dto.resource.request.ServiceQueryRequest;
-import com.roomx.shared.dto.resource.request.ServiceUpdateRequest;
+import com.roomx.shared.dto.resource.request.*;
+import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.shared.dto.resource.response.ServiceResponse;
 import com.roomx.application.mapper.ServiceAppMapper;
 import com.roomx.domain.repository.ServiceRepository;
@@ -20,13 +21,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
-@Service
+@org.springframework.stereotype.Service
 @RequiredArgsConstructor
 public class ServiceAppService {
     private final ServiceRepository serviceRepository;
@@ -84,6 +87,29 @@ public class ServiceAppService {
         serviceRepository.save(serviceDomain);
     }
 
+    @Transactional
+    public Map<String, List<String>> deleteListServiceById(List<String> services) {
+        var listServiceDeleted = new ArrayList<Service>();
+        var serviceFailedDelete = new ArrayList<String>();
+
+        for (String serviceId : services) {
+            var serviceFind = serviceRepository.findByIdAndStatus(serviceId, DeleteStatusType.getDefaultString());
+            if (serviceFind.isPresent()) {
+                var serviceDomain = serviceFind.get();
+                serviceDomain.setStatus(DeleteStatusType.INACTIVE.toString());
+                listServiceDeleted.add(serviceDomain);
+            } else {
+                serviceFailedDelete.add(serviceId);
+            }
+        }
+
+        if (!listServiceDeleted.isEmpty()) {
+            serviceRepository.saveAll(listServiceDeleted);
+        }
+
+        return Map.of("listServiceDeleteFailed", serviceFailedDelete);
+    }
+
 
     public Page<ServiceResponse> getListServicePages(
             ServiceQueryRequest filterRequest,
@@ -106,6 +132,41 @@ public class ServiceAppService {
         var serviceDomainPage = serviceEntityService.filterPageServices(serviceFilter, pageable, filterRequest.isCompareType());
 
         return serviceDomainPage.map(serviceAppMapper::toResponse);
+    }
+
+
+
+    @Transactional
+    public ServiceResponse addPriceNew(String serviceId, ServicePriceHistoryCreateRequest request) {
+        var serviceDomain = serviceRepository.findByIdAndStatus(serviceId, DeleteStatusType.getDefaultString())
+                .orElseThrow(() -> new AppException(ErrorCode.EQUIPMENT_NOT_FOUND));
+
+        var validEnd = Instant.now();
+
+        var servicePriceOldDomain = servicePriceHistoryRepository.findLatestValidFrom(serviceId);
+
+        if (servicePriceOldDomain.isPresent()) {
+            var oldPriceDomain = servicePriceOldDomain.get();
+            oldPriceDomain.setActive(false);
+            oldPriceDomain.setValidEnd(validEnd);
+            servicePriceHistoryRepository.save(oldPriceDomain);
+
+        }
+
+        var servicePriceNewDomain = ServicePriceHistory.builder()
+                .service(serviceDomain)
+                .unitPrice(request.getUnitPrice())
+                .validFrom(validEnd)
+                .active(true)
+                .build();
+
+        // logic add new roomClassPriceHistory
+
+        var savedServicePrice = servicePriceHistoryRepository.save(servicePriceNewDomain);
+
+        serviceDomain.setPrice(savedServicePrice);
+
+        return serviceAppMapper.toResponse(serviceDomain);
     }
 
 

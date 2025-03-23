@@ -23,4 +23,6 @@ public interface JpaServiceEntityRepository extends JpaRepository<ServiceEntity,
     boolean existsByServiceCode(String serviceCode);
 
     Optional<ServiceEntity> findByServiceCode(String serviceCode);
+
+    Optional<ServiceEntity> findByIdAndStatus(UUID serviceId, String status);
 }

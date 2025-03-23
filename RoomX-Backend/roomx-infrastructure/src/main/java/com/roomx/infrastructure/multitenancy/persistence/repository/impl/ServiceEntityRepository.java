@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -60,6 +61,20 @@ public class ServiceEntityRepository implements ServiceRepository {
     public Optional<Service> findByServiceCode(String serviceCode) {
         return jpaServiceEntityRepository.findByServiceCode(serviceCode)
                 .map(serviceEntityMapper::toDomain);
+    }
+
+    @Override
+    public Optional<Service> findByIdAndStatus(String serviceId, String status) {
+        return jpaServiceEntityRepository
+                .findByIdAndStatus(UUID.fromString(serviceId), status)
+                .map(serviceEntityMapper::toDomain);
+    }
+
+    @Override
+    public List<Service> saveAll(List<Service> services) {
+        var serviceEntityList = services.stream().map(serviceEntityMapper::toEntity).toList();
+        var savedServiceEntityList = jpaServiceEntityRepository.saveAll(serviceEntityList);
+        return savedServiceEntityList.stream().map(serviceEntityMapper::toDomain).toList();
     }
 
 

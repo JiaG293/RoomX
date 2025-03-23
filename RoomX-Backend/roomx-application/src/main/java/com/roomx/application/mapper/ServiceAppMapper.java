@@ -11,7 +11,10 @@ import java.time.Instant;
 @Mapper(
         componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        uses = {
+                ServicePriceHistoryAppMapper.class
+        }
 )
 public interface ServiceAppMapper {
 
