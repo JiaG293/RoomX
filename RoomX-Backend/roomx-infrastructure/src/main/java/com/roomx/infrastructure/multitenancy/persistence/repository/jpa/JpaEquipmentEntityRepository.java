@@ -1,6 +1,8 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.jpa;
 
+import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.EquipmentEntity;
+import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,4 +19,6 @@ public interface JpaEquipmentEntityRepository extends JpaRepository<EquipmentEnt
     Optional<EquipmentEntity> findByEquipmentCode(String equipmentCode);
 
     Page<EquipmentEntity> findAll(Specification<EquipmentEntity> spec, Pageable pageable);
+
+    Optional<EquipmentEntity> findByIdAndStatus(UUID uuid, String status);
 }

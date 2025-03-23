@@ -69,7 +69,7 @@ public class EquipmentController {
     }
 
     @DeleteMapping
-    public ResultResponse<?> deleteEquipment(@RequestBody List<String> listEquipmentId) {
+    public ResultResponse<?> deleteListEquipment(@RequestBody List<String> listEquipmentId) {
         var result = equipmentAppService.deleteListEquipmentById(listEquipmentId);
         return ResultResponse.<Map<String, List<String>>>builder()
                 .result(result)

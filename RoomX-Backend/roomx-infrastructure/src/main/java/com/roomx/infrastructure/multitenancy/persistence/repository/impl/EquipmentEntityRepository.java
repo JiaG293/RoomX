@@ -57,4 +57,11 @@ public class EquipmentEntityRepository implements EquipmentRepository {
         var savedEquipmentEntity = jpaEquipmentEntityRepository.saveAll(listEquipmentEntity);
         return savedEquipmentEntity.stream().map(equipmentEntityMapper::toDomain).toList();
     }
+
+    @Override
+    public Optional<Equipment> findByIdAndStatus(String equipmentId, String status) {
+        return jpaEquipmentEntityRepository
+                .findByIdAndStatus(UUID.fromString(equipmentId), status)
+                .map(equipmentEntityMapper::toDomain);
+    }
 }

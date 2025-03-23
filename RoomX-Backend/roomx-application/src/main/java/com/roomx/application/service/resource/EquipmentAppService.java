@@ -90,16 +90,23 @@ public class EquipmentAppService {
     @Transactional
     public Map<String, List<String>> deleteListEquipmentById(List<String> equipments) {
         var listEquipmentDeleted = new ArrayList<Equipment>();
-        var equipmentFailedDelete = equipments.stream().map(equipment -> {
-            var equipmentFind = equipmentRepository.findById(equipment);
+        var equipmentFailedDelete = new ArrayList<String>();
+
+        for (String equipmentId : equipments) {
+            var equipmentFind = equipmentRepository.findByIdAndStatus(equipmentId, DeleteStatusType.getDefaultString());
             if (equipmentFind.isPresent()) {
                 var equipmentDomain = equipmentFind.get();
                 equipmentDomain.setStatus(DeleteStatusType.INACTIVE.toString());
                 listEquipmentDeleted.add(equipmentDomain);
+            } else {
+                equipmentFailedDelete.add(equipmentId);
             }
-            return equipment;
-        }).toList();
-        equipmentRepository.saveAll(listEquipmentDeleted);
+        }
+
+        if (!listEquipmentDeleted.isEmpty()) {
+            equipmentRepository.saveAll(listEquipmentDeleted);
+        }
+
         return Map.of("listEquipmentDeleteFailed", equipmentFailedDelete);
     }
 

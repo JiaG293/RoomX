@@ -14,4 +14,6 @@ public interface EquipmentRepository {
     void deleteById(String id);
 
     List<Equipment> saveAll(List<Equipment> listEquipmentDeleted);
+
+    Optional<Equipment> findByIdAndStatus(String equipmentId, String status);
 }
