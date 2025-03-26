@@ -1,5 +1,6 @@
 package com.roomx.controller.resource;
 
+import com.roomx.shared.dto.resource.base.RoomClassPriceCalculateDto;
 import com.roomx.shared.dto.resource.request.*;
 import com.roomx.application.service.resource.EquipmentRoomClassAppService;
 import com.roomx.application.service.resource.RoomClassAppService;
@@ -88,6 +89,16 @@ public class RoomClassController {
             @Validated @RequestBody RoomClassPriceHistoryCreateRequest request) {
         var result = roomClassAppService.addPriceNew(roomClassId, request);
         return ResultResponse.<RoomClassResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/{roomClassId}/test")
+    public ResultResponse<?> calculatePriceRoomClass(
+            @PathVariable String roomClassId
+            ) {
+        var result = roomClassAppService.calculatePriceRoomClass(roomClassId);
+        return ResultResponse.<RoomClassPriceCalculateDto>builder()
                 .result(result)
                 .build();
     }

@@ -4,6 +4,7 @@ import com.roomx.domain.model.aggrerate.Room;
 import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import com.roomx.domain.model.entity.RoomClassPriceHistory;
 import com.roomx.domain.repository.*;
+import com.roomx.shared.dto.resource.base.RoomClassPriceCalculateDto;
 import com.roomx.shared.dto.resource.request.EquipmentPriceHistoryCreateRequest;
 import com.roomx.shared.dto.resource.request.RoomClassCreateRequest;
 import com.roomx.shared.dto.resource.request.RoomClassPriceHistoryCreateRequest;
@@ -181,5 +182,9 @@ public class RoomClassAppService {
         roomClassDomain.setPrice(savedEquipmentPrice);
 
         return roomClassAppMapper.toResponse(roomClassDomain);
+    }
+
+    public RoomClassPriceCalculateDto calculatePriceRoomClass(String roomClassId){
+        return roomClassPriceHistoryRepository.calculateTotalPrice(roomClassId);
     }
 }
