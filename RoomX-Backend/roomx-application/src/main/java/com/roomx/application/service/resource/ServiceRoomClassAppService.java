@@ -1,5 +1,6 @@
 package com.roomx.application.service.resource;
 
+import com.roomx.domain.repository.ServicePriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.ServiceRoomClassCreateRequest;
 import com.roomx.shared.dto.resource.response.ServiceRoomClassDetailResponse;
 import com.roomx.application.mapper.ServiceRoomClassAppMapper;
@@ -8,6 +9,8 @@ import com.roomx.domain.model.vo.ServiceRoomClassId;
 import com.roomx.domain.repository.RoomClassRepository;
 import com.roomx.domain.repository.ServiceRepository;
 import com.roomx.domain.repository.ServiceRoomClassRepository;
+import com.roomx.shared.dto.resource.response.ServiceRoomClassResponse;
+import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +31,12 @@ public class ServiceRoomClassAppService {
     private final ServiceRoomClassRepository serviceRoomClassRepository;
     private final RoomClassRepository roomClassRepository;
     private final ServiceRepository serviceRepository;
+    private final ServicePriceHistoryRepository servicePriceHistoryRepository;
 
     @Transactional
-    public List<ServiceRoomClassDetailResponse> addServiceToRoomClass(String roomClassId, List<ServiceRoomClassCreateRequest> request) {
+    public List<ServiceRoomClassResponse> addServiceToRoomClass(String roomClassId, List<ServiceRoomClassCreateRequest> request) {
 
-        var roomClassDomain = roomClassRepository.findById(roomClassId)
+        var roomClassDomain = roomClassRepository.findByIdAndStatus(roomClassId, DeleteStatusType.getDefaultString())
                 .orElseThrow(() -> new AppException(ErrorCode.ROOM_CLASS_NOT_FOUND, roomClassId));
 
         var serviceCanAdd = request.stream()
@@ -57,8 +61,17 @@ public class ServiceRoomClassAppService {
 
         var savedEntity = serviceRoomClassRepository.saveAll(serviceCanAdd);
 
+        var serviceRoomClassWithPrice = savedEntity.stream()
+                .map(serviceRoomClass -> {
+                    var servicePrice = servicePriceHistoryRepository
+                            .findLatestValidFrom(serviceRoomClass.getService().getId().toString())
+                            .orElse(null);
+                    serviceRoomClass.setPrice(servicePrice);
+                    return serviceRoomClass;
+                }).toList();
+
         return savedEntity.stream()
-                .map(serviceRoomClassAppMapper::toResponseDetail)
+                .map(serviceRoomClassAppMapper::toResponse)
                 .toList();
 
 

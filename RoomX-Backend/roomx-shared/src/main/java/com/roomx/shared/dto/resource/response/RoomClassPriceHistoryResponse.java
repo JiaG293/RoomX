@@ -14,6 +14,5 @@ import java.time.Instant;
 @Data
 public class RoomClassPriceHistoryResponse {
     private BigDecimal basePrice;
-    private BigDecimal totalPrice;
     private Instant validFrom;
 }

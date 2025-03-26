@@ -4,9 +4,11 @@ import com.roomx.domain.model.entity.RoomClassPriceHistory;
 import com.roomx.domain.repository.RoomClassPriceHistoryRepository;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.RoomClassPriceHistoryEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaRoomClassPriceHistoryEntityRepository;
+import com.roomx.shared.dto.resource.base.RoomClassPriceCalculateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +33,14 @@ public class RoomClassPriceHistoryEntityRepository implements RoomClassPriceHist
 
     @Override
     public Optional<RoomClassPriceHistory> findLatestValidFrom(String roomClassId) {
-        return null;
+        return jpaRoomClassPriceHistoryEntityRepository
+                .findLatestValidFrom(UUID.fromString(roomClassId))
+                .map(roomClassPriceHistoryEntityMapper::toDomain);
+    }
+
+    @Override
+    public RoomClassPriceCalculateDto calculateTotalPrice(String roomClassId) {
+        return jpaRoomClassPriceHistoryEntityRepository
+                .calculateTotalPrice(UUID.fromString(roomClassId));
     }
 }

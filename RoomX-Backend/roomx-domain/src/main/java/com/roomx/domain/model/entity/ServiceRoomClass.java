@@ -18,6 +18,11 @@ public class ServiceRoomClass {
     private RoomClass roomClass;
     private Service service;
     private Short quantity;
+    private ServicePriceHistory price;
+
+    public BigDecimal getTotalPrice() {
+        return price != null ? price.getUnitPrice().multiply(BigDecimal.valueOf(quantity)) : BigDecimal.ZERO;
+    }
 
 
 }

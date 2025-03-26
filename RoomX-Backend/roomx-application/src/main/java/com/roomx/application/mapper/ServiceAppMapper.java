@@ -2,6 +2,7 @@ package com.roomx.application.mapper;
 
 import com.roomx.shared.dto.resource.request.ServiceCreateRequest;
 import com.roomx.shared.dto.resource.request.ServiceUpdateRequest;
+import com.roomx.shared.dto.resource.response.ServiceDetailResponse;
 import com.roomx.shared.dto.resource.response.ServiceResponse;
 import com.roomx.domain.model.aggrerate.Service;
 import org.mapstruct.*;
@@ -20,6 +21,8 @@ public interface ServiceAppMapper {
 
     @Mapping(target = "id", source = "id")
     ServiceResponse toResponse(Service domain);
+
+    ServiceDetailResponse toResponseDetail(Service domain);
 
     Service toDomain(ServiceCreateRequest request);
 

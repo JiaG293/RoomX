@@ -2,6 +2,7 @@ package com.roomx.application.mapper;
 
 import com.roomx.shared.dto.resource.request.EquipmentCreateRequest;
 import com.roomx.shared.dto.resource.request.EquipmentUpdateRequest;
+import com.roomx.shared.dto.resource.response.EquipmentDetailResponse;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.domain.model.aggrerate.Equipment;
 import org.mapstruct.*;
@@ -19,8 +20,9 @@ public interface EquipmentAppMapper {
 
     Equipment toDomain(EquipmentCreateRequest request);
 
-
     EquipmentResponse toResponse(Equipment domain);
+
+    EquipmentDetailResponse toResponseDetail(Equipment domain);
 
     @Mapping(target = "id", ignore = true)
     void updateDomainFromDto(EquipmentUpdateRequest request, @MappingTarget Equipment domain);

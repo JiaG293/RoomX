@@ -14,8 +14,14 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class RoomClassDetailResponse {
+    private BigDecimal equipmentsTotalPrice;
+    private BigDecimal servicesTotalPrice;
+    private BigDecimal totalPrice;
+
     private RoomClassResponse roomClass;
+
     private List<EquipmentRoomClassDetailResponse> equipments;
     private List<ServiceRoomClassDetailResponse> services;
-    private BigDecimal totalPrice;
+
+
 }

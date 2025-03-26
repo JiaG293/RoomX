@@ -2,6 +2,7 @@ package com.roomx.application.mapper;
 
 import com.roomx.shared.dto.resource.request.RoomClassCreateRequest;
 import com.roomx.shared.dto.resource.request.RoomClassUpdateRequest;
+import com.roomx.shared.dto.resource.response.RoomClassDetailResponse;
 import com.roomx.shared.dto.resource.response.RoomClassResponse;
 import com.roomx.domain.model.aggrerate.RoomClass;
 import org.mapstruct.*;
@@ -21,7 +22,13 @@ public interface RoomClassAppMapper {
 
     RoomClass toDomain(RoomClassCreateRequest request);
 
+    @Mapping(target = "basePrice", source = "price.basePrice")
     RoomClassResponse toResponse(RoomClass domain);
+
+    @Mapping(target = "services", ignore = true)
+    @Mapping(target = "equipments", ignore = true)
+
+    RoomClassDetailResponse toResponseDetail(RoomClass domain);
 
     /*@Mapping(target = "roomClass", source = "domain")
     @Mapping(target = "equipmentRoomClasses", source = "listEquipmentRoomClass")*/

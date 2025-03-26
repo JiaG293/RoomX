@@ -7,14 +7,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
+
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class EquipmentRoomClassDetailResponse {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private RoomClassResponse roomClass;
-    private EquipmentResponse equipment;
+    private String id;
+    private String equipmentCode;
+    private String name;
+    private String brand;
+    private String description;
+    private List<String> imageUrls;
     private BigDecimal unitPrice;
     private int quantity;
     private BigDecimal totalPrice;

@@ -5,10 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class RoomClassPriceHistoryCreateRequest {
-    private String basePrice;
+    private BigDecimal basePrice;
 }

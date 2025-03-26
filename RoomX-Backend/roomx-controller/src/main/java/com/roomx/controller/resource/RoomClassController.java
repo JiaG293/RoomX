@@ -1,9 +1,6 @@
 package com.roomx.controller.resource;
 
-import com.roomx.shared.dto.resource.request.EquipmentRoomClassCreateRequest;
-import com.roomx.shared.dto.resource.request.RoomClassCreateRequest;
-import com.roomx.shared.dto.resource.request.RoomClassUpdateRequest;
-import com.roomx.shared.dto.resource.request.ServiceRoomClassCreateRequest;
+import com.roomx.shared.dto.resource.request.*;
 import com.roomx.application.service.resource.EquipmentRoomClassAppService;
 import com.roomx.application.service.resource.RoomClassAppService;
 import com.roomx.application.service.resource.ServiceRoomClassAppService;
@@ -80,7 +77,17 @@ public class RoomClassController {
             @Validated @RequestBody List<ServiceRoomClassCreateRequest> request) {
         log.info("data: {}", request);
         var result = serviceRoomClassAppService.addServiceToRoomClass(roomClassId, request);
-        return ResultResponse.<List<ServiceRoomClassDetailResponse>>builder()
+        return ResultResponse.<List<ServiceRoomClassResponse>>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/{roomClassId}/prices")
+    public ResultResponse<?> addNewPriceForRoomClass(
+            @PathVariable String roomClassId,
+            @Validated @RequestBody RoomClassPriceHistoryCreateRequest request) {
+        var result = roomClassAppService.addPriceNew(roomClassId, request);
+        return ResultResponse.<RoomClassResponse>builder()
                 .result(result)
                 .build();
     }

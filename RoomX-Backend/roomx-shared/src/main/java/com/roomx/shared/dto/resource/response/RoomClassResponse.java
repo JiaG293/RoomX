@@ -15,6 +15,6 @@ import java.time.Instant;
 public class RoomClassResponse {
     private String id;
     private String roomClassCode;
-    private RoomClassPriceHistoryResponse price;
+    private BigDecimal basePrice;
     private int capacity;
 }

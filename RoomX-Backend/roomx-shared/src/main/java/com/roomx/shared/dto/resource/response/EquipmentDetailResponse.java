@@ -1,6 +1,5 @@
 package com.roomx.shared.dto.resource.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,14 +12,14 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServiceRoomClassDetailResponse {
+public class EquipmentDetailResponse {
     private String id;
-    private String serviceCode;
+    private String equipmentCode;
     private String name;
+    private String brand;
     private String description;
-    private String note;
     private List<String> imageUrls;
+    private Integer quantity;
     private BigDecimal unitPrice;
-    private int quantity;
     private BigDecimal totalPrice;
 }
