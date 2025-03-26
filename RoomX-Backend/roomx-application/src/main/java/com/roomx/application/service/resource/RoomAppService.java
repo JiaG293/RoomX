@@ -1,5 +1,6 @@
 package com.roomx.application.service.resource;
 
+import com.roomx.domain.repository.RoomClassPriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.RoomQueryRequest;
 import com.roomx.shared.dto.resource.request.RoomCreateRequest;
 import com.roomx.shared.dto.resource.request.RoomUpdateStatusRequest;
@@ -25,6 +26,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class RoomAppService {
     private final RoomAppMapper roomAppMapper;
     private final PlaceRepository placeRepository;
     private final RoomClassRepository roomClassRepository;
+    private final RoomClassPriceHistoryRepository roomClassPriceHistoryRepository;
     private final JpaRoomEntityRepository jpaRoomEntityRepository;
     private final RoomEntityService roomEntityService;
 
@@ -48,19 +52,27 @@ public class RoomAppService {
         var roomClassDomain = roomClassRepository.findById(request.getRoomClassId())
                 .orElseThrow(() -> new AppException(ErrorCode.ROOM_CLASS_NOT_FOUND, request.getRoomClassId()));
 
+        var roomClassPriceDomain = roomClassPriceHistoryRepository.findLatestValidFrom(request.getRoomClassId())
+                .orElseThrow(() -> new AppException(ErrorCode.ROOM_CLASS_NOT_FOUND, request.getRoomClassId()));
+
+
 
         var roomDomain = Room.builder()
                 .roomClass(roomClassDomain)
                 .place(placeDomain)
                 .roomCode(request.getRoomCode())
-                .status(request.getStatus() == null || request.getStatus().isEmpty() ? request.getStatus() : RoomStatusType.AVAILABLE.toString())
+                .status(request.getStatus() == null || request.getStatus().isEmpty() ? RoomStatusType.AVAILABLE.toString() : request.getStatus())
                 .description(request.getDescription())
+                .imageUrls(request.getImageUrls() == null ? new ArrayList<String>() : request.getImageUrls())
                 .build();
 
         var savedRoom = roomRepository.save(roomDomain);
 
+        savedRoom.getRoomClass().setPrice(roomClassPriceDomain);
+
         var response = roomAppMapper.toResponseDetail(savedRoom);
-//        response.setTotalPrice(roomDomain.getRoomClass().getTotalPrice());
+        response.setTotalPrice(roomClassPriceHistoryRepository
+                .calculateTotalPrice(roomClassDomain.getId().toString()).getTotalPrice());
         return response;
     }
 

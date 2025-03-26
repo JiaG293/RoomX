@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,4 +21,9 @@ public class RoomCreateRequest {
     private String description;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String status;
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private List<String> imageUrls;
+
+
 }

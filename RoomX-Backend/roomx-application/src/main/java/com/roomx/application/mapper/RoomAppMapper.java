@@ -16,6 +16,7 @@ import org.mapstruct.ReportingPolicy;
         uses = {
                 PlaceAppMapper.class,
                 RoomClassAppMapper.class,
+                RoomClassPriceHistoryAppMapper.class,
                 EquipmentAppMapper.class,
                 ServiceAppMapper.class
         }
