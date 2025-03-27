@@ -22,6 +22,7 @@ public class ApprovalFormEntity {
     public static final String COLUMN_ID_NAME = "approval_form_id";
     public static final String COLUMN_STATUS_NAME = "status";
     public static final String COLUMN_NOTE_NAME = "note";
+    public static final String COLUMN_APPROVER_NAME = "approver";
     public static final String COLUMN_CREATEDAT_NAME = "created_at";
     public static final String COLUMN_UPDATEDAT_NAME = "updated_at";
 
@@ -32,9 +33,8 @@ public class ApprovalFormEntity {
     private UUID id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "approver_id", nullable = false)
-    private UserEntity approver;
+    @Column(name = COLUMN_APPROVER_NAME)
+    private UUID approver;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

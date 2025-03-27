@@ -5,15 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
-import java.time.LocalDate;
-
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecurrenceAdminCreateRequest {
-    private String recurrenceType;
-    private Instant startDate;
-    private Instant endDate;
+@Builder
+public class ParticipantBookingRequest {
+    private String id;
 }

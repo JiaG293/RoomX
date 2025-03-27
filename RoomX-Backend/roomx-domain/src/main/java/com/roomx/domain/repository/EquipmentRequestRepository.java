@@ -1,9 +1,7 @@
 package com.roomx.domain.repository;
 
 import com.roomx.domain.model.entity.EquipmentRequest;
-import com.roomx.domain.model.entity.ServiceRequest;
 import com.roomx.domain.model.vo.EquipmentRequestId;
-import com.roomx.domain.model.vo.ServiceRequestId;
 
 import java.util.List;
 import java.util.Optional;

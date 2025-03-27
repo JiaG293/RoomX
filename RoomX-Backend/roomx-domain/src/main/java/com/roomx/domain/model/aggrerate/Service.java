@@ -21,7 +21,6 @@ public class Service {
     private String name;
     private String description;
     private String note;
-    private BigDecimal unitPrice;
     private String status;
     @Builder.Default
     private Instant createdAt = Instant.now();

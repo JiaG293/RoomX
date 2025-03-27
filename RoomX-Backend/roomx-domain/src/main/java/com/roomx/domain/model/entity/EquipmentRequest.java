@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@EqualsAndHashCode
 public class EquipmentRequest {
     private EquipmentRequestId id;
     private BookingRequest bookingRequest;

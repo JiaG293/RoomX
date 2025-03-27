@@ -30,7 +30,7 @@ public class BookingServiceEntity {
     @MapsId("serviceId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "service_id", nullable = false)
-    private com.roomx.infrastructure.multitenancy.persistence.model.entity.ServiceEntity service;
+    private ServiceEntity service;
 
     @Column(name = COLUMN_QUANTITY_NAME)
     private Short quantity;

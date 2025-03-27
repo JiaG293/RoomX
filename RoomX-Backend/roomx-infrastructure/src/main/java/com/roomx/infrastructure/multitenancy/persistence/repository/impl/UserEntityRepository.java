@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class UserEntitySpecRepository implements UserRepository, com.roomx.infrastructure.multitenancy.persistence.repository.specification.UserEntitySpecRepository {
+public class UserEntityRepository implements UserRepository, com.roomx.infrastructure.multitenancy.persistence.repository.specification.UserEntitySpecRepository {
 
     private final JpaUserEntityRepository jpaUserEntityRepository;
     private final UserEntityMapper userEntityMapper;
@@ -59,6 +59,12 @@ public class UserEntitySpecRepository implements UserRepository, com.roomx.infra
                 .findAllByRoleId(roleName)
                 .stream().map(userEntityMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email, boolean enabled) {
+        return jpaUserEntityRepository.findByEmailAndEnable(email, enabled)
+                .map(userEntityMapper::toDomain);
     }
 
     @Override

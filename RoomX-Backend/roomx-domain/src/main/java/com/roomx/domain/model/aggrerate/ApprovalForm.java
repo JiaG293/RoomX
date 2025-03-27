@@ -14,7 +14,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class ApprovalForm {
     private UUID id;
-    private User approver;
+    private UUID approver;
     private BookingRequest bookingRequest;
 
     @Builder.Default

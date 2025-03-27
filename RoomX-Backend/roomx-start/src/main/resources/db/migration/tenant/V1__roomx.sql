@@ -1,4 +1,25 @@
+CREATE  TABLE booking_request (
+                                  booking_request_id   uuid  NOT NULL  ,
+                                  requester            uuid  NOT NULL  ,
+                                  priority             smallint    ,
+                                  created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
+                                  updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
+                                  end_date_approval    timestamp    ,
+                                  days_of_week         varchar    ,
+                                  end_time             time    ,
+                                  start_time           time    ,
+                                  end_date             date    ,
+                                  start_date           date    ,
+                                  recurrence_interval  smallint    ,
+                                  recurrence_type      varchar(32)    ,
+                                  capacity             integer    ,
+                                  CONSTRAINT pk_yeu_cau_dat_phong PRIMARY KEY ( booking_request_id )
+);
 
+CREATE  TABLE booking_request_participant (
+                                              booking_request_id   uuid  NOT NULL  ,
+                                              participants         varchar(512)
+);
 
 CREATE  TABLE branch (
                          branch_id            uuid  NOT NULL  ,
@@ -37,6 +58,13 @@ CREATE  TABLE equipment_price_history (
                                           CONSTRAINT pk_equipment_price_history PRIMARY KEY ( equipment_price_history_id )
 );
 
+CREATE  TABLE equipment_request (
+                                    quantity             smallint    ,
+                                    equipment_id         uuid  NOT NULL  ,
+                                    booking_request_id   uuid  NOT NULL  ,
+                                    CONSTRAINT pk_yeu_cau_thiet_bi PRIMARY KEY ( booking_request_id, equipment_id )
+);
+
 CREATE  TABLE exception_date (
                                  exception_date_id    uuid  NOT NULL  ,
                                  start_date           timestamp    ,
@@ -65,20 +93,6 @@ CREATE  TABLE place (
                         status               varchar(32)    ,
                         code                 varchar(32)    ,
                         CONSTRAINT pk_vi_tri PRIMARY KEY ( place_id )
-);
-
-CREATE  TABLE recurrence (
-                             recurrence_id        uuid  NOT NULL  ,
-                             booking_request_id   uuid    ,
-                             recurrence_type      varchar(32)  NOT NULL  ,
-                             "interval"           smallint    ,
-                             start_date           date    ,
-                             end_date             date    ,
-                             time_start           time    ,
-                             time_end             time    ,
-                             days_of_week         varchar    ,
-                             CONSTRAINT pk_chu_ky PRIMARY KEY ( recurrence_id ),
-                             CONSTRAINT unq_recurrence_booking_request_id UNIQUE ( booking_request_id )
 );
 
 CREATE  TABLE "role" (
@@ -133,6 +147,13 @@ CREATE  TABLE service_price_history (
                                         CONSTRAINT pk_service_price_history PRIMARY KEY ( service_price_history_id )
 );
 
+CREATE  TABLE service_request (
+                                  quantity             smallint    ,
+                                  service_id           uuid  NOT NULL  ,
+                                  booking_request_id   uuid  NOT NULL  ,
+                                  CONSTRAINT pk_yeu_cau_dich_vu PRIMARY KEY ( booking_request_id, service_id )
+);
+
 CREATE  TABLE service_room_class (
                                      room_class_id        uuid  NOT NULL  ,
                                      service_id           uuid  NOT NULL  ,
@@ -162,6 +183,17 @@ CREATE  TABLE user_role (
                             user_id              uuid  NOT NULL  ,
                             role_id              varchar(64)  NOT NULL  ,
                             CONSTRAINT pk_user_role PRIMARY KEY ( user_id, role_id )
+);
+
+CREATE  TABLE approval_form (
+                                approval_form_id     uuid  NOT NULL  ,
+                                approver             uuid  NOT NULL  ,
+                                booking_request_id   uuid  NOT NULL  ,
+                                status               varchar(32)    ,
+                                note                 text    ,
+                                created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
+                                updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
+                                CONSTRAINT pk_don_duyet PRIMARY KEY ( approval_form_id )
 );
 
 CREATE  TABLE equipment_room_class (
@@ -200,51 +232,6 @@ CREATE  TABLE room (
                        CONSTRAINT unq_phong_hop_ma_phong UNIQUE ( room_code )
 );
 
-CREATE  TABLE booking_request (
-                                  booking_request_id   uuid  NOT NULL  ,
-                                  room_id              uuid  NOT NULL  ,
-                                  status               varchar(32)    ,
-                                  requester_id         uuid  NOT NULL  ,
-                                  priority             smallint    ,
-                                  created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
-                                  updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
-                                  booking_request_code varchar(32)    ,
-                                  end_date_approval    timestamp    ,
-                                  CONSTRAINT pk_yeu_cau_dat_phong PRIMARY KEY ( booking_request_id ),
-                                  CONSTRAINT unq_booking_request UNIQUE ( booking_request_code )
-);
-
-CREATE  TABLE booking_request_participant (
-                                              user_id              uuid  NOT NULL  ,
-                                              booking_request_id   uuid  NOT NULL  ,
-                                              CONSTRAINT pk_booking_request_participant PRIMARY KEY ( user_id, booking_request_id )
-);
-
-CREATE  TABLE equipment_request (
-                                    quantity             smallint    ,
-                                    equipment_id         uuid  NOT NULL  ,
-                                    booking_request_id   uuid  NOT NULL  ,
-                                    CONSTRAINT pk_yeu_cau_thiet_bi PRIMARY KEY ( booking_request_id, equipment_id )
-);
-
-CREATE  TABLE service_request (
-                                  quantity             smallint    ,
-                                  service_id           uuid  NOT NULL  ,
-                                  booking_request_id   uuid  NOT NULL  ,
-                                  CONSTRAINT pk_yeu_cau_dich_vu PRIMARY KEY ( booking_request_id, service_id )
-);
-
-CREATE  TABLE approval_form (
-                                approval_form_id     uuid  NOT NULL  ,
-                                approver_id          uuid  NOT NULL  ,
-                                booking_request_id   uuid  NOT NULL  ,
-                                status               varchar(32)    ,
-                                note                 text    ,
-                                created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
-                                updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
-                                CONSTRAINT pk_don_duyet PRIMARY KEY ( approval_form_id )
-);
-
 CREATE  TABLE booking (
                           booking_id           uuid  NOT NULL  ,
                           booking_code         varchar(32)  NOT NULL  ,
@@ -252,19 +239,18 @@ CREATE  TABLE booking (
                           room_id              uuid  NOT NULL  ,
                           meeting_start        time    ,
                           meeting_end          time    ,
+                          meeting_date         date    ,
                           "count"              smallint    ,
                           total_price          numeric    ,
                           status               varchar(32)    ,
                           created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                           updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                           previous_room_id     uuid    ,
-                          meeting_date         date    ,
                           CONSTRAINT pk_booking_order PRIMARY KEY ( booking_id ),
-                          CONSTRAINT unq_booking_room_id UNIQUE ( room_id ) ,
                           CONSTRAINT unq_booking UNIQUE ( booking_code )
 );
 
-CREATE INDEX idx_booking ON booking USING  btree ( meeting_start, meeting_end );
+CREATE INDEX idx_booking ON booking USING  btree ( meeting_start, meeting_end, meeting_date );
 
 CREATE  TABLE booking_equipment (
                                     equipment_id         uuid  NOT NULL  ,
@@ -288,29 +274,19 @@ CREATE  TABLE booking_service (
 
 ALTER TABLE approval_form ADD CONSTRAINT fk_don_duyet_don_yeu_cau FOREIGN KEY ( booking_request_id ) REFERENCES booking_request( booking_request_id );
 
-ALTER TABLE approval_form ADD CONSTRAINT fk_don_duyet_nguoi_dung FOREIGN KEY ( approver_id ) REFERENCES "user"( user_id );
+ALTER TABLE booking ADD CONSTRAINT fk_booking_room FOREIGN KEY ( room_id ) REFERENCES room( room_id );
 
 ALTER TABLE booking ADD CONSTRAINT fk_booking_booking_request FOREIGN KEY ( booking_request_id ) REFERENCES booking_request( booking_request_id );
-
-ALTER TABLE booking ADD CONSTRAINT fk_booking_room FOREIGN KEY ( room_id ) REFERENCES room( room_id );
 
 ALTER TABLE booking_equipment ADD CONSTRAINT fk_booking_equipment_equipment FOREIGN KEY ( equipment_id ) REFERENCES equipment( equipment_id );
 
 ALTER TABLE booking_equipment ADD CONSTRAINT fk_booking_equipment_booking FOREIGN KEY ( booking_id ) REFERENCES booking( booking_id );
 
-ALTER TABLE booking_participant ADD CONSTRAINT fk_booking_participant_user FOREIGN KEY ( user_id ) REFERENCES "user"( user_id );
-
 ALTER TABLE booking_participant ADD CONSTRAINT fk_booking_participant_booking FOREIGN KEY ( booking_id ) REFERENCES booking( booking_id );
 
-ALTER TABLE booking_request ADD CONSTRAINT fk_don_yeu_cau_nguoi_dung FOREIGN KEY ( requester_id ) REFERENCES "user"( user_id );
-
-ALTER TABLE booking_request ADD CONSTRAINT fk_yeu_cau_dat_phong_phong_hop FOREIGN KEY ( room_id ) REFERENCES room( room_id );
-
-ALTER TABLE booking_request ADD CONSTRAINT fk_booking_request_recurrence FOREIGN KEY ( booking_request_id ) REFERENCES recurrence( booking_request_id );
+ALTER TABLE booking_participant ADD CONSTRAINT fk_booking_participant_user FOREIGN KEY ( user_id ) REFERENCES "user"( user_id );
 
 ALTER TABLE booking_request_participant ADD CONSTRAINT fk_booking_request_participant_booking_request FOREIGN KEY ( booking_request_id ) REFERENCES booking_request( booking_request_id );
-
-ALTER TABLE booking_request_participant ADD CONSTRAINT fk_booking_request_participant_user FOREIGN KEY ( user_id ) REFERENCES "user"( user_id );
 
 ALTER TABLE booking_service ADD CONSTRAINT fk_booking_service_service FOREIGN KEY ( service_id ) REFERENCES service( service_id );
 

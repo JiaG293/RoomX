@@ -1,15 +1,41 @@
 package com.roomx.shared.enums;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum RecurrenceType {
-    DAILY(""),
-    WEEKLY(""),
-    MONTHLY(""),
-    YEARLY(""),
-    CUSTOM("");
+    DAILY("daily") {
+        @Override
+        public LocalDate nextDate(LocalDate date, Short interval) {
+            return date.plusDays(interval == null ? 1 : interval);
+        }
+    },
+    WEEKLY("weekly") {
+        @Override
+        public LocalDate nextDate(LocalDate date, Short interval) {
+            return date.plusWeeks(interval == null ? 1 : interval);
+        }
+    },
+    MONTHLY("monthly") {
+        @Override
+        public LocalDate nextDate(LocalDate date, Short interval) {
+            return date.plusMonths(interval == null ? 1 : interval);
+        }
+    },
+    YEARLY("yearly") {
+        @Override
+        public LocalDate nextDate(LocalDate date, Short interval) {
+            return date.plusYears(interval == null ? 1 : interval);
+        }
+    },
+    CUSTOM("custom") {
+        @Override
+        public LocalDate nextDate(LocalDate date, Short interval) {
+            return date.plusDays(interval == null ? 1 : interval);
+        }
+    };
 
     private static final Map<String, RecurrenceType> DISPLAY_NAME_MAP = Stream.of(values())
             .collect(Collectors.toMap(RecurrenceType::getDisplayName, e -> e));
@@ -25,6 +51,9 @@ public enum RecurrenceType {
     }
 
     public static RecurrenceType fromDisplayName(String displayName) {
-        return DISPLAY_NAME_MAP.getOrDefault(displayName, null);
+        return DISPLAY_NAME_MAP.getOrDefault(displayName.toLowerCase(), null);
     }
+
+    public abstract LocalDate nextDate(LocalDate date, Short interval);
 }
+

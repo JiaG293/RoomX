@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -35,5 +37,25 @@ public class RoomEntityRepository implements RoomRepository {
     @Override
     public boolean checkExistsRoomCode(String roomCode) {
         return jpaRoomEntityRepository.existsByRoomCode(roomCode);
+    }
+
+    @Override
+    public List<Room> findAll() {
+        return jpaRoomEntityRepository
+                .findAll().stream()
+                .map(roomEntityMapper::toDomain).toList();
+    }
+
+    @Override
+    public List<Room> findAllByStatus(String status) {
+        return jpaRoomEntityRepository.findAllByStatus(status)
+                .stream().map(roomEntityMapper::toDomain).toList();
+    }
+
+    @Override
+    public List<Room> findAllByCapacityGreaterThanOrEqualAndStatus (int requiredCapacity, String status) {
+        return jpaRoomEntityRepository
+                .findAllByStatusIsAndRoomClassCapacityGreaterThanEqual(status, requiredCapacity)
+                .stream().map(roomEntityMapper::toDomain).toList();
     }
 }

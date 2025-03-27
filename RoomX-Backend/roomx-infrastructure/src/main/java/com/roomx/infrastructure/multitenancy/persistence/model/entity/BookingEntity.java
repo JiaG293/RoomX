@@ -20,10 +20,9 @@ import java.util.UUID;
 @ToString
 @Entity
 @Table(name = BookingEntity.TABLE_NAME, indexes = {
-        @Index(name = "idx_booking", columnList = "meeting_start, meeting_end")
+        @Index(name = "idx_booking", columnList = "meeting_start, meeting_end, meeting_date")
 }, uniqueConstraints = {
-        @UniqueConstraint(name = "unq_booking", columnNames = {"booking_code"}),
-        @UniqueConstraint(name = "unq_booking_room_id", columnNames = {"room_id"})
+        @UniqueConstraint(name = "unq_booking", columnNames = {"booking_code"})
 })
 public class BookingEntity {
     public static final String TABLE_NAME = "booking";

@@ -14,25 +14,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class BookingRequestAdminCreateRequest {
-    private String roomId;
+@AllArgsConstructor
+@Builder
+public class BookingRequestUserCreateRequest {
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private int priority = 0;
+    private int capacity;
     private String recurrenceType;
     private LocalDate startDate;
     private LocalDate endDate;
-    private LocalTime timeStart;
-    private LocalTime timeEnd;
+    private LocalTime startTime;
+    private LocalTime endTime;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String daysOfWeek;
-    private int interval;
+    private int recurrenceInterval;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<ServiceBookingRequest> services;
+    private List<ServiceBookingRequest> services = new ArrayList<>();
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<EquipmentBookingRequest> equipments;
+    private List<EquipmentBookingRequest> equipments = new ArrayList<>();
 
-    private List<String> participants;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private List<String> participants = new ArrayList<>();
 }

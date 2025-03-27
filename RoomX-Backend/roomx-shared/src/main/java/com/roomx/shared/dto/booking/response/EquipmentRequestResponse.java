@@ -1,22 +1,23 @@
 package com.roomx.shared.dto.booking.response;
 
-
-import com.roomx.shared.dto.resource.response.ServiceResponse;
+import com.roomx.shared.dto.resource.response.PriceHistoryResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class ServiceBookingReponse {
+@AllArgsConstructor
+@NoArgsConstructor
+public class EquipmentRequestResponse {
     private String id;
-    private ServiceResponse service;
+    private String equipmentCode;
+    private String name;
+    private List<String> imageUrls;
     private BigDecimal unitPrice;
     private int quantity;
-
 }

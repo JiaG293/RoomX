@@ -1,7 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.mapper;
 
 import com.roomx.domain.model.entity.EquipmentRequest;
-import com.roomx.infrastructure.multitenancy.persistence.model.entity.BookingRequestEntity;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.EquipmentRequestEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -14,7 +13,7 @@ import org.mapstruct.ReportingPolicy;
         uses = {
                 EquipmentEntityMapper.class,
                 BookingRequestEntityMapper.class,
-                EquipmentRequestIdMapper.class
+                EquipmentRequestEntityIdMapper.class
         }
 )
 public interface EquipmentRequestEntityMapper {

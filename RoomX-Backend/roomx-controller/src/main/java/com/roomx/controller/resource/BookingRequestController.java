@@ -1,3 +1,4 @@
+/*
 package com.roomx.controller.resource;
 
 import com.roomx.shared.dto.booking.request.BookingRequestAdminCreateRequest;
@@ -33,3 +34,4 @@ public class BookingRequestController {
     }
 
 }
+*/

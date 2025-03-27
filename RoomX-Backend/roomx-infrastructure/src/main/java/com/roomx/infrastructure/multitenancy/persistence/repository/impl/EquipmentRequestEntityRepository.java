@@ -3,10 +3,9 @@ package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 import com.roomx.domain.model.entity.EquipmentRequest;
 import com.roomx.domain.model.vo.EquipmentRequestId;
 import com.roomx.domain.repository.EquipmentRequestRepository;
+import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentRequestEntityIdMapper;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentRequestEntityMapper;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentRequestIdMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaEquipmentRequestEntityRepository;
-import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaRecurrenceEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -21,11 +20,11 @@ import java.util.UUID;
 public class EquipmentRequestEntityRepository implements EquipmentRequestRepository {
     private final JpaEquipmentRequestEntityRepository jpaEquipmentRequestEntityRepository;
     private final EquipmentRequestEntityMapper equipmentRequestEntityMapper;
-    private final EquipmentRequestIdMapper equipmentRequestIdMapper;
+    private final EquipmentRequestEntityIdMapper equipmentRequestEntityIdMapper;
 
     @Override
     public Optional<EquipmentRequest> findById(EquipmentRequestId equipmentRequestId) {
-        var equipmentRequestEntityId = equipmentRequestIdMapper.toEntity(equipmentRequestId);
+        var equipmentRequestEntityId = equipmentRequestEntityIdMapper.toEntity(equipmentRequestId);
         return jpaEquipmentRequestEntityRepository
                 .findById(equipmentRequestEntityId)
                 .map(equipmentRequestEntityMapper::toDomain);
@@ -47,11 +46,15 @@ public class EquipmentRequestEntityRepository implements EquipmentRequestReposit
 
     @Override
     public EquipmentRequest save(EquipmentRequest equipmentRequest) {
-        return null;
+        var equipmentRequestEntity = equipmentRequestEntityMapper.toEntity(equipmentRequest);
+        var savedEquipmentRequestEntity = jpaEquipmentRequestEntityRepository.save(equipmentRequestEntity);
+        return equipmentRequestEntityMapper.toDomain(savedEquipmentRequestEntity);
     }
 
     @Override
     public List<EquipmentRequest> saveAll(List<EquipmentRequest> listEquipmentRequset) {
-        return List.of();
+        var equipmentRequestEntityList = listEquipmentRequset.stream().map(equipmentRequestEntityMapper::toEntity).toList();
+        var savedEquipmentRequestEntityList = jpaEquipmentRequestEntityRepository.saveAll(equipmentRequestEntityList);
+        return savedEquipmentRequestEntityList.stream().map(equipmentRequestEntityMapper::toDomain).toList();
     }
 }

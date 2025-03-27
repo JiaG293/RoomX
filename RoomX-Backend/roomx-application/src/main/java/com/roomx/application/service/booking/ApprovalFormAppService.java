@@ -44,7 +44,7 @@ public class ApprovalFormAppService {
                 .orElseThrow(()-> new AppException(ErrorCode.BOOKING_REQUEST_NOT_FOUND, request.getBookingRequestId()));
 
         var approvalFormDomain = ApprovalForm.builder()
-                .approver(approver)
+//                .approver(approver)
                 .status(status)
                 .bookingRequest(bookingRequest)
                 .note(request.getNote())

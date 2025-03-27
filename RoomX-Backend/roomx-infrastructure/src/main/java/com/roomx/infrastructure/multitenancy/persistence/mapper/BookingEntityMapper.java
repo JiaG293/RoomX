@@ -1,8 +1,9 @@
 package com.roomx.infrastructure.multitenancy.persistence.mapper;
 
-import com.roomx.domain.model.entity.Recurrence;
-import com.roomx.infrastructure.multitenancy.persistence.model.entity.RecurrenceEntity;
+import com.roomx.domain.model.aggrerate.Booking;
+import com.roomx.infrastructure.multitenancy.persistence.model.entity.BookingEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
@@ -10,8 +11,10 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
-public interface RecurrenceEntityMapper {
-    Recurrence toDomain(RecurrenceEntity entity);
+public interface BookingEntityMapper {
 
-    RecurrenceEntity toEntity(Recurrence domain);
+
+    Booking toDomain(BookingEntity entity);
+
+    BookingEntity toEntity(Booking domain);
 }

@@ -23,4 +23,6 @@ public interface JpaUserEntityRepository extends JpaRepository<UserEntity, UUID>
     List<UserEntity> findAllByRoleId(String roleId);
 
     Optional<UserEntity> findByIdAndEnable(UUID id, boolean enabled);
+
+    Optional<UserEntity> findByEmailAndEnable(String email, boolean enabled);
 }
