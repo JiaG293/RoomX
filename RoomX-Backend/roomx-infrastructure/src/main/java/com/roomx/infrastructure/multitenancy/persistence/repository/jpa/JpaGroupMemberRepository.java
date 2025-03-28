@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+
 public interface JpaGroupMemberRepository extends JpaRepository<GroupMemberEntity, GroupMemberEntityId>, JpaSpecificationExecutor<GroupMemberEntity> {
 
     Optional<GroupMemberEntity> findByIdAndGroupStatus(GroupMemberEntityId groupMemberId, String status);

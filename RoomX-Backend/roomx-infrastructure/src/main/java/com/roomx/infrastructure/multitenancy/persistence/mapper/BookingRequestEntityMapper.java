@@ -16,6 +16,4 @@ public interface BookingRequestEntityMapper {
     BookingRequestEntity toEntity(BookingRequest domain);
 
 
-
-
 }

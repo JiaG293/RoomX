@@ -1,5 +1,17 @@
 package com.roomx.shared.dto.booking.base;
 
-import java.time.LocalDate;
+import lombok.*;
 
-public record RoomScheduleResultDto(LocalDate date, boolean hasConflict, String optimalRoomId, String alternativeRoomId) {}
+import java.time.LocalDate;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class RoomScheduleResultDto{
+    private LocalDate date;
+    private boolean hasConflict;
+    private String optimalRoomId;
+    private List<String> alternativeRoomId;
+}

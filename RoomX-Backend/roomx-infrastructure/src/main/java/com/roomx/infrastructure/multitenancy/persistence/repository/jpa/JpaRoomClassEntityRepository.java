@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+
 public interface JpaRoomClassEntityRepository extends JpaRepository<RoomClassEntity, UUID>, JpaSpecificationExecutor<RoomClassEntity> {
     boolean existsByRoomClassCode(String roomClassCode);
 

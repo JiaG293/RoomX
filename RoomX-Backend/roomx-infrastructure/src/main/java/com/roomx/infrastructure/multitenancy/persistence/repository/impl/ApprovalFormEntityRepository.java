@@ -32,4 +32,11 @@ public class ApprovalFormEntityRepository implements ApprovalFormRepository {
         var savedApprovalFormEntity = jpaApprovalFormEntityRepository.save(approvalFormEntity);
         return approvalFormEntityMapper.toDomain(savedApprovalFormEntity);
     }
+
+    @Override
+    public Optional<ApprovalForm> findByBookingRequestIdAndLastStatusWithBookingRequest(String bookingRequestId, String status) {
+        return jpaApprovalFormEntityRepository
+                .findByBookingRequestIdAndStatusOrderByUpdatedAtDesc(UUID.fromString(bookingRequestId), status)
+                .map(approvalFormEntityMapper::toDomain);
+    }
 }

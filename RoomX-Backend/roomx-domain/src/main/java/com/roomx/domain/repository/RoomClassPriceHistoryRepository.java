@@ -3,7 +3,7 @@ package com.roomx.domain.repository;
 import com.roomx.domain.model.entity.RoomClassPriceHistory;
 import com.roomx.shared.dto.resource.base.RoomClassPriceCalculateDto;
 
-import java.math.BigDecimal;
+
 import java.util.Optional;
 
 public interface RoomClassPriceHistoryRepository {

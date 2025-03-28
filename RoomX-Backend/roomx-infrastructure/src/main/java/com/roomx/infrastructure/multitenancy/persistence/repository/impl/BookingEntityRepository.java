@@ -7,9 +7,13 @@ import com.roomx.domain.repository.BookingRepository;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.BookingEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaBookingEntityRepository;
 import com.roomx.shared.enums.BookingStatusType;
+import com.roomx.shared.exception.exception.AppException;
+import com.roomx.shared.exception.exception.code.ErrorCode;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cglib.core.Local;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -95,6 +99,13 @@ public class BookingEntityRepository implements BookingRepository {
                 .findAllByMeetingDateAndStatusIn(date, listAccept)
                 .stream().map(bookingEntityMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<Booking> saveAll(List<Booking> bookings) {
+        var bookingEntityList = bookings.stream().map(bookingEntityMapper::toEntity).toList();
+        var savedBookingEntityList = jpaBookingEntityRepository.saveAll(bookingEntityList);
+        return savedBookingEntityList.stream().map(bookingEntityMapper::toDomain).toList();
     }
 
 }

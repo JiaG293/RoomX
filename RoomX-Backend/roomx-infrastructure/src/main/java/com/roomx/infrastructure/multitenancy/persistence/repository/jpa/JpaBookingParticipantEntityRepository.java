@@ -3,7 +3,7 @@ package com.roomx.infrastructure.multitenancy.persistence.repository.jpa;
 
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.BookingParticipantEntity;
 import com.roomx.infrastructure.multitenancy.persistence.model.ids.BookingParticipantEntityId;
-import io.micrometer.observation.ObservationFilter;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

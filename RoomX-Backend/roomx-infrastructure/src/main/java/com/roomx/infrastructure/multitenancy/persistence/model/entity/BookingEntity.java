@@ -59,8 +59,9 @@ public class BookingEntity {
     private BookingRequestEntity bookingRequest;
 
     @NotNull
-    @Column(name = COLUMN_ROOMID_NAME, nullable = false)
-    private UUID roomId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "room_id", nullable = false)
+    private RoomEntity room;
 
     @Column(name = COLUMN_MEETINGSTART_NAME)
     private LocalTime meetingStart;

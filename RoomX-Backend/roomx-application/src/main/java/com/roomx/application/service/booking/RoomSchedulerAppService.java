@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -230,7 +231,7 @@ public class RoomSchedulerAppService {
         return results;
     }*/
 
-    public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoom(
+   /* public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoom(
             String branchId,
             List<LocalDate> occurrences, LocalTime timeStart, LocalTime timeEnd,
             Integer capacity, List<String> participants) {
@@ -288,7 +289,77 @@ public class RoomSchedulerAppService {
                     optimalRoom.map(Room::getId).map(Object::toString).orElse(null), alternativeRoomId));
         }
         return results;
+    }*/
+
+    public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoom1(
+            String branchId,
+            List<LocalDate> occurrences, LocalTime timeStart, LocalTime timeEnd,
+            Integer capacity, List<String> participants) {
+
+        List<RoomScheduleResultDto> results = new ArrayList<>();
+        int requiredCapacity = (capacity != null && capacity > 0) ? capacity : participants.size() + 1;
+
+        for (LocalDate date : occurrences) {
+            // Lấy tất cả các booking trong ngày mà có trạng thái hợp lệ (không lọc theo branchId)
+            List<Booking> existingBookings = bookingRepository.findAllByMeetingDateAndContainsStatus(
+                    date, BookingStatusType.getListAccept());
+
+            // Lọc phòng theo branchId nếu có, nếu không thì lấy tất cả các phòng khả dụng
+            List<Room> availableRooms = (branchId != null)
+                    ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
+                    : roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
+
+            List<Event> events = new ArrayList<>();
+
+            for (Booking booking : existingBookings) {
+                if (booking.getRoom() != null && booking.getRoom().getRoomClass() != null) {
+                    int roomCapacity = booking.getRoom().getRoomClass().getCapacity();
+                    events.add(new Event(booking.getMeetingStart(), roomCapacity, true));
+                    events.add(new Event(booking.getMeetingEnd(), roomCapacity, false));
+                }
+            }
+
+            events.add(new Event(timeStart, requiredCapacity, true));
+            events.add(new Event(timeEnd, requiredCapacity, false));
+
+            // Sắp xếp các sự kiện theo thời gian (ưu tiên sự kiện kết thúc trước nếu trùng thời gian)
+            events.sort((e1, e2) -> e1.getTime().equals(e2.getTime())
+                    ? Boolean.compare(e1.isStart(), e2.isStart())
+                    : e1.getTime().compareTo(e2.getTime()));
+
+            int currentCapacity = 0;
+            int maxCapacityNeeded = 0;
+            for (Event event : events) {
+                currentCapacity += event.isStart() ? event.getCapacity() : -event.getCapacity();
+                maxCapacityNeeded = Math.max(maxCapacityNeeded, currentCapacity);
+            }
+
+            // Tìm phòng tối ưu có sức chứa nhỏ nhất nhưng vẫn đủ chỗ
+            int finalMaxCapacityNeeded = maxCapacityNeeded;
+            Room optimalRoom = availableRooms.stream()
+                    .filter(room -> room.getRoomClass().getCapacity() >= finalMaxCapacityNeeded)
+                    .sorted(Comparator.comparingInt(room -> room.getRoomClass().getCapacity())) // Sắp xếp tăng dần theo sức chứa
+                    .findFirst()
+                    .orElse(null);
+
+            // Lấy danh sách các phòng thay thế có sức chứa lớn hơn phòng tối ưu
+            int finalMaxCapacityNeeded1 = maxCapacityNeeded;
+            List<String> alternativeRooms = availableRooms.stream()
+                    .filter(room -> room.getRoomClass().getCapacity() >= finalMaxCapacityNeeded1 &&
+                            (optimalRoom == null || room.getRoomClass().getCapacity() > optimalRoom.getRoomClass().getCapacity()))
+                    .sorted(Comparator.comparingInt(room -> room.getRoomClass().getCapacity()))
+                    .map(room -> room.getId().toString())
+                    .collect(Collectors.toList());
+
+            results.add(new RoomScheduleResultDto(
+                    date, maxCapacityNeeded > availableRooms.stream().mapToInt(r -> r.getRoomClass().getCapacity()).max().orElse(0),
+                    (optimalRoom != null) ? optimalRoom.getId().toString() : null,
+                    alternativeRooms));
+        }
+        return results;
     }
+
+
 
 
 

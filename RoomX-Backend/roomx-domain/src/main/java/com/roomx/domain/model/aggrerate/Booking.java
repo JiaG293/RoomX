@@ -26,6 +26,7 @@ public class Booking {
     private LocalDate meetingDate;
     private int count;
     private BigDecimal totalPrice;
+    private String status;
 
     @Builder.Default
     private Instant createdAt = Instant.now();

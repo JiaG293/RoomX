@@ -9,7 +9,10 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        uses = {
+            BookingRequestEntityMapper.class
+        }
 )
 public interface ApprovalFormEntityMapper {
     ApprovalForm toDomain(ApprovalFormEntity entity);

@@ -508,17 +508,17 @@ ON CONFLICT (service_price_history_id) DO NOTHING ;
 
 -- ROOM
 insert into room (room_id, place_id, status, description, room_class_id, room_code)
-values  ('3b14be31-fe23-43cb-90f9-9cbf246ff835', 'c74a844e-36ec-4b46-9926-03214929fe45', 'AVAILABLE', 'Phòng tiêu chuẩn với đầy đủ tiện nghi', 'f8e74629-f29b-4d39-a5f0-986bb1388a14', 'A26-1-004'),
-        ('091ccf9f-5020-4813-9375-3548b0626579', 'adc6feab-8c23-497f-b19f-77341b545aac', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', 'dbef80aa-d03d-47da-aa03-96252dbd1f79', 'A26-4-006'),
-        ('587dbfde-5c66-411c-9ed9-7ad2f559cc6d', 'f32615d8-dd19-4946-ba77-f489e4e49b62', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', 'b7d17122-d9cf-4c8e-9e58-b77ecce9d773', 'C22-1-007'),
-        ('b0879eac-4830-470f-83bc-15d03f7876b1', '10e6e9a2-400a-4636-b139-e609f2d69bce', 'AVAILABLE', 'Phòng tiêu chuẩn với đầy đủ tiện nghi', 'a6bcfefb-15c5-41cb-bf17-7268836f3484', 'C22-4-009'),
+values  ('3b14be31-fe23-43cb-90f9-9cbf246ff835', 'a84e8c68-7005-4889-be77-039b722e25e7', 'AVAILABLE', 'Phòng tiêu chuẩn với đầy đủ tiện nghi', 'f8e74629-f29b-4d39-a5f0-986bb1388a14', 'A26-1-004'),
+        ('091ccf9f-5020-4813-9375-3548b0626579', 'a84e8c68-7005-4889-be77-039b722e25e7', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', 'a8738ec8-28bd-4847-8810-6a471221b5a7', 'A26-4-006'),
+        ('587dbfde-5c66-411c-9ed9-7ad2f559cc6d', 'a84e8c68-7005-4889-be77-039b722e25e7', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', 'b7d17122-d9cf-4c8e-9e58-b77ecce9d773', 'C22-1-007'),
+        ('b0879eac-4830-470f-83bc-15d03f7876b1', '2f790170-d3b3-4182-8906-278bccdff2f1', 'AVAILABLE', 'Phòng tiêu chuẩn với đầy đủ tiện nghi', 'a6bcfefb-15c5-41cb-bf17-7268836f3484', 'C22-4-009'),
         ('bba14d83-c561-4b2f-a7b0-24fe7a2154fd', 'dce5ecf4-05dc-49a6-8f7d-5a144653c6d1', 'AVAILABLE', 'Phòng họp nhỏ, phù hợp cho nhóm dưới 10 người', '0e7997ac-0fe0-4fc9-9b9e-72757cb92781', 'C29-3-011'),
-        ('e57d5e71-0ff6-43a2-ba8f-3a4bab0b55c4', 'ef00a2a3-9438-46f1-87a3-318de786de5b', 'AVAILABLE', 'Phòng tiêu chuẩn với đầy đủ tiện nghi', '9ea6d236-a852-449d-ac43-8ed5437ee8b8', 'C29-1-010'),
-        ('063f9c0e-ab1b-4504-b162-c363421f6ac5', '2f790170-d3b3-4182-8906-278bccdff2f1', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', 'b2ec20e2-88ad-4841-ad7e-5c3ba856e30e', 'A25-4-003'),
-        ('e87f6cf0-5502-4ef9-9bfb-9c5cbfbf718b', 'b154ec93-baef-4663-b2bf-65f2edb7c111', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', '4a5a0aa1-c504-477e-b58f-14852101f34d', 'C29-4-012'),
-        ('5c17a25b-b9bf-42e9-acdf-86b0daf66fc6', '0170373d-c356-4ab3-87eb-8b2c85283d14', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', '35584afe-6650-4bd6-8045-e6db90a7b67b', 'A25-3-002'),
+        ('e57d5e71-0ff6-43a2-ba8f-3a4bab0b55c4', '2f790170-d3b3-4182-8906-278bccdff2f1', 'AVAILABLE', 'Phòng tiêu chuẩn với đầy đủ tiện nghi', '9ea6d236-a852-449d-ac43-8ed5437ee8b8', 'C29-1-010'),
+        ('063f9c0e-ab1b-4504-b162-c363421f6ac5', 'c74a844e-36ec-4b46-9926-03214929fe45', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', 'b2ec20e2-88ad-4841-ad7e-5c3ba856e30e', 'A25-4-003'),
+        ('e87f6cf0-5502-4ef9-9bfb-9c5cbfbf718b', 'adc6feab-8c23-497f-b19f-77341b545aac', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', '4a5a0aa1-c504-477e-b58f-14852101f34d', 'C29-4-012'),
+        ('5c17a25b-b9bf-42e9-acdf-86b0daf66fc6', 'c74a844e-36ec-4b46-9926-03214929fe45', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', '35584afe-6650-4bd6-8045-e6db90a7b67b', 'A25-3-002'),
         ('6910edef-8261-48c9-81a3-a2a7c76e7c73', '1e2c0d33-20c5-4c13-974b-2248fc529189', 'AVAILABLE', 'Phòng hội nghị với trang thiết bị hiện đại', '407a364b-04d5-406f-b301-08701cc214eb', 'A26-3-005'),
-        ('45c1c341-6419-46ee-baff-02451536d1e8', '8bb83093-79f3-402f-83a2-0408f0c08f59', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', '198e372e-8a68-46e5-a8b9-5521035ab015', 'C22-3-008'),
+        ('45c1c341-6419-46ee-baff-02451536d1e8', '1e2c0d33-20c5-4c13-974b-2248fc529189', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', '198e372e-8a68-46e5-a8b9-5521035ab015', 'C22-3-008'),
         ('ffe4ba6a-d0a2-41ab-b4f9-fef8a021e193', 'a84e8c68-7005-4889-be77-039b722e25e7', 'AVAILABLE', 'Phòng VIP với dịch vụ cao cấp', 'f2810a2a-69b7-41f1-beb6-f2b9049e21ed', 'A25-1-001')
 ON CONFLICT (room_id) DO NOTHING;
 
@@ -535,7 +535,9 @@ VALUES
     -- DAILY
     ('11111111-1111-1111-1111-111111111111', '374e33ed-1d51-4298-a3be-b51b4d7529a3', 0, NOW(), NOW(),
      NOW() + INTERVAL '1 day',
-     'MO,TU,WE,TH,FR', '09:00', '08:00', CURRENT_DATE + INTERVAL '30 day', CURRENT_DATE, NULL, 'DAILY', 10, NULL, NULL),
+     'MO,TU,WE,TH,FR', '09:00', '08:00', CURRENT_DATE + INTERVAL '30 day', CURRENT_DATE, NULL, 'DAILY', 20, 'e2f404d9-29c3-44f9-9f4c-cdbf9c859a89', NULL),
+
+
     ('11111111-1111-1111-1111-111111111112', '374e33ed-1d51-4298-a3be-b51b4d7529a3', 0, NOW(), NOW(),
      NOW() + INTERVAL '1 day',
      'MO,TU,WE,TH,FR', '16:00', '17:00', CURRENT_DATE + INTERVAL '30 day', CURRENT_DATE, NULL, 'DAILY', 12, NULL, NULL),
@@ -581,6 +583,9 @@ ON CONFLICT DO NOTHING ;
 INSERT INTO approval_form (approval_form_id, booking_request_id, approver, status, created_at, updated_at)
 VALUES ('55555555-5555-5555-5555-555555555550', '11111111-1111-1111-1111-111111111111',
         'f4a6a4ba-ffb4-4ce5-8125-97be4fa7cd91', 'PENDING', NOW(), NOW()),
+       ('55555555-5555-5555-5555-555555555550', '11111111-1111-1111-1111-111111111111',
+        'f4a6a4ba-ffb4-4ce5-8125-97be4fa7cd91', 'APPROVED', NOW() + INTERVAL '1 minutes', NOW() + INTERVAL '1 minutes'),
+
        ('55555555-5555-5555-5555-555555555551', '11111111-1111-1111-1111-111111111112',
         'f4a6a4ba-ffb4-4ce5-8125-97be4fa7cd91', 'PENDING', NOW(), NOW()),
        ('55555555-5555-5555-5555-555555555552', '11111111-1111-1111-1111-111111111113',
@@ -651,7 +656,49 @@ VALUES ('22222222-2222-2222-2222-222222222229', 'BK_20241217_00001', '11111111-1
         'ffe4ba6a-d0a2-41ab-b4f9-fef8a021e193',
         '08:00', '09:00',
         10, 120.00, 'COMPLETED', NOW() - INTERVAL '2 day', NOW() - INTERVAL '10 day', NULL,
-        CURRENT_DATE + INTERVAL '10 day')
+        CURRENT_DATE + INTERVAL '10 day'),
+
+       ('22222222-2222-2222-2222-222222222230', 'BK_20241217_00011', '11111111-1111-1111-1111-111111111111',
+        '091ccf9f-5020-4813-9375-3548b0626579',
+        '08:00', '09:00',
+        1, 100.00, 'COMPLETED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day', NULL,
+        CURRENT_DATE),
+       ('22222222-2222-2222-2222-222222222231', 'BK_20241217_00012', '11111111-1111-1111-1111-111111111111',
+        '091ccf9f-5020-4813-9375-3548b0626579',
+        '08:00', '09:00',
+        1, 100.00, 'SCHEDULED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day', NULL,
+        CURRENT_DATE + INTERVAL '1 day'),
+       ('22222222-2222-2222-2222-222222222232', 'BK_20241217_00013', '11111111-1111-1111-1111-111111111111',
+        '091ccf9f-5020-4813-9375-3548b0626579',
+        '08:00', '09:00',
+        1, 100.00, 'SCHEDULED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day', NULL,
+        CURRENT_DATE + INTERVAL '2 day'),
+       ('22222222-2222-2222-2222-222222222233', 'BK_20241217_00014', '11111111-1111-1111-1111-111111111111',
+        '091ccf9f-5020-4813-9375-3548b0626579',
+        '08:00', '09:00',
+        1, 100.00, 'SCHEDULED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day', NULL,
+        CURRENT_DATE + INTERVAL '3 day'),
+       ('22222222-2222-2222-2222-222222222234', 'BK_20241217_00015', '11111111-1111-1111-1111-111111111111',
+        '091ccf9f-5020-4813-9375-3548b0626579',
+        '08:00', '09:00',
+        1, 100.00, 'SCHEDULED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day', NULL,
+        CURRENT_DATE + INTERVAL '4 day'),
+       ('22222222-2222-2222-2222-222222222235', 'BK_20241217_00016', '11111111-1111-1111-1111-111111111111',
+        '091ccf9f-5020-4813-9375-3548b0626579',
+        '08:00', '09:00',
+        1, 100.00, 'SCHEDULED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day', NULL,
+        CURRENT_DATE + INTERVAL '4 day'),
+       ('22222222-2222-2222-2222-222222222236', 'BK_20241217_00017', '11111111-1111-1111-1111-111111111111',
+        '091ccf9f-5020-4813-9375-3548b0626579',
+        '08:00', '09:00',
+        1, 100.00, 'SCHEDULED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day', NULL,
+        CURRENT_DATE + INTERVAL '5 day'),
+       ('22222222-2222-2222-2222-222222222237', 'BK_20241217_00018', '11111111-1111-1111-1111-111111111111',
+        '091ccf9f-5020-4813-9375-3548b0626579',
+        '08:00', '09:00',
+        1, 100.00, 'SCHEDULED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day', NULL,
+        CURRENT_DATE + INTERVAL '6 day')
+
 ON CONFLICT (booking_id) DO NOTHING ;
 
 -- BOOKING PARTICIPANT

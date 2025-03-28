@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+
 public interface JpaEquipmentEntityRepository extends JpaRepository<EquipmentEntity, UUID>, JpaSpecificationExecutor<EquipmentEntity> {
 
     Optional<EquipmentEntity> findByEquipmentCode(String equipmentCode);

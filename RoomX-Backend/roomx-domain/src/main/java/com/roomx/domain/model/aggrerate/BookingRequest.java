@@ -31,6 +31,7 @@ public class BookingRequest {
     private LocalTime startTime;
     private LocalTime endTime;
     private UUID branchId;
+    private UUID roomId;
     @Builder.Default
     private String daysOfWeek = "MO,TU,WE,TH,FR";
     @Builder.Default

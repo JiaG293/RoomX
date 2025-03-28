@@ -16,9 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class TestRequest {
+    private String id;
     private int capacity;
-    private String branchId;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private String branchId;
     private String roomId;
     private String recurrenceType;
     private LocalDate startDate;

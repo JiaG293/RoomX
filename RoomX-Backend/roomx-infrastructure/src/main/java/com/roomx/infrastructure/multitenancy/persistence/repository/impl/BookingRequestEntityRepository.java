@@ -28,11 +28,9 @@ public class BookingRequestEntityRepository implements BookingRequestRepository 
     @Override
     public BookingRequest save(BookingRequest bookingRequest) {
         var bookingRequestEntity = bookingRequestEntityMapper.toEntity(bookingRequest);
-        log.info("Saving bookingRequest {}", bookingRequest);
-        log.info("Saving bookingRequestEntity {}", bookingRequestEntity);
-
         var savedBookingRequestEntity = jpaBookingRequestEntityRepository.save(bookingRequestEntity);
-        log.info("Saving savedBookingRequestEntity {}", savedBookingRequestEntity);
         return bookingRequestEntityMapper.toDomain(savedBookingRequestEntity);
     }
+
+
 }

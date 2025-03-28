@@ -55,7 +55,7 @@ public class ApprovalFormEntity {
     //RELATIONSHIP
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "booking_request_id", nullable = false)
     private BookingRequestEntity bookingRequest;
 }

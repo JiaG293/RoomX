@@ -24,9 +24,8 @@ public interface JpaRoomEntityRepository extends JpaRepository<RoomEntity, UUID>
 
     @Query("""
             SELECT r FROM RoomEntity r 
-            JOIN r.place p 
-            JOIN p.branch b 
-            WHERE r.status = :status AND b.id = :branchId
+            LEFT JOIN FETCH r.place
+            WHERE r.status = :status AND r.place.branch.id = :branchId
             """)
     List<RoomEntity> findAllByStatusBranchId(@Param("status") String status, @Param("branchId") UUID branchId);
 }

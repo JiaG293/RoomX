@@ -7,6 +7,7 @@ import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +44,17 @@ public class BookingController {
                 .build();
     }
 
-    @PostMapping("/test")
-    public ResultResponse<?> test(
+    @GetMapping("/check/{bookingRequestId}")
+    public ResultResponse<?> checkRoomSuitable(
+           @PathVariable String bookingRequestId) {
+        var result = bookingAppService.checkRoomSuitable(bookingRequestId);
+        return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/check")
+    public ResultResponse<?> checkRoomSuitable(
             @RequestBody TestRequest request) {
         var result = bookingAppService.test(request);
         return ResultResponse.<Object>builder()

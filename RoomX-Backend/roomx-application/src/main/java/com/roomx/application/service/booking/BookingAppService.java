@@ -1,6 +1,8 @@
 package com.roomx.application.service.booking;
 
 import com.roomx.domain.model.aggrerate.Booking;
+import com.roomx.domain.model.aggrerate.Room;
+import com.roomx.domain.model.entity.BookingParticipant;
 import com.roomx.domain.model.entity.EquipmentRequest;
 import com.roomx.domain.model.entity.ServiceRequest;
 import com.roomx.domain.model.vo.EquipmentRequestId;
@@ -9,6 +11,7 @@ import com.roomx.domain.service.BookingDomainService;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentRequestEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.ServiceRequestEntityMapper;
 import com.roomx.shared.dto.TestRequest;
+import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
 import com.roomx.shared.dto.booking.request.ApprovalFormAdminCreateRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestAdminCreateRequest;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
@@ -22,6 +25,7 @@ import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.BookingRequestEntityMapper;
 import com.roomx.infrastructure.multitenancy.security.oauth.SecurityUtil;
+import com.roomx.shared.enums.BookingStatusType;
 import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.RoomStatusType;
 import com.roomx.shared.exception.exception.AppException;
@@ -32,13 +36,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.print.Book;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,6 +68,7 @@ public class BookingAppService {
     private final EquipmentPriceHistoryRepository equipmentPriceHistoryRepository;
     private final ServicePriceHistoryRepository servicePriceHistoryRepository;
     private final BookingParticipantRepository bookingParticipantRepository;
+    private final ApprovalFormRepository approvalFormRepository;
 
     private final BookingRepository bookingRepository;
     private final RoomSchedulerAppService roomSchedulerAppService;
@@ -115,7 +118,10 @@ public class BookingAppService {
         bookingRequestDomain.setCreatedAt(Instant.now());
         bookingRequestDomain.setUpdatedAt(Instant.now());
 
+
         var savedBookingRequest = bookingRequestRepository.save(bookingRequestDomain);
+        log.info("Booking Request ID after save: {}", savedBookingRequest.getId());
+
         var servicesDomain = request.getServices().stream()
                 .map(service -> {
                     var serviceFind = serviceRepository.findById(service.getServiceId())
@@ -157,7 +163,7 @@ public class BookingAppService {
         savedBookingRequest.setServices(servicesDomain);
         savedBookingRequest.setEquipments(equipmentsDomain);
 
-        var approvalFormDomain = approvalFormAppService.createApprovalFormPending(bookingRequestDomain, null);
+        var approvalFormDomain = approvalFormAppService.createApprovalFormPending(savedBookingRequest, null);
 
         var response = bookingRequestAppMapper.toResponse(savedBookingRequest);
         response.setApprovalStatus(approvalFormDomain.getStatus());
@@ -165,39 +171,40 @@ public class BookingAppService {
         return response;
     }
 
+    public Object checkRoomSuitable(String bookingRequestId) {
+        var approvalFormDomain = approvalFormRepository
+                .findByBookingRequestIdAndLastStatusWithBookingRequest(bookingRequestId, ApprovalStatusType.PENDING.toString())
+                .orElseThrow(() -> new AppException(ErrorCode.APPROVAL_FORM_NOT_FOUND));
 
+        var bookingRequestDomain = approvalFormDomain.getBookingRequest();
+        var listOccurrences = bookingRequestDomain.getOccurrences();
+        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoom1(
+                approvalFormDomain.getBookingRequest().getBranchId().toString(),
+                listOccurrences,
+                bookingRequestDomain.getStartTime(),
+                bookingRequestDomain.getEndTime(),
+                bookingRequestDomain.getCapacity(),
+                bookingRequestDomain.getParticipants()
+        );
+        return result;
+
+    }
     public Object test(TestRequest request) {
-        var bookingRequest = BookingRequest.builder()
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .endTime(request.getEndTime())
-                .startTime(request.getStartTime())
-                .capacity(request.getCapacity())
-                .participants(request.getParticipants())
-                .recurrenceInterval((short) request.getRecurrenceInterval())
-                .recurrenceType(request.getRecurrenceType())
-                .daysOfWeek(request.getDaysOfWeek())
-                .build();
-        var listOccurrences = bookingRequest.getOccurrences();
-        /*var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoom(
+        var approvalFormDomain = approvalFormRepository
+                .findByBookingRequestIdAndLastStatusWithBookingRequest(request.getId(), ApprovalStatusType.PENDING.toString())
+                .orElseThrow(() -> new AppException(ErrorCode.APPROVAL_FORM_NOT_FOUND));
+
+        var bookingRequestDomain = approvalFormDomain.getBookingRequest();
+        var listOccurrences = bookingRequestDomain.getOccurrences();
+        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoom1(
                 request.getBranchId(),
                 listOccurrences,
-                bookingRequest.getStartTime(),
-                bookingRequest.getEndTime(),
-                bookingRequest.getCapacity(),
-                bookingRequest.getParticipants()
-        );*/
-
-        /*var result = bookingRepository
-                .findAllByMeetingDate(
-                        LocalDate.of(2025, 04, 02))
-                .stream().map(booking -> {
-                    var bookingParticipants = bookingParticipantRepository
-                            .findAllBookingId(booking.getId().toString());
-                    booking.setParticipants(bookingParticipants);
-                  return booking;
-                }).toList();*/
-        var result = roomRepository.findAllByBranchIdAndStatus(RoomStatusType.AVAILABLE.toString(), request.getBranchId());
+                bookingRequestDomain.getStartTime(),
+                bookingRequestDomain.getEndTime(),
+                bookingRequestDomain.getCapacity(),
+                bookingRequestDomain.getParticipants()
+        );
         return result;
+
     }
 }

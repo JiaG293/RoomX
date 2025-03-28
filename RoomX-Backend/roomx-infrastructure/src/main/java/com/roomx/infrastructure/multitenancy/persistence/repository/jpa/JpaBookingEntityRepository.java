@@ -1,14 +1,9 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.jpa;
 
-import com.roomx.domain.dto.BookingDto;
-import com.roomx.domain.model.aggrerate.Booking;
-import com.roomx.domain.model.aggrerate.Room;
+
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.BookingEntity;
-import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
