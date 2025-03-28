@@ -575,7 +575,7 @@ INSERT INTO booking_request_participant (booking_request_id, participants)
 VALUES ('11111111-1111-1111-1111-111111111110', 'ea4e9c4c-a317-4064-8a5b-da2b339e4380'),
        ('11111111-1111-1111-1111-111111111110', '374e33ed-1d51-4298-a3be-b51b4d7529a3'),
        ('11111111-1111-1111-1111-111111111110', 'ea4e9c4c-a317-4064-8a5b-da2b339e4182')
-ON CONFLICT (booking_request_id, participants) DO NOTHING ;
+ON CONFLICT DO NOTHING ;
 
 -- APPROVAL FORM
 INSERT INTO approval_form (approval_form_id, booking_request_id, approver, status, created_at, updated_at)
