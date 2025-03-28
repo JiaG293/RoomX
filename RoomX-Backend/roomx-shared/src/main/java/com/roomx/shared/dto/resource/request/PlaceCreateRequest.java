@@ -20,6 +20,8 @@ public class PlaceCreateRequest {
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String code;
     private String layout;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private String name;
 
     @Pattern(regexp = "^(BRANCH|BUILDING|FLOOR)$", message = "valid.place.place_type")
     @JsonSetter(nulls = Nulls.AS_EMPTY)
