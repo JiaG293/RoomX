@@ -1,12 +1,14 @@
 package com.roomx.application.service.booking;
 
+import com.roomx.domain.event.Event;
 import com.roomx.domain.model.aggrerate.Booking;
 import com.roomx.domain.model.aggrerate.BookingRequest;
 import com.roomx.domain.model.aggrerate.Room;
-import com.roomx.domain.model.aggrerate.User;
 import com.roomx.domain.model.entity.BookingParticipant;
 import com.roomx.domain.model.vo.BookingParticipantId;
 import com.roomx.domain.repository.*;
+import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
+import com.roomx.shared.enums.BookingStatusType;
 import com.roomx.shared.enums.RoomStatusType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Slf4j
@@ -94,7 +93,7 @@ public class RoomSchedulerAppService {
 
                 var bookingParticipants = request.getParticipants().stream().map(email -> {
                     var userFind = userRepository.findByEmail(email, true).orElse(null);
-                    if(userFind != null){
+                    if (userFind != null) {
                         return BookingParticipant.builder()
                                 .id(new BookingParticipantId(bookingDomain.getId(), userFind.getId()))
                                 .booking(bookingDomain)
@@ -108,6 +107,189 @@ public class RoomSchedulerAppService {
         }
         return createdBookings;
     }
+
+
+    /*public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoom(
+            List<LocalDate> occurrences,
+            LocalTime timeStart,
+            LocalTime timeEnd,
+            Integer capacity,
+            List<String> participants
+    ) {
+        List<RoomScheduleResultDto> results = new ArrayList<>();
+        int requiredCapacity = (capacity != null && capacity > 0) ? capacity : participants.size();
+
+        for (LocalDate date : occurrences) {
+            List<Booking> existingBookings = bookingRepository.findAllByMeetingDateAndContainsStatus(date, BookingStatusType.getListAccept());
+            String conflictRoomId = null;
+
+            boolean hasConflict = false;
+            for (Booking booking : existingBookings) {
+                if (timeOverlap(booking.getMeetingStart(), booking.getMeetingEnd(), timeStart, timeEnd)) {
+                    var bookingParticipants = bookingParticipantRepository
+                            .findAllBookingId(booking.getId().toString());
+                    boolean participantConflict = bookingParticipants.stream()
+                            .anyMatch(p -> participants.contains(p.getUser().getEmail()));
+
+                    if (participantConflict) {
+                        hasConflict = true;
+                        conflictRoomId = booking.getRoom().getId().toString(); // Lưu lại room gây xung đột
+                        break;
+                    }
+                }
+            }
+
+            // Tìm phòng tối ưu (đủ sức chứa nhỏ nhất)
+            Optional<Room> optimalRoom = roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString()).stream()
+                    .filter(room -> room.getRoomClass().getCapacity() >= requiredCapacity)
+                    .min(Comparator.comparingInt(room -> room.getRoomClass().getCapacity()));
+
+            // Tìm phòng thay thế (lớn hơn nhưng không phải tốt nhất)
+            Optional<Room> alternativeRoom = roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString()).stream()
+                    .filter(room -> room.getRoomClass().getCapacity() >= requiredCapacity &&
+                            (!optimalRoom.isPresent() || room.getRoomClass().getCapacity() > optimalRoom.get().getRoomClass().getCapacity()))
+                    .min(Comparator.comparingInt(room -> room.getRoomClass().getCapacity()));
+
+            // Nếu có conflict, trả về cả phòng cũ và phòng thay thế
+            String alternativeRoomId = hasConflict ? alternativeRoom.map(Room::getId).map(Object::toString).orElse(null) : null;
+
+            results.add(new RoomScheduleResultDto(date, hasConflict, optimalRoom.map(Room::getId).map(Object::toString).orElse(null), conflictRoomId, alternativeRoomId));
+        }
+        return results;
+    }*/
+
+    /*public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoom(
+            List<LocalDate> occurrences, LocalTime timeStart, LocalTime timeEnd,
+            Integer capacity, List<String> participants) {
+
+        List<RoomScheduleResultDto> results = new ArrayList<>();
+        // Nếu không cung cấp sức chứa sẽ lấy theo số lượng thành viên tham gia
+        int requiredCapacity = (capacity != null && capacity > 0) ? capacity : participants.size() + 1;
+
+        // Lấy ra ngày theo chu kỳ do người dùng lựa chọn
+        for (LocalDate date : occurrences) {
+            List<Booking> existingBookings = bookingRepository.findAllByMeetingDateAndContainsStatus(date, BookingStatusType.getListAccept());
+            List<Room> availableRooms = roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
+
+            List<Event> bookingEvents = new ArrayList<>();
+
+            // Tạo ra line các cuộc họp đã lên lịch
+            for (Booking booking : existingBookings) {
+                if (booking.getRoom() == null || booking.getRoom().getRoomClass() == null) {
+                    continue; // Bỏ qua booking không có phòng hợp lệ
+                }
+                bookingEvents.add(new Event(booking.getMeetingStart(), booking.getRoom().getRoomClass().getCapacity(), true)); // Giờ họp bắt đầu - sức chứa
+                bookingEvents.add(new Event(booking.getMeetingEnd(), booking.getRoom().getRoomClass().getCapacity(), false)); // Giờ họp kết thúc - sức chứa
+            }
+
+            // Thêm sự kiện cho cuộc họp cần đặt
+            bookingEvents.add(new Event(timeStart, requiredCapacity, true));
+            bookingEvents.add(new Event(timeEnd, requiredCapacity, false));
+
+            // Sắp xếp theo thời gian, nếu trùng ưu tiên sự kiện kết thúc trước
+            bookingEvents.sort((event1, event2) ->
+                    event1.getTime().equals(event2.getTime()) ?
+                            Boolean.compare(event1.isStart(), event2.isStart()) :
+                            event1.getTime().compareTo(event2.getTime())
+            );
+
+            int currentCapacity = 0;
+            boolean hasConflict = false;
+
+            for (Event event : bookingEvents) {
+                if (event.isStart()) {
+                    currentCapacity += event.getCapacity();
+                    if (currentCapacity > availableRooms.stream().mapToInt(r -> r.getRoomClass().getCapacity()).max().orElse(0)) {
+                        hasConflict = true;
+                        break;
+                    }
+                } else {
+                    currentCapacity -= event.getCapacity();
+                }
+            }
+
+            // Tìm phòng tốt nhất có thể sử dụng
+            Optional<Room> optimalRoom = availableRooms.stream()
+                    .filter(room -> room.getRoomClass().getCapacity() >= requiredCapacity)
+                    .min(Comparator.comparingInt(room -> room.getRoomClass().getCapacity()));
+
+            // Nếu có xung đột, tìm phòng thay thế
+            String alternativeRoomId = null;
+            if (hasConflict) {
+                alternativeRoomId = availableRooms.stream()
+                        .filter(room -> room.getRoomClass().getCapacity() >= requiredCapacity &&
+                                (!optimalRoom.isPresent() || room.getRoomClass().getCapacity() > optimalRoom.get().getRoomClass().getCapacity()))
+                        .min(Comparator.comparingInt(room -> room.getRoomClass().getCapacity()))
+                        .map(Room::getId)
+                        .map(Object::toString)
+                        .orElse(null);
+            }
+
+            results.add(new RoomScheduleResultDto(date, hasConflict, optimalRoom.map(Room::getId).map(Object::toString).orElse(null), alternativeRoomId));
+        }
+        return results;
+    }*/
+
+    public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoom(
+            String branchId,
+            List<LocalDate> occurrences, LocalTime timeStart, LocalTime timeEnd,
+            Integer capacity, List<String> participants) {
+
+        List<RoomScheduleResultDto> results = new ArrayList<>();
+        int requiredCapacity = (capacity != null && capacity > 0) ? capacity : participants.size() + 1;
+
+        for (LocalDate date : occurrences) {
+            List<Booking> existingBookings = bookingRepository.findAllByMeetingDateAndContainsStatus(
+                    date, BookingStatusType.getListAccept());
+
+            List<Room> availableRooms = (branchId != null)
+                    ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
+                    : roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
+
+            List<Event> events = new ArrayList<>();
+
+            for (Booking booking : existingBookings) {
+                if (booking.getRoom() != null && booking.getRoom().getRoomClass() != null) {
+                    int roomCapacity = booking.getRoom().getRoomClass().getCapacity();
+                    events.add(new Event(booking.getMeetingStart(), roomCapacity, true));
+                    events.add(new Event(booking.getMeetingEnd(), roomCapacity, false));
+                }
+            }
+
+            events.add(new Event(timeStart, requiredCapacity, true));
+            events.add(new Event(timeEnd, requiredCapacity, false));
+
+            events.sort((e1, e2) -> e1.getTime().equals(e2.getTime())
+                    ? Boolean.compare(e1.isStart(), e2.isStart())
+                    : e1.getTime().compareTo(e2.getTime()));
+
+            int currentCapacity = 0;
+            int maxCapacityNeeded = 0;
+            for (Event event : events) {
+                currentCapacity += event.isStart() ? event.getCapacity() : -event.getCapacity();
+                maxCapacityNeeded = Math.max(maxCapacityNeeded, currentCapacity);
+            }
+
+            int finalMaxCapacityNeeded = maxCapacityNeeded;
+            Optional<Room> optimalRoom = availableRooms.stream()
+                    .filter(room -> room.getRoomClass().getCapacity() >= finalMaxCapacityNeeded)
+                    .min(Comparator.comparingInt(room -> room.getRoomClass().getCapacity()));
+
+            String alternativeRoomId = availableRooms.stream()
+                    .filter(room -> room.getRoomClass().getCapacity() >= finalMaxCapacityNeeded &&
+                            (optimalRoom.isEmpty() || room.getRoomClass().getCapacity() > optimalRoom.get().getRoomClass().getCapacity()))
+                    .min(Comparator.comparingInt(room -> room.getRoomClass().getCapacity()))
+                    .map(Room::getId)
+                    .map(Object::toString)
+                    .orElse(null);
+
+            results.add(new RoomScheduleResultDto(
+                    date, maxCapacityNeeded > availableRooms.stream().mapToInt(r -> r.getRoomClass().getCapacity()).max().orElse(0),
+                    optimalRoom.map(Room::getId).map(Object::toString).orElse(null), alternativeRoomId));
+        }
+        return results;
+    }
+
 
 
 }

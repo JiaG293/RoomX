@@ -35,6 +35,8 @@ public class BookingRequestEntity {
     public static final String COLUMN_RECURRENCETYPE_NAME = "recurrence_type";
     public static final String COLUMN_CAPACITY_NAME = "capacity";
     public static final String COLUMN_REQUESTER_NAME = "requester";
+    public static final String COLUMN_BRANCHID_NAME = "branch_id";
+    public static final String COLUMN_ROOMID_NAME = "room_id";
 
 
     @Id
@@ -62,6 +64,11 @@ public class BookingRequestEntity {
     @Column(name = COLUMN_ENDDATEAPPROVAL_NAME)
     private Instant endDateApproval;
 
+    @Column(name = COLUMN_BRANCHID_NAME)
+    private UUID branchId;
+
+    @Column(name = COLUMN_ROOMID_NAME)
+    private UUID roomId;
 
     @Column(name = COLUMN_DAYSOFWEEK_NAME, length = Integer.MAX_VALUE)
     private String daysOfWeek;

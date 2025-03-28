@@ -58,4 +58,12 @@ public class RoomEntityRepository implements RoomRepository {
                 .findAllByStatusIsAndRoomClassCapacityGreaterThanEqual(status, requiredCapacity)
                 .stream().map(roomEntityMapper::toDomain).toList();
     }
+
+    @Override
+    public List<Room> findAllByBranchIdAndStatus(String branchId, String status) {
+
+        return jpaRoomEntityRepository
+                .findAllByStatusBranchId(status, UUID.fromString(branchId))
+                .stream().map(roomEntityMapper::toDomain).toList();
+    }
 }

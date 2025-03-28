@@ -1,8 +1,11 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.roomx.infrastructure.multitenancy.persistence.model.ids.BookingParticipantEntityId;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -21,11 +24,12 @@ public class BookingParticipantEntity {
     @MapsId("bookingId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "booking_id", nullable = false)
-    private com.roomx.infrastructure.multitenancy.persistence.model.entity.BookingEntity booking;
+    private BookingEntity booking;
 
     @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity user;
+    private UserEntity user;
+
 
 }

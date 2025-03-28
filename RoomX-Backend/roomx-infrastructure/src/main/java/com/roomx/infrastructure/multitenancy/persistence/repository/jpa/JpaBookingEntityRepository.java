@@ -1,5 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.jpa;
 
+import com.roomx.domain.dto.BookingDto;
 import com.roomx.domain.model.aggrerate.Booking;
 import com.roomx.domain.model.aggrerate.Room;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.BookingEntity;
@@ -24,4 +25,9 @@ public interface JpaBookingEntityRepository extends JpaRepository<BookingEntity,
 //    List<BookingEntity> findAllByRoomIdsAndMeetingDate(@Param("roomIds") List<UUID> roomIds, @Param("date") LocalDate date);
 
     List<BookingEntity> findAllByMeetingDateAndRoomId(LocalDate date, UUID room);
+
+    List<BookingEntity> findAllByMeetingDate(LocalDate date);
+
+
+    List<BookingEntity> findAllByMeetingDateAndStatusIn(LocalDate date, List<String> listAccept);
 }

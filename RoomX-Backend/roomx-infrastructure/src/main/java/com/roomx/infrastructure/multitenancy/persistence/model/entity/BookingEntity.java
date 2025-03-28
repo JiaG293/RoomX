@@ -1,5 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,6 +11,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -88,5 +91,6 @@ public class BookingEntity {
 
     @Column(name = COLUMN_PREVIOUSROOMID_NAME)
     private UUID previousRoomId;
+
 
 }

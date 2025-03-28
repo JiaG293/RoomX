@@ -16,4 +16,6 @@ public interface RoomRepository {
 
 
     List<Room> findAllByCapacityGreaterThanOrEqualAndStatus(int requiredCapacity, String status);
+
+    List<Room> findAllByBranchIdAndStatus(String branchId, String status);
 }

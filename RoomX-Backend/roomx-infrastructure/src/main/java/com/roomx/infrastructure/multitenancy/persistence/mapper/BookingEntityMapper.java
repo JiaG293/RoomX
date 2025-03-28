@@ -1,6 +1,8 @@
 package com.roomx.infrastructure.multitenancy.persistence.mapper;
 
+import com.roomx.domain.dto.BookingDto;
 import com.roomx.domain.model.aggrerate.Booking;
+import com.roomx.domain.model.entity.BookingParticipant;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.BookingEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

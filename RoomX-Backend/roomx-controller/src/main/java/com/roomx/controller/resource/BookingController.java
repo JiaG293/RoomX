@@ -1,6 +1,7 @@
 package com.roomx.controller.resource;
 
 import com.roomx.application.service.booking.BookingAppService;
+import com.roomx.shared.dto.TestRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestAdminCreateRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
@@ -13,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -32,11 +34,20 @@ public class BookingController {
                 .build();
     }*/
 
-    @PostMapping("/check")
+    @PostMapping
     public ResultResponse<?> createBookingRequest(
             @Validated @RequestBody BookingRequestUserCreateRequest request) {
         var result = bookingAppService.createBookingRequest(request);
         return ResultResponse.<BookingRequestResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/test")
+    public ResultResponse<?> test(
+            @RequestBody TestRequest request) {
+        var result = bookingAppService.test(request);
+        return ResultResponse.<Object>builder()
                 .result(result)
                 .build();
     }

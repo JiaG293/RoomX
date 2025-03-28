@@ -51,7 +51,7 @@ public enum RecurrenceType {
     }
 
     public static RecurrenceType fromDisplayName(String displayName) {
-        return DISPLAY_NAME_MAP.getOrDefault(displayName.toLowerCase(), null);
+        return (displayName != null) ? DISPLAY_NAME_MAP.get(displayName.toLowerCase()) : null;
     }
 
     public abstract LocalDate nextDate(LocalDate date, Short interval);

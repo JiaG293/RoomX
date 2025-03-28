@@ -1,5 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 
+import com.roomx.domain.dto.BookingDto;
 import com.roomx.domain.model.aggrerate.Booking;
 import com.roomx.domain.model.aggrerate.Room;
 import com.roomx.domain.repository.BookingRepository;
@@ -8,6 +9,7 @@ import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaBooki
 import com.roomx.shared.enums.BookingStatusType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -78,4 +80,21 @@ public class BookingEntityRepository implements BookingRepository {
                 .stream().map(bookingEntityMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<Booking> findAllByMeetingDate(LocalDate date) {
+        return jpaBookingEntityRepository
+                .findAllByMeetingDate(date).stream()
+                .map(bookingEntityMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Booking> findAllByMeetingDateAndContainsStatus(LocalDate date, List<String> listAccept) {
+        return jpaBookingEntityRepository
+                .findAllByMeetingDateAndStatusIn(date, listAccept)
+                .stream().map(bookingEntityMapper::toDomain)
+                .toList();
+    }
+
 }

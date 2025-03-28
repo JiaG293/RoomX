@@ -36,11 +36,6 @@ public class ApprovalFormEntity {
     @Column(name = COLUMN_APPROVER_NAME)
     private UUID approver;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "booking_request_id", nullable = false)
-    private BookingRequestEntity bookingRequest;
-
     @Size(max = 32)
     @Column(name = COLUMN_STATUS_NAME, length = 32)
     private String status;
@@ -56,4 +51,11 @@ public class ApprovalFormEntity {
     @Column(name = COLUMN_UPDATEDAT_NAME)
     private Instant updatedAt;
 
+
+    //RELATIONSHIP
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "booking_request_id", nullable = false)
+    private BookingRequestEntity bookingRequest;
 }

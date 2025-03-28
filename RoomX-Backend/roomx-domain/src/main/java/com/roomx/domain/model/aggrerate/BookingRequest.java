@@ -12,10 +12,7 @@ import lombok.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Builder
 @NoArgsConstructor
@@ -33,6 +30,7 @@ public class BookingRequest {
     private LocalDate endDate;
     private LocalTime startTime;
     private LocalTime endTime;
+    private UUID branchId;
     @Builder.Default
     private String daysOfWeek = "MO,TU,WE,TH,FR";
     @Builder.Default
@@ -63,9 +61,11 @@ public class BookingRequest {
 
 
     public List<String> getDaysOfWeekList() {
-        return Arrays.stream(daysOfWeek.split(","))
-                .filter(day -> !day.isEmpty())
-                .toList();
+        return daysOfWeek != null ?
+                Arrays.stream(daysOfWeek.split(","))
+                        .filter(day -> !day.isEmpty())
+                        .toList()
+                : List.of();
     }
 
     public void setDaysOfWeekList(List<String> newDays) {
@@ -79,23 +79,41 @@ public class BookingRequest {
 
     public List<LocalDate> getOccurrences() {
         if (startDate == null || endDate == null || recurrenceType == null) {
-            throw new AppException(ErrorCode.RECURRENCE_DATE_INVALID, "Missing required fields");
+            throw new AppException(ErrorCode.RECURRENCE_DATE_INVALID, startDate + " | " + endDate + " | " + recurrenceType);
         }
 
         RecurrenceType type = getRecurrenceTypeEnum();
         if (type == null) {
-            throw new AppException(ErrorCode.RECURRENCE_DATE_INVALID, "Invalid recurrence type");
+            throw new AppException(ErrorCode.RECURRENCE_DATE_INVALID, recurrenceType);
         }
 
         List<LocalDate> occurrences = new ArrayList<>();
         LocalDate currentDate = startDate;
+        List<String> allowedDays = getDaysOfWeekList();
 
         while (!currentDate.isAfter(endDate)) {
-            occurrences.add(currentDate);
-            currentDate = type.nextDate(currentDate, recurrenceInterval);
+            if (allowedDays.contains(currentDate.getDayOfWeek().name().substring(0, 2))) {
+                occurrences.add(currentDate);
+            }
+
+            if (type == RecurrenceType.CUSTOM) {
+                // Recurrence type là CUSTOM
+                if (recurrenceInterval == null || recurrenceInterval < 1) {
+                    throw new AppException(ErrorCode.RECURRENCE_DATE_INVALID, recurrenceInterval);
+                }
+                currentDate = type.nextDate(currentDate, recurrenceInterval);
+            } else {
+                currentDate = type.nextDate(currentDate, (short) 1); // Các loại khác mặc định là 1
+            }
         }
         return occurrences;
     }
+
+
+
+
+
+
 
 
 }

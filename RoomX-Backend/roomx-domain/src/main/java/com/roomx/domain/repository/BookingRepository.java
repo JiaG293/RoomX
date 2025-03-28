@@ -1,5 +1,6 @@
 package com.roomx.domain.repository;
 
+import com.roomx.domain.dto.BookingDto;
 import com.roomx.domain.model.aggrerate.Booking;
 import com.roomx.domain.model.aggrerate.Room;
 
@@ -16,4 +17,9 @@ public interface BookingRepository {
 //    List<Booking> findAllByRoomIdsAndMeetingDate(List<String> roomIds, LocalDate date);
 
     List<Booking> findAllByMeetingDateAndRoomId(LocalDate date, String roomId);
+
+    List<Booking> findAllByMeetingDate(LocalDate date);
+
+
+    List<Booking> findAllByMeetingDateAndContainsStatus(LocalDate date, List<String> listAccept);
 }

@@ -1,5 +1,6 @@
 package com.roomx.shared.enums;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,5 +26,9 @@ public enum BookingStatusType {
 
     public static BookingStatusType fromDisplayName(String displayName) {
         return DISPLAY_NAME_MAP.getOrDefault(displayName, null);
+    }
+
+    public static List<String> getListAccept(){
+        return List.of(SCHEDULED.toString(), IN_PROGRESS.toString());
     }
 }

@@ -8,6 +8,7 @@ import com.roomx.domain.model.vo.ServiceRequestId;
 import com.roomx.domain.service.BookingDomainService;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentRequestEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.ServiceRequestEntityMapper;
+import com.roomx.shared.dto.TestRequest;
 import com.roomx.shared.dto.booking.request.ApprovalFormAdminCreateRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestAdminCreateRequest;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
@@ -21,6 +22,8 @@ import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.BookingRequestEntityMapper;
 import com.roomx.infrastructure.multitenancy.security.oauth.SecurityUtil;
+import com.roomx.shared.enums.DeleteStatusType;
+import com.roomx.shared.enums.RoomStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.print.Book;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Objects;
@@ -61,9 +65,11 @@ public class BookingAppService {
     private final EquipmentRepository equipmentRepository;
     private final EquipmentPriceHistoryRepository equipmentPriceHistoryRepository;
     private final ServicePriceHistoryRepository servicePriceHistoryRepository;
+    private final BookingParticipantRepository bookingParticipantRepository;
 
     private final BookingRepository bookingRepository;
     private final RoomSchedulerAppService roomSchedulerAppService;
+    private final BookingDomainService bookingDomainService;
 
     /*@Transactional
     public BookingRequestResponse adminCreateBooking(BookingRequestAdminCreateRequest request) {
@@ -150,8 +156,48 @@ public class BookingAppService {
 
         savedBookingRequest.setServices(servicesDomain);
         savedBookingRequest.setEquipments(equipmentsDomain);
-        return bookingRequestAppMapper.toResponse(savedBookingRequest);
+
+        var approvalFormDomain = approvalFormAppService.createApprovalFormPending(bookingRequestDomain, null);
+
+        var response = bookingRequestAppMapper.toResponse(savedBookingRequest);
+        response.setApprovalStatus(approvalFormDomain.getStatus());
+
+        return response;
     }
 
 
+    public Object test(TestRequest request) {
+        var bookingRequest = BookingRequest.builder()
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .endTime(request.getEndTime())
+                .startTime(request.getStartTime())
+                .capacity(request.getCapacity())
+                .participants(request.getParticipants())
+                .recurrenceInterval((short) request.getRecurrenceInterval())
+                .recurrenceType(request.getRecurrenceType())
+                .daysOfWeek(request.getDaysOfWeek())
+                .build();
+        var listOccurrences = bookingRequest.getOccurrences();
+        /*var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoom(
+                request.getBranchId(),
+                listOccurrences,
+                bookingRequest.getStartTime(),
+                bookingRequest.getEndTime(),
+                bookingRequest.getCapacity(),
+                bookingRequest.getParticipants()
+        );*/
+
+        /*var result = bookingRepository
+                .findAllByMeetingDate(
+                        LocalDate.of(2025, 04, 02))
+                .stream().map(booking -> {
+                    var bookingParticipants = bookingParticipantRepository
+                            .findAllBookingId(booking.getId().toString());
+                    booking.setParticipants(bookingParticipants);
+                  return booking;
+                }).toList();*/
+        var result = roomRepository.findAllByBranchIdAndStatus(RoomStatusType.AVAILABLE.toString(), request.getBranchId());
+        return result;
+    }
 }
