@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.roomx.infrastructure.multitenancy.persistence.model.ids.BookingParticipantEntityId;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = BookingParticipantEntity.TABLE_NAME)
 public class BookingParticipantEntity {

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,5 +43,11 @@ public class RoomClassPriceHistoryEntityRepository implements RoomClassPriceHist
     public RoomClassPriceCalculateDto calculateTotalPrice(String roomClassId) {
         return jpaRoomClassPriceHistoryEntityRepository
                 .calculateTotalPrice(UUID.fromString(roomClassId));
+    }
+
+    @Override
+    public Optional<BigDecimal> findPriceByRoomClassIdValidTime(String roomClassId, Instant timestamp) {
+        return jpaRoomClassPriceHistoryEntityRepository
+                .findPriceByRoomClassIdValidTime(UUID.fromString(roomClassId), timestamp.toString());
     }
 }

@@ -116,6 +116,6 @@ public class PlaceEntityRepository implements PlaceRepository {
     public Optional<Place> findByBranchIdAndPlaceTypeAndStatus(String branchId, String placeType, String status) {
         return jpaPlaceEntityRepository
                 .findByPlaceTypeAndStatusAndBranchId(placeType, status, UUID.fromString(branchId))
-                .map(placeEntityMapper::toDomain);
+                .map(placeEntityMapper::toDomainLazy);
     }
 }

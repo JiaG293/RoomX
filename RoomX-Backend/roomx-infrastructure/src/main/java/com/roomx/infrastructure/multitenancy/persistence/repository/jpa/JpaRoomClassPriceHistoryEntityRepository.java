@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,4 +49,16 @@ public interface JpaRoomClassPriceHistoryEntityRepository extends JpaRepository<
                 GROUP BY rc.room_class_id, rc.room_class_code
             """, nativeQuery = true)
     RoomClassPriceCalculateDto calculateTotalPrice(UUID roomClassId);
+
+
+    @Query(value = """
+            SELECT a.total_price
+            FROM room_class_price_history a
+            WHERE a.room_class_id = :roomClassId
+            AND :timestamp >= a.valid_from
+            AND (:timestamp <= a.valid_end OR a.valid_end IS NULL)
+            ORDER BY a.valid_from DESC
+            LIMIT 1
+            """, nativeQuery = true)
+    Optional<BigDecimal> findPriceByRoomClassIdValidTime(@Param("roomClassId") UUID roomClassId, @Param("timestamp") String timestamp);
 }

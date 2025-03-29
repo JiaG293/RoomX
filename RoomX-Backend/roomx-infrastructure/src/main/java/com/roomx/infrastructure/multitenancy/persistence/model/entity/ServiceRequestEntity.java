@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = ServiceRequestEntity.TABLE_NAME)
 public class ServiceRequestEntity {

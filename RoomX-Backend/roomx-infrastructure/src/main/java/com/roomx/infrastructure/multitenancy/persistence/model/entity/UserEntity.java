@@ -19,7 +19,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = UserEntity.TABLE_NAME, uniqueConstraints = {
         @UniqueConstraint(name = "unq_nguoi_dung", columnNames = {"user_code", "email", "phone_number"})

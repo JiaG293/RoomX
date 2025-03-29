@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.roomx.domain.model.entity.BookingParticipant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -11,9 +12,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Builder
 @AllArgsConstructor
@@ -45,7 +44,6 @@ public class BookingEntity {
 
     @Id
     @Column(name = COLUMN_ID_NAME, nullable = false)
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Size(max = 32)
@@ -54,12 +52,12 @@ public class BookingEntity {
     private String bookingCode;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "booking_request_id", nullable = false)
     private BookingRequestEntity bookingRequest;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private RoomEntity room;
 
@@ -92,6 +90,7 @@ public class BookingEntity {
 
     @Column(name = COLUMN_PREVIOUSROOMID_NAME)
     private UUID previousRoomId;
+
 
 
 }

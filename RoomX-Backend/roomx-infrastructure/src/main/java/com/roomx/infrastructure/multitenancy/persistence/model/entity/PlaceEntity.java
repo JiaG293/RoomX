@@ -1,5 +1,6 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,7 +13,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = PlaceEntity.TABLE_NAME)
 public class PlaceEntity {

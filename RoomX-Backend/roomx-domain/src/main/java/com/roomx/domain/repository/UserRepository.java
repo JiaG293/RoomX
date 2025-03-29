@@ -23,4 +23,8 @@ public interface UserRepository {
     List<User> findAllUserWithRole(String roleName);
 
     Optional<User> findByEmail(String email, boolean enabled);
+
+    Optional<User> findByEmailAndStatus(String email, boolean enabled);
+
+    Optional<UUID> findByEmailCustom(String email);
 }

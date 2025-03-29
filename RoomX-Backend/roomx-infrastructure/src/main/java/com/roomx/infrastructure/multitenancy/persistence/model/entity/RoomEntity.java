@@ -14,7 +14,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = RoomEntity.TABLE_NAME, uniqueConstraints = {
         @UniqueConstraint(name = "unq_phong_hop_ma_phong", columnNames = {"room_code"})
@@ -30,7 +29,7 @@ public class RoomEntity {
 
     @Id
     @Column(name = COLUMN_ID_NAME, nullable = false)
-    @GeneratedValue(strategy = GenerationType.UUID)
+//    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Size(max = 32)
@@ -63,6 +62,5 @@ public class RoomEntity {
     @Column(name = "url")
     @OrderColumn(name="image_order")
     private List<String> imageUrls = new ArrayList<>();
-
 
 }

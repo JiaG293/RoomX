@@ -7,8 +7,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Builder
 @NoArgsConstructor
@@ -33,7 +32,8 @@ public class Booking {
     @Builder.Default
     private Instant updatedAt = Instant.now();
 
-    private List<BookingParticipant> participants;
+    @Builder.Default
+    private List<BookingParticipant> participants = new ArrayList<>();
 
 
 }

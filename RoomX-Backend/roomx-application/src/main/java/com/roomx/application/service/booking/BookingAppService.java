@@ -2,14 +2,19 @@ package com.roomx.application.service.booking;
 
 import com.roomx.domain.model.aggrerate.Booking;
 import com.roomx.domain.model.aggrerate.Room;
+import com.roomx.domain.model.aggrerate.User;
 import com.roomx.domain.model.entity.BookingParticipant;
 import com.roomx.domain.model.entity.EquipmentRequest;
+import com.roomx.domain.model.entity.RoomClassPriceHistory;
 import com.roomx.domain.model.entity.ServiceRequest;
+import com.roomx.domain.model.vo.BookingParticipantId;
 import com.roomx.domain.model.vo.EquipmentRequestId;
 import com.roomx.domain.model.vo.ServiceRequestId;
 import com.roomx.domain.service.BookingDomainService;
+import com.roomx.infrastructure.multitenancy.persistence.mapper.BookingEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentRequestEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.ServiceRequestEntityMapper;
+import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaBookingEntityRepository;
 import com.roomx.shared.dto.TestRequest;
 import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
 import com.roomx.shared.dto.booking.request.ApprovalFormAdminCreateRequest;
@@ -30,15 +35,25 @@ import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.RoomStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.awt.print.Book;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -73,6 +88,11 @@ public class BookingAppService {
     private final BookingRepository bookingRepository;
     private final RoomSchedulerAppService roomSchedulerAppService;
     private final BookingDomainService bookingDomainService;
+    private final RoomClassPriceHistoryRepository roomClassPriceHistoryRepository;
+    private final RoomClassRepository roomClassRepository;
+
+    private final JpaBookingEntityRepository jpaBookingEntityRepository;
+
 
     /*@Transactional
     public BookingRequestResponse adminCreateBooking(BookingRequestAdminCreateRequest request) {
@@ -108,6 +128,7 @@ public class BookingAppService {
 
         return bookingRequestAppMapper.toResponse(bookingRequestDomain);
     }*/
+    private static final Logger logger = LoggerFactory.getLogger(BookingAppService.class);
 
     @Transactional
     public BookingRequestResponse createBookingRequest(BookingRequestUserCreateRequest request) {
@@ -171,15 +192,19 @@ public class BookingAppService {
         return response;
     }
 
+    //    @PreAuthorize("roleEvaluator.hasAnyRole('ADMIN')")
     public Object checkRoomSuitable(String bookingRequestId) {
         var approvalFormDomain = approvalFormRepository
                 .findByBookingRequestIdAndLastStatusWithBookingRequest(bookingRequestId, ApprovalStatusType.PENDING.toString())
                 .orElseThrow(() -> new AppException(ErrorCode.APPROVAL_FORM_NOT_FOUND));
 
+        String branchId = (approvalFormDomain.getBookingRequest().getBranchId() != null)
+                ? approvalFormDomain.getBookingRequest().getBranchId().toString()
+                : null;
         var bookingRequestDomain = approvalFormDomain.getBookingRequest();
         var listOccurrences = bookingRequestDomain.getOccurrences();
         var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptional(
-                approvalFormDomain.getBookingRequest().getBranchId().toString(),
+                branchId,
                 listOccurrences,
                 bookingRequestDomain.getStartTime(),
                 bookingRequestDomain.getEndTime(),
@@ -190,23 +215,98 @@ public class BookingAppService {
         return result;
 
     }
-    public Object test(TestRequest request) {
+
+
+    @Transactional
+    public Object approveBooking(String bookingRequestId) {
         var approvalFormDomain = approvalFormRepository
-                .findByBookingRequestIdAndLastStatusWithBookingRequest(request.getId(), ApprovalStatusType.PENDING.toString())
+                .findByBookingRequestIdAndLastStatusWithBookingRequest(bookingRequestId, ApprovalStatusType.PENDING.toString())
                 .orElseThrow(() -> new AppException(ErrorCode.APPROVAL_FORM_NOT_FOUND));
+
+        String branchId = (approvalFormDomain.getBookingRequest().getBranchId() != null)
+                ? approvalFormDomain.getBookingRequest().getBranchId().toString()
+                : null;
 
         var bookingRequestDomain = approvalFormDomain.getBookingRequest();
         var listOccurrences = bookingRequestDomain.getOccurrences();
         var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptional(
-                request.getBranchId(),
+                branchId,
                 listOccurrences,
                 bookingRequestDomain.getStartTime(),
                 bookingRequestDomain.getEndTime(),
                 bookingRequestDomain.getCapacity(),
                 bookingRequestDomain.getParticipants(),
-                10 // có thể thêm vào sau này config để khoảng thời gian giũa các phòng được đặt
+                10
         );
-        return result;
+
+        var dateConflictList = result.stream()
+                .filter(dateMeeting -> dateMeeting.isHasConflict() && dateMeeting.getOptimalRoomId() == null)
+                .map(RoomScheduleResultDto::getDate)
+                .toList();
+
+        var bookingDomainList = new ArrayList<Booking>();
+        if (dateConflictList.isEmpty()) {
+            result.forEach(occurrence -> {
+                var roomDomain = Room.builder().id(UUID.fromString(occurrence.getOptimalRoomId())).build();
+                var totalPrice = roomRepository
+                        .findPriceByIdAndValidTimestamp(
+                                occurrence.getOptimalRoomId(),
+                                bookingRequestDomain.getCreatedAt())
+                        .orElse(BigDecimal.ZERO);
+                var bookingDomainId = UUID.randomUUID();
+
+                var bookingDomain = Booking.builder()
+                        .id(bookingDomainId)
+                        .bookingRequest(bookingRequestDomain)
+                        .room(roomDomain)
+                        .bookingCode(generateBookingCode(occurrence.getDate()))
+                        .meetingStart(bookingRequestDomain.getStartTime())
+                        .meetingEnd(bookingRequestDomain.getEndTime())
+                        .meetingDate(occurrence.getDate())
+                        .totalPrice(totalPrice)
+                        .status(BookingStatusType.SCHEDULED.toString())
+                        .count(1)
+                        .build();
+                bookingRepository.save(bookingDomain);
+                bookingDomainList.add(bookingDomain);
+
+
+                var bookingParticpantsDomainList = new ArrayList<BookingParticipant>();
+                bookingRequestDomain.getParticipants().forEach(participant -> {
+                    var userIdDomain = userRepository.findByEmailCustom(participant)
+                            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED, participant));
+                    var bookingParticipant = BookingParticipant.builder()
+                            .id(new BookingParticipantId(bookingDomain.getId(), userIdDomain))
+                            .user(User.builder().id(userIdDomain).build())
+                            .booking(bookingDomain)
+                            .build();
+                    bookingParticpantsDomainList.add(bookingParticipant);
+
+                });
+                bookingParticipantRepository.saveAll(bookingParticpantsDomainList);
+
+
+            });
+
+        }
+
+//        bookingRepository.saveAll(bookingDomainList);
+
+//        bookingRepository.save(bookingDomainList.getFirst());
+        return bookingDomainList;
+    }
+
+
+    @Transactional
+    public Object test() {
+
+        return true;
 
     }
+
+    private String generateBookingCode(LocalDate meetingDate) {
+        return meetingDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-" + Long.toString(System.nanoTime(), 36).toUpperCase();
+    }
+
+
 }

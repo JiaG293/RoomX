@@ -44,19 +44,51 @@ public class BookingController {
                 .build();
     }
 
-    @GetMapping("/check/{bookingRequestId}")
+    @GetMapping("/{bookingRequestId}/check")
     public ResultResponse<?> checkRoomSuitable(
-           @PathVariable String bookingRequestId) {
+            @PathVariable String bookingRequestId) {
         var result = bookingAppService.checkRoomSuitable(bookingRequestId);
         return ResultResponse.<Object>builder()
                 .result(result)
                 .build();
     }
 
-    @PostMapping("/check")
-    public ResultResponse<?> checkRoomSuitable(
-            @RequestBody TestRequest request) {
-        var result = bookingAppService.test(request);
+    @PostMapping("/{bookingRequestId}")
+    public ResultResponse<?> approveBooking(
+            @PathVariable String bookingRequestId) {
+        var result = bookingAppService.approveBooking(bookingRequestId);
+        return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/1")
+    public ResultResponse<?> test1() {
+        var result = "";
+        return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/2")
+    public ResultResponse<?> test2() {
+        var result = "";
+        return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/3")
+    public ResultResponse<?> test3() {
+        var result = "";
+        return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/test")
+    public ResultResponse<?> test() {
+        var result = bookingAppService.test();
         return ResultResponse.<Object>builder()
                 .result(result)
                 .build();

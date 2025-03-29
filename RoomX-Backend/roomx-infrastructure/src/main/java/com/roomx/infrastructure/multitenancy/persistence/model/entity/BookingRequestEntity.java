@@ -16,7 +16,6 @@ import java.util.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = BookingRequestEntity.TABLE_NAME)
 public class BookingRequestEntity {

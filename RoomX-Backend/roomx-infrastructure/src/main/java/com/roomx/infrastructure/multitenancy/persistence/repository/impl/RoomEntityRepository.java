@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,7 +55,7 @@ public class RoomEntityRepository implements RoomRepository {
     }
 
     @Override
-    public List<Room> findAllByCapacityGreaterThanOrEqualAndStatus (int requiredCapacity, String status) {
+    public List<Room> findAllByCapacityGreaterThanOrEqualAndStatus(int requiredCapacity, String status) {
         return jpaRoomEntityRepository
                 .findAllByStatusIsAndRoomClassCapacityGreaterThanEqual(status, requiredCapacity)
                 .stream().map(roomEntityMapper::toDomain).toList();
@@ -64,5 +66,18 @@ public class RoomEntityRepository implements RoomRepository {
         return jpaRoomEntityRepository
                 .findAllByStatusBranchId(status, UUID.fromString(branchId))
                 .stream().map(roomEntityMapper::toDomain).toList();
+    }
+
+    @Override
+    public List<Room> findAllByPlaceIdAndStatus(String placeId, String status) {
+        return jpaRoomEntityRepository
+                .findAllByPlaceIdAndStatus(UUID.fromString(placeId), status)
+                .stream().map(roomEntityMapper::toDomain).toList();
+    }
+
+    @Override
+    public Optional<BigDecimal> findPriceByIdAndValidTimestamp(String roomId, Instant timestamp) {
+        return jpaRoomEntityRepository
+                .findPriceByIdAndValidTimestamp(UUID.fromString(roomId), timestamp);
     }
 }

@@ -44,6 +44,7 @@ spring:
       ddl-auto: ${JPA_DDL_AUTO:none}
     properties: # Nếu hibernate không tìm thấy schema mặc định sẽ đi vào đây (cấp thấp hơn hikari)
       hibernate:
+        generate_statistics: true
         format_sql: true
         use_sql_comments: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -162,4 +163,7 @@ multitenancy:
 logging:
   level:
     org.springframework.transaction: DEBUG
+    org.hibernate.sql: DEBUG
+
+
 

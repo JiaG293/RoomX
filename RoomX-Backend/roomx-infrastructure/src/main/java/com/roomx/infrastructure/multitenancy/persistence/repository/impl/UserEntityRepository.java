@@ -68,6 +68,19 @@ public class UserEntityRepository implements UserRepository, com.roomx.infrastru
     }
 
     @Override
+    public Optional<User> findByEmailAndStatus(String email, boolean enabled) {
+        return jpaUserEntityRepository
+                .findByEmailAndEnable(email, enabled)
+                .map(userEntityMapper::toDomain);
+    }
+
+    @Override
+    public Optional<UUID> findByEmailCustom(String email) {
+
+        return jpaUserEntityRepository.findByEmailCustom(email);
+    }
+
+    @Override
     public Page<UserEntity> findAll(Specification specification, Pageable pageable) {
         return jpaUserEntityRepository.findAll(specification, pageable);
     }

@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.jpa;
 
 import com.roomx.domain.model.aggrerate.Place;
+import com.roomx.infrastructure.multitenancy.persistence.model.dto.PlaceDto;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.PlaceEntity;
 import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,6 +42,13 @@ public interface JpaPlaceEntityRepository extends JpaRepository<PlaceEntity, UUI
     @Query("SELECT p FROM PlaceEntity p WHERE p.placeType <> :placeType")
     List<PlaceEntity> findChildren(@Param("placeType") String placeType);
 
+    @Query("""
+        SELECT new com.roomx.infrastructure.multitenancy.persistence.model.dto.PlaceDto(
+            p.id, p.name, p.layout, p.placeType, p.parentId, p.code, p.status, p.branch.id)
+        FROM PlaceEntity p
+        WHERE p.placeType = :placeType AND p.status = :status AND p.branch.id = :branchId
+    """)
+    Optional<PlaceDto> findByPlaceTypeAndStatusAndBranchIdCustom(String placeType, String status, UUID branchId);
 
     Optional<PlaceEntity> findByPlaceTypeAndStatusAndBranchId(String placeType, String status, UUID branchId);
 }

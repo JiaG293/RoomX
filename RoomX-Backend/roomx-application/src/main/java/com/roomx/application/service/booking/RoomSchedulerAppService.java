@@ -10,7 +10,10 @@ import com.roomx.domain.repository.*;
 import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
 import com.roomx.shared.dto.booking.base.SuggestedTimeSlotDto;
 import com.roomx.shared.enums.BookingStatusType;
+import com.roomx.shared.enums.PlaceType;
 import com.roomx.shared.enums.RoomStatusType;
+import com.roomx.shared.exception.exception.AppException;
+import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Slf4j
@@ -33,6 +37,7 @@ public class RoomSchedulerAppService {
     private final BookingRequestRepository bookingRequestRepository;
     private final UserRepository userRepository;
     private final BookingParticipantRepository bookingParticipantRepository;
+    private final PlaceRepository placeRepository;
 
     public Optional<Room> findAvailableRoom(
             int requiredCapacity,
@@ -631,15 +636,15 @@ public class RoomSchedulerAppService {
                     LocalTime end = availableTimeSlots.get(i + 1).minusMinutes(bufferTime);
 
                     if (start.isBefore(end)) {
-                        if (end.isBefore(LocalTime.NOON)) { // Hoàn toàn trong buổi sáng
+                        if (end.isBefore(LocalTime.NOON)) { // Khung thời gian trong buổi sáng
                             timeMorning.add(start + " - " + end);
-                        } else if (start.isAfter(LocalTime.NOON)) { // Hoàn toàn trong buổi chiều
+                        } else if (start.isAfter(LocalTime.NOON)) { // Khung thời gian buổi chiều
                             timeAfternoon.add(start + " - " + end);
                         } else { // Giao thoa giữa sáng và chiều
-                            if (start.isBefore(LocalTime.NOON)) { // Thêm phần buổi sáng
+                            if (start.isBefore(LocalTime.NOON)) { // Khung thời gian buổi sáng
                                 timeMorning.add(start + " - " + LocalTime.NOON);
                             }
-                            if (end.isAfter(LocalTime.NOON)) { // Thêm phần buổi chiều
+                            if (end.isAfter(LocalTime.NOON)) { // Khung thời gian buổi chiều
                                 timeAfternoon.add(LocalTime.NOON + " - " + end);
                             }
                         }
@@ -660,6 +665,7 @@ public class RoomSchedulerAppService {
         }
         return results;
     }
+
 
 
 
