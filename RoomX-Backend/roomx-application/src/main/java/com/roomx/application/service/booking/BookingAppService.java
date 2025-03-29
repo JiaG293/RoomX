@@ -178,13 +178,14 @@ public class BookingAppService {
 
         var bookingRequestDomain = approvalFormDomain.getBookingRequest();
         var listOccurrences = bookingRequestDomain.getOccurrences();
-        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoom1(
+        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptional(
                 approvalFormDomain.getBookingRequest().getBranchId().toString(),
                 listOccurrences,
                 bookingRequestDomain.getStartTime(),
                 bookingRequestDomain.getEndTime(),
                 bookingRequestDomain.getCapacity(),
-                bookingRequestDomain.getParticipants()
+                bookingRequestDomain.getParticipants(),
+                10
         );
         return result;
 
@@ -196,13 +197,14 @@ public class BookingAppService {
 
         var bookingRequestDomain = approvalFormDomain.getBookingRequest();
         var listOccurrences = bookingRequestDomain.getOccurrences();
-        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoom1(
+        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptional(
                 request.getBranchId(),
                 listOccurrences,
                 bookingRequestDomain.getStartTime(),
                 bookingRequestDomain.getEndTime(),
                 bookingRequestDomain.getCapacity(),
-                bookingRequestDomain.getParticipants()
+                bookingRequestDomain.getParticipants(),
+                10 // có thể thêm vào sau này config để khoảng thời gian giũa các phòng được đặt
         );
         return result;
 
