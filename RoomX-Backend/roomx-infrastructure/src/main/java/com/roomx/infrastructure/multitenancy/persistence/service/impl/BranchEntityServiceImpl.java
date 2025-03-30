@@ -30,7 +30,6 @@ public class BranchEntityServiceImpl implements BranchEntityService {
 
     @Override
     public Page<Branch> filterPageBranchs(BranchFilter filter, Pageable pageable, boolean typeCompare) {
-
         // use filter search like, AND
         String method = "%";
         boolean condition = typeCompare; // TRUE = OR || FALSE = AND

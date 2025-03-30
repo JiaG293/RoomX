@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -30,5 +31,7 @@ public class BookingRequestResponse {
     private String branchId;
     private String roomId;
     private String approvalStatus;
+    private Instant createdAt;
+    private Instant updatedAt;
 
 }

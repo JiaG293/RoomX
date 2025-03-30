@@ -2,18 +2,23 @@ package com.roomx.controller.resource;
 
 import com.roomx.application.service.booking.BookingAppService;
 import com.roomx.shared.dto.TestRequest;
+import com.roomx.shared.dto.booking.request.BookingQueryRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestAdminCreateRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
+import com.roomx.shared.dto.booking.response.BookingResponse;
+import com.roomx.shared.dto.resource.request.BranchQueryRequest;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -62,18 +67,31 @@ public class BookingController {
                 .build();
     }
 
-    @PostMapping("/1")
-    public ResultResponse<?> test1() {
-        var result = "";
-        return ResultResponse.<Object>builder()
+    @GetMapping("/filters")
+    public ResultResponse<?> filterPageWithAdmin(
+            @ModelAttribute BookingQueryRequest filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "updatedAt") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        var result = bookingAppService.filterPageBookingAdmin(filter, page, size, sortBy, direction);
+        return ResultResponse.<Page<BookingResponse>>builder()
                 .result(result)
                 .build();
     }
 
-    @PostMapping("/2")
-    public ResultResponse<?> test2() {
-        var result = "";
-        return ResultResponse.<Object>builder()
+    @GetMapping("/approvals")
+    public ResultResponse<?> getPageBookingRequestAdminApproval(
+            @RequestParam(required = false, defaultValue = "week") String byType,
+            @RequestParam(required = false) Integer value,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "updatedAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
+    ) {
+        var result = bookingAppService.getListPageBookingRequestAdminApproval(byType, value, page, size, sortBy, direction);
+        return ResultResponse.<Page<BookingRequestResponse>>builder()
                 .result(result)
                 .build();
     }

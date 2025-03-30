@@ -40,6 +40,7 @@ public class BookingRequest {
     private Instant updatedAt = Instant.now();
 
     private Instant endDateApproval;
+    private String approvalStatus;
 
 
 

@@ -1,5 +1,6 @@
 package com.roomx.application.mapper;
 
+import com.roomx.domain.model.aggrerate.ApprovalForm;
 import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.shared.dto.booking.request.BookingRequestCreateRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
@@ -26,6 +27,10 @@ public interface BookingRequestAppMapper {
     BookingRequest toDomain(BookingRequestCreateRequest request);
 
     BookingRequestResponse toResponse(BookingRequest domain);
+
+    @Mapping(target = "createdAt", expression = "java(approvalForm.getCreatedAt())")
+    @Mapping(target = "updatedAt", expression = "java(approvalForm.getUpdatedAt())")
+    BookingRequestResponse toResponseFromApprovalForm(BookingRequest domain, @Context ApprovalForm approvalForm);
 
     @AfterMapping
     default void setUpdatedAt(@MappingTarget BookingRequest domain) {

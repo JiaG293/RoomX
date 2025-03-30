@@ -1,6 +1,7 @@
 package com.roomx.shared.enums;
 
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -9,7 +10,8 @@ public enum ApprovalStatusType {
     PENDING("Đang chờ duyệt"),
     APPROVED("Đã duyệt"),
     REJECTED("Từ chối"),
-    CANCELLED("Hủy");
+    CANCELLED("Hủy"),
+    CONFLICT("Xung đột có thể cập nhật");
     private static final Map<String, ApprovalStatusType> DISPLAY_NAME_MAP = Stream.of(values())
             .collect(Collectors.toMap(ApprovalStatusType::getDisplayName, e -> e));
 
@@ -25,5 +27,13 @@ public enum ApprovalStatusType {
 
     public static ApprovalStatusType fromDisplayName(String displayName) {
         return DISPLAY_NAME_MAP.getOrDefault(displayName, null);
+    }
+
+    public static List<String> getListCanApproval(){
+        return List.of(PENDING.toString(), CONFLICT.toString());
+    }
+
+    public static List<String> getListCantApproval(){
+        return List.of(CANCELLED.toString(), REJECTED.toString(), APPROVED.toString());
     }
 }

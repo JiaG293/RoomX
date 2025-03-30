@@ -77,7 +77,8 @@ public enum ErrorCode {
     ROOM_CLASS_FORBIDDEN(1000, "error.room_class.forbidden", HttpStatus.FORBIDDEN),
     EQUIPMENT_PRICE_NOT_FOUND(1000, "error.equipment.price.not_found", HttpStatus.NOT_FOUND),
     BOOKING_CONFLICT(1000, "error.booking.conflict", HttpStatus.CONFLICT),
-    APPROVAL_FORM_NOT_FOUND(1000, "error.approval_form.not_found", HttpStatus.NOT_FOUND);
+    APPROVAL_FORM_NOT_FOUND(1000, "error.approval_form.not_found", HttpStatus.NOT_FOUND),
+    BOOKING_REQUEST_VALID_DATE(1000, "valid.booking_request.date.invalid", HttpStatus.BAD_REQUEST);
 
 
 

@@ -1,5 +1,6 @@
 package com.roomx.application.service.booking;
 
+import com.roomx.application.mapper.BookingAppMapper;
 import com.roomx.domain.model.aggrerate.*;
 import com.roomx.domain.model.entity.BookingParticipant;
 import com.roomx.domain.model.entity.EquipmentRequest;
@@ -9,13 +10,19 @@ import com.roomx.domain.model.vo.BookingParticipantId;
 import com.roomx.domain.model.vo.EquipmentRequestId;
 import com.roomx.domain.model.vo.ServiceRequestId;
 import com.roomx.domain.service.BookingDomainService;
+import com.roomx.infrastructure.multitenancy.persistence.dto.BookingFilter;
+import com.roomx.infrastructure.multitenancy.persistence.dto.BranchFilter;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.BookingEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentRequestEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.ServiceRequestEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaBookingEntityRepository;
+import com.roomx.infrastructure.multitenancy.persistence.service.ApprovalFormEntityService;
+import com.roomx.infrastructure.multitenancy.persistence.service.BookingEntityService;
+import com.roomx.infrastructure.multitenancy.persistence.service.PageableQueryService;
 import com.roomx.shared.dto.TestRequest;
 import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
 import com.roomx.shared.dto.booking.request.ApprovalFormAdminCreateRequest;
+import com.roomx.shared.dto.booking.request.BookingQueryRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestAdminCreateRequest;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.application.mapper.BookingRequestAppMapper;
@@ -23,6 +30,9 @@ import com.roomx.application.mapper.EquipmentRequestAppMapper;
 import com.roomx.application.mapper.ServiceRequestAppMapper;
 import com.roomx.application.service.resource.RoomAppService;
 import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
+import com.roomx.shared.dto.booking.response.BookingResponse;
+import com.roomx.shared.dto.resource.request.BranchQueryRequest;
+import com.roomx.shared.dto.resource.response.BranchResponse;
 import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.BookingRequestEntityMapper;
@@ -37,6 +47,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,11 +61,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.awt.print.Book;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -87,8 +100,12 @@ public class BookingAppService {
     private final BookingDomainService bookingDomainService;
     private final RoomClassPriceHistoryRepository roomClassPriceHistoryRepository;
     private final RoomClassRepository roomClassRepository;
+    private final PageableQueryService<BookingFilter, Booking> bookingPageableQueryService;
 
     private final JpaBookingEntityRepository jpaBookingEntityRepository;
+    private final BookingAppMapper bookingAppMapper;
+    private final ApprovalFormEntityService approvalFormEntityService;
+
 
 
     /*@Transactional
@@ -310,12 +327,121 @@ public class BookingAppService {
     }
 
 
+    public Page<BookingResponse> filterPageBookingUser(
+            BookingQueryRequest filterRequest,
+            int page,
+            int size,
+            String sortBy,
+            String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        var bookingFilter = BookingFilter.builder()
+                .id(filterRequest.getId())
+                .bookingCode(filterRequest.getId())
+                .bookingRequestId(filterRequest.getBookingRequestId())
+                .meetingDate(filterRequest.getMeetingDate())
+                .meetingStart(filterRequest.getMeetingStart())
+                .meetingEnd(filterRequest.getMeetingEnd())
+                .status(BookingStatusType.SCHEDULED.toString())
+                .roomId(filterRequest.getRoomId())
+                .previousRoomId(filterRequest.getPreviousRoomId())
+                .totalPrice(filterRequest.getTotalPrice())
+                .updatedAt(filterRequest.getUpdatedAt())
+                .createdAt(filterRequest.getCreatedAt())
+                .build();
+
+        var bookingDomainPage = bookingPageableQueryService.filterPageBranchs(bookingFilter, pageable, filterRequest.isTypeCompare());
+
+        return bookingDomainPage.map(bookingAppMapper::toResponse);
+    }
+
+    public Page<BookingResponse> filterPageBookingAdmin(
+            BookingQueryRequest filterRequest,
+            int page,
+            int size,
+            String sortBy,
+            String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        var bookingFilter = BookingFilter.builder()
+                .id(filterRequest.getId())
+                .bookingCode(filterRequest.getId())
+                .bookingRequestId(filterRequest.getBookingRequestId())
+                .meetingDate(filterRequest.getMeetingDate())
+                .meetingStart(filterRequest.getMeetingStart())
+                .meetingEnd(filterRequest.getMeetingEnd())
+                .status(filterRequest.getStatus())
+                .roomId(filterRequest.getRoomId())
+                .previousRoomId(filterRequest.getPreviousRoomId())
+                .totalPrice(filterRequest.getTotalPrice())
+                .updatedAt(filterRequest.getUpdatedAt())
+                .createdAt(filterRequest.getCreatedAt())
+                .build();
+
+        var bookingDomainPage = bookingPageableQueryService.filterPageBranchs(bookingFilter, pageable, filterRequest.isTypeCompare());
+
+        return bookingDomainPage.map(bookingAppMapper::toResponse);
+    }
+
+
+    public Page<BookingRequestResponse> getListPageBookingRequestAdminApproval(String byType, Integer value, int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today;
+        LocalDate endDate = today;
+
+        switch (byType.toLowerCase()) {
+            case "week" -> {
+                int weekNumber = (value != null && value > 0) ? value : today.get(WeekFields.of(Locale.getDefault()).weekOfYear());
+                startDate = LocalDate.of(today.getYear(), 1, 1)
+                        .with(WeekFields.of(Locale.getDefault()).weekOfYear(), weekNumber)
+                        .with(DayOfWeek.MONDAY);
+                endDate = startDate.with(DayOfWeek.SUNDAY);
+            }
+            case "month" -> {
+                int month = (value != null && value >= 1 && value <= 12) ? value : today.getMonthValue();
+                startDate = today.withMonth(month).withDayOfMonth(1);
+                endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+            }
+            case "year" -> {
+                int year = (value != null && value > 0) ? value : today.getYear();
+                startDate = today.withYear(year).withDayOfYear(1);
+                endDate = startDate.withDayOfYear(startDate.lengthOfYear());
+            }
+            default -> {
+                startDate = today;
+                endDate = today;
+            }
+        }
+
+        ZoneId zoneId = ZoneId.systemDefault();
+
+
+        Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
+        Instant endInstant = endDate.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
+
+        log.info("date la: {} -> {} insant: {} -> {}", startDate, endDate, startInstant, endInstant);
+        Page<ApprovalForm> approvalFormPage =
+                approvalFormEntityService.findAllByLastStatusInAndTimeRangeWithBookingRequest(
+                        ApprovalStatusType.getListCanApproval(), startInstant, endInstant, pageable);
+
+        return approvalFormPage.map(approvalForm ->
+
+                bookingRequestAppMapper.toResponseFromApprovalForm(approvalForm.getBookingRequest(), approvalForm)
+        );
+    }
+
+
     @Transactional
     public Object test() {
 
         return true;
 
     }
+
 
     private String generateBookingCode(LocalDate meetingDate) {
         return meetingDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-" + Long.toString(System.nanoTime(), 36).toUpperCase();
