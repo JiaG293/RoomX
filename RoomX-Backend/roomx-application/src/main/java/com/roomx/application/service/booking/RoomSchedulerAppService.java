@@ -552,6 +552,7 @@ public class RoomSchedulerAppService {
     }*/
 
     public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptional(
+            String bookingRequestId,
             String branchId,
             List<LocalDate> occurrences, LocalTime timeStart, LocalTime timeEnd,
             Integer capacity, List<String> participants, Integer bufferTime) {
@@ -560,8 +561,8 @@ public class RoomSchedulerAppService {
         int requiredCapacity = (capacity != null && capacity > 0) ? capacity : participants.size() + 1;
 
         for (LocalDate date : occurrences) {
-            List<Booking> existingBookings = bookingRepository.findAllByMeetingDateAndContainsStatus(
-                    date, BookingStatusType.getListAccept());
+            List<Booking> existingBookings = bookingRepository.findAllByMeetingDateAndContainsStatusAndBookingRequestId(
+                    date, BookingStatusType.getListAccept(), bookingRequestId);
 
             List<Room> availableRooms = (branchId != null)
                     ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())

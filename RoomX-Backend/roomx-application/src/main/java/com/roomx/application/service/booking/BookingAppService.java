@@ -1,8 +1,6 @@
 package com.roomx.application.service.booking;
 
-import com.roomx.domain.model.aggrerate.Booking;
-import com.roomx.domain.model.aggrerate.Room;
-import com.roomx.domain.model.aggrerate.User;
+import com.roomx.domain.model.aggrerate.*;
 import com.roomx.domain.model.entity.BookingParticipant;
 import com.roomx.domain.model.entity.EquipmentRequest;
 import com.roomx.domain.model.entity.RoomClassPriceHistory;
@@ -24,7 +22,6 @@ import com.roomx.application.mapper.BookingRequestAppMapper;
 import com.roomx.application.mapper.EquipmentRequestAppMapper;
 import com.roomx.application.mapper.ServiceRequestAppMapper;
 import com.roomx.application.service.resource.RoomAppService;
-import com.roomx.domain.model.aggrerate.BookingRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
 import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.domain.repository.*;
@@ -204,6 +201,7 @@ public class BookingAppService {
         var bookingRequestDomain = approvalFormDomain.getBookingRequest();
         var listOccurrences = bookingRequestDomain.getOccurrences();
         var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptional(
+                bookingRequestId,
                 branchId,
                 listOccurrences,
                 bookingRequestDomain.getStartTime(),
@@ -230,6 +228,7 @@ public class BookingAppService {
         var bookingRequestDomain = approvalFormDomain.getBookingRequest();
         var listOccurrences = bookingRequestDomain.getOccurrences();
         var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptional(
+                bookingRequestId,
                 branchId,
                 listOccurrences,
                 bookingRequestDomain.getStartTime(),
@@ -240,7 +239,7 @@ public class BookingAppService {
         );
 
         var dateConflictList = result.stream()
-                .filter(dateMeeting -> dateMeeting.isHasConflict() && dateMeeting.getOptimalRoomId() == null)
+                .filter(dateMeeting -> dateMeeting.isHasConflict() && dateMeeting.getOptimalRoomId() != null)
                 .map(RoomScheduleResultDto::getDate)
                 .toList();
 
@@ -267,8 +266,8 @@ public class BookingAppService {
                         .status(BookingStatusType.SCHEDULED.toString())
                         .count(1)
                         .build();
-                bookingRepository.save(bookingDomain);
-                bookingDomainList.add(bookingDomain);
+                ;
+                bookingDomainList.add(bookingRepository.save(bookingDomain));
 
 
                 var bookingParticpantsDomainList = new ArrayList<BookingParticipant>();
@@ -284,16 +283,30 @@ public class BookingAppService {
 
                 });
                 bookingParticipantRepository.saveAll(bookingParticpantsDomainList);
-
-
             });
 
+        } else {
+            throw new AppException(ErrorCode.BOOKING_CONFLICT, dateConflictList);
         }
 
-//        bookingRepository.saveAll(bookingDomainList);
+        approvalFormRepository.save(ApprovalForm.builder()
+                .approver(UUID.fromString(securityUtil.getCurrentUserId()))
+                .bookingRequest(bookingRequestDomain)
+                .note("")
+                .status(ApprovalStatusType.APPROVED.toString())
+                .build());
 
-//        bookingRepository.save(bookingDomainList.getFirst());
-        return bookingDomainList;
+        return bookingDomainList.stream()
+                .map(booking -> Map.of(
+                        "meetingDate", booking.getMeetingDate(),
+                        "id", booking.getId(),
+                        "roomId", booking.getRoom().getId(),
+                        "place", booking.getPlaceDetail(),
+                        "capacity", booking.getBookingRequest().getCapacity(),
+                        "totalPrice", booking.getTotalPrice(),
+                        "participants", booking.getBookingRequest().getParticipants()
+                ))
+                .toList();
     }
 
 

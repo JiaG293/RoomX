@@ -1,17 +1,16 @@
 package com.roomx.infrastructure.multitenancy.persistence.repository.impl;
 
+
 import com.roomx.domain.model.aggrerate.ApprovalForm;
 import com.roomx.domain.repository.ApprovalFormRepository;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.ApprovalFormEntityMapper;
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaApprovalFormEntityRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ApprovalFormEntityRepository implements ApprovalFormRepository {

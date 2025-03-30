@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,4 +28,6 @@ public interface JpaBookingEntityRepository extends JpaRepository<BookingEntity,
 
 
     List<BookingEntity> findAllByMeetingDateAndStatusIn(LocalDate date, List<String> listAccept);
+
+    List<BookingEntity> findAllByMeetingDateAndStatusInAndBookingRequestId(LocalDate date, List<String> listAccept, UUID bookingRequestId);
 }

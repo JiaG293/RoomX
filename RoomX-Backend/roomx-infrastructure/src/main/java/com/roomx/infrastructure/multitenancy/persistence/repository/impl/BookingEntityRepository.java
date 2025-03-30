@@ -108,4 +108,13 @@ public class BookingEntityRepository implements BookingRepository {
         return savedBookingEntityList.stream().map(bookingEntityMapper::toDomain).toList();
     }
 
+    @Override
+    public List<Booking> findAllByMeetingDateAndContainsStatusAndBookingRequestId(LocalDate date, List<String> listAccept, String bookingRequestId) {
+        return  jpaBookingEntityRepository
+                .findAllByMeetingDateAndStatusInAndBookingRequestId(date, listAccept, UUID.fromString(bookingRequestId))
+                .stream().map(bookingEntityMapper::toDomain)
+                .toList();
+    }
+
+
 }
