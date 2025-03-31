@@ -19,7 +19,7 @@ import java.time.Instant;
 )
 public interface ServiceAppMapper {
 
-    @Mapping(target = "id", source = "id")
+//    @Mapping(target = "price", source = "price")
     ServiceResponse toResponse(Service domain);
 
     ServiceDetailResponse toResponseDetail(Service domain);

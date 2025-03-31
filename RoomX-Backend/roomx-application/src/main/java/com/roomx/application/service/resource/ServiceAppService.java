@@ -4,6 +4,7 @@ package com.roomx.application.service.resource;
 import com.roomx.domain.model.aggrerate.Service;
 import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import com.roomx.domain.model.entity.ServicePriceHistory;
+import com.roomx.domain.model.entity.ServiceRequest;
 import com.roomx.domain.repository.ServicePriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.*;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
@@ -111,7 +112,7 @@ public class ServiceAppService {
     }
 
 
-    public Page<ServiceResponse> getListServicePages(
+   /* public Page<ServiceResponse> getListServicePages(
             ServiceQueryRequest filterRequest,
             int page,
             int size,
@@ -121,15 +122,40 @@ public class ServiceAppService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         ServiceFilter serviceFilter = ServiceFilter.builder()
-                .name(filterRequest.getName())
-                .description(filterRequest.getDescription())
-                .note(filterRequest.getNote())
+//                .name(filterRequest.getName())
+//                .description(filterRequest.getDescription())
+//                .note(filterRequest.getNote())
                 .createdAt(filterRequest.getCreatedAt())
                 .updatedAt(filterRequest.getUpdatedAt())
-                .unitPrice(filterRequest.getUnitPrice())
+                //.unitPrice(filterRequest.getUnitPrice())
                 .build();
 
         var serviceDomainPage = serviceEntityService.filterPageServices(serviceFilter, pageable, filterRequest.isCompareType());
+
+        return serviceDomainPage.map(serviceAppMapper::toResponse);
+    }*/
+
+
+    public Page<ServiceResponse> searchFilterService(
+            ServiceFilterRequest filter,
+            int page,
+            int size,
+            String sortBy,
+            String direction){
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        ServiceFilter serviceFilter = ServiceFilter.builder()
+                .keyword(filter.keyword())
+                .searchBy(filter.searchBy())
+                .fromPrice(filter.fromPrice())
+                .toPrice(filter.toPrice())
+                .validPriceFrom(filter.validPriceFrom())
+                .validPriceEnd(filter.validPriceEnd())
+                .status(filter.status())
+                .build();
+
+        var serviceDomainPage = serviceEntityService.searchFilterService(serviceFilter, pageable);
 
         return serviceDomainPage.map(serviceAppMapper::toResponse);
     }

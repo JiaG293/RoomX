@@ -1,9 +1,8 @@
 package com.roomx.infrastructure.multitenancy.persistence.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.roomx.shared.base.BaseFilter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -11,12 +10,13 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ServiceFilter {
-    private String name;
-    private String description;
-    private String note;
-    private BigDecimal unitPrice;
-    private Instant createdAt;
-    private Instant updatedAt;
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+public class ServiceFilter extends BaseFilter {
+    private BigDecimal fromPrice;
+    private BigDecimal toPrice;
+    private Instant validPriceFrom;
+    private Instant validPriceEnd;
+
+    private String status;
 }

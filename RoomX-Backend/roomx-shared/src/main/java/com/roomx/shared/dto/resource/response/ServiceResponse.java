@@ -19,4 +19,5 @@ public class ServiceResponse {
     private String note;
     private List<String> imageUrls;
     private PriceHistoryResponse price;
+    private String status;
 }

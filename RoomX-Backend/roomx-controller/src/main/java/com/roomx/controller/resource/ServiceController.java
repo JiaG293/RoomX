@@ -52,14 +52,14 @@ public class ServiceController {
     }
 
     @GetMapping("/filters")
-    public ResultResponse<?> getListPageService(
-            @ModelAttribute ServiceQueryRequest filter,
+    public ResultResponse<?> searchFilterServicePage(
+            @ModelAttribute ServiceFilterRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "updatedAt") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "desc") String direction
             ) {
-        var result = serviceAppService.getListServicePages(filter, page, size, sortBy, direction);
+        var result = serviceAppService.searchFilterService(filter, page, size, sortBy, direction);
 
         return ResultResponse.<Page<ServiceResponse>>builder()
                 .result(result)

@@ -13,6 +13,8 @@ import java.time.Instant;
 @AllArgsConstructor
 @Builder
 public class PriceHistoryResponse {
+    private String id;
     private BigDecimal unitPrice;
     private Instant validFrom;
+    private Instant validEnd;
 }

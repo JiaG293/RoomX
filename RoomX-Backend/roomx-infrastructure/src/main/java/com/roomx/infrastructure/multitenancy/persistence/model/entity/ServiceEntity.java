@@ -1,9 +1,11 @@
 package com.roomx.infrastructure.multitenancy.persistence.model.entity;
 
+import com.roomx.domain.model.entity.ServicePriceHistory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Formula;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -71,5 +73,10 @@ public class ServiceEntity {
     @Column(name = "url")
     @OrderColumn(name="image_order")
     private List<String> imageUrls = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "service", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("validFrom DESC")
+    private List<ServicePriceHistoryEntity> priceHistories = new ArrayList<>();
 
 }
