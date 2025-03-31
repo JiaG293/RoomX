@@ -76,15 +76,15 @@ public class BranchController {
     }
 
     @GetMapping("/filters")
-    public ResultResponse<?> getListPageBranch(
-            @ModelAttribute BranchQueryRequest filter,
+    public ResultResponse<?> searchFilterBranchPage(
+            @ModelAttribute BranchFilterRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "branchCode") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "updatedAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
     ) {
 
-        var result = branchAppService.getListBranchPages(filter, page, size, sortBy, direction);
+        var result = branchAppService.searchFilterBranch(filter, page, size, sortBy, direction);
 
         return ResultResponse.<Page<BranchResponse>>builder()
                 .result(result)
@@ -92,16 +92,14 @@ public class BranchController {
     }
 
     @GetMapping("/search")
-    public ResultResponse<?> getListPageBranch(
-            @ModelAttribute BranchFilterRequest filter,
+    public ResultResponse<?> searchBranchPageByKeyword(
+            @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "updatedAt") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
-        log.info("data : {}", filter);
-        var result = branchAppService.searchBranchByKeyword(filter, page, size, sortBy, direction);
-
+        var result = branchAppService.searchBranchByKeyword(keyword, page, size, sortBy, direction);
         return ResultResponse.<Page<BranchResponse>>builder()
                 .result(result)
                 .build();

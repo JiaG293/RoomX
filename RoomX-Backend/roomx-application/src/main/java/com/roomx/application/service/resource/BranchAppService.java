@@ -98,7 +98,7 @@ public class BranchAppService {
         return branchDomainPage.map(branchAppMapper::toResponse);
     }
 
-    public Page<BranchResponse> searchBranchByKeyword(
+    public Page<BranchResponse> searchFilterBranch(
             BranchFilterRequest filter,
             int page,
             int size,
@@ -118,6 +118,22 @@ public class BranchAppService {
         return branchDomainPage.map(branchAppMapper::toResponse);
     }
 
+    public Page<BranchResponse> searchBranchByKeyword(
+            String keyword,
+            int page,
+            int size,
+            String sortBy,
+            String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        var branchDomainPage = branchEntityService
+                .searchPageBranchByKeyword(keyword, pageable);
+
+        return branchDomainPage.map(branchAppMapper::toResponse);
+    }
+
 
     public List<BranchResponse> searchBranchByNameOrBranchCode(String name, String code) {
         var listBranchDomain = branchRepository.searchBranchByNameOrBranchCode(name, code);
@@ -128,6 +144,8 @@ public class BranchAppService {
         var listBranchDomain = branchRepository.findAll();
         return listBranchDomain.stream().map(branchAppMapper::toResponse).toList();
     }
+
+
 
     public BranchDetailResponse getBranchDetail(String branchId) {
         var branchDomain = branchRepository.findById(branchId)
