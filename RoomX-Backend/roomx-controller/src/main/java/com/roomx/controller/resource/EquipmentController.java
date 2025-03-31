@@ -1,10 +1,7 @@
 package com.roomx.controller.resource;
 
 
-import com.roomx.shared.dto.resource.request.EquipmentCreateRequest;
-import com.roomx.shared.dto.resource.request.EquipmentPriceHistoryCreateRequest;
-import com.roomx.shared.dto.resource.request.EquipmentQueryRequest;
-import com.roomx.shared.dto.resource.request.EquipmentUpdateRequest;
+import com.roomx.shared.dto.resource.request.*;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.application.service.resource.EquipmentAppService;
 import com.roomx.shared.exception.api.ResultResponse;
@@ -54,14 +51,15 @@ public class EquipmentController {
     }
 
     @GetMapping("/filters")
-    public ResultResponse<?> getListPageEquipment(
-            @ModelAttribute EquipmentQueryRequest filter,
+    public ResultResponse<?> searchFilterEquipmentPage(
+            @ModelAttribute EquipmentFilterRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "updatedAt") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "desc") String direction
     ) {
-        var result = equipmentAppService.getListEquipmentPages(filter, page, size, sortBy, direction);
+
+        var result = equipmentAppService.searchFilterEquipment(filter, page, size, sortBy, direction);
         return ResultResponse.<Page<EquipmentResponse>>builder()
                 .result(result)
                 .build();

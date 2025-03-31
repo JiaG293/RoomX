@@ -70,4 +70,10 @@ public class EquipmentEntity {
     @Column(name = "url")
     @OrderColumn(name="image_order")
     private List<String> imageUrls = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("validFrom DESC")
+    private List<EquipmentPriceHistoryEntity> priceHistories = new ArrayList<>();
+
 }

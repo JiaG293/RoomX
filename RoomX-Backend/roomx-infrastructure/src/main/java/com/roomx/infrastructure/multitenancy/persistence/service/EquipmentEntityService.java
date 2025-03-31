@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable;
 
 
 public interface EquipmentEntityService {
-    public Page<Equipment> filterPageEquipments(EquipmentFilter filter, Pageable pageable, boolean typeCompare);
+    Page<Equipment> filterPageEquipments(EquipmentFilter filter, Pageable pageable);
 }

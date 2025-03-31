@@ -3,11 +3,9 @@ package com.roomx.infrastructure.multitenancy.persistence.service.impl;
 import com.roomx.domain.model.aggrerate.Service;
 import com.roomx.infrastructure.multitenancy.persistence.dto.ServiceFilter;
 import com.roomx.infrastructure.multitenancy.persistence.mapper.ServiceEntityMapper;
-import com.roomx.infrastructure.multitenancy.persistence.model.base.GenericSpecification;
-import com.roomx.infrastructure.multitenancy.persistence.model.base.SearchCriteria;
-import com.roomx.infrastructure.multitenancy.persistence.model.entity.ServiceEntity;
+
 import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaServiceEntityRepository;
-import com.roomx.infrastructure.multitenancy.persistence.repository.specification.BranchSpecification;
+
 import com.roomx.infrastructure.multitenancy.persistence.repository.specification.ServiceSpecification;
 import com.roomx.infrastructure.multitenancy.persistence.service.ServiceEntityService;
 import lombok.RequiredArgsConstructor;

@@ -4,10 +4,7 @@ package com.roomx.application.service.resource;
 import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import com.roomx.domain.repository.EquipmentPriceHistoryRepository;
-import com.roomx.shared.dto.resource.request.EquipmentCreateRequest;
-import com.roomx.shared.dto.resource.request.EquipmentPriceHistoryCreateRequest;
-import com.roomx.shared.dto.resource.request.EquipmentQueryRequest;
-import com.roomx.shared.dto.resource.request.EquipmentUpdateRequest;
+import com.roomx.shared.dto.resource.request.*;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.application.mapper.EquipmentAppMapper;
 import com.roomx.domain.repository.EquipmentRepository;
@@ -114,8 +111,8 @@ public class EquipmentAppService {
         return Map.of("listEquipmentDeleteFailed", equipmentFailedDelete);
     }
 
-    public Page<EquipmentResponse> getListEquipmentPages(
-            EquipmentQueryRequest filterRequest,
+    public Page<EquipmentResponse> searchFilterEquipment(
+            EquipmentFilterRequest filter,
             int page,
             int size,
             String sortBy,
@@ -124,18 +121,19 @@ public class EquipmentAppService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         EquipmentFilter equipmentFilter = EquipmentFilter.builder()
-                .equipmentCode(filterRequest.getEquipmentCode())
-                .brand(filterRequest.getBrand())
-                .id(filterRequest.getId())
-                .name(filterRequest.getName())
-                .createdAt(filterRequest.getCreatedAt())
-                .updatedAt(filterRequest.getUpdatedAt())
-                .unitPrice(filterRequest.getUnitPrice())
+                .keyword(filter.keyword())
+                .searchBy(filter.keyword())
+                .status(filter.status())
+                .brand(filter.brand())
+                .fromPrice(filter.fromPrice())
+                .toPrice(filter.toPrice())
+                .validPriceFrom(filter.validPriceFrom())
+                .validPriceEnd(filter.validPriceEnd())
                 .build();
 
-        var equipmentDomainPage = equipmentEntityService.filterPageEquipments(equipmentFilter, pageable, filterRequest.isCompareType());
-
-        return equipmentDomainPage.map(equipmentAppMapper::toResponse);
+        return equipmentEntityService
+                .filterPageEquipments(equipmentFilter, pageable)
+                .map(equipmentAppMapper::toResponse);
     }
 
     @Transactional

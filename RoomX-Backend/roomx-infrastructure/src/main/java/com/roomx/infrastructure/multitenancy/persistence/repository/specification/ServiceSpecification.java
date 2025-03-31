@@ -4,6 +4,7 @@ import com.roomx.infrastructure.multitenancy.persistence.dto.ServiceFilter;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.ServiceEntity;
 import com.roomx.infrastructure.multitenancy.persistence.model.entity.ServicePriceHistoryEntity;
 import jakarta.persistence.criteria.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
+@Slf4j
 public class ServiceSpecification {
     public static Specification<ServiceEntity> searchFilterService(ServiceFilter filter) {
         return (root, query, criteriaBuilder) -> {
@@ -21,7 +23,7 @@ public class ServiceSpecification {
             Subquery<Instant> maxValidFromSubquery = query.subquery(Instant.class);
             Root<ServicePriceHistoryEntity> subRoot = maxValidFromSubquery.from(ServicePriceHistoryEntity.class);
             maxValidFromSubquery.select(
-                    criteriaBuilder.greatest(subRoot.<Instant>get("validFrom"))  // Ép kiểu
+                    criteriaBuilder.greatest(subRoot.<Instant>get("validFrom"))
             ).where(
                     criteriaBuilder.equal(subRoot.get("service"), root),
                     criteriaBuilder.isTrue(subRoot.get("active"))
@@ -29,9 +31,6 @@ public class ServiceSpecification {
 
             Predicate latestPrice = criteriaBuilder.equal(priceHistoryJoin.get("validFrom"), maxValidFromSubquery);
             predicate = criteriaBuilder.and(predicate, activePrice, latestPrice);
-
-
-
 
 
             if (StringUtils.hasText(filter.getStatus())) {
@@ -101,7 +100,6 @@ public class ServiceSpecification {
                         .filter(Objects::nonNull)
                         .map(expression -> criteriaBuilder.like(expression, keyword))
                         .toList();
-
                 if (!searchPredicates.isEmpty()) {
                     predicate = criteriaBuilder.and(predicate, criteriaBuilder.or(searchPredicates.toArray(new Predicate[0])));
                 }

@@ -19,4 +19,5 @@ public class EquipmentResponse {
     private String description;
     private List<String> imageUrls;
     private PriceHistoryResponse price;
+    private String status;
 }
