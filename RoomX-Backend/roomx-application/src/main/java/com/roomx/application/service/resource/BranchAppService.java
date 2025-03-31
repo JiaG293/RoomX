@@ -3,19 +3,19 @@ package com.roomx.application.service.resource;
 import com.roomx.application.mapper.PlaceAppMapper;
 import com.roomx.domain.repository.PlaceRepository;
 import com.roomx.shared.dto.resource.request.BranchCreateRequest;
+import com.roomx.shared.dto.resource.request.BranchFilterRequest;
 import com.roomx.shared.dto.resource.request.BranchQueryRequest;
 import com.roomx.shared.dto.resource.request.BranchUpdateRequest;
 import com.roomx.shared.dto.resource.response.BranchDetailResponse;
 import com.roomx.shared.dto.resource.response.BranchResponse;
 import com.roomx.application.mapper.BranchAppMapper;
 import com.roomx.domain.repository.BranchRepository;
-import com.roomx.infrastructure.multitenancy.persistence.dto.BranchFilter;
+import com.roomx.shared.base.filter.BranchFilter;
 import com.roomx.infrastructure.multitenancy.persistence.service.BranchEntityService;
 import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.PlaceType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
-import jakarta.ws.rs.DELETE;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -86,17 +86,38 @@ public class BranchAppService {
         Pageable pageable = PageRequest.of(page, size, sort);
         log.info("data la: {}", filterRequest);
         BranchFilter branchFilter = BranchFilter.builder()
-                .branchCode(filterRequest.getBranchCode())
-                .name(filterRequest.getName())
-                .email(filterRequest.getEmail())
-                .address(filterRequest.getAddress())
-                .phoneNumber(filterRequest.getPhoneNumber())
+//                .branchCode(filterRequest.getBranchCode())
+//                .name(filterRequest.getName())
+//                .email(filterRequest.getEmail())
+//                .address(filterRequest.getAddress())
+//                .phoneNumber(filterRequest.getPhoneNumber())
                 .build();
 
         var branchDomainPage = branchEntityService.filterPageBranchs(branchFilter, pageable, filterRequest.isTypeCompare());
 
         return branchDomainPage.map(branchAppMapper::toResponse);
     }
+
+    public Page<BranchResponse> searchBranchByKeyword(
+            BranchFilterRequest filter,
+            int page,
+            int size,
+            String sortBy,
+            String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        var branchFilter = BranchFilter.builder()
+                .status(filter.status())
+                .searchBy(filter.searchBy())
+                .keyword(filter.keyword())
+                .build();
+        var branchDomainPage = branchEntityService
+                .searchFilterBranch(branchFilter, pageable);
+
+        return branchDomainPage.map(branchAppMapper::toResponse);
+    }
+
 
     public List<BranchResponse> searchBranchByNameOrBranchCode(String name, String code) {
         var listBranchDomain = branchRepository.searchBranchByNameOrBranchCode(name, code);

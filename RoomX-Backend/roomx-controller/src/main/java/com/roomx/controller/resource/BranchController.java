@@ -1,6 +1,7 @@
 package com.roomx.controller.resource;
 
 import com.roomx.shared.dto.resource.request.BranchCreateRequest;
+import com.roomx.shared.dto.resource.request.BranchFilterRequest;
 import com.roomx.shared.dto.resource.request.BranchQueryRequest;
 import com.roomx.shared.dto.resource.request.BranchUpdateRequest;
 import com.roomx.shared.dto.resource.response.BranchDetailResponse;
@@ -84,6 +85,22 @@ public class BranchController {
     ) {
 
         var result = branchAppService.getListBranchPages(filter, page, size, sortBy, direction);
+
+        return ResultResponse.<Page<BranchResponse>>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/search")
+    public ResultResponse<?> getListPageBranch(
+            @ModelAttribute BranchFilterRequest filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "updatedAt") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        log.info("data : {}", filter);
+        var result = branchAppService.searchBranchByKeyword(filter, page, size, sortBy, direction);
 
         return ResultResponse.<Page<BranchResponse>>builder()
                 .result(result)

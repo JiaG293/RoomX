@@ -70,4 +70,6 @@ public class BranchEntityRepository implements BranchRepository {
                 .stream().map(branchEntityMapper::toDomain)
                 .toList();
     }
+
+
 }

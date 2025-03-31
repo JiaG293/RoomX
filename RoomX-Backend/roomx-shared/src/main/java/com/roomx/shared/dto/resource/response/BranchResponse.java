@@ -22,5 +22,6 @@ public class BranchResponse {
     private String address;
     private Instant createdAt;
     private Instant updatedAt;
+    private String status;
 
 }
