@@ -117,17 +117,6 @@ resilience4j:
         waitDurationInOpenState: 5s
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
-management:
-  health:
-    circuitbreakers:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
 keycloak:
   client-default: ${KEYCLOAK_CLIENT_DEFAULT:roomx-fe} # client mặc định cho app roomx
   realm: master
@@ -160,10 +149,56 @@ multitenancy:
 #      issuer: ${MULTITENANCY_HIEP_ISSUER:http://192.168.1.251:5555/realms/hiep}
 
 
+
+
+
+
+### LOG
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+      show-components: always
+#  metrics:
+#    tags:
+#      application: ${spring.application.name}
+#    distribution:
+#      percentiles-histogram:
+#        all: true
+#        http.server.requests: true
+#  opentelemetry:
+#    resource-attributes:
+#      application: ${spring.application.name}
+#      "service.name": ${spring.application.name}
+#  otlp:
+#    tracing:
+#      endpoint: ${MANAGEMANT_OLTP_TRACING_ENDPOINT:http://localhost:4318/v1/traces}
+#  tracing:
+#    sampling:
+#      probability: 1.0
+#  prometheus:
+#    metrics:
+#      export:
+#        step: 5s
+
+
+
 logging:
   level:
     org.springframework.transaction: DEBUG
     org.hibernate.sql: DEBUG
+#  pattern:
+#    correlation: '[%X{traceId:-}-%X{spanId:-}] [%X{tenantId:-}] '
 
 
 

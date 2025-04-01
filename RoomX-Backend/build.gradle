@@ -5,7 +5,6 @@ plugins {
 }
 
 
-
 //Config Common
 allprojects {
     apply plugin: 'java'
@@ -20,6 +19,7 @@ allprojects {
     }
 
     dependencies {
+
         implementation 'org.springframework.boot:spring-boot-starter-web'
         compileOnly 'org.projectlombok:lombok'
         implementation('org.springframework.boot:spring-boot-starter-validation')
@@ -50,10 +50,13 @@ allprojects {
 //        implementation 'org.flywaydb:flyway-core'
         implementation("org.flywaydb:flyway-database-postgresql")
 
-
+        //LOG OBSER
+        runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+        implementation 'com.github.loki4j:loki-logback-appender:1.6.0'
+        implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+        implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
 
     }
-
 
 
     configurations {
