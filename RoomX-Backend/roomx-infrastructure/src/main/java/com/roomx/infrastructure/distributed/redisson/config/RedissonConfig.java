@@ -1,5 +1,6 @@
 package com.roomx.infrastructure.distributed.redisson.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 public class RedissonConfig {
 
@@ -26,12 +28,14 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         String redisUrl = "redis://" + host + ":" + port;
-        config.useSingleServer()
+        var server = config.useSingleServer()
                 .setAddress(redisUrl)
                 .setUsername(username.isEmpty() ? null : username)
                 .setPassword(password.isEmpty() ? null : password)
                 .setConnectionPoolSize(50)
                 .setDatabase(0);
+
+        log.info("address info redis: {}", server.getAddress());
         return Redisson.create(config);
     }
 
