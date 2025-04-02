@@ -2,10 +2,7 @@ package com.roomx.controller.resource;
 
 import com.roomx.application.service.booking.BookingAppService;
 import com.roomx.shared.dto.TestRequest;
-import com.roomx.shared.dto.booking.request.BookingFilterRequest;
-import com.roomx.shared.dto.booking.request.BookingQueryRequest;
-import com.roomx.shared.dto.booking.request.BookingRequestAdminCreateRequest;
-import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
+import com.roomx.shared.dto.booking.request.*;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.shared.dto.booking.response.BookingResponse;
 import com.roomx.shared.dto.resource.request.BranchQueryRequest;
@@ -84,14 +81,13 @@ public class BookingController {
 
     @GetMapping("/approvals")
     public ResultResponse<?> getPageBookingRequestAdminApproval(
-            @RequestParam(required = false, defaultValue = "week") String byType,
-            @RequestParam(required = false) Integer value,
+            @ModelAttribute BookingRequestApprovalRequest request,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "updatedAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction
     ) {
-        var result = bookingAppService.getListPageBookingRequestAdminApproval(byType, value, page, size, sortBy, direction);
+        var result = bookingAppService.getListPageBookingRequestAdminApproval(request, page, size, sortBy, direction);
         return ResultResponse.<Page<BookingRequestResponse>>builder()
                 .result(result)
                 .build();

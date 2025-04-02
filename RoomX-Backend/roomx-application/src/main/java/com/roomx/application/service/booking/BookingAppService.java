@@ -19,6 +19,7 @@ import com.roomx.infrastructure.persistence.service.PageableQueryService;
 import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
 import com.roomx.shared.dto.booking.request.BookingFilterRequest;
 import com.roomx.shared.dto.booking.request.BookingQueryRequest;
+import com.roomx.shared.dto.booking.request.BookingRequestApprovalRequest;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.application.mapper.BookingRequestAppMapper;
 import com.roomx.application.mapper.EquipmentRequestAppMapper;
@@ -87,7 +88,6 @@ public class BookingAppService {
     private final BookingAppMapper bookingAppMapper;
     private final ApprovalFormEntityService approvalFormEntityService;
     private final BookingEntityService bookingEntityService;
-
 
 
     /*@Transactional
@@ -339,50 +339,34 @@ public class BookingAppService {
     }
 
 
-    public Page<BookingRequestResponse> getListPageBookingRequestAdminApproval(String byType, Integer value, int page, int size, String sortBy, String direction) {
+    public Page<BookingRequestResponse> getListPageBookingRequestAdminApproval(
+            BookingRequestApprovalRequest request,
+            int page,
+            int size,
+            String sortBy,
+            String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         LocalDate today = LocalDate.now();
-        LocalDate startDate = today;
-        LocalDate endDate = today;
 
-        switch (byType.toLowerCase()) {
-            case "week" -> {
-                int weekNumber = (value != null && value > 0) ? value : today.get(WeekFields.of(Locale.getDefault()).weekOfYear());
-                startDate = LocalDate.of(today.getYear(), 1, 1)
-                        .with(WeekFields.of(Locale.getDefault()).weekOfYear(), weekNumber)
-                        .with(DayOfWeek.MONDAY);
-                endDate = startDate.with(DayOfWeek.SUNDAY);
-            }
-            case "month" -> {
-                int month = (value != null && value >= 1 && value <= 12) ? value : today.getMonthValue();
-                startDate = today.withMonth(month).withDayOfMonth(1);
-                endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-            }
-            case "year" -> {
-                int year = (value != null && value > 0) ? value : today.getYear();
-                startDate = today.withYear(year).withDayOfYear(1);
-                endDate = startDate.withDayOfYear(startDate.lengthOfYear());
-            }
-            default -> {
-                startDate = today;
-                endDate = today;
-            }
-        }
+        int currentYear = today.getYear();
+        int selectedYear = (request.getYear() != null && request.getYear() > 0) ? request.getYear() : currentYear;
+        int selectedMonth = (request.getMonth() != null && request.getMonth() >= 1 && request.getMonth() <= 12) ? request.getMonth() : today.getMonthValue();
+
+        LocalDate startDate = LocalDate.of(selectedYear, selectedMonth, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
         ZoneId zoneId = ZoneId.systemDefault();
-
-
         Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
         Instant endInstant = endDate.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
 
-        log.info("date la: {} -> {} insant: {} -> {}", startDate, endDate, startInstant, endInstant);
+        log.info("Date range: {} -> {} | Instant range: {} -> {}", startDate, endDate, startInstant, endInstant);
+
         Page<ApprovalForm> approvalFormPage =
                 approvalFormEntityService.findAllByLastStatusInAndTimeRangeWithBookingRequest(
                         ApprovalStatusType.getListCanApproval(), startInstant, endInstant, pageable);
 
         return approvalFormPage.map(approvalForm ->
-
                 bookingRequestAppMapper.toResponseFromApprovalForm(approvalForm.getBookingRequest(), approvalForm)
         );
     }
