@@ -102,7 +102,6 @@ spring:
           max-idle: 5
           min-idle: 5
       connect-timeout: 30000
-      url: ${REDIS_URL:redis://admin:admin123@redis:6379}
 
   kafka:
     bootstrap-servers: ${KAFKA_SERVER_URL:localhost:9092}
