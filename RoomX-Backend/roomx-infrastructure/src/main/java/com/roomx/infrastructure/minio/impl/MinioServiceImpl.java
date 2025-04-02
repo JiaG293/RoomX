@@ -67,7 +67,13 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file, String path, Boolean makePrivate, Integer duration, TimeUnit timeType) {
+    public String uploadFile(
+            MultipartFile file,
+            String path,
+            Boolean makePrivate,
+            Integer duration,
+            TimeUnit timeType
+    ) {
         String bucketName = getTenantBucketName();
         String originalFileName = file.getOriginalFilename();
         String fileExtension = "";
@@ -81,20 +87,21 @@ public class MinioServiceImpl implements MinioService {
 
         ensureBucketExists(bucketName);
 
-        String pathFile = makePrivate == true ? newFileName : "public/" + newFileName;
-
         String objectPath = (path == null || path.isEmpty())
                 ? newFileName
-                : path + "/" + pathFile;
+                : path + "/" + newFileName;
+        String objectPathPublic = "public/" + objectPath;
 
         try {
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(bucketName)
-                    .object(objectPath)
+                    .object(makePrivate ? objectPath : objectPathPublic)
                     .stream(file.getInputStream(), file.getSize(), -1)
                     .contentType(file.getContentType())
                     .build());
-           return makePrivate ? getFileUrl(objectPath) : generateSignedUrl(objectPath, duration, timeType);
+
+            return makePrivate ? generateSignedUrl(objectPath, duration, timeType)
+                    :getFileUrl(objectPathPublic);
         } catch (Exception e) {
             log.error("Failed to upload file '{}' to bucket '{}' at path '{}': {}", file.getOriginalFilename(), bucketName, objectPath, e.getMessage(), e);
             throw new AppException(ErrorCode.MINIO_FAILED, file.getOriginalFilename());
@@ -102,7 +109,13 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public List<String> uploadFiles(List<MultipartFile> files, String path, Boolean makePrivate, Integer duration, TimeUnit timeTye) {
+    public List<String> uploadFiles(
+            List<MultipartFile> files,
+            String path,
+            Boolean makePrivate,
+            Integer duration,
+            TimeUnit timeTye
+    ) {
         List<String> uploadedFileUrls = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
@@ -128,6 +141,37 @@ public class MinioServiceImpl implements MinioService {
                             .build());
         } catch (Exception e) {
             log.error("getFileUrl: Failed to generate custom file URL for file '{}' in bucket '{}': {}", filePath, bucketName, e.getMessage(), e);
+            throw new AppException(ErrorCode.MINIO_FAILED, filePath);
+        }
+    }
+
+    @Override
+    public String generateSignedUrl(String filePath, Integer duration, TimeUnit timeType) {
+        String bucketName = getTenantBucketName();
+        int expireTime = 1;
+        TimeUnit timeUnit = TimeUnit.HOURS;
+
+        if (duration != null) {
+            expireTime = duration;
+        }
+
+        if (timeType != null) {
+            timeUnit = timeType;
+        }
+
+
+        log.info("check var {} | {} | {} | {}", filePath, duration, timeType, timeUnit);
+        try {
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucketName)
+                            .object(filePath)
+                            .expiry(expireTime, timeUnit)
+                            .build()
+            );
+        } catch (Exception e) {
+            log.error("Failed to generate signed URL for file '{}' in bucket '{}': {}", filePath, bucketName, e.getMessage(), e);
             throw new AppException(ErrorCode.MINIO_FAILED, filePath);
         }
     }
@@ -207,29 +251,6 @@ public class MinioServiceImpl implements MinioService {
         }
     }
 
-    @Override
-    public String generateSignedUrl(String filePath, Integer duration, TimeUnit timeType) {
-        String bucketName = getTenantBucketName();
-        int expireTime = 1;
-        TimeUnit timeUnit = TimeUnit.DAYS;
-        try {
-            if (duration != null) {
-                expireTime = duration;
-                timeUnit = timeType;
-
-            }
-            return minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .bucket(bucketName)
-                            .object(filePath)
-                            .expiry(expireTime, timeUnit)
-                            .build()
-            );
-        } catch (Exception e) {
-            log.error("Failed to generate signed URL for file '{}' in bucket '{}': {}", filePath, bucketName, e.getMessage(), e);
-            throw new AppException(ErrorCode.MINIO_FAILED, filePath);
-        }
-    }
 
     @Override
     public List<String> listFiles() {

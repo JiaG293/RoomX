@@ -32,9 +32,13 @@ public class TestController {
     }
 
     @PostMapping("/minio")
-    public ResultResponse<?> test(@RequestParam("files") List<MultipartFile> request) {
+    public ResultResponse<?> test(
+            @RequestParam("files") List<MultipartFile> request,
+            @RequestParam("makePrivate") boolean makePrivate,
+            @RequestParam("path") String path
+    ) {
 
-        var result = testAppService.testMinio(request);
+        var result = testAppService.testMinio(request, makePrivate, path);
         return ResultResponse.<Object>builder()
                 .result(result)
                 .build();

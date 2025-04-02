@@ -35,11 +35,11 @@ public class TestAppService {
         return result;
     }
 
-    public Object testMinio(List<MultipartFile> request) {
+    public Object testMinio(List<MultipartFile> request, boolean makePrivate, String path) {
         var result = new ArrayList<String>();
 
         request.forEach(file -> {
-            result.add(minioService.uploadFile(file, "test", false,30, null));
+            result.add(minioService.uploadFile(file, path, makePrivate,7, TimeUnit.DAYS));
         });
 
 
