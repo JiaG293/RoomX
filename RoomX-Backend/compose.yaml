@@ -121,7 +121,7 @@ services:
       - 6379:6379
       - 8001:8001 # UI
     environment:
-      REDIS_USER: admin
+      REDIS_USERNAME: admin
       REDIS_PASSWORD: admin123
       ALLOW_EMPTY_PASSWORD: no
     volumes:
