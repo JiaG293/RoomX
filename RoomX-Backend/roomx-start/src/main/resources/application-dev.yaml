@@ -102,6 +102,7 @@ spring:
           max-idle: 5
           min-idle: 5
       connect-timeout: 30000
+      url: ${REDIS_URL:redis://admin:admin123@redis:6379}
 
   kafka:
     bootstrap-servers: ${KAFKA_SERVER_URL:localhost:9092}
@@ -126,7 +127,7 @@ minio:
   ssl: true
   access-key: ${MINIO_ACCESS_KEY:admin}
   secret-key: ${MINIO_SECRET_KEY:admin}
-  bucket-policy-custom: '${MINIO_BUCKET_POLICY_CUSTOM:{ "Version": "2012-10-17", "Statement": [ { "Effect": "Allow", "Principal": "*", "Action": [ "s3:GetObject" ], "Resource": [ "arn:aws:s3:::%s/public*" ] } ] }}'
+  bucket-policy-custom: '${MINIO_BUCKET_POLICY_CUSTOM:{ "Version": "2012-10-17", "Statement": [ { "Effect": "Allow", "Principal": "*", "Action": [ "s3:GetObject" ], "Resource": [ "arn:aws:s3:::%s/public/*" ] } ] }}'
 
 resilience4j:
   ratelimiter:

@@ -28,10 +28,10 @@ public class RedissonConfig {
         String redisUrl = "redis://" + host + ":" + port;
         config.useSingleServer()
                 .setAddress(redisUrl)
+                .setUsername(username.isEmpty() ? null : username)
+                .setPassword(password.isEmpty() ? null : password)
                 .setConnectionPoolSize(50)
-                .setDatabase(0)
-                .setUsername(username)
-                .setPassword(password);
+                .setDatabase(0);
         return Redisson.create(config);
     }
 

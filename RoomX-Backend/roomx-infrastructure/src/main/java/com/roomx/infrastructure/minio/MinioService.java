@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public interface MinioService {
-    String uploadFile(MultipartFile file, String path, Boolean makePrivate, Integer duration, TimeUnit timeTye);
+    String uploadFile(MultipartFile file, String path, Boolean makePrivate, Integer duration, TimeUnit timeType);
     String getFileUrl(String filePath);
     Optional<String> findFileByName(String fileName);
     InputStream downloadFile(String filePath);
