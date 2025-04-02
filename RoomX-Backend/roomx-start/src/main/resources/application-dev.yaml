@@ -13,6 +13,10 @@ server:
 #      min-spare: 50
 #    accept-count: 20000
 spring:
+  servlet:
+    multipart:
+      max-request-size: 500MB
+      max-file-size: 500MB
   messages: # Cấu hình message chuận utf8 tránh lỗi font tiếng việt
     encoding: UTF-8
   datasource:
@@ -21,9 +25,9 @@ spring:
     password: ${DB_PASSWORD:root}
     driver-class-name: org.postgresql.Driver
     dbcp2: # Các connection qua pool mặc định  sẽ đi vào đây
-#      default-schema: ${DB_SCHEMA_DBCP2:schema_roomx}
+    #      default-schema: ${DB_SCHEMA_DBCP2:schema_roomx}
     hikari: # Nếu không chỉ định schema thì các truy vấn mặc định sẽ đi vào đây
-#      schema: ${DB_SCHEMA_HIKARI:schema_roomx}
+      #      schema: ${DB_SCHEMA_HIKARI:schema_roomx}
       maximum-pool-size: 20   # Số lượng tối đa kết nối
       minimum-idle: 5         # Số lượng kết nối tối thiểu trong pool
     type: com.zaxxer.hikari.HikariDataSource
@@ -36,7 +40,7 @@ spring:
       schema: ${FLYWAY_PLACEHOLDERS:public}
 
   #    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:roomx}
-#    driver-class-name: org.postgresql.Driver
+  #    driver-class-name: org.postgresql.Driver
   jpa:
     database: postgresql
     show-sql: true
@@ -57,17 +61,17 @@ spring:
       indent-output: true
     deserialization:
       fail-on-unknown-properties: true
-#  sql:
-#    init:
-#      mode: ${SQL_INIT_MODE:never}
-#      data-locations: ${SQL_INIT_DATA:classpath:database/data.sql}  # SQL native thêm dữ liệu
-#      schema-locations: ${SQL_INIT_SCHEMA:classpath:database/schema.sql} # SQL native tạo schema
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri: ${OAUTH2_RESOURCESERVER_JWT_ISSUER:http://keycloak:5555/realms/roomx}
-#          jwk-set-uri: ${OAUTH2_RESOURCESERVER_JWT_JWK:http://keycloak:5555/realms/roomx/protocol/openid-connect/certs}
+  #  sql:
+  #    init:
+  #      mode: ${SQL_INIT_MODE:never}
+  #      data-locations: ${SQL_INIT_DATA:classpath:database/data.sql}  # SQL native thêm dữ liệu
+  #      schema-locations: ${SQL_INIT_SCHEMA:classpath:database/schema.sql} # SQL native tạo schema
+  #  security:
+  #    oauth2:
+  #      resourceserver:
+  #        jwt:
+  #          issuer-uri: ${OAUTH2_RESOURCESERVER_JWT_ISSUER:http://keycloak:5555/realms/roomx}
+  #          jwk-set-uri: ${OAUTH2_RESOURCESERVER_JWT_JWK:http://keycloak:5555/realms/roomx/protocol/openid-connect/certs}
   mail:
     port: 587
     host: ${MAIL_HOST:smtp.gmail.com}
@@ -82,6 +86,47 @@ spring:
             enable: true
           ssl:
             trust: ${MAIL_DOMAIN_SSL:smtp.gmail.com}
+  data:
+    threads:
+      virtual:
+        enabled: true
+
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      username: ${REDIS_USERNAME:admin}
+      password: ${REDIS_PASSWORD:admin}
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 5
+      connect-timeout: 30000
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVER_URL:localhost:9092}
+    listener:
+      missing-topics-fatal: false
+    consumer:
+      group-id: roomx-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+minio:
+  url: ${MINIO_URL:http://localhost:9000}
+  domain: ${MINIO_DOMAIN:s3.domain.com}
+  ssl: true
+  access-key: ${MINIO_ACCESS_KEY:admin}
+  secret-key: ${MINIO_SECRET_KEY:admin}
+  bucket-policy-custom: '${MINIO_BUCKET_POLICY_CUSTOM:{ "Version": "2012-10-17", "Statement": [ { "Effect": "Allow", "Principal": "*", "Action": [ "s3:GetObject" ], "Resource": [ "arn:aws:s3:::%s/public*" ] } ] }}'
 
 resilience4j:
   ratelimiter:

@@ -2,17 +2,14 @@ package com.roomx.application.service.resource;
 
 
 import com.roomx.domain.model.aggrerate.Service;
-import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import com.roomx.domain.model.entity.ServicePriceHistory;
-import com.roomx.domain.model.entity.ServiceRequest;
 import com.roomx.domain.repository.ServicePriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.*;
-import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.shared.dto.resource.response.ServiceResponse;
 import com.roomx.application.mapper.ServiceAppMapper;
 import com.roomx.domain.repository.ServiceRepository;
-import com.roomx.infrastructure.multitenancy.persistence.dto.ServiceFilter;
-import com.roomx.infrastructure.multitenancy.persistence.service.ServiceEntityService;
+import com.roomx.infrastructure.persistence.dto.ServiceFilter;
+import com.roomx.infrastructure.persistence.service.ServiceEntityService;
 import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
@@ -194,6 +191,7 @@ public class ServiceAppService {
 
         return serviceAppMapper.toResponse(serviceDomain);
     }
+
 
 
 

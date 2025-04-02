@@ -7,7 +7,7 @@ import com.roomx.shared.dto.user.response.UserResponse;
 import com.roomx.shared.dto.user.response.UserRoleResponse;
 import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.domain.model.aggrerate.User;
-import com.roomx.infrastructure.multitenancy.persistence.model.entity.UserEntity;
+import com.roomx.infrastructure.persistence.model.entity.UserEntity;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 

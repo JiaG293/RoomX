@@ -9,7 +9,7 @@ import com.roomx.domain.repository.RoleRepository;
 import com.roomx.domain.repository.UserRepository;
 import com.roomx.domain.repository.UserRoleRepository;
 import com.roomx.domain.service.RoleDomainService;
-import com.roomx.infrastructure.multitenancy.keycloak.service.KeycloakRoleService;
+import com.roomx.infrastructure.keycloak.service.KeycloakRoleService;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;

@@ -17,6 +17,8 @@ import java.util.*;
 public class Booking {
     private UUID id;
     private String bookingCode;
+    private String title;
+    private String description;
     private BookingRequest bookingRequest;
     private Room room;
     private Room previousRoom;

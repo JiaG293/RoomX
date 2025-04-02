@@ -9,8 +9,8 @@ import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.PlaceType;
 import com.roomx.domain.repository.BranchRepository;
 import com.roomx.domain.repository.PlaceRepository;
-import com.roomx.infrastructure.multitenancy.persistence.dto.PlaceFilter;
-import com.roomx.infrastructure.multitenancy.persistence.service.PlaceEntityService;
+import com.roomx.infrastructure.persistence.dto.PlaceFilter;
+import com.roomx.infrastructure.persistence.service.PlaceEntityService;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -141,24 +140,21 @@ public class PlaceAppService {
     }
 
 
-    public Page<PlaceResponse> getListPlacePages(PlaceQueryRequest request,
+    public Page<PlaceResponse> getListPlacePages(PlaceFilterRequest filter,
                                                  int page,
                                                  int size,
                                                  String sortBy,
                                                  String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        log.info("data la: {}", request);
         var placeFilter = PlaceFilter.builder()
-                .id(request.getId())
-                .branchCode(request.getBranchCode())
-                .name(request.getName())
-                .building(request.getBuilding())
-                .floor(request.getFloor())
-                .slug(request.getSlug())
+                .keyword(filter.keyword())
+                .searchBy(filter.searchBy())
+                .placeType(filter.placeType())
+                .status(filter.status())
                 .build();
 
-        var placeDomainPage = placeEntityService.filterPagePlaces(placeFilter, pageable, request.isCompareType());
+        var placeDomainPage = placeEntityService.filterSearchPagePlaces(placeFilter, pageable);
 
         return placeDomainPage.map(placeAppMapper::toResponse);
     }

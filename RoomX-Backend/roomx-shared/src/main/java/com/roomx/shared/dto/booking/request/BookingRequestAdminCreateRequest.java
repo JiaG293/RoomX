@@ -22,6 +22,8 @@ public class BookingRequestAdminCreateRequest {
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private int priority = 0;
     private String recurrenceType;
+    private String description;
+    private String title;
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalTime timeStart;

@@ -8,8 +8,8 @@ import com.roomx.shared.dto.resource.request.*;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.application.mapper.EquipmentAppMapper;
 import com.roomx.domain.repository.EquipmentRepository;
-import com.roomx.infrastructure.multitenancy.persistence.dto.EquipmentFilter;
-import com.roomx.infrastructure.multitenancy.persistence.service.EquipmentEntityService;
+import com.roomx.infrastructure.persistence.dto.EquipmentFilter;
+import com.roomx.infrastructure.persistence.service.EquipmentEntityService;
 import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
@@ -26,7 +26,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 
 @Slf4j

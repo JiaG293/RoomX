@@ -15,6 +15,8 @@ CREATE  TABLE booking_request (
                                   capacity             integer  NOT NULL  ,
                                   branch_id            uuid    ,
                                   room_id              uuid    ,
+                                  title                varchar    ,
+                                  description          text    ,
                                   CONSTRAINT pk_yeu_cau_dat_phong PRIMARY KEY ( booking_request_id )
 );
 
@@ -181,6 +183,15 @@ CREATE  TABLE "user" (
                          CONSTRAINT unq_nguoi_dung UNIQUE ( user_code, email, phone_number )
 );
 
+CREATE  TABLE user_config (
+                              user_config_id       uuid  NOT NULL  ,
+                              config_type          varchar(64)    ,
+                              generate_auto        boolean DEFAULT true   ,
+                              time_buffer_booking  integer    ,
+                              time_duration        integer    ,
+                              CONSTRAINT pk_generate_code PRIMARY KEY ( user_config_id )
+);
+
 CREATE  TABLE user_role (
                             user_id              uuid  NOT NULL  ,
                             role_id              varchar(64)  NOT NULL  ,
@@ -248,6 +259,8 @@ CREATE  TABLE booking (
                           updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                           previous_room_id     uuid    ,
                           meeting_date         date    ,
+                          title                varchar    ,
+                          description          text    ,
                           CONSTRAINT pk_booking_order PRIMARY KEY ( booking_id ),
                           CONSTRAINT unq_booking UNIQUE ( booking_code )
 );

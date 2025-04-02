@@ -1,0 +1,26 @@
+package com.roomx.infrastructure.persistence.repository.jpa;
+
+import com.roomx.infrastructure.persistence.model.entity.ServiceEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+
+public interface JpaServiceEntityRepository extends JpaRepository<ServiceEntity, UUID> {
+
+    boolean existsByName(String serviceName);
+
+    Optional<ServiceEntity> findByName(String serviceName);
+
+    Page<ServiceEntity> findAll(Specification<ServiceEntity> spec, Pageable pageable);
+
+    boolean existsByServiceCode(String serviceCode);
+
+    Optional<ServiceEntity> findByServiceCode(String serviceCode);
+
+    Optional<ServiceEntity> findByIdAndStatus(UUID serviceId, String status);
+}

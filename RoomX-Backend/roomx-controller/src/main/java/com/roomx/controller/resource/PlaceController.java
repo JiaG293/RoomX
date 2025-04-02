@@ -1,5 +1,6 @@
 package com.roomx.controller.resource;
 
+import com.roomx.application.service.resource.PlaceFilterRequest;
 import com.roomx.shared.dto.resource.request.PlaceCreateBuildingWithFloorRequest;
 import com.roomx.shared.dto.resource.request.PlaceCreateRequest;
 import com.roomx.shared.dto.resource.request.PlaceQueryRequest;
@@ -58,10 +59,10 @@ public class PlaceController {
 
     @GetMapping("/filters")
     public ResultResponse<?> getListPagePlace(
-            @ModelAttribute PlaceQueryRequest filter,
+            @ModelAttribute PlaceFilterRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "branch.branchCode") String sortBy,
+            @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
 

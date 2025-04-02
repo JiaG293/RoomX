@@ -1,6 +1,5 @@
 package com.roomx.application.mapper;
 
-import com.roomx.infrastructure.multitenancy.persistence.mapper.GroupEntityMapper;
 import com.roomx.shared.dto.user.request.GroupCreateAdminRequest;
 import com.roomx.shared.dto.user.response.GroupResponse;
 import com.roomx.domain.model.aggrerate.Group;

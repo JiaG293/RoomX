@@ -9,13 +9,15 @@ import com.roomx.domain.model.vo.BookingParticipantId;
 import com.roomx.domain.model.vo.EquipmentRequestId;
 import com.roomx.domain.model.vo.ServiceRequestId;
 import com.roomx.domain.service.BookingDomainService;
-import com.roomx.infrastructure.multitenancy.persistence.dto.BookingFilter;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.EquipmentRequestEntityMapper;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.ServiceRequestEntityMapper;
-import com.roomx.infrastructure.multitenancy.persistence.repository.jpa.JpaBookingEntityRepository;
-import com.roomx.infrastructure.multitenancy.persistence.service.ApprovalFormEntityService;
-import com.roomx.infrastructure.multitenancy.persistence.service.PageableQueryService;
+import com.roomx.infrastructure.persistence.dto.BookingFilter;
+import com.roomx.infrastructure.persistence.mapper.EquipmentRequestEntityMapper;
+import com.roomx.infrastructure.persistence.mapper.ServiceRequestEntityMapper;
+import com.roomx.infrastructure.persistence.repository.jpa.JpaBookingEntityRepository;
+import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
+import com.roomx.infrastructure.persistence.service.BookingEntityService;
+import com.roomx.infrastructure.persistence.service.PageableQueryService;
 import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
+import com.roomx.shared.dto.booking.request.BookingFilterRequest;
 import com.roomx.shared.dto.booking.request.BookingQueryRequest;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.application.mapper.BookingRequestAppMapper;
@@ -26,8 +28,8 @@ import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
 import com.roomx.shared.dto.booking.response.BookingResponse;
 import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.domain.repository.*;
-import com.roomx.infrastructure.multitenancy.persistence.mapper.BookingRequestEntityMapper;
-import com.roomx.infrastructure.multitenancy.security.oauth.SecurityUtil;
+import com.roomx.infrastructure.persistence.mapper.BookingRequestEntityMapper;
+import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.enums.BookingStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
@@ -80,11 +82,11 @@ public class BookingAppService {
     private final BookingDomainService bookingDomainService;
     private final RoomClassPriceHistoryRepository roomClassPriceHistoryRepository;
     private final RoomClassRepository roomClassRepository;
-    private final PageableQueryService<BookingFilter, Booking> bookingPageableQueryService;
 
     private final JpaBookingEntityRepository jpaBookingEntityRepository;
     private final BookingAppMapper bookingAppMapper;
     private final ApprovalFormEntityService approvalFormEntityService;
+    private final BookingEntityService bookingEntityService;
 
 
 
@@ -307,8 +309,8 @@ public class BookingAppService {
     }
 
 
-    public Page<BookingResponse> filterPageBookingUser(
-            BookingQueryRequest filterRequest,
+    public Page<BookingResponse> filterSearchPageBookingAdmin(
+            BookingFilterRequest filter,
             int page,
             int size,
             String sortBy,
@@ -317,50 +319,21 @@ public class BookingAppService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         var bookingFilter = BookingFilter.builder()
-                .id(filterRequest.getId())
-                .bookingCode(filterRequest.getId())
-                .bookingRequestId(filterRequest.getBookingRequestId())
-                .meetingDate(filterRequest.getMeetingDate())
-                .meetingStart(filterRequest.getMeetingStart())
-                .meetingEnd(filterRequest.getMeetingEnd())
-                .status(BookingStatusType.SCHEDULED.toString())
-                .roomId(filterRequest.getRoomId())
-                .previousRoomId(filterRequest.getPreviousRoomId())
-                .totalPrice(filterRequest.getTotalPrice())
-                .updatedAt(filterRequest.getUpdatedAt())
-                .createdAt(filterRequest.getCreatedAt())
+                .keyword(filter.keyword())
+                .searchBy(filter.searchBy())
+                .roomId(filter.roomId())
+                .fromTime(filter.fromTime())
+                .toTime(filter.toTime())
+                .fromMeetingDate(filter.fromMeetingDate())
+                .toMeetingDate(filter.toMeetingDate())
+                .fromTotalPrice(filter.fromTotalPrice())
+                .toTotalPrice(filter.toTotalPrice())
+                .status(filter.status())
+                .fromTimestamp(filter.fromTimestamp())
+                .toTimestamp(filter.toTimestamp())
                 .build();
 
-        var bookingDomainPage = bookingPageableQueryService.filterPageBranchs(bookingFilter, pageable, filterRequest.isTypeCompare());
-
-        return bookingDomainPage.map(bookingAppMapper::toResponse);
-    }
-
-    public Page<BookingResponse> filterPageBookingAdmin(
-            BookingQueryRequest filterRequest,
-            int page,
-            int size,
-            String sortBy,
-            String direction) {
-        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        var bookingFilter = BookingFilter.builder()
-                .id(filterRequest.getId())
-                .bookingCode(filterRequest.getId())
-                .bookingRequestId(filterRequest.getBookingRequestId())
-                .meetingDate(filterRequest.getMeetingDate())
-                .meetingStart(filterRequest.getMeetingStart())
-                .meetingEnd(filterRequest.getMeetingEnd())
-                .status(filterRequest.getStatus())
-                .roomId(filterRequest.getRoomId())
-                .previousRoomId(filterRequest.getPreviousRoomId())
-                .totalPrice(filterRequest.getTotalPrice())
-                .updatedAt(filterRequest.getUpdatedAt())
-                .createdAt(filterRequest.getCreatedAt())
-                .build();
-
-        var bookingDomainPage = bookingPageableQueryService.filterPageBranchs(bookingFilter, pageable, filterRequest.isTypeCompare());
+        var bookingDomainPage = bookingEntityService.filterSearchPageBooking(bookingFilter, pageable);
 
         return bookingDomainPage.map(bookingAppMapper::toResponse);
     }

@@ -2,6 +2,7 @@ package com.roomx.controller.resource;
 
 import com.roomx.application.service.booking.BookingAppService;
 import com.roomx.shared.dto.TestRequest;
+import com.roomx.shared.dto.booking.request.BookingFilterRequest;
 import com.roomx.shared.dto.booking.request.BookingQueryRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestAdminCreateRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
@@ -69,13 +70,13 @@ public class BookingController {
 
     @GetMapping("/filters")
     public ResultResponse<?> filterPageWithAdmin(
-            @ModelAttribute BookingQueryRequest filter,
+            @ModelAttribute BookingFilterRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "updatedAt") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
-        var result = bookingAppService.filterPageBookingAdmin(filter, page, size, sortBy, direction);
+        var result = bookingAppService.filterSearchPageBookingAdmin(filter, page, size, sortBy, direction);
         return ResultResponse.<Page<BookingResponse>>builder()
                 .result(result)
                 .build();

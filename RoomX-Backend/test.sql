@@ -258,5 +258,9 @@ WHERE unaccent(CONCAT(b.name, ' ',
                       b.email, ' ',
                       b.address, ' '))
     ILIKE unaccent(CONCAT('%', 'nhanh', '%'))
-  AND b.status = 'ACTIVE'
+  AND b.status = 'ACTIVE';
+
+
+
+EXPLAIN ANALYZE select count(*) from equipment
 

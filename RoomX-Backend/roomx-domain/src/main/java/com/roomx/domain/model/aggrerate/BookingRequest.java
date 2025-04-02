@@ -24,6 +24,8 @@ public class BookingRequest {
     private UUID requester;
     private Short priority;
     private int capacity;
+    private String title;
+    private String description;
     private String recurrenceType;
     private Short recurrenceInterval;
     private LocalDate startDate;

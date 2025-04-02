@@ -5,7 +5,7 @@ import com.roomx.shared.dto.resource.request.BranchUpdateRequest;
 import com.roomx.shared.dto.resource.response.BranchDetailResponse;
 import com.roomx.shared.dto.resource.response.BranchResponse;
 import com.roomx.domain.model.aggrerate.Branch;
-import com.roomx.infrastructure.multitenancy.persistence.model.entity.BranchEntity;
+import com.roomx.infrastructure.persistence.model.entity.BranchEntity;
 import org.mapstruct.*;
 
 import java.time.Instant;

@@ -50,6 +50,8 @@ allprojects {
 //        implementation 'org.flywaydb:flyway-core'
         implementation("org.flywaydb:flyway-database-postgresql")
 
+        implementation 'io.minio:minio:8.5.17'
+
         //LOG OBSER
         runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
         implementation 'com.github.loki4j:loki-logback-appender:1.6.0'
@@ -82,6 +84,7 @@ allprojects {
 
 //root project
 dependencies {
+
     implementation project(':start')
 }
 
@@ -146,8 +149,16 @@ project(':infrastructure') {
 //        implementation 'org.flywaydb:flyway-core'
         implementation("org.flywaydb:flyway-database-postgresql")
 
-//        implementation 'org.redisson:redisson:3.42.0'
-//        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+        implementation 'org.redisson:redisson:3.42.0'
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+        implementation 'io.minio:minio:8.5.17'
+
+        testImplementation 'org.springframework.kafka:spring-kafka-test'
+        implementation 'org.springframework.kafka:spring-kafka'
+        implementation 'org.apache.kafka:kafka-streams'
+
+
     }
 }
 

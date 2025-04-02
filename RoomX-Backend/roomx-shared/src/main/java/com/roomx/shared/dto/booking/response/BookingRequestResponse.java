@@ -21,6 +21,8 @@ public class BookingRequestResponse {
     private int capacity;
     private List<ServiceRequestResponse> services;
     private List<EquipmentRequestResponse> equipments;
+    private String title;
+    private String description;
     private String recurrenceType;
     private LocalDate startDate;
     private LocalDate endDate;

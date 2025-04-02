@@ -37,6 +37,10 @@ public class BookingRequestUserCreateRequest {
     @NotNull(message = "valid.booking_request.user_create.not_null.start_time")
     private LocalTime startTime;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private String title;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private String description;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String daysOfWeek;
     private int recurrenceInterval;
 //    @NotNull(message = "valid.booking_request.user_create.not_null.branchId")

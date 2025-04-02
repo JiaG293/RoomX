@@ -23,5 +23,6 @@ public class BranchResponse {
     private Instant createdAt;
     private Instant updatedAt;
     private String status;
+    private String placeId;
 
 }
