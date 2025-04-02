@@ -120,11 +120,12 @@ services:
     ports:
       - 6379:6379
       - 8001:8001 # UI
-    environment:
-      REDIS_USERNAME: admin
-      REDIS_PASSWORD: admin123
-      ALLOW_EMPTY_PASSWORD: no
+#    environment:
+#      REDIS_USERNAME: admin
+#      REDIS_PASSWORD: admin123
+#      ALLOW_EMPTY_PASSWORD: no
     volumes:
+      - ./storage/redis/redis.conf:/usr/local/etc/redis/redis.conf
       - ./storage/redis/data:/data
     restart: unless-stopped
     networks:
