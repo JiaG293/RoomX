@@ -56,4 +56,3 @@ public enum RecurrenceType {
 
     public abstract LocalDate nextDate(LocalDate date, Short interval);
 }
-

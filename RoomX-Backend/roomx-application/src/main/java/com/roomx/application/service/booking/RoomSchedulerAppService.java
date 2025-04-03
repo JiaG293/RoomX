@@ -561,12 +561,23 @@ public class RoomSchedulerAppService {
         int requiredCapacity = (capacity != null && capacity > 0) ? capacity : participants.size() + 1;
 
         for (LocalDate date : occurrences) {
-            List<Booking> existingBookings = bookingRepository.findAllByMeetingDateAndContainsStatusAndBookingRequestId(
-                    date, BookingStatusType.getListAccept(), bookingRequestId);
+            List<Booking> existingBookings = bookingRepository.findAllByMeetingDateAndContainsStatus(
+                    date, BookingStatusType.getListAccept());
+
+            log.info("\n\n\n\n\n\n\n\n\n existingBookings: {} \n\n\n\n\n\n\n", existingBookings);
+
+            List<UUID> bookedRoomIds = existingBookings.stream()
+                    .map(booking -> booking.getRoom().getId())
+                    .collect(Collectors.toList());
 
             List<Room> availableRooms = (branchId != null)
                     ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
                     : roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
+
+            // Lọc danh sách phòng, chỉ lấy các phòng chưa được đặt trước đó
+            availableRooms = availableRooms.stream()
+                    .filter(room -> !bookedRoomIds.contains(room.getId()))
+                    .collect(Collectors.toList());
 
             List<Event> events = new ArrayList<>();
 
@@ -666,6 +677,7 @@ public class RoomSchedulerAppService {
         }
         return results;
     }
+
 
 
 

@@ -9,6 +9,8 @@ import java.util.UUID;
 public interface UserRepository {
     Optional<User> findById(UUID id, boolean enabled);
 
+    Optional<User> findByIdAll(String id);
+
     Optional<User> findByUserCode(String userCode);
 
     Optional<User> findByEmail(String email);

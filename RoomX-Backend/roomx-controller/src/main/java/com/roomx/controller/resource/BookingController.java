@@ -3,6 +3,7 @@ package com.roomx.controller.resource;
 import com.roomx.application.service.booking.BookingAppService;
 import com.roomx.shared.dto.TestRequest;
 import com.roomx.shared.dto.booking.request.*;
+import com.roomx.shared.dto.booking.response.BookingDetailResponse;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.shared.dto.booking.response.BookingResponse;
 import com.roomx.shared.dto.resource.request.BranchQueryRequest;
@@ -93,10 +94,12 @@ public class BookingController {
                 .build();
     }
 
-    @PostMapping("/3")
-    public ResultResponse<?> test3() {
-        var result = "";
-        return ResultResponse.<Object>builder()
+    @GetMapping("/{bookingId}")
+    public ResultResponse<?> getDetailBooking(
+            @PathVariable String bookingId
+    ) {
+        var result = bookingAppService.getDetailBooking(bookingId);
+        return ResultResponse.<BookingDetailResponse>builder()
                 .result(result)
                 .build();
     }

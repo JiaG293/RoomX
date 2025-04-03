@@ -39,7 +39,12 @@ public class ApprovalFormEntityRepository implements ApprovalFormRepository {
                 .map(approvalFormEntityMapper::toDomain);
     }
 
-
+    @Override
+    public Optional<ApprovalForm> findByBookingRequestIdLastStatusWithBookingRequest(String bookingRequestId) {
+        return jpaApprovalFormEntityRepository
+                .findFirstByBookingRequestIdOrderByUpdatedAtDesc(UUID.fromString(bookingRequestId))
+                .map(approvalFormEntityMapper::toDomain);
+    }
 
 
 }

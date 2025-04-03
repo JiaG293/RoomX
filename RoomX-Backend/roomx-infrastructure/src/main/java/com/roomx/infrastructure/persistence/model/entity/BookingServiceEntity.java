@@ -24,7 +24,7 @@ public class BookingServiceEntity {
     @MapsId("bookingId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "booking_id", nullable = false)
-    private BookingEntity bookingEntity;
+    private BookingEntity booking;
 
     @MapsId("serviceId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -34,7 +34,5 @@ public class BookingServiceEntity {
     @Column(name = COLUMN_QUANTITY_NAME)
     private Short quantity;
 
-    @Column(name = COLUMN_UNITPRICE_NAME)
-    private BigDecimal unitPrice;
 
 }

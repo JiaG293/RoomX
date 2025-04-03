@@ -79,7 +79,10 @@ public enum ErrorCode {
     BOOKING_CONFLICT(1000, "error.booking.conflict", HttpStatus.CONFLICT),
     APPROVAL_FORM_NOT_FOUND(1000, "error.approval_form.not_found", HttpStatus.NOT_FOUND),
     BOOKING_REQUEST_VALID_DATE(1000, "valid.booking_request.date.invalid", HttpStatus.BAD_REQUEST),
-    MINIO_FAILED(1000, "error.minio.failed", HttpStatus.BAD_GATEWAY);
+    MINIO_FAILED(1000, "error.minio.failed", HttpStatus.BAD_GATEWAY),
+    BOOKING_REQUEST_BAD_REQUEST(1000, "error.booking_request.bad_request", HttpStatus.BAD_REQUEST),
+    BOOKING_APPROVE_CONFLICT(1000, "error.booking.approve.conflict", HttpStatus.CONFLICT),
+    BOOKING_NOTFOUND(1000, "error.booking.not_found", HttpStatus.NOT_FOUND);
 
 
 

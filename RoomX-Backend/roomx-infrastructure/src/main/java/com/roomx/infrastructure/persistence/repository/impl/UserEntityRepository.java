@@ -30,6 +30,11 @@ public class UserEntityRepository implements UserRepository, UserEntitySpecRepos
     }
 
     @Override
+    public Optional<User> findByIdAll(String id) {
+        return jpaUserEntityRepository.findById(UUID.fromString(id)).map(userEntityMapper::toDomain);
+    }
+
+    @Override
     public Optional<User> findByUserCode(String userCode) {
         return jpaUserEntityRepository.findByUserCode(userCode).map(userEntityMapper::toDomain);
     }

@@ -11,4 +11,6 @@ public interface ApprovalFormRepository {
     Optional<ApprovalForm> findById(String id);
     ApprovalForm save(ApprovalForm approvalForm);
     Optional<ApprovalForm> findByBookingRequestIdAndLastStatusWithBookingRequest(String bookingRequestId, String status);
+
+    Optional<ApprovalForm> findByBookingRequestIdLastStatusWithBookingRequest(String bookingRequestId);
 }

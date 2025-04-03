@@ -1,10 +1,8 @@
 package com.roomx.application.service.booking;
 
-import com.roomx.application.mapper.BookingAppMapper;
+import com.roomx.application.mapper.*;
 import com.roomx.domain.model.aggrerate.*;
-import com.roomx.domain.model.entity.BookingParticipant;
-import com.roomx.domain.model.entity.EquipmentRequest;
-import com.roomx.domain.model.entity.ServiceRequest;
+import com.roomx.domain.model.entity.*;
 import com.roomx.domain.model.vo.BookingParticipantId;
 import com.roomx.domain.model.vo.EquipmentRequestId;
 import com.roomx.domain.model.vo.ServiceRequestId;
@@ -20,10 +18,8 @@ import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
 import com.roomx.shared.dto.booking.request.BookingFilterRequest;
 import com.roomx.shared.dto.booking.request.BookingQueryRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestApprovalRequest;
+import com.roomx.shared.dto.booking.response.BookingDetailResponse;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
-import com.roomx.application.mapper.BookingRequestAppMapper;
-import com.roomx.application.mapper.EquipmentRequestAppMapper;
-import com.roomx.application.mapper.ServiceRequestAppMapper;
 import com.roomx.application.service.resource.RoomAppService;
 import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
 import com.roomx.shared.dto.booking.response.BookingResponse;
@@ -51,11 +47,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.WeekFields;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingAppService {
+    private final ServiceAppMapper serviceAppMapper;
+    private final EquipmentAppMapper equipmentAppMapper;
     private final EquipmentRequestEntityMapper equipmentRequestEntityMapper;
     private final ServiceRequestEntityMapper serviceRequestEntityMapper;
     private final BookingRequestEntityMapper bookingRequestEntityMapper;
@@ -77,6 +76,7 @@ public class BookingAppService {
     private final ServicePriceHistoryRepository servicePriceHistoryRepository;
     private final BookingParticipantRepository bookingParticipantRepository;
     private final ApprovalFormRepository approvalFormRepository;
+    private final UserAppMapper userAppMapper;
 
     private final BookingRepository bookingRepository;
     private final RoomSchedulerAppService roomSchedulerAppService;
@@ -88,6 +88,11 @@ public class BookingAppService {
     private final BookingAppMapper bookingAppMapper;
     private final ApprovalFormEntityService approvalFormEntityService;
     private final BookingEntityService bookingEntityService;
+    private final BookingServiceRepository bookingServiceRepository;
+    private final BookingEquipmentRepository bookingEquipmentRepository;
+    private final BookingServiceAppMapper bookingServiceAppMapper;
+    private final BookingEquipmentAppMapper bookingEquipmentAppMapper;
+    private final BookingParticitipantAppMapper bookingParticitipantAppMapper;
 
 
     /*@Transactional
@@ -217,8 +222,12 @@ public class BookingAppService {
     @Transactional
     public Object approveBooking(String bookingRequestId) {
         var approvalFormDomain = approvalFormRepository
-                .findByBookingRequestIdAndLastStatusWithBookingRequest(bookingRequestId, ApprovalStatusType.PENDING.toString())
+                .findByBookingRequestIdLastStatusWithBookingRequest(bookingRequestId)
                 .orElseThrow(() -> new AppException(ErrorCode.APPROVAL_FORM_NOT_FOUND));
+
+        if (ApprovalStatusType.getListCantApproval().contains(approvalFormDomain.getStatus())) {
+            throw new AppException(ErrorCode.BOOKING_APPROVE_CONFLICT, bookingRequestId);
+        }
 
         String branchId = (approvalFormDomain.getBookingRequest().getBranchId() != null)
                 ? approvalFormDomain.getBookingRequest().getBranchId().toString()
@@ -372,11 +381,44 @@ public class BookingAppService {
     }
 
 
-    @Transactional
     public Object test() {
 
         return true;
 
+    }
+
+
+    public BookingDetailResponse getDetailBooking(String bookingId) {
+        var bookingDomain = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOTFOUND, bookingId));
+
+        var bookingDetailResponse = bookingAppMapper.toResponseDetail(bookingDomain);
+
+        var requesterDomain = userRepository
+                .findByIdAll(bookingDomain.getBookingRequest().getRequester().toString())
+                .orElse(null);
+
+        bookingDetailResponse.setRequester(userAppMapper.toResponse(requesterDomain));
+
+        var participantsBooking = bookingParticipantRepository
+                .findAllBookingId(bookingDomain.getId().toString())
+                .stream().map(bookingParticitipantAppMapper::toResponse)
+                .toList();
+        var servicesBooking= bookingServiceRepository
+                .findAllByBookingId(bookingDomain.getId().toString())
+                .stream().map(BookingService::getService)
+                .map(serviceAppMapper::toResponse)
+                .toList();
+
+        var equipmentsBooking = bookingEquipmentRepository
+                .findAllByBookingId(bookingDomain.getId().toString())
+                .stream().map(BookingEquipment::getEquipment)
+                .map(equipmentAppMapper::toResponse)
+                .toList();
+        bookingDetailResponse.setEquipments(equipmentsBooking);
+        bookingDetailResponse.setServices(servicesBooking);
+        bookingDetailResponse.setParticipants(participantsBooking);
+        return bookingDetailResponse;
     }
 
 

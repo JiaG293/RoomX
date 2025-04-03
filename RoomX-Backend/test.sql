@@ -264,3 +264,43 @@ WHERE unaccent(CONCAT(b.name, ' ',
 
 EXPLAIN ANALYZE select count(*) from equipment
 
+
+select
+    afe1_0.approval_form_id,
+    afe1_0.approver,
+    afe1_0.booking_request_id,
+    afe1_0.created_at,
+    afe1_0.note,
+    afe1_0.status,
+    afe1_0.updated_at
+from
+    approval_form afe1_0
+        join
+    booking_request br1_0
+    on br1_0.booking_request_id=afe1_0.booking_request_id
+where
+    br1_0.booking_request_id='5870c428-78cf-456e-a412-37e92aea48d3'
+  and afe1_0.status='PENDING'
+order by
+    afe1_0.updated_at desc
+
+select
+    afe1_0.approval_form_id,
+    afe1_0.approver,
+    afe1_0.booking_request_id,
+    afe1_0.created_at,
+    afe1_0.note,
+    afe1_0.status,
+    afe1_0.updated_at
+from
+    approval_form afe1_0
+        join
+    booking_request br1_0
+    on br1_0.booking_request_id=afe1_0.booking_request_id
+where
+    br1_0.booking_request_id='a2a7bde0-ff45-4939-9b34-350d3c739a99'
+order by
+    afe1_0.updated_at desc
+LIMIT 1
+
+

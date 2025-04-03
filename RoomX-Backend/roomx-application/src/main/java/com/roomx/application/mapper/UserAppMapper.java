@@ -32,6 +32,9 @@ public interface UserAppMapper {
     @Mapping(target = "userId", source = "id")
     UserResponse toUserResponse(UserEntity entity);
 
+    @Mapping(target = "userId", source = "id")
+    UserResponse toResponse(User domain);
+
     @Mapping(target = "id", ignore = true)
     void updateDomainFromDto(UserUpdateRequest request, @MappingTarget User domain);
 

@@ -2,11 +2,9 @@ package com.roomx.application.mapper;
 
 import com.roomx.domain.model.aggrerate.Booking;
 import com.roomx.domain.model.aggrerate.BookingRequest;
+import com.roomx.shared.dto.booking.response.BookingDetailResponse;
 import com.roomx.shared.dto.booking.response.BookingResponse;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
@@ -21,4 +19,8 @@ public interface BookingAppMapper {
     @Mapping(target = "roomId", source = "room.id")
     @Mapping(target = "previousRoomId", source = "previousRoom.id")
     BookingResponse toResponse(Booking domain);
+
+    @Mapping(target = "bookingRequestId", source = "bookingRequest.id")
+    BookingDetailResponse toResponseDetail(Booking bookingDomain);
+
 }

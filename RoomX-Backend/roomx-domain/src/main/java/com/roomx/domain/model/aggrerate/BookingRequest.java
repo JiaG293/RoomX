@@ -9,10 +9,12 @@ import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.*;
 
 
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Builder
 @NoArgsConstructor
@@ -55,6 +57,16 @@ public class BookingRequest {
     private List<String> participants;
 
 
+    private static final Map<String, DayOfWeek> SHORT_DAY_MAP = Map.of(
+            "MO", DayOfWeek.MONDAY,
+            "TU", DayOfWeek.TUESDAY,
+            "WE", DayOfWeek.WEDNESDAY,
+            "TH", DayOfWeek.THURSDAY,
+            "FR", DayOfWeek.FRIDAY,
+            "SA", DayOfWeek.SATURDAY,
+            "SU", DayOfWeek.SUNDAY
+    );
+
     public RecurrenceType getRecurrenceTypeEnum() {
         return RecurrenceType.fromDisplayName(recurrenceType);
     }
@@ -63,7 +75,16 @@ public class BookingRequest {
         this.recurrenceType = type != null ? type.getDisplayName() : null;
     }
 
+    // Lấy danh sách ngày trong tuần dưới dạng DayOfWeek enum
+    public List<DayOfWeek> getAllowedDays() {
+        return getDaysOfWeekList().stream()
+                .map(String::trim)
+                .map(SHORT_DAY_MAP::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
 
+    // Convert danh sách string ngày trong tuần thành List<String>
     public List<String> getDaysOfWeekList() {
         return daysOfWeek != null ?
                 Arrays.stream(daysOfWeek.split(","))
@@ -80,7 +101,7 @@ public class BookingRequest {
         return getDaysOfWeekList().contains(day);
     }
 
-
+    // Get các ngày lặp lại
     public List<LocalDate> getOccurrences() {
         if (startDate == null || endDate == null || recurrenceType == null) {
             throw new AppException(ErrorCode.RECURRENCE_DATE_INVALID, startDate + " | " + endDate + " | " + recurrenceType);
@@ -93,10 +114,13 @@ public class BookingRequest {
 
         List<LocalDate> occurrences = new ArrayList<>();
         LocalDate currentDate = startDate;
-        List<String> allowedDays = getDaysOfWeekList();
+        List<DayOfWeek> allowedDays = getAllowedDays(); // Dùng danh sách DayOfWeek enum
 
         while (!currentDate.isAfter(endDate)) {
-            if (allowedDays.contains(currentDate.getDayOfWeek().name().substring(0, 2))) {
+
+            System.out.println("Checking date: " + currentDate + " (" + currentDate.getDayOfWeek() + ")");
+
+            if (allowedDays.contains(currentDate.getDayOfWeek())) {
                 occurrences.add(currentDate);
             }
 

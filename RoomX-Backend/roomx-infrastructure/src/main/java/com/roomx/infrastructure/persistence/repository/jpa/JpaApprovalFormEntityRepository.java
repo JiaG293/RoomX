@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.persistence.repository.jpa;
 
 import com.roomx.infrastructure.persistence.model.entity.ApprovalFormEntity;
+import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +25,6 @@ public interface JpaApprovalFormEntityRepository extends JpaRepository<ApprovalF
 //    List<ApprovalFormEntity>findAllByStatusInAndUpdatedAtIsBetween(List<String> listStatusCanApproval, Instant startDate, Instant endDate);
 
     Page<ApprovalFormEntity> findAllByStatusInAndUpdatedAtIsBetween(List<String> listStatusCanApproval, Instant startDate, Instant endDate, Pageable pageable);
+
+    Optional<ApprovalFormEntity> findFirstByBookingRequestIdOrderByUpdatedAtDesc(UUID bookingRequsetId);
 }

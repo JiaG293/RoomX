@@ -86,18 +86,19 @@ public class BookingEntityRepository implements BookingRepository {
     }
 
     @Override
+    public List<Booking> saveAll(List<Booking> bookings) {
+        var bookingEntityList = bookings.stream().map(bookingEntityMapper::toEntity).toList();
+        var savedBookingEntityList = jpaBookingEntityRepository.saveAll(bookingEntityList);
+        return savedBookingEntityList.stream().map(bookingEntityMapper::toDomain).toList();
+    }
+
+
+    @Override
     public List<Booking> findAllByMeetingDateAndContainsStatus(LocalDate date, List<String> listAccept) {
         return jpaBookingEntityRepository
                 .findAllByMeetingDateAndStatusIn(date, listAccept)
                 .stream().map(bookingEntityMapper::toDomain)
                 .toList();
-    }
-
-    @Override
-    public List<Booking> saveAll(List<Booking> bookings) {
-        var bookingEntityList = bookings.stream().map(bookingEntityMapper::toEntity).toList();
-        var savedBookingEntityList = jpaBookingEntityRepository.saveAll(bookingEntityList);
-        return savedBookingEntityList.stream().map(bookingEntityMapper::toDomain).toList();
     }
 
     @Override
