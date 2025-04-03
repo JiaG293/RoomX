@@ -1,13 +1,19 @@
 package com.roomx.infrastructure.persistence.repository.specification;
 
 import com.roomx.infrastructure.persistence.dto.BookingFilter;
+import com.roomx.infrastructure.persistence.dto.BookingGetFilter;
 import com.roomx.infrastructure.persistence.model.entity.BookingEntity;
+import com.roomx.shared.enums.ApprovalStatusType;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Slf4j
@@ -100,6 +106,33 @@ public class BookingSpecification {
             }
 
             return predicate;
+        };
+    }
+
+    public static Specification<BookingEntity> searchFilterBookingWithUser(BookingGetFilter filter, String userId) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            LocalDate today = LocalDate.now();
+
+            int currentYear = today.getYear();
+            int selectedYear = (filter.getYear() != null && filter.getYear() > 0) ? filter.getYear() : currentYear;
+            int selectedMonth = (filter.getMonth() != null && filter.getMonth() >= 1 && filter.getMonth() <= 12) ? filter.getMonth() : today.getMonthValue();
+
+            LocalDate startDate = LocalDate.of(selectedYear, selectedMonth, 1);
+            LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+            ZoneId zoneId = ZoneId.systemDefault();
+            Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
+            Instant endInstant = endDate.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
+
+            predicates.add(root.get("status").in(ApprovalStatusType.getListCanApproval()));
+            predicates.add(criteriaBuilder.between(root.get("bookingRequest").get("time"), startInstant, endInstant));
+
+            if (userId != null) {
+                predicates.add(criteriaBuilder.equal(root.get("requester").get("id"), userId));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 }

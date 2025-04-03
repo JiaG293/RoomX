@@ -2,6 +2,7 @@ package com.roomx.infrastructure.persistence.service.impl;
 
 import com.roomx.domain.model.aggrerate.Booking;
 import com.roomx.infrastructure.persistence.dto.BookingFilter;
+import com.roomx.infrastructure.persistence.dto.BookingGetFilter;
 import com.roomx.infrastructure.persistence.mapper.BookingEntityMapper;
 import com.roomx.infrastructure.persistence.model.base.GenericSpecification;
 import com.roomx.infrastructure.persistence.model.base.SearchCriteria;
@@ -32,6 +33,15 @@ public class BookingEntityServiceImpl implements BookingEntityService {
     @Override
     public Page<Booking> filterSearchPageBooking(BookingFilter filter, Pageable pageable) {
         var spec = BookingSpecification.searchFilterBooking(filter);
+
+        var bookingEntityPage = jpaBookingEntityRepository.findAll(spec, pageable);
+
+        return bookingEntityPage.map(bookingEntityMapper::toDomain);
+    }
+
+    @Override
+    public Page<Booking> filterSearchPageBookingWithUser(BookingGetFilter filter, String userId, Pageable pageable) {
+        var spec = BookingSpecification.searchFilterBookingWithUser(filter, userId);
 
         var bookingEntityPage = jpaBookingEntityRepository.findAll(spec, pageable);
 

@@ -328,6 +328,11 @@ public class BookingAppService {
             String sortBy,
             String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+        if (size <= 0) {
+            size = Integer.MAX_VALUE;
+        }
+
         Pageable pageable = PageRequest.of(page, size, sort);
 
         var bookingFilter = BookingFilter.builder()
@@ -425,7 +430,7 @@ public class BookingAppService {
 
 
 
-   /* public Page<BookingResponse> getListBookingUser(
+    /*public Page<BookingResponse> getListBooking(
             BookingRequestApprovalRequest request,
             int page,
             int size,
@@ -457,50 +462,15 @@ public class BookingAppService {
             approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeAndRequesterWithBookingRequest(
                     ApprovalStatusType.getListCanApproval(),startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
         }
+        Page<Booking> bookingDomainPage = bookingEntityService.filterSearchPageBookingWithUser(bookingFilter, pageable);
+
 
         return approvalFormPage.map(approvalForm ->
                 bookingRequestAppMapper.toResponseFromApprovalForm(approvalForm.getBookingRequest(), approvalForm)
         );
     }*/
 
-   /* public Page<BookingResponse> getListBookingUser(
-            BookingRequestApprovalRequest request,
-            int page,
-            int size,
-            String sortBy,
-            String direction) {
-        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        LocalDate today = LocalDate.now();
 
-        int currentYear = today.getYear();
-        int selectedYear = (request.getYear() != null && request.getYear() > 0) ? request.getYear() : currentYear;
-        int selectedMonth = (request.getMonth() != null && request.getMonth() >= 1 && request.getMonth() <= 12) ? request.getMonth() : today.getMonthValue();
-
-        LocalDate startDate = LocalDate.of(selectedYear, selectedMonth, 1);
-        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-
-        ZoneId zoneId = ZoneId.systemDefault();
-        Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
-        Instant endInstant = endDate.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
-
-        log.info("Date range: {} -> {} | Instant range: {} -> {}", startDate, endDate, startInstant, endInstant);
-
-        Page<ApprovalForm> approvalFormPage = null;
-        if(!roleEvaluator.hasRole(RoleType.USER.toString())){
-            approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeWithBookingRequest(
-                    ApprovalStatusType.getListCanApproval(), startInstant, endInstant, pageable);
-
-        } else {
-            approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeAndRequesterWithBookingRequest(
-                    ApprovalStatusType.getListCanApproval(),startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
-        }
-
-        return approvalFormPage.map(approvalForm ->
-                bookingRequestAppMapper.toResponseFromApprovalForm(approvalForm.getBookingRequest(), approvalForm)
-        );
-    }
-*/
 
 
     private String generateBookingCode(LocalDate meetingDate) {
