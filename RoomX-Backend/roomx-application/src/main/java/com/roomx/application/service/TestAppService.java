@@ -2,6 +2,7 @@ package com.roomx.application.service;
 
 import com.roomx.infrastructure.cache.redis.RedisTenantService;
 import com.roomx.infrastructure.minio.MinioService;
+import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,18 +21,20 @@ import java.util.concurrent.TimeUnit;
 public class TestAppService {
     private final RedisTenantService redisTenantService;
     private final MinioService minioService;
+    private final RoleEvaluator roleEvaluator;
 
 
     public Object testAppService() {
 
-        var map = new HashMap<String, List<String>>();
+        /*var map = new HashMap<String, List<String>>();
         map.put("1", List.of("value1", "value2"));
         map.put("2", List.of("value1", "value2"));
 
         var key = "test" + UUID.randomUUID().toString();
         redisTenantService.put(key, map, 30, TimeUnit.SECONDS);
 
-        var result = redisTenantService.getObject(key, HashMap.class);
+        var result = redisTenantService.getObject(key, HashMap.class);*/
+        var result = roleEvaluator.hasRole("USER");
         return result;
     }
 

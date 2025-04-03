@@ -14,20 +14,20 @@ import com.roomx.infrastructure.persistence.repository.jpa.JpaBookingEntityRepos
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.persistence.service.BookingEntityService;
 import com.roomx.infrastructure.persistence.service.PageableQueryService;
+import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
-import com.roomx.shared.dto.booking.request.BookingFilterRequest;
-import com.roomx.shared.dto.booking.request.BookingQueryRequest;
-import com.roomx.shared.dto.booking.request.BookingRequestApprovalRequest;
+import com.roomx.shared.dto.booking.request.*;
 import com.roomx.shared.dto.booking.response.BookingDetailResponse;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.application.service.resource.RoomAppService;
-import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
 import com.roomx.shared.dto.booking.response.BookingResponse;
+import com.roomx.shared.dto.booking.response.BookingUserRelatedResponse;
 import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.persistence.mapper.BookingRequestEntityMapper;
 import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.enums.BookingStatusType;
+import com.roomx.shared.enums.RoleType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +38,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -130,6 +131,7 @@ public class BookingAppService {
         return bookingRequestAppMapper.toResponse(bookingRequestDomain);
     }*/
     private static final Logger logger = LoggerFactory.getLogger(BookingAppService.class);
+    private final RoleEvaluator roleEvaluator;
 
     @Transactional
     public BookingRequestResponse createBookingRequest(BookingRequestUserCreateRequest request) {
@@ -219,6 +221,7 @@ public class BookingAppService {
     }
 
 
+    @PreAuthorize("@roleEvaluator.hasAnyRoleType('approve')")
     @Transactional
     public Object approveBooking(String bookingRequestId) {
         var approvalFormDomain = approvalFormRepository
@@ -371,20 +374,19 @@ public class BookingAppService {
 
         log.info("Date range: {} -> {} | Instant range: {} -> {}", startDate, endDate, startInstant, endInstant);
 
-        Page<ApprovalForm> approvalFormPage =
-                approvalFormEntityService.findAllByLastStatusInAndTimeRangeWithBookingRequest(
-                        ApprovalStatusType.getListCanApproval(), startInstant, endInstant, pageable);
+        Page<ApprovalForm> approvalFormPage = null;
+        if(!roleEvaluator.hasAnyRoleType("approve")){
+            approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeWithBookingRequest(
+                    ApprovalStatusType.getListCanApproval(), startInstant, endInstant, pageable);
+
+        } else {
+            approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeAndRequesterWithBookingRequest(
+                    ApprovalStatusType.getListCanApproval(),startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
+        }
 
         return approvalFormPage.map(approvalForm ->
                 bookingRequestAppMapper.toResponseFromApprovalForm(approvalForm.getBookingRequest(), approvalForm)
         );
-    }
-
-
-    public Object test() {
-
-        return true;
-
     }
 
 
@@ -422,9 +424,93 @@ public class BookingAppService {
     }
 
 
+
+   /* public Page<BookingResponse> getListBookingUser(
+            BookingRequestApprovalRequest request,
+            int page,
+            int size,
+            String sortBy,
+            String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        LocalDate today = LocalDate.now();
+
+        int currentYear = today.getYear();
+        int selectedYear = (request.getYear() != null && request.getYear() > 0) ? request.getYear() : currentYear;
+        int selectedMonth = (request.getMonth() != null && request.getMonth() >= 1 && request.getMonth() <= 12) ? request.getMonth() : today.getMonthValue();
+
+        LocalDate startDate = LocalDate.of(selectedYear, selectedMonth, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        ZoneId zoneId = ZoneId.systemDefault();
+        Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
+        Instant endInstant = endDate.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
+
+        log.info("Date range: {} -> {} | Instant range: {} -> {}", startDate, endDate, startInstant, endInstant);
+
+        Page<ApprovalForm> approvalFormPage = null;
+        if(!roleEvaluator.hasRole(RoleType.USER.toString())){
+            approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeWithBookingRequest(
+                    ApprovalStatusType.getListCanApproval(), startInstant, endInstant, pageable);
+
+        } else {
+            approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeAndRequesterWithBookingRequest(
+                    ApprovalStatusType.getListCanApproval(),startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
+        }
+
+        return approvalFormPage.map(approvalForm ->
+                bookingRequestAppMapper.toResponseFromApprovalForm(approvalForm.getBookingRequest(), approvalForm)
+        );
+    }*/
+
+   /* public Page<BookingResponse> getListBookingUser(
+            BookingRequestApprovalRequest request,
+            int page,
+            int size,
+            String sortBy,
+            String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        LocalDate today = LocalDate.now();
+
+        int currentYear = today.getYear();
+        int selectedYear = (request.getYear() != null && request.getYear() > 0) ? request.getYear() : currentYear;
+        int selectedMonth = (request.getMonth() != null && request.getMonth() >= 1 && request.getMonth() <= 12) ? request.getMonth() : today.getMonthValue();
+
+        LocalDate startDate = LocalDate.of(selectedYear, selectedMonth, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        ZoneId zoneId = ZoneId.systemDefault();
+        Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
+        Instant endInstant = endDate.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
+
+        log.info("Date range: {} -> {} | Instant range: {} -> {}", startDate, endDate, startInstant, endInstant);
+
+        Page<ApprovalForm> approvalFormPage = null;
+        if(!roleEvaluator.hasRole(RoleType.USER.toString())){
+            approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeWithBookingRequest(
+                    ApprovalStatusType.getListCanApproval(), startInstant, endInstant, pageable);
+
+        } else {
+            approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeAndRequesterWithBookingRequest(
+                    ApprovalStatusType.getListCanApproval(),startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
+        }
+
+        return approvalFormPage.map(approvalForm ->
+                bookingRequestAppMapper.toResponseFromApprovalForm(approvalForm.getBookingRequest(), approvalForm)
+        );
+    }
+*/
+
+
     private String generateBookingCode(LocalDate meetingDate) {
         return meetingDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-" + Long.toString(System.nanoTime(), 36).toUpperCase();
     }
 
+    public Object test() {
+
+        return true;
+
+    }
 
 }

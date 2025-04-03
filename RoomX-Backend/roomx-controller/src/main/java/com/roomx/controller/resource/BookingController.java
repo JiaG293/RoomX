@@ -80,8 +80,8 @@ public class BookingController {
                 .build();
     }
 
-    @GetMapping("/approvals")
-    public ResultResponse<?> getPageBookingRequestAdminApproval(
+    @GetMapping("/list")
+    public ResultResponse<?> getPageBookingRequest(
             @ModelAttribute BookingRequestApprovalRequest request,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,

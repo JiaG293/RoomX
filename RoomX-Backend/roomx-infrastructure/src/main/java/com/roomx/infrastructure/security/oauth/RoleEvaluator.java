@@ -2,12 +2,14 @@ package com.roomx.infrastructure.security.oauth;
 
 import com.roomx.domain.model.aggrerate.Role;
 import com.roomx.domain.repository.UserRepository;
+import com.roomx.shared.enums.RoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,4 +51,54 @@ public class RoleEvaluator {
                         .anyMatch(roleNames::contains))
                 .orElse(false);
     }
+
+    @Transactional(readOnly = true)
+    public boolean hasRole(String roleName) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            return false;
+        }
+
+        return userRepository.findById(UUID.fromString(authentication.getName()), true)
+                .map(user -> user.getRoles().stream()
+                        .map(Role::getId)
+                        .anyMatch(roleId -> roleId.equals(roleName)))
+                .orElse(false);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasAnyRoleType(String type) {
+        List<String> roleNames = new ArrayList<>();
+        switch (type){
+            case "approve":
+                roleNames.add(RoleType.ADMIN.toString());
+                roleNames.add(RoleType.OWNER.toString());
+                roleNames.add(RoleType.APPROVER.toString());
+                break;
+            case "manager":
+                roleNames.add(RoleType.ADMIN.toString());
+                roleNames.add(RoleType.APPROVER.toString());
+                roleNames.add(RoleType.SUPPORTER.toString());
+                break;
+            case "user":
+                roleNames.add(RoleType.ADMIN.toString());
+                roleNames.add(RoleType.OWNER.toString());
+                break;
+            default:
+                roleNames.add(RoleType.USER.name());
+                break;
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            return false;
+        }
+
+        return userRepository.findById(UUID.fromString(authentication.getName()), true)
+                .map(user -> user.getRoles().stream()
+                        .map(Role::getId)
+                        .anyMatch(roleNames::contains))
+                .orElse(false);
+    }
+
+
 }

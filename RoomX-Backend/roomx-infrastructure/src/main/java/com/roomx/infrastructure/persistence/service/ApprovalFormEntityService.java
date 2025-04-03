@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface ApprovalFormEntityService {
     Page<ApprovalForm> findAllByLastStatusInAndTimeRangeWithBookingRequest(List<String> listStatusCanApproval, Instant startDate, Instant endDate, Pageable pageable);
+    Page<ApprovalForm> findAllByLastStatusInAndTimeRangeAndRequesterWithBookingRequest(List<String> listStatusCanApproval, Instant startDate, Instant endDate, String requester, Pageable pageable);
 }

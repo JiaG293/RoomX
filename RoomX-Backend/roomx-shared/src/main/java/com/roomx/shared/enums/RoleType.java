@@ -1,6 +1,8 @@
 package com.roomx.shared.enums;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public enum RoleType {
@@ -37,5 +39,12 @@ public enum RoleType {
     public static RoleType fromString(String roleName) {
         return ROLE_NAME_MAP.get(roleName.toUpperCase());
     }
+
+
+    public static List<String> listRoleApproval() {
+        return Arrays.asList(ADMIN.toString(), APPROVER.toString(), OWNER.toString());
+    }
+
+
 }
 

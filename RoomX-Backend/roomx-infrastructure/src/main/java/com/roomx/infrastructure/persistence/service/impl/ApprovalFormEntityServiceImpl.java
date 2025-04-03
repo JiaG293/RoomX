@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Repository
@@ -24,6 +25,17 @@ public class ApprovalFormEntityServiceImpl implements ApprovalFormEntityService 
         return
                 jpaApprovalFormEntityRepository.findAllByStatusInAndUpdatedAtIsBetween(
                         listStatusCanApproval,
+                        startDate,
+                        endDate,
+                        pageable).map(approvalFormEntityMapper::toDomain);
+    }
+
+    @Override
+    public Page<ApprovalForm> findAllByLastStatusInAndTimeRangeAndRequesterWithBookingRequest(List<String> listStatusCanApproval, Instant startDate, Instant endDate, String requester, Pageable pageable) {
+        return
+                jpaApprovalFormEntityRepository.findAllByStatusInAndBookingRequestRequesterAndUpdatedAtIsBetween(
+                        listStatusCanApproval,
+                        UUID.fromString(requester),
                         startDate,
                         endDate,
                         pageable).map(approvalFormEntityMapper::toDomain);

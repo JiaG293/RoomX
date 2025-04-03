@@ -26,5 +26,7 @@ public interface JpaApprovalFormEntityRepository extends JpaRepository<ApprovalF
 
     Page<ApprovalFormEntity> findAllByStatusInAndUpdatedAtIsBetween(List<String> listStatusCanApproval, Instant startDate, Instant endDate, Pageable pageable);
 
-    Optional<ApprovalFormEntity> findFirstByBookingRequestIdOrderByUpdatedAtDesc(UUID bookingRequsetId);
+    Optional<ApprovalFormEntity> findFirstByBookingRequestIdOrderByUpdatedAtDesc(UUID bookingRequestId);
+
+    Page<ApprovalFormEntity> findAllByStatusInAndBookingRequestRequesterAndUpdatedAtIsBetween(List<String> listStatusCanApproval, UUID requester, Instant startDate, Instant endDate, Pageable pageable);
 }
