@@ -25,7 +25,9 @@ public class Place {
     private String placeType = PlaceType.BRANCH.toString();
 
 
+
     public String getPlaceTypeDefault() {
         return placeType != null ? placeType : PlaceType.BRANCH.toString();
     }
+
 }

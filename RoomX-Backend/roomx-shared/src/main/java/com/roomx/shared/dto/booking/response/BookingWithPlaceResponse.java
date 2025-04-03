@@ -1,7 +1,6 @@
 package com.roomx.shared.dto.booking.response;
 
 import com.roomx.shared.dto.resource.response.RoomDetailResponse;
-import com.roomx.shared.dto.resource.response.RoomResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,15 +11,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class BookingResponse {
+public class BookingWithPlaceResponse {
     private String id;
-    private String title;
-    private String description;
     private String bookingCode;
     private String bookingRequestId;
     private String roomId;
@@ -33,6 +29,7 @@ public class BookingResponse {
     private String status;
     private Instant createdAt;
     private Instant updatedAt;
-    private RoomDetailResponse room;
+    private RoomDetailWithPlaceResponse room;
+
 
 }

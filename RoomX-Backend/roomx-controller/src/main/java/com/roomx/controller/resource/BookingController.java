@@ -6,6 +6,7 @@ import com.roomx.shared.dto.booking.request.*;
 import com.roomx.shared.dto.booking.response.BookingDetailResponse;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.shared.dto.booking.response.BookingResponse;
+import com.roomx.shared.dto.booking.response.BookingWithPlaceResponse;
 import com.roomx.shared.dto.resource.request.BranchQueryRequest;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
