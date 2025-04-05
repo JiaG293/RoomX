@@ -1,5 +1,6 @@
 networks:
   roomx_network:
+    name: roomx_network
     external: true
 services:
   roomx-be:
@@ -63,13 +64,13 @@ services:
     environment:
       # Keycloak Admin Configuration
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin123
 
       # Database Configuration
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
-      KC_DB_USERNAME: root
-      KC_DB_PASSWORD: root
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: admin123
 
       # Keycloak DevOps Configuration
       KC_DEVELOPER_MODE: true               # true | false : dev | production
@@ -99,7 +100,7 @@ services:
     container_name: postgres_roomx
     volumes:
       - ./platform/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./storage/postgres/data:/var/lib/postgresql/data       # Need remove folder if run init.sql
+#      - ./storage/postgres/data:/var/lib/postgresql/data       # Need remove folder if run init.sql
     environment:
       #POSTGRES_DB: roomx
       POSTGRES_USER: root
@@ -107,7 +108,6 @@ services:
     ports:
       - 5432:5432
     restart: unless-stopped
-
     networks:
       - roomx_network
   #  volumes:
@@ -120,10 +120,10 @@ services:
     ports:
       - 6379:6379
       - 8001:8001 # UI
-#    environment:
+    environment:
 #      REDIS_USERNAME: admin
-#      REDIS_PASSWORD: admin123
-#      ALLOW_EMPTY_PASSWORD: no
+      REDIS_PASSWORD: admin123
+      ALLOW_EMPTY_PASSWORD: no
 #    volumes:
 #      - ./storage/redis/redis.conf:/usr/local/etc/redis/redis.conf
 #      - ./storage/redis/data:/data
@@ -190,7 +190,7 @@ services:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui_roomx
     ports:
-      - 9999:8080
+      - 9090:8080
     environment:
       KAFKA_CLUSTER_0_NAME: roomx
       KAFKA_CLUSTER_0_BOOTSTRAPSERVERS: kafka:9092
