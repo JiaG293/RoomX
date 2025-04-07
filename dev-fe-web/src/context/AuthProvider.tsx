@@ -78,11 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       keycloak.refreshToken = data.refresh_token;
       setToken(data.access_token);
       setIsAuthenticated(true);
-      Cookies.set("token", data.access_token, {
-        expires: 1 / 96,
-        secure: true,
-        sameSite: "Strict",
-      });
+      Cookies.set("token", data.access_token);
       Cookies.set("refreshToken", data.refresh_token || "", {
         expires: 7,
         secure: true,
@@ -154,7 +150,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const resetPassword = async (email: string): Promise<void> => {
+  const resetPassword = async (): Promise<void> => {
     ///
   };
 

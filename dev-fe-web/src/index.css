@@ -198,3 +198,17 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+/* CSS để highlight sự kiện */
+.highlight-event {
+  background-color: #ffeb3b !important; /* Màu vàng cho sự kiện trùng email */
+  border-color: #fbc02d !important; /* Màu viền */
+  color: black !important; /* Đổi màu chữ */
+}
+
+
+/* Đổi màu nền và chữ cho ngày hiện tại */
+.fc-day-today {
+  background-color: rgb(57, 89, 235) !important;
+  border: 2px solid rgb(57, 89, 235) !important; 
+}

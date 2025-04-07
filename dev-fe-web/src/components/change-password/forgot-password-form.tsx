@@ -1,4 +1,3 @@
-import { useAuth } from "@/context/AuthProvider";
 import React, { useState } from "react";
 
 const ForgotPasswordForm: React.FC = () => {

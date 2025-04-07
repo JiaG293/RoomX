@@ -1,141 +1,111 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
 import CMSLayout from "@/layouts/cms-layout";
+import BranchEdit from "@/components/admin/branches/branch-edit";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BranchService } from "@/services/admin/branch.service";
-import { toast } from "sonner";
-import CopyableInput from "@/components/admin/custom/copyable-input";
 
-const BranchUpdate: React.FC = () => {
-  const { branchId } = useParams(); // Lấy id từ URL
-  const [branch, setBranch] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const initialBuildings = [
+  {
+    id: 1,
+    name: "Tòa nhà A",
+    floors: ["Tầng 1", "Tầng 2", "Tầng 3", "Tầng 4", "Tầng 5"],
+  },
+  {
+    id: 2,
+    name: "Tòa nhà B",
+    floors: ["Tầng 1", "Tầng 2", "Tầng 3"],
+  },
+  {
+    id: 3,
+    name: "Tòa nhà C",
+    floors: ["Tầng 1", "Tầng 2", "Tầng 3", "Tầng 4"],
+  },
+  {
+    id: 4,
+    name: "Tòa nhà D",
+    floors: ["Tầng 1", "Tầng 2"],
+  },
+  {
+    id: 5,
+    name: "Tòa nhà E",
+    floors: ["Tầng 1", "Tầng 2", "Tầng 3", "Tầng 4", "Tầng 5", "Tầng 6"],
+  },
+];
 
-  // State để quản lý form
-  const [id, setId] = useState("");
-  const [branchCode, setBranchCode] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [address, setAddress] = useState("");
 
-  useEffect(() => {
-    if (!branchId) return;
-    const fetchBranch = async () => {
-      try {
-        const service = new BranchService();
-        const data = await service.getDetailBranch(branchId);
-        const branchData = data.content[0];
-        setId(branchData.id);
-        setBranch(branchData);
-        setBranchCode(branchData.branchCode || "");
-        setName(branchData.name || "");
-        setEmail(branchData.email || "");
-        setPhoneNumber(branchData.phoneNumber || "");
-        setAddress(branchData.address || "");
-      } catch (err) {
-        toast.error("Có lỗi xảy ra");
-      } finally {
-        setLoading(false);
-      }
-    };
+const BuildingList: React.FC = () => {
+  const [buildings, setBuildings] = useState(initialBuildings);
+  const [selectedBuilding, setSelectedBuilding] = useState<number | null>(null);
 
-    fetchBranch();
-  }, [branchId]);
-
-  const handleUpdate = async () => {
-    if (!branchId) return;
-
-    const updatedData = { name, email, phoneNumber, address };
-
-    try {
-      const service = new BranchService();
-      await service.updateBranch(id, updatedData);
-      toast.success("Cập nhật chi nhánh thành công!");
-    } catch (error) {
-      toast.error("Có lỗi xảy ra khi cập nhật.");
-    }
+  const handleSelectBuilding = (id: number) => {
+    setSelectedBuilding(id);
   };
 
-  if (loading)
-    return (
-      <CMSLayout>
-        <p className="text-center">Đang tải dữ liệu...</p>
-      </CMSLayout>
-    );
+  const currentBuilding = buildings.find((b) => b.id === selectedBuilding);
 
   return (
-    <CMSLayout>
-      <div className="flex justify-center items-center flex-1">
-        <Card className="w-full max-w-2xl">
-          <CardHeader>
-            <CardTitle>Cập Nhật Chi Nhánh</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <CopyableInput id="id" label="ID" value={branch?.id || ""} />
-              </div>
+    <Card className="p-4 h-full flex flex-col overflow-hidden">
+      <div className="flex justify-between mb-4">
+        <Button onClick={() => alert("Thêm toà nhà")}>Thêm toà nhà</Button>
+        
+      </div>
+      <div className="flex-1 grid grid-rows-2 gap-4 overflow-hidden">
+        {/* Danh sách tòa nhà */}
+        <div className="overflow-y-auto border p-2 rounded h-full">
+          <ul className="space-y-2">
+            {buildings.map((building) => (
+              <li
+                key={building.id}
+                onClick={() => handleSelectBuilding(building.id)}
+                className={`p-2 border rounded cursor-pointer ${
+                  selectedBuilding === building.id ? "bg-blue-100" : ""
+                }`}
+              >
+                {building.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+        {/* Danh sách tầng của tòa nhà đã chọn */}
+        <div className="overflow-y-auto border p-2 rounded h-full">
+        <Button
+          onClick={() =>
+            selectedBuilding
+              ? alert("Thêm tầng cho " + currentBuilding?.name)
+              : alert("Chọn tòa nhà để thêm tầng")
+          }
+        >
+          Thêm tầng
+        </Button>
+          {currentBuilding ? (
+            <>
+              <h4 className="font-bold mb-2">Các tầng của {currentBuilding.name}:</h4>
+              <ul className="list-disc list-inside">
+                {currentBuilding.floors.map((floor, index) => (
+                  <li key={index}>{floor}</li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <p className="text-gray-500">Chọn một tòa nhà để xem các tầng</p>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+};
 
-              <div>
-                <Label htmlFor="branchCode">Mã Chi Nhánh</Label>
-                <Input
-                  id="branchCode"
-                  value={branchCode}
-                  onChange={(e) => setBranchCode(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="name">Tên Chi Nhánh</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="phoneNumber">Số Điện Thoại</Label>
-                <Input
-                  id="phoneNumber"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="address">Địa Chỉ</Label>
-                <Input
-                  id="address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
-              </div>
-
-              <Button className="w-full" onClick={handleUpdate}>
-                Cập Nhật
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+const BranchDetail: React.FC = () => {
+  return (
+    <CMSLayout title="Thông tin chi nhánh">
+      <div className="flex justify-center w-full px-4">
+        <div className="grid grid-cols-2 gap-6 w-full">
+          <BranchEdit />
+          <BuildingList />
+        </div>
       </div>
     </CMSLayout>
   );
 };
 
-export default BranchUpdate;
+export default BranchDetail;

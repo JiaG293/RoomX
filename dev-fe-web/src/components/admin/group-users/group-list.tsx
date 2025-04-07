@@ -5,8 +5,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 // import GroupUserItem from "./group-user-item"; // Component hiển thị thông tin 1 nhóm
-import { DataTable } from "@/components/admin/custom/data-table";
-import { columns } from "./column"; // Các cột hiển thị trong table
+
 
 export type GroupUser = {
   groupId: string;
@@ -14,7 +13,7 @@ export type GroupUser = {
   details: string;
   type: string;
   memberCount: number;
-};
+}
 
 const groups: GroupUser[] = [
   {
@@ -56,6 +55,8 @@ const GroupUserList: React.FC = () => {
     return matchesSearch && matchesFilter;
   });
 
+  console.log(filteredGroups)
+
   return (
     <div className="flex-1">
       {/* Thanh tìm kiếm và bộ lọc */}
@@ -88,14 +89,14 @@ const GroupUserList: React.FC = () => {
 
       {viewMode === "table" ? (
         <div className="overflow-auto max-h-[75vh]">
-          <DataTable columns={columns} data={filteredGroups} />
+          {/* <DataTable columns={columns} data={filteredGroups} /> */}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredGroups.map((group) => (
+          {/* {filteredGroups.map((group) => (
             // <GroupUserItem key={group.groupId} group={group} />
             <></>
-          ))}
+          ))} */}
         </div>
       )}
     </div>

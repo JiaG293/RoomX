@@ -43,48 +43,27 @@ export const columns: ColumnDef<ServiceType>[] = [
         ? row.original.description.substring(0, 50) + "..."
         : row.original.description,
   },
-  {
-    accessorKey: "unitPrice",
-    header: "Giá dịch vụ",
-    cell: ({ row }) => `${row.original.unitPrice.toLocaleString()} VND`,
-  },
+  // {
+  //   accessorKey: "unitPrice",
+  //   header: "Giá dịch vụ",
+  //   cell: ({ row }) => `${row.original.unitPrice.toLocaleString()} VND`,
+  // },
   {
     id: "actions",
     cell: ({ row }) => {
+      const isEven = row.index % 2 === 0;
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0 bg-transparent">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <Link to={`/admin/services/${row.original.id}`}>
-                Xem chi tiết
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                alert(`Chỉnh sửa dịch vụ: ${row.original.name}`);
-              }}
-            >
-              Cập nhật
-            </DropdownMenuItem>
-            {/* <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                alert(`Xóa dịch vụ: ${row.original.name}`);
-              }}
-            >
-              Ẩn dịch vụ
-            </DropdownMenuItem> */}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button
+          asChild
+          variant={isEven ? "secondary" : "outline"}
+          className={`px-4 py-2 text-sm font-medium ${
+            isEven
+              ? "bg-gray-100 hover:bg-gray-200"
+              : "bg-blue-100 hover:bg-blue-200"
+          }`}
+        >
+          <Link to={`/admin/services/${row.original.id}`}>Xem chi tiết</Link>
+        </Button>
       );
     },
   },

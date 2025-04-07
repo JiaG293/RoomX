@@ -57,40 +57,40 @@
 /* Làm nổi bật ngày hiện tại */
 .fc-day-today {
   background: rgba(230, 57, 70, 0.2) !important;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   font-weight: bold;
   transition: background 0.3s ease-in-out;
 }
 
 /* Bo góc cho từng ô ngày */
 .fc-daygrid-day {
-  border-radius: 6px;
+  /* border-radius: 6px; */
   transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
 /* Khi di chuột vào ô ngày */
 .fc-daygrid-day:hover {
   background: rgba(69, 123, 157, 0.1);
-  transform: scale(1.02);
 }
 
 /* Làm nổi bật sự kiện */
 .fc-event {
-  border-radius: 6px !important;
+  /* border-radius: 6px !important; */
   padding: 5px;
   font-weight: 500;
   transition: transform 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 .fc-event:hover {
-  transform: scale(1.05);
+  transform: scale(1.008);
 }
 
 /* Tuỳ chỉnh nút Today */
 .fc-today-button {
   background-color: #e63946 !important;
   color: white !important;
-  border-radius: 6px !important;
+  /* border-radius: 6px !important; */
   padding: 6px 12px !important;
   font-weight: bold !important;
   transition: background 0.3s ease-in-out;
@@ -116,5 +116,12 @@
 .fc .fc-button-primary:not(:disabled).fc-button-active {
   background-color: #8ABF92; /* Màu nền khi hover, đậm hơn chút */
   color: #2F3D44; /* Màu chữ khi hover, tối hơn chút để nổi bật */
+}
+
+
+/* Đổi màu nền và chữ cho ngày hiện tại */
+.fc-day-today {
+  background-color: #fff !important;
+  border: 2px solid rgb(57, 89, 235) !important; 
 }
 

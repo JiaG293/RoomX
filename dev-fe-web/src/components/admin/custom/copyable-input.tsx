@@ -1,4 +1,4 @@
-import { ClipboardCopy, Copy } from "lucide-react";
+import {  Copy } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -8,6 +8,8 @@ interface CopyableInputProps {
   label: string;
   value: string;
   readOnly?: boolean;
+  onChange?: (val: string) => void;
+
 }
 
 const CopyableInput: React.FC<CopyableInputProps> = ({
@@ -15,6 +17,7 @@ const CopyableInput: React.FC<CopyableInputProps> = ({
   label,
   value,
   readOnly = false,
+  onChange
 }) => {
   const handleCopy = async () => {
     try {
@@ -34,6 +37,7 @@ const CopyableInput: React.FC<CopyableInputProps> = ({
           value={value}
           readOnly={readOnly}
           className="pr-12 cursor-default bg-gray-100"
+          // onChange={(e) => onChange?.(e.target.value)}
         />
         <Copy 
           onClick={handleCopy}

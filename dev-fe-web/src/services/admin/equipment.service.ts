@@ -19,6 +19,8 @@ export class EquipmentService {
           "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
         },
       });
+      console.log(response.data.result)
+
       return response.data.result;
     } catch (error) {
       console.error("Error fetching equipments:", error);

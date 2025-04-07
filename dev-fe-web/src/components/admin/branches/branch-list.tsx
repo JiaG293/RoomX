@@ -6,15 +6,14 @@ import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/admin/custom/data-table";
 import { columns } from "./column";
 import { BranchService } from "@/services/admin/branch.service";
-import UserAddModal from "@/components/admin/users/user-add";
 import BranchAddModal from "@/components/admin/branches/branch-add";
 
 export type Branch = {
   branchId: string;
   branchCode: string;
   name: string;
-  phoneNumber: string;
   email: string;
+  phoneNumber: string;
   address: string;
 };
 

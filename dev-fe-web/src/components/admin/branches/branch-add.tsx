@@ -1,7 +1,15 @@
 import { useState } from "react";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { BranchService } from "@/services/admin/branch.service"; // Import BranchService
 import { toast } from "sonner";
+import { BranchValidator } from "@/validators/branch.validators";
 
 export interface Branch {
   branchCode: string;
@@ -28,11 +36,29 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!branchCode || !branchName || !email || !phoneNumber || !address) {
-      alert("Vui lòng điền đầy đủ thông tin.");
+    // Kiểm tra validation
+    if (!BranchValidator.isNotEmpty(branchCode)) {
+      toast.error("Mã chi nhánh không được để trống!");
+      return;
+    }
+    if (!BranchValidator.isValidBranchName(branchName)) {
+      toast.error("Tên chi nhánh không hợp lệ!");
+      return;
+    }
+    if (!BranchValidator.isValidEmail(email)) {
+      toast.error("Email không hợp lệ!");
+      return;
+    }
+    if (!BranchValidator.isValidPhoneNumber(phoneNumber)) {
+      toast.error("Số điện thoại không hợp lệ!");
+      return;
+    }
+    if (!BranchValidator.isNotEmpty(address)) {
+      toast.error("Địa chỉ không được để trống!");
       return;
     }
 
+    // Tạo đối tượng branch
     const newBranch: Branch = {
       branchCode: branchCode,
       name: branchName,
@@ -48,9 +74,12 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
       });
       setIsDialogOpen(false);
       onAddSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Lỗi khi tạo chi nhánh:", error);
-      alert("Lỗi khi tạo chi nhánh.");
+      toast.error("Lỗi khi tạo chi nhánh!", {
+        description:
+          error.response?.data?.message || error.message || "Đã có lỗi xảy ra.",
+      });
     }
   };
 
@@ -63,12 +92,18 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
       </DialogTrigger>
 
       <DialogContent className="p-6 bg-white rounded-lg shadow-lg max-w-lg mx-auto">
-        <DialogTitle className="text-xl font-semibold mb-4">Tạo chi nhánh mới</DialogTitle>
-        <DialogDescription className="text-sm mb-6">Điền đầy đủ các thông tin bên dưới</DialogDescription>
+        <DialogTitle className="text-xl font-semibold mb-4">
+          Tạo chi nhánh mới
+        </DialogTitle>
+        <DialogDescription className="text-sm mb-6">
+          Điền đầy đủ các thông tin bên dưới
+        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mã chi nhánh</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Mã chi nhánh
+            </label>
             <input
               type="text"
               value={branchCode}
@@ -79,7 +114,9 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tên chi nhánh</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Tên chi nhánh
+            </label>
             <input
               type="text"
               value={branchName}
@@ -90,7 +127,9 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -101,7 +140,9 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Số điện thoại
+            </label>
             <input
               type="text"
               value={phoneNumber}
@@ -112,7 +153,9 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Địa chỉ</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Địa chỉ
+            </label>
             <input
               type="text"
               value={address}

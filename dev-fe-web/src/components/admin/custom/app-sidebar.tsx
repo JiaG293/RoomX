@@ -8,8 +8,6 @@ import {
   Users,
   MapPin,
   Calendar,
-  Settings,
-  File,
   CheckCircle,
   UserPlus,
   Monitor,
@@ -37,12 +35,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     teams: [
       {
         name: "Trang quản trị",
-        logo: User, // Đây có thể là icon đặc trưng cho quản trị viên
+        logo: User,
         plan: "",
       },
       {
         name: "Trang người dùng",
-        logo: Users, // Người dùng
+        logo: Users,
         plan: "",
       },
     ],
@@ -51,62 +49,80 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("menu_tong_quan"),
         url: "/admin/home",
         icon: Home,
-        color: 'text-blue-500', // Màu cho icon "Trang chủ"
+        color: "text-blue-500",
       },
+      {
+        title: t("menu_quan_ly_nguoi_dung"),
+        url: "#",
+        icon: Users,
+        color: "text-red-500",
+        items: [
+          {
+            title: t("menu_danh_sach_nguoi_dung"),
+            url: "/admin/users",
+          },
+          {
+            title: t("menu_quan_ly_nhom"),
+            url: "/admin/users/groups",
+          },
+        ],
+      },
+      {
+        title: "Cơ sở",
+        url: "#",
+        icon: MapPin,
+        color: "text-purple-500",
+        items: [
+          {
+            title: t("menu_danh_sach_chi_nhanh"),
+            url: "/admin/branches",
+          },
+          {
+            title: t("menu_danh_sach_phong_hop"),
+            url: "/admin/rooms",
+          },
+        ],
+      },
+      {
+        title: "Tài nguyên",
+        url: "#",
+        icon: Monitor,
+        color: "text-pink-500",
+        items: [
+          {
+            title: t("menu_danh_sach_thiet_bi"),
+            url: "/admin/equipments",
+          },
+          {
+            title: t("menu_cau_hinh_dich_vu"),
+            url: "/admin/services",
+          },
+        ],
+      },
+      {
+        title: t("menu_quan_ly_dat_phong"),
+        url: "#",
+        icon: Calendar,
+        color: "text-orange-500",
+        items: [
+          {
+            title: t("menu_quan_ly_dat_phong"),
+            url: "/admin/meetings",
+          },
+          {
+            title: t("menu_phe_duyet_cuoc_hop"),
+            url: "/admin/meetings/room-approvals",
+          },
+        ],
+      },
+      
       {
         title: t("menu_thong_ke"),
         url: "/admin/statistics",
         icon: BarChart,
-        color: 'text-green-500', // Màu cho icon "Thống kê"
-      },
-      {
-        title: t("menu_danh_sach_nguoi_dung"),
-        url: "/admin/users",
-        icon: Users,
-        color: 'text-red-500', // Màu cho icon "Danh sách người dùng"
-      },
-      {
-        title: t("menu_quan_ly_nhom"),
-        url: "/admin/users/groups",
-        icon: UserPlus,
-        color: 'text-yellow-500', // Màu cho icon "Quản lý nhóm"
-      },
-      {
-        title: t("menu_danh_sach_chi_nhanh"),
-        url: "/admin/branches",
-        icon: MapPin,
-        color: 'text-purple-500', // Màu cho icon "Chi nhánh"
-      },
-      {
-        title: t("menu_danh_sach_phong_hop"),
-        url: "/admin/rooms",
-        icon: Building2,
-        color: 'text-indigo-500', // Màu cho icon "Phòng họp"
-      },
-      {
-        title: t("menu_danh_sach_thiet_bi"),
-        url: "/admin/equipments",
-        icon: Monitor,
-        color: 'text-pink-500', // Màu cho icon "Thiết bị"
-      },
-      {
-        title: t("menu_cau_hinh_dich_vu"),
-        url: "/admin/services",
-        icon: Coffee,
-        color: 'text-teal-500', // Màu cho icon "Dịch vụ"
-      },
-      {
-        title: t("menu_quan_ly_dat_phong"),
-        url: "/admin/meetings",
-        icon: Calendar,
-        color: 'text-orange-500', // Màu cho icon "Đặt phòng"
-      },
-      {
-        title: t("menu_phe_duyet_cuoc_hop"),
-        url: "/admin/meetings/room-approvals",
-        icon: CheckCircle,
-        color: 'text-lime-500', // Màu cho icon "Duyệt cuộc họp"
-      },
+        color: "text-green-500",
+      }
+
     ],
   };
 

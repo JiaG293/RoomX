@@ -1,7 +1,16 @@
 import { useState } from "react";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
-import { UserService } from "@/services/admin/user.service"; // import UserService
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { UserService } from "@/services/admin/user.service";
+import { UserValidator } from "@/validators/user.validators";
 import { toast } from "sonner";
+import { Hash, Mail, Phone, User, UserPlus, Users } from "lucide-react";
 
 export interface User {
   userCode: string;
@@ -11,12 +20,12 @@ export interface User {
   password: string;
   gender: string;
   email: string;
-  type: "EMPLOYEE" | "APPROVER"; 
-  roles: string[]; 
+  type: "EMPLOYEE" | "APPROVER";
+  roles: string[];
 }
 
 interface UserAddModalProps {
-  onAddSuccess: () => void; 
+  onAddSuccess: () => void;
 }
 
 const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
@@ -26,123 +35,217 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [userType, setUserType] = useState("employee");
-  const [isDialogOpen, setIsDialogOpen] = useState(false); 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const userService = new UserService();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Đảm bảo tất cả các trường hợp nhập là hợp lệ trước khi gửi yêu cầu
-    if (!employeeId || !email || !firstName || !lastName || !phoneNumber || !userType) {
-      alert("Please fill all fields.");
+    // Kiểm tra validation
+    if (!UserValidator.isNotEmpty(employeeId)) {
+      toast.error("Mã nhân viên không được để trống!");
+      return;
+    }
+    if (!UserValidator.isValidUserCode(employeeId)) {
+      toast.error("Mã nhân viên chỉ được chứa chữ, số và lớn hơn 6 ký tự!");
+      return;
+    }
+    if (!UserValidator.isValidEmail(email)) {
+      toast.error("Email không hợp lệ!");
+      return;
+    }
+    if (!UserValidator.isValidName(firstName)) {
+      toast.error("Họ không hợp lệ!");
+      return;
+    }
+    if (!UserValidator.isValidName(lastName)) {
+      toast.error("Tên không hợp lệ!");
+      return;
+    }
+    if (!UserValidator.isValidPhoneNumber(phoneNumber)) {
+      toast.error("Số điện thoại không hợp lệ!");
       return;
     }
 
-    // Tạo một đối tượng người dùng từ form
+    // Tạo đối tượng user
     const newUser: User = {
       userCode: employeeId,
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,
-      password: "password123", 
-      gender: "true", 
+      password: "password123",
+      gender: "true",
       email: email,
       type: userType === "employee" ? "EMPLOYEE" : "APPROVER",
-      roles: userType === "employee" ? ["USER"] : ["USER", "APPROVER"]
+      roles: userType === "employee" ? ["USER"] : ["USER", "APPROVER"],
     };
 
     try {
       await userService.createUser(newUser);
       toast.success("Tạo người dùng thành công!", {
-        description: <strong>Người dùng {firstName} {lastName} đã được thêm.</strong>,
-      });      
-      setIsDialogOpen(false); 
+        description: (
+          <strong>
+            Người dùng {firstName} {lastName} đã được thêm.
+          </strong>
+        ),
+      });
+      setIsDialogOpen(false);
       onAddSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating user:", error);
-      alert("Error creating user.");
+      toast.error("Lỗi tạo người dùng!", {
+        description:
+          error.response?.data?.message || error.message || "Đã có lỗi xảy ra.",
+      });
     }
   };
 
+  const resetForm = () => {
+    setEmployeeId("");
+    setEmail("");
+    setFirstName("");
+    setLastName("");
+    setPhoneNumber("");
+    setUserType("employee");
+  };
+
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+    <Dialog
+      open={isDialogOpen}
+      onOpenChange={(open) => {
+        setIsDialogOpen(open);
+        if (!open) resetForm();
+      }}
+    >
       <DialogTrigger asChild>
-        <button className="py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-          Thêm người dùng
+        <button className="py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2">
+          <UserPlus size={18} /> Thêm người dùng
         </button>
       </DialogTrigger>
 
       <DialogContent className="p-6 bg-white rounded-lg shadow-lg max-w-lg mx-auto">
-        <DialogTitle className="text-xl font-semibold mb-4">Tạo người dùng mới</DialogTitle>
-        <DialogDescription className="text-sm mb-6">Điền đầy đủ các thông tin bên dưới</DialogDescription>
+        <DialogTitle className="text-xl font-semibold mb-4">
+          Tạo người dùng mới
+        </DialogTitle>
+        <DialogDescription className="text-sm mb-6">
+          Điền đầy đủ các thông tin bên dưới
+        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mã nhân viên</label>
-            <input
-              type="text"
-              value={employeeId}
-              onChange={(e) => setEmployeeId(e.target.value)}
-              className="w-full p-2 bg-transparent border border-gray-300 rounded-md"
-              placeholder="Nhập mã nhân viên"
-            />
+          <div className="col-span-1 relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Mã nhân viên
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={employeeId}
+                onChange={(e) => setEmployeeId(e.target.value)}
+                className="w-full p-2 bg-transparent border border-gray-300 rounded-md pl-10"
+                placeholder="Nhập mã nhân viên"
+              />
+              <Hash
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+            </div>
           </div>
 
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 bg-transparent border border-gray-300 rounded-md"
-              placeholder="Nhập email"
-            />
+          <div className="col-span-1 relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <div className="relative">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-2 bg-transparent border border-gray-300 rounded-md pl-10"
+                placeholder="Nhập email"
+              />
+              <Mail
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+            </div>
           </div>
 
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Họ</label>
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="w-full p-2 bg-transparent border border-gray-300 rounded-md"
-              placeholder="Nhập họ"
-            />
+          <div className="col-span-1 relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Họ
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="w-full p-2 bg-transparent border border-gray-300 rounded-md pl-10"
+                placeholder="Nhập họ"
+              />
+              <User
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+            </div>
           </div>
 
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tên</label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="w-full p-2 bg-transparent border border-gray-300 rounded-md"
-              placeholder="Nhập tên"
-            />
+          <div className="col-span-1 relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Tên
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="w-full p-2 bg-transparent border border-gray-300 rounded-md pl-10"
+                placeholder="Nhập tên"
+              />
+              <User
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+            </div>
           </div>
 
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
-            <input
-              type="text"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="w-full p-2 bg-transparent border border-gray-300 rounded-md"
-              placeholder="Nhập số điện thoại"
-            />
+          <div className="col-span-1 relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Số điện thoại
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="w-full p-2 bg-transparent border border-gray-300 rounded-md pl-10"
+                placeholder="Nhập số điện thoại"
+              />
+              <Phone
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+            </div>
           </div>
 
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Loại người dùng</label>
-            <select
-              value={userType}
-              onChange={(e) => setUserType(e.target.value)}
-              className="w-full p-2 bg-transparent border border-gray-300 rounded-md"
-            >
-              <option value="employee">Nhân Viên</option>
-              <option value="approver">Kiểm duyệt viên</option>
-            </select>
+          <div className="col-span-1 relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Loại người dùng
+            </label>
+            <div className="relative">
+              <select
+                value={userType}
+                onChange={(e) => setUserType(e.target.value)}
+                className="w-full p-2 bg-transparent border border-gray-300 rounded-md pl-10"
+              >
+                <option value="employee">Nhân Viên</option>
+                <option value="approver">Kiểm duyệt viên</option>
+              </select>
+              <Users
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+            </div>
           </div>
 
           <div className="col-span-2 flex justify-between items-center mt-4">
@@ -157,9 +260,9 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
 
             <button
               type="submit"
-              className="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              className="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-2"
             >
-              Thêm người dùng
+              <UserPlus size={18} /> Thêm người dùng
             </button>
           </div>
         </form>

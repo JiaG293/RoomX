@@ -15,6 +15,8 @@ import UserDetail from "@/pages/Admin/UserDetail";
 import BranchUpdate from "@/pages/Admin/Branch/BranchUpdate";
 import Service from "@/pages/Admin/Service/Service";
 import Equipment from "@/pages/Admin/Equipment/Equipment";
+import Room from "@/pages/Admin/Room/Room";
+import Booking from "@/pages/App/Booking";
 
 export const RootRouter = createBrowserRouter([
   {
@@ -49,7 +51,7 @@ export const RootRouter = createBrowserRouter([
         element: <Branch />,
       },
       {
-        path: "/admin/branches/edit/:branchId",
+        path: "/admin/branches/:branchId",
         element: <BranchUpdate />,
       },
       {
@@ -63,7 +65,19 @@ export const RootRouter = createBrowserRouter([
       {
         path: "/admin/equipments",
         element: <Equipment />,
-      }
+      },
+      {
+        path: "/admin/rooms",
+        element: <Room />,
+      },
+      {
+        path: "/portal/home",
+        element: <Home />,
+      },
+      {
+        path: "/portal/booking",
+        element: <Booking />,
+      },
     ],
   },
   {
@@ -78,8 +92,4 @@ export const RootRouter = createBrowserRouter([
     path: "*",
     element: <Notfound />,
   },
-  {
-    path: "/portal/home",
-    element: <Home/>
-  }
 ]);

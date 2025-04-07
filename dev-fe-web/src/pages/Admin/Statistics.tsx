@@ -2,42 +2,33 @@ import React from "react";
 import CMSLayout from "@/layouts/cms-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
-import { TrendingUp, TrendingDown, Users, Calendar } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { TrendingUp, Users, Calendar } from "lucide-react";
 
-const revenueData = [
-  { name: "Jan", revenue: 3000 },
-  { name: "Feb", revenue: 4500 },
-  { name: "Mar", revenue: 6000 },
-  { name: "Apr", revenue: 5000 },
-  { name: "May", revenue: 7000 },
-  { name: "Jun", revenue: 9000 },
+const bookingData = [
+  { name: "Jan", bookings: 120 },
+  { name: "Feb", bookings: 150 },
+  { name: "Mar", bookings: 180 },
+  { name: "Apr", bookings: 160 },
+  { name: "May", bookings: 200 },
+  { name: "Jun", bookings: 250 },
 ];
 
-const roomTypeRevenue = [
-  { name: "Standard", revenue: 5000 },
-  { name: "Deluxe", revenue: 8000 },
-  { name: "Suite", revenue: 12000 },
+const roomTypeUsage = [
+  { name: "Phòng họp nhỏ", usage: 100 },
+  { name: "Phòng họp trung bình", usage: 150 },
+  { name: "Phòng họp lớn", usage: 200 },
 ];
 
-const topCustomers = [
-  { id: 1, name: "John Doe", totalSpent: "$1200" },
-  { id: 2, name: "Jane Smith", totalSpent: "$950" },
-  { id: 3, name: "Mike Johnson", totalSpent: "$870" },
-];
-
-const bookingStats = [
-  { month: "Jan", bookings: 50, cancellations: 5 },
-  { month: "Feb", bookings: 75, cancellations: 8 },
-  { month: "Mar", bookings: 100, cancellations: 12 },
-  { month: "Apr", bookings: 90, cancellations: 10 },
-  { month: "May", bookings: 120, cancellations: 15 },
-  { month: "Jun", bookings: 140, cancellations: 18 },
+const topUsers = [
+  { id: 1, name: "Nguyễn Văn A", totalBookings: 15 },
+  { id: 2, name: "Trần Thị B", totalBookings: 12 },
+  { id: 3, name: "Lê Minh C", totalBookings: 10 },
 ];
 
 const Statistics: React.FC = () => {
   return (
-    <CMSLayout>
+    <CMSLayout title="Thống kê">
       <div className="p-6 space-y-6">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -45,12 +36,12 @@ const Statistics: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-6 h-6 text-green-500" />
-                Total Revenue
+                Tổng lượt đặt phòng
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-green-600">$42,500</p>
-              <p className="text-sm text-gray-500">+12% compared to last month</p>
+              <p className="text-3xl font-bold text-green-600">960</p>
+              <p className="text-sm text-gray-500">+15% so với tháng trước</p>
             </CardContent>
           </Card>
 
@@ -58,12 +49,12 @@ const Statistics: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="w-6 h-6 text-blue-500" />
-                Total Bookings
+                Lượt đặt trong tháng
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-blue-600">620</p>
-              <p className="text-sm text-gray-500">+8% from last month</p>
+              <p className="text-3xl font-bold text-blue-600">250</p>
+              <p className="text-sm text-gray-500">+10% so với tháng trước</p>
             </CardContent>
           </Card>
 
@@ -71,69 +62,51 @@ const Statistics: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-6 h-6 text-purple-500" />
-                Returning Customers
+                Người dùng thường xuyên
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-purple-600">240</p>
-              <p className="text-sm text-gray-500">45% of total customers</p>
+              <p className="text-3xl font-bold text-purple-600">75</p>
+              <p className="text-sm text-gray-500">30% tổng số người dùng</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Revenue Chart */}
+        {/* Booking Chart */}
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Monthly Revenue</CardTitle>
+            <CardTitle>Lượt đặt phòng theo tháng</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={revenueData}>
+              <BarChart data={bookingData}>
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="revenue" fill="#10b981" />
+                <Bar dataKey="bookings" fill="#10b981" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Booking Statistics Chart */}
+        {/* Room Type Usage */}
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Booking & Cancellations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={bookingStats}>
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="bookings" stroke="#3b82f6" strokeWidth={2} />
-                <Line type="monotone" dataKey="cancellations" stroke="#ef4444" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Revenue by Room Type */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle>Revenue by Room Type</CardTitle>
+            <CardTitle>Tần suất sử dụng theo loại phòng</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Room Type</TableHead>
-                  <TableHead>Revenue</TableHead>
+                  <TableHead>Loại phòng</TableHead>
+                  <TableHead>Số lượt đặt</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {roomTypeRevenue.map((room, index) => (
+                {roomTypeUsage.map((room, index) => (
                   <TableRow key={index}>
                     <TableCell>{room.name}</TableCell>
-                    <TableCell>${room.revenue.toLocaleString()}</TableCell>
+                    <TableCell>{room.usage}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -141,26 +114,26 @@ const Statistics: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Top Customers */}
+        {/* Top Users */}
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Top Customers</CardTitle>
+            <CardTitle>Người dùng đặt phòng nhiều nhất</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Total Spent</TableHead>
+                  <TableHead>Tên</TableHead>
+                  <TableHead>Số lượt đặt</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {topCustomers.map((customer) => (
-                  <TableRow key={customer.id}>
-                    <TableCell>{customer.id}</TableCell>
-                    <TableCell>{customer.name}</TableCell>
-                    <TableCell>{customer.totalSpent}</TableCell>
+                {topUsers.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell>{user.id}</TableCell>
+                    <TableCell>{user.name}</TableCell>
+                    <TableCell>{user.totalBookings}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

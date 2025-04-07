@@ -1,17 +1,17 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Eye, MoreHorizontal, XCircle } from "lucide-react";
+import {  MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 export type Branch = {
+  branchId: string;
   branchCode: string;
   name: string;
   email: string;
@@ -48,35 +48,23 @@ export const columns: ColumnDef<Branch>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const isEven = row.index % 2 === 0;
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0 bg-transparent">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-            {/* <DropdownMenuItem>
-              <Link to={`/admin/branchs/${row.original.branchId}`}>
-                Xem chi tiết
-              </Link>
-            </DropdownMenuItem> */}
-            <DropdownMenuItem>
-              <Link to={`/admin/branches/edit/${row.original.branchCode}`}>
-                Cập nhật
-              </Link>{" "}
-            </DropdownMenuItem>
-            {/* <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-              }}
-            >
-              <DisableBranchDialog triggerText="Vô hiệu hoá" />
-            </DropdownMenuItem> */}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button
+          asChild
+          variant={isEven ? "secondary" : "outline"}
+          className={`px-4 py-2 text-sm font-medium ${
+            isEven
+              ? "bg-gray-100 hover:bg-gray-200"
+              : "bg-blue-100 hover:bg-blue-200"
+          }`}
+        >
+          <Link
+            to={`/admin/branches/${row.original.branchId}`}
+          >
+            Xem chi tiết
+          </Link>
+        </Button>
       );
     },
   },

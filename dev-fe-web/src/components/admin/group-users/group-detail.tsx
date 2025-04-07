@@ -3,7 +3,7 @@ import React from 'react'
 
 const GroupUserDetail: React.FC = () => {
   return (
-    <CMSLayout>
+    <CMSLayout title="Chi tiết nhóm người dùng">
       <></>
     </CMSLayout>
   )

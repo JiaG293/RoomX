@@ -20,7 +20,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       { title: "Lịch của tôi", url: "/portal/home", icon: CalendarCheck },
       { title: "Đặt lịch", url: "/portal/booking", icon: Clock },
       { title: "Lịch chờ duyệt", url: "/portal/pending", icon: Hourglass },
-      { title: "Gợi ý đặt lịch", url: "/portal/suggestions", icon: Bell },
       { title: "Nhóm", url: "/portal/groups", icon: Users },
       { title: "Hồ sơ", url: "/portal/profile", icon: User },
       { title: "Cài đặt", url: "/portal/settings", icon: Settings },

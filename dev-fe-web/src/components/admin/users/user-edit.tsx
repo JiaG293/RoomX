@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
-import { UserService } from "@/services/admin/user.service";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 export interface User {
@@ -29,7 +28,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onEditSuccess }) =>
   const [userType, setUserType] = useState("employee");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const userService = new UserService();
+  // const userService = new UserService();
 
   // Cập nhật state khi user thay đổi
   useEffect(() => {
@@ -63,6 +62,8 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onEditSuccess }) =>
       type: userType === "employee" ? "EMPLOYEE" : "APPROVER",
       roles: userType === "employee" ? ["USER"] : ["USER", "APPROVER"]
     };
+
+    console.log("Updated User:", updatedUser);
 
     try {
     //   await userService.updateUser(updatedUser);

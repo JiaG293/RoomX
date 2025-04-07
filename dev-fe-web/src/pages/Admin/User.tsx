@@ -4,7 +4,7 @@ import React from 'react'
 
 const User: React.FC = () => {
   return (
-    <CMSLayout>
+    <CMSLayout title='Danh sách người dùng'>
         <UserList ></UserList>
     </CMSLayout>
   )

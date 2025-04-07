@@ -9,7 +9,7 @@ const stats = [
   { title: "Số phòng", value: 15, icon: <Calendar className="w-6 h-6" /> },
   { title: "Lượt đặt hôm nay", value: 8, icon: <CheckCircle className="w-6 h-6" /> },
   { title: "Người dùng", value: 200, icon: <Users className="w-6 h-6" /> },
-  { title: "Tổng doanh thu", value: "$12,500", icon: <DollarSign className="w-6 h-6" /> },
+  { title: "Tổng chi phí", value: "$12,500", icon: <DollarSign className="w-6 h-6" /> },
 ];
 
 const bookings = [
@@ -38,7 +38,7 @@ const revenueChartData = [
 
 const Dashboard: React.FC = () => {
   return (
-    <CMSLayout>
+    <CMSLayout title='Trang chủ'>
       <div className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
@@ -105,7 +105,7 @@ const Dashboard: React.FC = () => {
 
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Thống kê doanh thu</CardTitle>
+            <CardTitle>Thống kê chi phí</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>

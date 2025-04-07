@@ -4,7 +4,7 @@ import React from 'react'
 
 const Branch: React.FC = () => {
   return (
-    <CMSLayout>
+    <CMSLayout title='Danh sách chi nhánh'>
       <BranchList/>
     </CMSLayout>
   )

@@ -27,7 +27,7 @@ const UserList: React.FC = () => {
   // Thêm state để quản lý phân trang
   const [pageIndex, setPageIndex] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-
+console.log(loading)
   // Hàm fetch dữ liệu người dùng
   const fetchUsers = async () => {
     setLoading(true);
@@ -53,10 +53,10 @@ const UserList: React.FC = () => {
     }
   };
 
-  // Hàm gọi khi chỉnh sửa người dùng thành công
-  const onEditSuccess = async () => {
-    await fetchUsers();
-  };
+  // // Hàm gọi khi chỉnh sửa người dùng thành công
+  // const onEditSuccess = async () => {
+  //   await fetchUsers();
+  // };
 
   useEffect(() => {
     fetchUsers();

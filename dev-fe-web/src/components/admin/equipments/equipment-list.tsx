@@ -54,10 +54,12 @@ const EquipmentList: React.FC = () => {
     }
   };
 
-  // Khi chỉnh sửa thiết bị thành công
-  const onEditSuccess = async () => {
-    await fetchEquipments();
-  };
+  console.log(loading)
+
+  // // Khi chỉnh sửa thiết bị thành công
+  // const onEditSuccess = async () => {
+  //   await fetchEquipments();
+  // };
 
   useEffect(() => {
     fetchEquipments();
