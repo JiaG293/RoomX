@@ -12,15 +12,13 @@ import java.util.*;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE/*,
-        uses = {
-                BranchAppMapper.class
-        }*/
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface PlaceAppMapper {
 
-//    @Mapping(target = "branch", ignore = true)
+    @Mapping(target = "place", ignore = true)
     Place toDomain(PlaceCreateRequest request);
+
 
     PlaceResponse toResponse(Place domain);
 
@@ -32,12 +30,15 @@ public interface PlaceAppMapper {
     @Mapping(target = "children", expression = "java(buildChildren(place, places))")
     PlaceHierarchyResponse toResponseHierarchy(Place place, List<Place> places);
 
-//    @Mapping(target = "branchId", source = "branch.id")
+    //    @Mapping(target = "branchId", source = "branch.id")
     PlaceBranchResponse toResponseBranch(Place domain);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "placeType", ignore = true)
+    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "parentId", ignore = true)
+    @Mapping(target = "place", ignore = true)
     void updateDomainFromDto(PlaceUpdateRequest request, @MappingTarget Place domain);
-
 
 
     default List<PlaceHierarchyResponse> buildChildren(Place place, List<Place> places) {

@@ -1,5 +1,8 @@
 package com.roomx.shared.dto.resource.request;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,10 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class PlaceUpdateRequest {
-    private String branchId;
-    private String slug;
-    private String floor;
-    private String building;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private String code;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String name;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String layout;
 }

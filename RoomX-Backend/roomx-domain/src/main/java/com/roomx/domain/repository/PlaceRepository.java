@@ -1,6 +1,8 @@
 package com.roomx.domain.repository;
 
 import com.roomx.domain.model.aggrerate.Place;
+import com.roomx.shared.enums.DeleteStatusType;
+import com.roomx.shared.enums.PlaceType;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +36,8 @@ public interface PlaceRepository {
     Optional<Place> findByCode(String code);
 
     Optional<Place> findByPlaceTypeAndCodeAndParentId(String type, String code, String parentId);
+    Optional<Place> findByIdAndPlaceTypeAndCode(String id, String placeType, String code);
+    Optional<Place>findByIdAndStatusAndPlaceType(String placeId, String status, String placeType);
 //    boolean checkPlaceExistsBySlug(String slug);
 //    boolean checkPlaceExistsBySlugBuildingFloorBranchId(String BranchId, String slug, String Building, String floor);
 //    List<String> customFindPlaceSelectBox(String branchId, String building, String floor, String placeType);

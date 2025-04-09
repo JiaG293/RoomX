@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -81,15 +82,11 @@ public class PlaceAppService {
         var checkBuilding = placeRepository
                 .findByPlaceTypeAndCodeAndParentId(placeBuildingDomain.getPlaceType(), placeBuildingDomain.getCode(), placeBranchDomain.getId().toString());
         if (checkBuilding.isPresent()) {
-            log.info("data 1 {}", placeBuildingDomain);
             placeBuildingDomain = checkBuilding.get();
-            log.info("data 2 {}", placeBuildingDomain);
         } else {
             placeBuildingDomain = placeRepository.save(placeBuildingDomain);
         }
 
-
-        log.info("data 3{}", placeBuildingDomain);
 
         placeAllDomain.add(placeBuildingDomain);
 
@@ -119,23 +116,93 @@ public class PlaceAppService {
 
     }
 
+    @Transactional
+    public PlaceResponse updatePlaceById(String placeId, String type, PlaceUpdateRequest request) {
+        String placeType = null;
+        if(type == null || type.isEmpty()){
+            throw  new AppException(ErrorCode.PLACE_INVALID, type);
+        } else {
+            placeType = type.toUpperCase();
+        }
+
+        return switch (PlaceType.valueOf(placeType)) {
+            case FLOOR -> updateFloorById(placeId, request);
+            case BUILDING -> updateBuildingById(placeId, request);
+            case BRANCH -> updateBranchById(placeId, request);
+        };
+    }
 
     @Transactional
-    public PlaceResponse updatePlaceById(String placeId, PlaceUpdateRequest request) {
-        var placeDomain = placeRepository.findById(placeId)
-                .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, placeId));
-
-        /*if (request.getBranchId() != null) {
-            var branchDomain = branchRepository.findById(request.getBranchId())
-                    .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND, request.getBranchId()));
-            placeDomain.setBranch(branchDomain);
-        }*/
+    public PlaceResponse updateFloorById(String placeId, PlaceUpdateRequest request) {
+        var placeDomain = findActivePlace(placeId, PlaceType.FLOOR.toString());
 
         placeAppMapper.updateDomainFromDto(request, placeDomain);
 
-        var savedPlace = placeRepository.save(placeDomain);
-        return placeAppMapper.toResponse(savedPlace);
+        validateCodeConflict(placeDomain, request.getCode(), placeId);
+
+        if (StringUtils.hasText(request.getCode())) {
+            placeDomain.setCode(request.getCode());
+            placeDomain.setName(PlaceType.FLOOR.getDisplayName() + " " + request.getCode());
+        }
+
+        var saved = placeRepository.save(placeDomain);
+        return placeAppMapper.toResponse(saved);
     }
+
+    @Transactional
+    public PlaceResponse updateBuildingById(String placeId, PlaceUpdateRequest request) {
+        var placeDomain = findActivePlace(placeId, PlaceType.BUILDING.toString());
+
+        placeAppMapper.updateDomainFromDto(request, placeDomain);
+
+        validateCodeConflict(placeDomain, request.getCode(), placeId);
+
+        if (StringUtils.hasText(request.getCode())) {
+            placeDomain.setCode(request.getCode());
+            placeDomain.setName(PlaceType.BUILDING.getDisplayName() + " " + request.getCode());
+        }
+
+        var saved = placeRepository.save(placeDomain);
+        return placeAppMapper.toResponse(saved);
+    }
+
+    @Transactional
+    public PlaceResponse updateBranchById(String placeId, PlaceUpdateRequest request) {
+        var placeDomain = findActivePlace(placeId, PlaceType.BRANCH.toString());
+
+        placeAppMapper.updateDomainFromDto(request, placeDomain);
+
+        validateCodeConflict(placeDomain, request.getCode(), placeId);
+
+        if (StringUtils.hasText(request.getCode())) {
+            placeDomain.setCode(request.getCode());
+            placeDomain.setName(PlaceType.BRANCH.getDisplayName() + " " + request.getCode());
+        }
+
+        var saved = placeRepository.save(placeDomain);
+        return placeAppMapper.toResponse(saved);
+    }
+
+    private Place findActivePlace(String id, String placeType) {
+        return placeRepository
+                .findByIdAndStatusAndPlaceType(id, DeleteStatusType.ACTIVE.toString(), placeType)
+                .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, placeType, id));
+    }
+
+    private void validateCodeConflict(Place placeDomain, String code, String placeId) {
+        if (StringUtils.hasText(code)) {
+            var checkPlace = placeRepository.findByPlaceTypeAndCodeAndParentId(
+                    placeDomain.getPlaceType(),
+                    code,
+                    placeDomain.getParentId().toString()
+            );
+
+            if (checkPlace.isPresent() && !checkPlace.get().getId().toString().equals(placeId)) {
+                throw new AppException(ErrorCode.PLACE_CONFLICT, placeDomain.getPlaceType(), code);
+            }
+        }
+    }
+
 
     public List<String> getListPlaceSelectBox(PlaceSelectBoxRequest request) {
        /* log.info("place type : {}", request.getPlaceType());

@@ -35,6 +35,7 @@ public class PlaceController {
                 .build();
     }
 
+
     @PostMapping("/{placeBranchId}/buildings")
     public ResultResponse<?> createPlaceBuildingWithFloors(
             @PathVariable String placeBranchId,
@@ -45,13 +46,47 @@ public class PlaceController {
                 .build();
     }
 
-
     @PatchMapping("/{placeId}")
-    public ResultResponse<?> updatePlaceById(
+    public ResultResponse<?> updatePlaceByIdWithParam(
+            @PathVariable String placeId,
+            @RequestParam(name = "type") String type,
+            @Validated @RequestBody PlaceUpdateRequest request
+    ) {
+        var result = placeAppService.updatePlaceById(placeId, type, request);
+        return ResultResponse.<PlaceResponse>builder()
+                .result(result)
+                .build();
+    }
+
+
+    @PatchMapping("/{placeId}/branchs")
+    public ResultResponse<?> updatePlaceBranchById(
             @PathVariable String placeId,
             @Validated @RequestBody PlaceUpdateRequest request
     ) {
-        var result = placeAppService.updatePlaceById(placeId, request);
+        var result = placeAppService.updateBranchById(placeId, request);
+        return ResultResponse.<PlaceResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PatchMapping("/{placeId}/buildings")
+    public ResultResponse<?> updatePlaceBuildingById(
+            @PathVariable String placeId,
+            @Validated @RequestBody PlaceUpdateRequest request
+    ) {
+        var result = placeAppService.updateBuildingById(placeId, request);
+        return ResultResponse.<PlaceResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PatchMapping("/{placeId}/floors")
+    public ResultResponse<?> updatePlaceFloorById(
+            @PathVariable String placeId,
+            @Validated @RequestBody PlaceUpdateRequest request
+    ) {
+        var result = placeAppService.updateFloorById(placeId, request);
         return ResultResponse.<PlaceResponse>builder()
                 .result(result)
                 .build();

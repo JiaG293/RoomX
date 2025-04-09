@@ -146,4 +146,18 @@ public class PlaceEntityRepository implements PlaceRepository {
                 .findByPlaceTypeAndCodeAndParentId(type, code, UUID.fromString(parentId))
                 .map(placeEntityMapper::toDomain);
     }
+
+    @Override
+    public Optional<Place> findByIdAndPlaceTypeAndCode(String id, String placeType, String code) {
+        return jpaPlaceEntityRepository
+                .findByIdAndPlaceTypeAndCode(UUID.fromString(id), placeType, code)
+                .map(placeEntityMapper::toDomain);
+    }
+
+    @Override
+    public Optional<Place> findByIdAndStatusAndPlaceType(String placeId, String status, String placeType) {
+        return jpaPlaceEntityRepository
+                .findByIdAndStatusAndPlaceType(UUID.fromString(placeId), status, placeType)
+                .map(placeEntityMapper::toDomain);
+    }
 }

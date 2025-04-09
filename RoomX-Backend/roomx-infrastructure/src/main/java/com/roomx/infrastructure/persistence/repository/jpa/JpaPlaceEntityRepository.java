@@ -57,4 +57,8 @@ public interface JpaPlaceEntityRepository extends JpaRepository<PlaceEntity, UUI
     Optional<PlaceEntity> findByCode(String code);
 
     Optional<PlaceEntity> findByPlaceTypeAndCodeAndParentId(String type, String code, UUID uuid);
+
+    Optional<PlaceEntity> findByIdAndStatusAndPlaceType(UUID placeId, String status, String placeType);
+
+    Optional<PlaceEntity> findByIdAndPlaceTypeAndCode(UUID id, String placeType, String code);
 }
