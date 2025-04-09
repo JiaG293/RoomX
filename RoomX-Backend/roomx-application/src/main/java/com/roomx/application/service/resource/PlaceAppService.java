@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -191,11 +192,20 @@ public class PlaceAppService {
 
     private void validateCodeConflict(Place placeDomain, String code, String placeId) {
         if (StringUtils.hasText(code)) {
-            var checkPlace = placeRepository.findByPlaceTypeAndCodeAndParentId(
-                    placeDomain.getPlaceType(),
-                    code,
-                    placeDomain.getParentId().toString()
-            );
+            Optional<Place> checkPlace;
+
+            if (placeDomain.getParentId() != null) {
+                checkPlace = placeRepository.findByPlaceTypeAndCodeAndParentId(
+                        placeDomain.getPlaceType(),
+                        code,
+                        placeDomain.getParentId().toString()
+                );
+            } else {
+                checkPlace = placeRepository.findByPlaceTypeAndCode(
+                        placeDomain.getPlaceType(),
+                        code
+                );
+            }
 
             if (checkPlace.isPresent() && !checkPlace.get().getId().toString().equals(placeId)) {
                 throw new AppException(ErrorCode.PLACE_CONFLICT, placeDomain.getPlaceType(), code);
@@ -237,28 +247,21 @@ public class PlaceAppService {
 
     @Transactional
     public List<PlaceHierarchyResponse> getAllPlacesHierarchy() {
-        var placeParentListDomain = placeRepository.findRootPlace();
-        var placeChildrenListDomain = placeRepository.findChildrenPlace(PlaceType.BRANCH.toString());
+        var places = new ArrayList<Place>();
+        places.addAll(placeRepository.findRootPlace());
+        places.addAll(placeRepository.findChildrenPlace(PlaceType.BRANCH.toString()));
 
-
-        var listResponse = new ArrayList<PlaceHierarchyResponse>();
-
-
-        List<Place> places = new ArrayList<>();
-        places.addAll(placeParentListDomain);
-        places.addAll(placeChildrenListDomain);
-
-
-        for (Place place : places) {
-            if (place.getParentId() == null) {
-
-                listResponse.add(placeAppMapper.toResponseHierarchy(place, places));
-            }
-        }
-
-        return listResponse;
-
+        return placeAppMapper.buildHierarchy(places);
     }
 
 
+
+    @Transactional
+    public void deletePlaceById(String placeId) {
+        var placeDomain = placeRepository.findById(placeId).orElse(null);
+        if(placeDomain != null){
+            placeDomain.setStatus(DeleteStatusType.INACTIVE.toString());
+            placeRepository.save(placeDomain);
+        }
+    }
 }

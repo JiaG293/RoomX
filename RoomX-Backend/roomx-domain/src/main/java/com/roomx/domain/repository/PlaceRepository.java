@@ -38,6 +38,10 @@ public interface PlaceRepository {
     Optional<Place> findByPlaceTypeAndCodeAndParentId(String type, String code, String parentId);
     Optional<Place> findByIdAndPlaceTypeAndCode(String id, String placeType, String code);
     Optional<Place>findByIdAndStatusAndPlaceType(String placeId, String status, String placeType);
+
+    List<Place> findAllByStatus(String status);
+
+
 //    boolean checkPlaceExistsBySlug(String slug);
 //    boolean checkPlaceExistsBySlugBuildingFloorBranchId(String BranchId, String slug, String Building, String floor);
 //    List<String> customFindPlaceSelectBox(String branchId, String building, String floor, String placeType);

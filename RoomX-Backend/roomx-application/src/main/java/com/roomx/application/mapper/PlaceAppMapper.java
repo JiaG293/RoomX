@@ -6,6 +6,7 @@ import com.roomx.shared.dto.resource.response.PlaceBranchResponse;
 import com.roomx.shared.dto.resource.response.PlaceHierarchyResponse;
 import com.roomx.shared.dto.resource.response.PlaceResponse;
 import com.roomx.domain.model.aggrerate.Place;
+import com.roomx.shared.enums.PlaceType;
 import org.mapstruct.*;
 
 import java.util.*;
@@ -45,16 +46,24 @@ public interface PlaceAppMapper {
         List<PlaceHierarchyResponse> children = new ArrayList<>();
         for (Place p : places) {
             if (p.getParentId() != null && p.getParentId().equals(place.getId())) {
-                children.add(toResponseHierarchy(p, places));
+                if (isValidChild(place, p)) {
+                    children.add(toResponseHierarchy(p, places));
+                }
             }
         }
         return children;
     }
 
+    default boolean isValidChild(Place parent, Place child) {
+        return (PlaceType.BRANCH.name().equals(parent.getPlaceType()) && PlaceType.BUILDING.name().equals(child.getPlaceType()))
+                || (PlaceType.BUILDING.name().equals(parent.getPlaceType()) && PlaceType.FLOOR.name().equals(child.getPlaceType()));
+    }
+
+
     default List<PlaceHierarchyResponse> buildHierarchy(List<Place> places) {
         List<PlaceHierarchyResponse> rootPlaces = new ArrayList<>();
         for (Place place : places) {
-            if (place.getParentId() == null) {
+            if (place.getParentId() == null && PlaceType.BRANCH.name().equals(place.getPlaceType())) {
                 rootPlaces.add(toResponseHierarchy(place, places));
             }
         }

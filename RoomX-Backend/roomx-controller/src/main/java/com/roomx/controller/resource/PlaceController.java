@@ -116,7 +116,7 @@ public class PlaceController {
 
     @DeleteMapping("/{placeId}")
     public ResultResponse<?> deletePlace(@PathVariable String placeId) {
-
+        placeAppService.deletePlaceById(placeId);
         return ResultResponse.<Void>builder().build();
     }
 

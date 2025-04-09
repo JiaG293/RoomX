@@ -147,6 +147,7 @@ public class PlaceEntityRepository implements PlaceRepository {
                 .map(placeEntityMapper::toDomain);
     }
 
+
     @Override
     public Optional<Place> findByIdAndPlaceTypeAndCode(String id, String placeType, String code) {
         return jpaPlaceEntityRepository
@@ -160,4 +161,15 @@ public class PlaceEntityRepository implements PlaceRepository {
                 .findByIdAndStatusAndPlaceType(UUID.fromString(placeId), status, placeType)
                 .map(placeEntityMapper::toDomain);
     }
+
+    @Override
+    public List<Place> findAllByStatus(String status) {
+        return jpaPlaceEntityRepository
+                .findAllByStatus(status)
+                .stream()
+                .map(placeEntityMapper::toDomain)
+                .toList();
+    }
+
+
 }
