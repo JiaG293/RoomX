@@ -24,8 +24,12 @@ public interface PlaceAppMapper {
 
     PlaceResponse toResponse(Place domain);
 
-//    @Mapping(target = "children", expression = "java(buildChildren(place, places))")
-//    @Mapping(target = "branch", expression = "java(place.getParentId() == null ? branchAppMapper.toResponse(place.getBranch()) : null)")
+    @Mapping(target = "id", source = "place.id")
+    @Mapping(target = "code", source = "place.code")
+    @Mapping(target = "name", source = "place.name")
+    @Mapping(target = "layout", source = "place.layout")
+    @Mapping(target = "placeType", source = "place.placeType")
+    @Mapping(target = "children", expression = "java(buildChildren(place, places))")
     PlaceHierarchyResponse toResponseHierarchy(Place place, List<Place> places);
 
 //    @Mapping(target = "branchId", source = "branch.id")
@@ -35,7 +39,8 @@ public interface PlaceAppMapper {
     void updateDomainFromDto(PlaceUpdateRequest request, @MappingTarget Place domain);
 
 
-  /*  default List<PlaceHierarchyResponse> buildChildren(Place place, List<Place> places) {
+
+    default List<PlaceHierarchyResponse> buildChildren(Place place, List<Place> places) {
         List<PlaceHierarchyResponse> children = new ArrayList<>();
         for (Place p : places) {
             if (p.getParentId() != null && p.getParentId().equals(place.getId())) {
@@ -53,5 +58,5 @@ public interface PlaceAppMapper {
             }
         }
         return rootPlaces;
-    }*/
+    }
 }

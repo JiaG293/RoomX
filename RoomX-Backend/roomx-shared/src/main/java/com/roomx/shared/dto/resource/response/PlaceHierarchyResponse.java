@@ -14,7 +14,6 @@ import java.util.List;
 @Builder
 public class PlaceHierarchyResponse {
     private String id;
-    private String parentId;
     private String code;
     private String name;
     private String layout;

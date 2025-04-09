@@ -46,15 +46,11 @@ public class PlaceEntityServiceImpl implements PlaceEntityService {
     @Transactional
     @Override
     public Place createPlaceFloor(PlaceCreateRequest request) {
+        Place placeFloorReturn = new Place();
+
         var placeBuilding = placeRepository.findById(request.getParentId())
                 .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND));
 
-        var checkPlaceFloorExist = placeRepository
-                .findByPlaceTypeAndParentIdAndCode(PlaceType.FLOOR.toString(), request.getParentId(), request.getCode());
-
-        if (checkPlaceFloorExist.isPresent()) {
-            throw new AppException(ErrorCode.PLACE_CONFLICT, request.getPlaceType(), request.getCode());
-        }
 
         var nameFloor = request.getName() == null ?
                 PlaceType.FLOOR.getDisplayName() + " " + request.getCode():
@@ -69,8 +65,16 @@ public class PlaceEntityServiceImpl implements PlaceEntityService {
                 .status(DeleteStatusType.ACTIVE.toString())
                 .build();
 
+        var checkPlaceFloorExist = placeRepository
+                .findByPlaceTypeAndParentIdAndCode(PlaceType.FLOOR.toString(), request.getParentId(), request.getCode());
 
-        return placeRepository.save(placeFloorDomain);
+        if (checkPlaceFloorExist.isPresent()) {
+            placeFloorReturn = checkPlaceFloorExist.get();
+        } else {
+            placeFloorReturn = placeRepository.save(placeFloorDomain);
+        }
+
+        return placeFloorReturn;
     }
 
 

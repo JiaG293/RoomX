@@ -78,15 +78,18 @@ public class PlaceAppService {
                 .parentId(placeBranchDomain.getId())
                 .build();
 
-        var checkBuilding = placeRepository.findByPlaceTypeAndCode(placeBuildingDomain.getPlaceType(), placeBuildingDomain.getCode());
+        var checkBuilding = placeRepository
+                .findByPlaceTypeAndCodeAndParentId(placeBuildingDomain.getPlaceType(), placeBuildingDomain.getCode(), placeBranchDomain.getId().toString());
         if (checkBuilding.isPresent()) {
+            log.info("data 1 {}", placeBuildingDomain);
             placeBuildingDomain = checkBuilding.get();
+            log.info("data 2 {}", placeBuildingDomain);
         } else {
             placeBuildingDomain = placeRepository.save(placeBuildingDomain);
         }
 
 
-
+        log.info("data 3{}", placeBuildingDomain);
 
         placeAllDomain.add(placeBuildingDomain);
 

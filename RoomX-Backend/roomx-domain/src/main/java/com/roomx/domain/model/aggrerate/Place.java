@@ -23,5 +23,6 @@ public class Place {
     @Builder.Default
     private String placeType = PlaceType.BRANCH.toString();
 
+    private Place place;
 
 }
