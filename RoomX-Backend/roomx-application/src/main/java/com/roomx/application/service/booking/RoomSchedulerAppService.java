@@ -1,19 +1,19 @@
 package com.roomx.application.service.booking;
 
+import com.roomx.shared.dto.booking.base.TimeRange;
+import com.roomx.shared.dto.booking.base.TimeRangeWithDate;
 import com.roomx.domain.event.Event;
 import com.roomx.domain.model.aggrerate.Booking;
 import com.roomx.domain.model.aggrerate.BookingRequest;
 import com.roomx.domain.model.aggrerate.Room;
 import com.roomx.domain.model.entity.BookingParticipant;
+import com.roomx.domain.model.entity.DateRequestException;
 import com.roomx.domain.model.vo.BookingParticipantId;
 import com.roomx.domain.repository.*;
 import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
 import com.roomx.shared.dto.booking.base.SuggestedTimeSlotDto;
 import com.roomx.shared.enums.BookingStatusType;
-import com.roomx.shared.enums.PlaceType;
 import com.roomx.shared.enums.RoomStatusType;
-import com.roomx.shared.exception.exception.AppException;
-import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @Slf4j
@@ -677,6 +676,351 @@ public class RoomSchedulerAppService {
         }
         return results;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+            String branchId,
+            List<LocalDate> occurrences, List<DateRequestException> dateRequestExceptions,
+            LocalTime timeStart, LocalTime timeEnd,
+            Integer capacity, List<String> participants, Integer bufferTime) {
+
+        List<RoomScheduleResultDto> results = new ArrayList<>();
+        int requiredCapacity = (capacity != null && capacity > 0) ? capacity : participants.size() + 1;
+
+        for (LocalDate date : occurrences) {
+            List<Booking> existingBookings = bookingRepository.findAllByMeetingDateAndContainsStatus(
+                    date, BookingStatusType.getListAccept());
+
+            log.info("\n\n\n\n\n\n\n\n\n existingBookings: {} \n\n\n\n\n\n\n", existingBookings);
+
+            List<UUID> bookedRoomIds = existingBookings.stream()
+                    .map(booking -> booking.getRoom().getId())
+                    .collect(Collectors.toList());
+
+            List<Room> availableRooms = (branchId != null)
+                    ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
+                    : roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
+
+            // Lọc danh sách phòng, chỉ lấy các phòng chưa được đặt trước đó
+            availableRooms = availableRooms.stream()
+                    .filter(room -> !bookedRoomIds.contains(room.getId()))
+                    .collect(Collectors.toList());
+
+            List<Event> events = new ArrayList<>();
+
+            for (Booking booking : existingBookings) {
+                if (booking.getRoom() != null && booking.getRoom().getRoomClass() != null) {
+                    int roomCapacity = booking.getRoom().getRoomClass().getCapacity();
+                    events.add(new Event(booking.getMeetingStart().minusMinutes(bufferTime), roomCapacity, true));
+                    events.add(new Event(booking.getMeetingEnd().plusMinutes(bufferTime), roomCapacity, false));
+                }
+            }
+
+            events.add(new Event(timeStart.minusMinutes(bufferTime), requiredCapacity, true));
+            events.add(new Event(timeEnd.plusMinutes(bufferTime), requiredCapacity, false));
+
+            events.sort((e1, e2) -> e1.getTime().equals(e2.getTime())
+                    ? Boolean.compare(e1.isStart(), e2.isStart())
+                    : e1.getTime().compareTo(e2.getTime()));
+
+            int currentCapacity = 0;
+            int maxCapacityNeeded = 0;
+            List<LocalTime> availableTimeSlots = new ArrayList<>();
+            LocalTime lastEndTime = LocalTime.MIN;
+
+            for (Event event : events) {
+                if (currentCapacity == 0 && lastEndTime.isBefore(event.getTime())) {
+                    availableTimeSlots.add(lastEndTime);
+                    availableTimeSlots.add(event.getTime());
+                }
+
+                currentCapacity += event.isStart() ? event.getCapacity() : -event.getCapacity();
+                maxCapacityNeeded = Math.max(maxCapacityNeeded, currentCapacity);
+
+                if (!event.isStart()) {
+                    lastEndTime = event.getTime();
+                }
+            }
+
+            // Thêm khoảng trống cuối ngày nếu còn
+            LocalTime adjustedMax = LocalTime.of(23, 59);
+            if (lastEndTime.isBefore(adjustedMax)) {
+                availableTimeSlots.add(lastEndTime);
+                availableTimeSlots.add(adjustedMax);
+            }
+
+            int finalMaxCapacityNeeded = maxCapacityNeeded;
+            Room optimalRoom = availableRooms.stream()
+                    .filter(room -> room.getRoomClass().getCapacity() >= finalMaxCapacityNeeded)
+                    .sorted(Comparator.comparingInt(room -> room.getRoomClass().getCapacity()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (optimalRoom != null) {
+                results.add(new RoomScheduleResultDto(
+                        date,
+                        false,
+                        optimalRoom.getId().toString(),
+                        null
+                ));
+                continue;
+            }
+
+            for (Room room : availableRooms) {
+                List<String> timeMorning = new ArrayList<>();
+                List<String> timeAfternoon = new ArrayList<>();
+
+                for (int i = 0; i < availableTimeSlots.size() - 1; i += 2) {
+                    LocalTime start = availableTimeSlots.get(i).plusMinutes(bufferTime);
+                    LocalTime end = availableTimeSlots.get(i + 1).minusMinutes(bufferTime);
+
+                    if (start.isBefore(end)) {
+                        if (end.isBefore(LocalTime.NOON)) { // Khung thời gian trong buổi sáng
+                            timeMorning.add(start + " - " + end);
+                        } else if (start.isAfter(LocalTime.NOON)) { // Khung thời gian buổi chiều
+                            timeAfternoon.add(start + " - " + end);
+                        } else { // Giao thoa giữa sáng và chiều
+                            if (start.isBefore(LocalTime.NOON)) { // Khung thời gian buổi sáng
+                                timeMorning.add(start + " - " + LocalTime.NOON);
+                            }
+                            if (end.isAfter(LocalTime.NOON)) { // Khung thời gian buổi chiều
+                                timeAfternoon.add(LocalTime.NOON + " - " + end);
+                            }
+                        }
+                    }
+                }
+
+                if (!timeMorning.isEmpty() || !timeAfternoon.isEmpty()) {
+                    SuggestedTimeSlotDto suggestedTimeSlots = new SuggestedTimeSlotDto(timeMorning, timeAfternoon);
+
+                    results.add(new RoomScheduleResultDto(
+                            date,
+                            true,
+                            room.getId().toString(),
+                            suggestedTimeSlots
+                    ));
+                }
+            }
+        }
+        return results;
+    }*/
+
+
+    public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+            String branchId,
+            List<LocalDate> occurrences,
+            List<DateRequestException> dateRequestExceptions,
+            LocalTime timeStart, LocalTime timeEnd,
+            Integer capacity,
+            List<String> participants,
+            Integer bufferTime) {
+
+        // Tính ra participants size nếu người dùng không yêu cầu sức chứa
+        List<RoomScheduleResultDto> results = new ArrayList<>();
+        int requiredCapacity = (capacity != null && capacity > 0) ? capacity : participants.size() + 1;
+
+        Map<LocalDate, DateRequestException> exceptionMap = dateRequestExceptions.stream()
+                .collect(Collectors.toMap(DateRequestException::getDate, e -> e));
+
+        // Lấy ra các phòng khả dụng tại thời điểm hiện tại
+        List<Room> availableRooms = (branchId != null)
+                ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
+                : roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
+
+        // Duyệt qua tất cả các ngày để áp dụng sweepline
+        for (LocalDate date : occurrences) {
+            // Lấy tất cả các phòng hiện đang được họp hoặc đã lên lịch
+            List<Booking> bookings = bookingRepository.findAllByMeetingDateAndContainsStatus(
+                    date, BookingStatusType.getListAccept());
+
+            Map<UUID, List<Booking>> bookingsByRoom = bookings.stream()
+                    .filter(b -> b.getRoom() != null)
+                    .collect(Collectors.groupingBy(b -> b.getRoom().getId()));
+
+            LocalTime originalStart = timeStart;
+            LocalTime originalEnd = timeEnd;
+
+            Room optimalRoom = availableRooms.stream()
+                    .sorted(Comparator.comparingInt(r -> r.getRoomClass().getCapacity()))
+                    .filter(room -> {
+                        if (room.getRoomClass().getCapacity() < requiredCapacity) return false;
+                        List<Booking> roomBookings = bookingsByRoom.getOrDefault(room.getId(), Collections.emptyList());
+                        return !hasConflict(roomBookings, originalStart, originalEnd, bufferTime);
+                    })
+                    .findFirst()
+                    .orElse(null);
+
+            if (optimalRoom != null) {
+                results.add(new RoomScheduleResultDto(date, false, optimalRoom.getId().toString(), null));
+                continue;
+            }
+
+            // Gợi ý slot nếu không phòng nào trống (nhiều phòng một ngày)
+            /*for (Room room : availableRooms) {
+                if (room.getRoomClass().getCapacity() < requiredCapacity) continue;
+
+                List<Booking> roomBookings = bookingsByRoom.getOrDefault(room.getId(), Collections.emptyList());
+                List<TimeRange> busy = roomBookings.stream()
+                        .map(b -> new TimeRange(
+                                b.getMeetingStart().minusMinutes(bufferTime),
+                                b.getMeetingEnd().plusMinutes(bufferTime)))
+                        .sorted(Comparator.comparing(TimeRange::start))
+                        .collect(Collectors.toList());
+
+                List<TimeRange> free = findFreeTimeSlots(busy);
+
+                List<String> timeMorning = new ArrayList<>();
+                List<String> timeAfternoon = new ArrayList<>();
+
+                for (TimeRange slot : free) {
+                    LocalTime start = slot.start().plusMinutes(bufferTime);
+                    LocalTime end = slot.end().minusMinutes(bufferTime);
+                    if (!start.isBefore(end)) continue;
+
+                    if (end.isBefore(LocalTime.NOON)) {
+                        timeMorning.add(start + " - " + end);
+                    } else if (start.isAfter(LocalTime.NOON)) {
+                        timeAfternoon.add(start + " - " + end);
+                    } else {
+                        if (start.isBefore(LocalTime.NOON)) {
+                            timeMorning.add(start + " - " + LocalTime.NOON);
+                        }
+                        if (end.isAfter(LocalTime.NOON)) {
+                            timeAfternoon.add(LocalTime.NOON + " - " + end);
+                        }
+                    }
+                }
+
+                SuggestedTimeSlotDto suggestedTimeSlotDto = null;
+                boolean hasConflict = true;
+
+                // Kiểm tra các date request exception thay thế thời gian
+                if (exceptionMap.containsKey(date)) {
+                    DateRequestException exception = exceptionMap.get(date);
+                    LocalTime newStart = exception.getStartTime();
+                    LocalTime newEnd = exception.getEndTime();
+
+                    for (TimeRange slot : free) {
+                        LocalTime start = slot.start().plusMinutes(bufferTime);
+                        LocalTime end = slot.end().minusMinutes(bufferTime);
+                        if (!start.isBefore(end)) continue;
+
+                        if (!newStart.isBefore(start) && !newEnd.isAfter(end)) {
+                            hasConflict = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (hasConflict) {
+                    if (!timeMorning.isEmpty() || !timeAfternoon.isEmpty()) {
+                        suggestedTimeSlotDto = new SuggestedTimeSlotDto(timeMorning, timeAfternoon);
+                    } else {
+                        continue;
+                    }
+                }
+
+                results.add(new RoomScheduleResultDto(
+                        date,
+                        hasConflict,
+                        room.getId().toString(),
+                        suggestedTimeSlotDto
+                ));
+            }*/
+
+            // Chỉ lấy phòng tối ưu nhất
+            for (Room room : availableRooms) {
+                if (room.getRoomClass().getCapacity() < requiredCapacity) continue;
+
+                List<Booking> roomBookings = bookingsByRoom.getOrDefault(room.getId(), Collections.emptyList());
+                List<TimeRange> busy = roomBookings.stream()
+                        .map(b -> new TimeRange(
+                                b.getMeetingStart().minusMinutes(bufferTime),
+                                b.getMeetingEnd().plusMinutes(bufferTime)))
+                        .sorted(Comparator.comparing(TimeRange::start))
+                        .collect(Collectors.toList());
+
+                List<TimeRange> free = findFreeTimeSlots(busy);
+
+                List<String> timeMorning = new ArrayList<>();
+                List<String> timeAfternoon = new ArrayList<>();
+
+                for (TimeRange slot : free) {
+                    LocalTime start = slot.start().plusMinutes(bufferTime);
+                    LocalTime end = slot.end().minusMinutes(bufferTime);
+                    if (!start.isBefore(end)) continue;
+
+                    if (end.isBefore(LocalTime.NOON)) {
+                        timeMorning.add(start + " - " + end);
+                    } else if (start.isAfter(LocalTime.NOON)) {
+                        timeAfternoon.add(start + " - " + end);
+                    } else {
+                        if (start.isBefore(LocalTime.NOON)) {
+                            timeMorning.add(start + " - " + LocalTime.NOON);
+                        }
+                        if (end.isAfter(LocalTime.NOON)) {
+                            timeAfternoon.add(LocalTime.NOON + " - " + end);
+                        }
+                    }
+                }
+
+                if (!timeMorning.isEmpty() || !timeAfternoon.isEmpty()) {
+                    results.add(new RoomScheduleResultDto(date, true, room.getId().toString(),
+                            new SuggestedTimeSlotDto(timeMorning, timeAfternoon)));
+                    break;
+                }
+            }
+        }
+
+        return results;
+    }
+
+
+    private boolean hasConflict(List<Booking> bookings, LocalTime start, LocalTime end, int bufferTime) {
+        for (Booking b : bookings) {
+            LocalTime bStart = b.getMeetingStart().minusMinutes(bufferTime);
+            LocalTime bEnd = b.getMeetingEnd().plusMinutes(bufferTime);
+            if (!end.isBefore(bStart) && !start.isAfter(bEnd)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<TimeRange> findFreeTimeSlots(List<TimeRange> busySlots) {
+        List<TimeRange> free = new ArrayList<>();
+        LocalTime current = LocalTime.MIN;
+
+        for (TimeRange busy : busySlots) {
+            if (current.isBefore(busy.start())) {
+                free.add(new TimeRange(current, busy.start()));
+            }
+            current = busy.end().isAfter(current) ? busy.end() : current;
+        }
+
+        if (current.isBefore(LocalTime.of(23, 59))) {
+            free.add(new TimeRange(current, LocalTime.of(23, 59)));
+        }
+
+        return free;
+    }
+
+
+
+
+
 
 
 

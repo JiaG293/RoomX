@@ -1,5 +1,6 @@
 package com.roomx.application.service;
 
+import com.roomx.application.service.booking.RoomSchedulerAppService;
 import com.roomx.domain.model.aggrerate.Room;
 import com.roomx.infrastructure.cache.redis.RedisTenantService;
 import com.roomx.infrastructure.distributed.kafka.config.KafkaConfig;
@@ -22,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +40,7 @@ public class TestAppService {
     private final RoleEvaluator roleEvaluator;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final KafkaTenantService kafkaTenantService;
+    private final RoomSchedulerAppService roomSchedulerAppService;
 
 
     public Object testAppService() {
@@ -50,6 +54,7 @@ public class TestAppService {
 
         var result = redisTenantService.getObject(key, HashMap.class);*/
 
+        redisTenantService.put("helo", "12", 30, TimeUnit.SECONDS);
 
         return "ok";
     }

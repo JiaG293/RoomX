@@ -32,7 +32,9 @@ public class RedissonConfig {
                 .setAddress(redisUrl)
                 .setUsername(username.isEmpty() ? null : username)
                 .setPassword(password.isEmpty() ? null : password)
-                .setConnectionPoolSize(50)
+                .setConnectionPoolSize(100)
+                .setConnectionMinimumIdleSize(5)
+                .setIdleConnectionTimeout(30000)
                 .setDatabase(0);
 
         log.info("address info redis: {}", server.getAddress());

@@ -4,6 +4,7 @@ import com.roomx.domain.model.aggrerate.ApprovalForm;
 import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.shared.dto.booking.request.BookingRequestCreateRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
+import com.roomx.shared.dto.booking.request.CheckingBookingRequest;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.domain.model.aggrerate.BookingRequest;
 import com.roomx.shared.dto.booking.response.BookingUserRelatedResponse;
@@ -16,7 +17,8 @@ import java.time.Instant;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {
                 EquipmentRequestAppMapper.class,
-                ServiceRequestAppMapper.class
+                ServiceRequestAppMapper.class,
+                DateRequestExceptionAppMapper.class
         }
 )
 public interface BookingRequestAppMapper {
@@ -41,4 +43,6 @@ public interface BookingRequestAppMapper {
     @Mapping(target = "createdAt", expression = "java(approvalForm.getCreatedAt())")
     @Mapping(target = "updatedAt", expression = "java(approvalForm.getUpdatedAt())")
     BookingUserRelatedResponse toResponseFromApprovalFormForUser(BookingRequest bookingRequest, @Context ApprovalForm approvalForm);
+
+    BookingRequest toDomainChecking(CheckingBookingRequest request);
 }

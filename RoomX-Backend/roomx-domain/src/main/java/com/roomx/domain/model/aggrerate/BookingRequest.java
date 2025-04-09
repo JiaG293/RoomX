@@ -1,5 +1,6 @@
 package com.roomx.domain.model.aggrerate;
 
+import com.roomx.domain.model.entity.DateRequestException;
 import com.roomx.domain.model.entity.EquipmentRequest;
 import com.roomx.domain.model.entity.ServiceRequest;
 
@@ -45,6 +46,8 @@ public class BookingRequest {
 
     private Instant endDateApproval;
     private String approvalStatus;
+
+    private List<DateRequestException> dateRequestExceptions;
 
 
 

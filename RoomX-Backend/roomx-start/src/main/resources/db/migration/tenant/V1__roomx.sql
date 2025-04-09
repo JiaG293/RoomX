@@ -27,11 +27,11 @@ CREATE  TABLE booking_request_participant (
 
 CREATE  TABLE date_request_exception (
                                          date_booking_id      uuid  NOT NULL  ,
-                                         booking_request_id   uuid    ,
                                          "date"               date    ,
                                          start_time           time    ,
                                          end_time             time    ,
                                          room_id              uuid    ,
+                                         booking_request_id   uuid    ,
                                          CONSTRAINT pk_date_booking PRIMARY KEY ( date_booking_id )
 );
 
@@ -229,7 +229,7 @@ CREATE  TABLE group_member (
 
 CREATE  TABLE room (
                        room_id              uuid  NOT NULL  ,
-                       floor_id             uuid  NOT NULL  ,
+                       place_id             uuid  NOT NULL  ,
                        status               varchar(32)    ,
                        description          text    ,
                        room_class_id        uuid  NOT NULL  ,
@@ -322,7 +322,7 @@ ALTER TABLE group_member ADD CONSTRAINT fk_thanh_vien_nhom_nguoi_dung FOREIGN KE
 
 ALTER TABLE room ADD CONSTRAINT fk_phong_hop_loai_phong FOREIGN KEY ( room_class_id ) REFERENCES room_class( room_class_id );
 
-ALTER TABLE room ADD CONSTRAINT fk_phong_hop_vi_tri FOREIGN KEY ( floor_id ) REFERENCES place( place_id );
+ALTER TABLE room ADD CONSTRAINT fk_phong_hop_vi_tri FOREIGN KEY ( place_id ) REFERENCES place( place_id );
 
 ALTER TABLE room_class_price_history ADD CONSTRAINT fk_room_class_price_history_room_class FOREIGN KEY ( room_class_id ) REFERENCES room_class( room_class_id );
 

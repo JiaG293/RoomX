@@ -40,6 +40,16 @@ public class BookingController {
                 .build();
     }*/
 
+
+    @GetMapping("/checking")
+    public ResultResponse<?> createBookingRequest(
+            @Validated @RequestBody CheckingBookingRequest request) {
+        var result = bookingAppService.checkingBookingRequest(request);
+        return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
     @PostMapping
     public ResultResponse<?> createBookingRequest(
             @Validated @RequestBody BookingRequestUserCreateRequest request) {

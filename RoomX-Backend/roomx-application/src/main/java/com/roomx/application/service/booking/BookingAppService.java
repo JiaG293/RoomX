@@ -43,8 +43,10 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.time.temporal.WeekFields;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -91,6 +93,7 @@ public class BookingAppService {
     private final BookingServiceAppMapper bookingServiceAppMapper;
     private final BookingEquipmentAppMapper bookingEquipmentAppMapper;
     private final BookingParticitipantAppMapper bookingParticitipantAppMapper;
+    private final RoleEvaluator roleEvaluator;
 
 
     /*@Transactional
@@ -127,8 +130,40 @@ public class BookingAppService {
 
         return bookingRequestAppMapper.toResponse(bookingRequestDomain);
     }*/
-    private static final Logger logger = LoggerFactory.getLogger(BookingAppService.class);
-    private final RoleEvaluator roleEvaluator;
+
+
+    @Transactional
+    public Object checkingBookingRequest(CheckingBookingRequest request) {
+        BookingRequest bookingRequestDomain = bookingRequestAppMapper.toDomainChecking(request);
+
+        /*var bookingRequest = BookingRequest.builder()
+                .daysOfWeek(request.getDaysOfWeek())
+                .priority((short) request.getPriority())
+                .capacity(request.getCapacity())
+                .recurrenceInterval((short) request.getRecurrenceInterval())
+                .endTime(request.getEndTime())
+                .startTime(request.getStartTime())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .branchId(UUID.fromString(request.getBranchId()))
+                .roomId(UUID.fromString(request.getRoomId()))
+                .build();*/
+        var listOccurrences = bookingRequestDomain.getOccurrences();
+        List<DateRequestException> dateExceptions = bookingRequestDomain.getDateRequestExceptions() != null ? bookingRequestDomain.getDateRequestExceptions() : Collections.EMPTY_LIST;
+
+        log.info("check time: {}", dateExceptions);
+        List<RoomScheduleResultDto> resposne = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+                request.getBranchId(),
+                listOccurrences,
+                dateExceptions,
+                bookingRequestDomain.getStartTime(),
+                bookingRequestDomain.getEndTime(),
+                bookingRequestDomain.getCapacity(),
+                bookingRequestDomain.getParticipants(),
+                10
+        );
+        return resposne;
+    }
 
     @Transactional
     public BookingRequestResponse createBookingRequest(BookingRequestUserCreateRequest request) {
@@ -377,13 +412,13 @@ public class BookingAppService {
         log.info("Date range: {} -> {} | Instant range: {} -> {}", startDate, endDate, startInstant, endInstant);
 
         Page<ApprovalForm> approvalFormPage = null;
-        if(!roleEvaluator.hasAnyRoleType("approve")){
+        if (!roleEvaluator.hasAnyRoleType("approve")) {
             approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeWithBookingRequest(
                     ApprovalStatusType.getListCanApproval(), startInstant, endInstant, pageable);
 
         } else {
             approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeAndRequesterWithBookingRequest(
-                    ApprovalStatusType.getListCanApproval(),startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
+                    ApprovalStatusType.getListCanApproval(), startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
         }
 
         return approvalFormPage.map(approvalForm ->
@@ -408,7 +443,7 @@ public class BookingAppService {
                 .findAllBookingId(bookingDomain.getId().toString())
                 .stream().map(bookingParticitipantAppMapper::toResponse)
                 .toList();
-        var servicesBooking= bookingServiceRepository
+        var servicesBooking = bookingServiceRepository
                 .findAllByBookingId(bookingDomain.getId().toString())
                 .stream().map(BookingService::getService)
                 .map(serviceAppMapper::toResponse)
@@ -466,8 +501,6 @@ public class BookingAppService {
                 bookingRequestAppMapper.toResponseFromApprovalForm(approvalForm.getBookingRequest(), approvalForm)
         );
     }*/
-
-
 
 
     private String generateBookingCode(LocalDate meetingDate) {

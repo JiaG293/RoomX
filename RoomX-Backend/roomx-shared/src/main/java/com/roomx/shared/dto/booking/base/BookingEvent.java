@@ -1,4 +1,4 @@
-package com.roomx.domain.event;
+package com.roomx.shared.dto.booking.base;
 
 import java.time.LocalTime;
 

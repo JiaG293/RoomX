@@ -1,8 +1,6 @@
 package com.roomx.domain.repository;
 
-import com.roomx.domain.dto.BookingDto;
 import com.roomx.domain.model.aggrerate.Booking;
-import com.roomx.domain.model.aggrerate.Room;
 
 import java.time.LocalDate;
 import java.util.List;

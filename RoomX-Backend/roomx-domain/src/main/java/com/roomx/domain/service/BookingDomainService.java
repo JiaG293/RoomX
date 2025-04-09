@@ -1,10 +1,9 @@
 package com.roomx.domain.service;
 
-import com.roomx.domain.event.BookingEvent;
+import com.roomx.shared.dto.booking.base.BookingEvent;
 import com.roomx.domain.model.aggrerate.Booking;
 import com.roomx.domain.repository.BookingRepository;
 import com.roomx.shared.enums.BookingStatusType;
-import com.roomx.shared.exception.exception.AppException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
