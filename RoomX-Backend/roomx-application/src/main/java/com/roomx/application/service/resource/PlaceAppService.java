@@ -264,4 +264,33 @@ public class PlaceAppService {
             placeRepository.save(placeDomain);
         }
     }
+
+
+    public Map<String, PlaceResponse> getDetailPlaceById(String placeId) {
+        var result = new LinkedHashMap<String, PlaceResponse>();
+
+        var current = placeRepository.findById(placeId)
+                .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, placeId));
+
+        while (current != null) {
+            var response = placeAppMapper.toResponse(current);
+            result.put(current.getPlaceType().toLowerCase(), response);
+            var parentId = current.getParentId();
+            if (parentId != null) {
+                current = placeRepository.findById(parentId.toString()).orElse(null);
+            } else {
+                break;
+            }
+        }
+
+        var order = List.of("branch", "building", "floor");
+        var sorted = new LinkedHashMap<String, PlaceResponse>();
+        for (String type : order) {
+            if (result.containsKey(type)) {
+                sorted.put(type, result.get(type));
+            }
+        }
+
+        return sorted;
+    }
 }

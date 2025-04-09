@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -110,8 +111,10 @@ public class PlaceController {
 
     @GetMapping("/{placeId}")
     public ResultResponse<?> getDetailPlace(@PathVariable String placeId) {
-
-        return ResultResponse.<Void>builder().build();
+            var result = placeAppService.getDetailPlaceById(placeId);
+        return ResultResponse.<Map<String, PlaceResponse>>builder()
+                .result(result)
+                .build();
     }
 
     @DeleteMapping("/{placeId}")
