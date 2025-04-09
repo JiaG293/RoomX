@@ -267,30 +267,28 @@ public class PlaceAppService {
 
 
     public Map<String, PlaceResponse> getDetailPlaceById(String placeId) {
-        var result = new LinkedHashMap<String, PlaceResponse>();
+        Map<String, PlaceResponse> result = new LinkedHashMap<>();
+        List<String> order = List.of("branch", "building", "floor");
 
-        var current = placeRepository.findById(placeId)
-                .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, placeId));
+        order.forEach(type -> result.put(type, null));
 
-        while (current != null) {
-            var response = placeAppMapper.toResponse(current);
-            result.put(current.getPlaceType().toLowerCase(), response);
-            var parentId = current.getParentId();
-            if (parentId != null) {
-                current = placeRepository.findById(parentId.toString()).orElse(null);
-            } else {
-                break;
-            }
-        }
+        Map<String, Place> cache = new HashMap<>();
 
-        var order = List.of("branch", "building", "floor");
-        var sorted = new LinkedHashMap<String, PlaceResponse>();
-        for (String type : order) {
+        String currentId = placeId;
+        while (currentId != null) {
+            Place place = cache.computeIfAbsent(currentId, id ->
+                    placeRepository.findById(id)
+                            .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, id))
+            );
+
+            String type = place.getPlaceType().toLowerCase();
             if (result.containsKey(type)) {
-                sorted.put(type, result.get(type));
+                result.put(type, placeAppMapper.toResponse(place));
             }
+
+            currentId = place.getParentId() != null ? place.getParentId().toString() : null;
         }
 
-        return sorted;
+        return result;
     }
 }
