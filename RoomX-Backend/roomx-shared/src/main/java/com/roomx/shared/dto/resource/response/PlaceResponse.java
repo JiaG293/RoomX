@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class PlaceResponse {
     private String id;
-    private BranchResponse branch;
     private String parentId;
     private String code;
     private String name;

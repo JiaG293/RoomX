@@ -10,10 +10,10 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE/*,
+       *//* uses = {
                 BranchEntityMapper.class
-        }
+        }*/
 )
 public interface PlaceEntityMapper {
 
@@ -21,9 +21,9 @@ public interface PlaceEntityMapper {
 
     PlaceEntity toEntity(Place domain);
 
-    @Mapping(target = "branch.id", source = "branchId")
+//    @Mapping(target = "branch.id", source = "branchId")
     Place toPlaceDto(PlaceDto placeDto);
 
-    @Mapping(target = "branch", ignore = true) // Nếu branch là lazy, nó sẽ bị load
+//    @Mapping(target = "branch", ignore = true) // Nếu branch là lazy, nó sẽ bị load
     Place toDomainLazy(PlaceEntity entity);
 }

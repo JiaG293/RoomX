@@ -48,7 +48,7 @@ spring:
       ddl-auto: ${JPA_DDL_AUTO:none}
     properties: # Nếu hibernate không tìm thấy schema mặc định sẽ đi vào đây (cấp thấp hơn hikari)
       hibernate:
-        generate_statistics: true
+#        generate_statistics: true
         format_sql: true
         use_sql_comments: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -104,11 +104,11 @@ spring:
       connect-timeout: 30000
 
   kafka:
-    bootstrap-servers: ${KAFKA_SERVER_URL:localhost:9092}
+    bootstrap-servers: ${KAFKA_SERVER_URL:localhost:9094}
     listener:
       missing-topics-fatal: false
     consumer:
-      group-id: roomx-group
+      group-id: group-default
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -119,7 +119,6 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.trusted.packages: "*"
-
 minio:
   url: ${MINIO_URL:http://localhost:9000}
   domain: ${MINIO_DOMAIN:s3.domain.com}
@@ -196,7 +195,9 @@ multitenancy:
 
 
 
-
+###    FIREBASE
+firebase:
+  service-account: ${FIREBASE_SERVICE_ACCOUNT:}
 
 ### LOG
 
@@ -238,10 +239,10 @@ management:
 
 
 
-logging:
-  level:
-    org.springframework.transaction: DEBUG
-    org.hibernate.sql: DEBUG
+#logging:
+#  level:
+#    org.springframework.transaction: DEBUG
+#    org.hibernate.sql: DEBUG
 #  pattern:
 #    correlation: '[%X{traceId:-}-%X{spanId:-}] [%X{tenantId:-}] '
 

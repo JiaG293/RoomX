@@ -7,7 +7,6 @@ import com.roomx.application.mapper.PlaceAppMapper;
 import com.roomx.domain.model.aggrerate.Place;
 import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.PlaceType;
-import com.roomx.domain.repository.BranchRepository;
 import com.roomx.domain.repository.PlaceRepository;
 import com.roomx.infrastructure.persistence.dto.PlaceFilter;
 import com.roomx.infrastructure.persistence.service.PlaceEntityService;
@@ -29,7 +28,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PlaceAppService {
     private final PlaceRepository placeRepository;
-    private final BranchRepository branchRepository;
     private final PlaceAppMapper placeAppMapper;
     private final PlaceEntityService placeEntityService;
 
@@ -37,20 +35,17 @@ public class PlaceAppService {
     public PlaceResponse createPlace(PlaceCreateRequest request) {
         Place savedPlace = null;
 
-        var branchDomain = branchRepository.findById(request.getBranchId())
-                .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));
-
         switch (request.getPlaceType()) {
             case "BRANCH": {
-                savedPlace = placeEntityService.createPlaceBranch(branchDomain, request);
+                savedPlace = placeEntityService.createPlaceBranch(request);
                 break;
             }
             case "BUILDING": {
-                savedPlace = placeEntityService.createPlaceBuilding(branchDomain, request);
+                savedPlace = placeEntityService.createPlaceBuilding(request);
                 break;
             }
             case "FLOOR": {
-                savedPlace = placeEntityService.createPlaceFloor(branchDomain, request);
+                savedPlace = placeEntityService.createPlaceFloor(request);
                 break;
             }
             default:
@@ -63,45 +58,56 @@ public class PlaceAppService {
 
 
     @Transactional
-    public PlaceHierarchyResponse createPlaceBuildingWithFloors(String placeBranchId, PlaceCreateBuildingWithFloorRequest request) {
+    public PlaceHierarchyResponse createPlaceBuildingWithFloors(String placeBranchIdOrCode, PlaceCreateBuildingWithFloorRequest request) {
         List<Place> placeAllDomain = new ArrayList<>();
 
-        var placeBranchDomain = placeRepository.findById(placeBranchId)
-                .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, placeBranchId));
+        var placeBranchDomain = placeBranchIdOrCode.length() <= 32 ?
+                placeRepository.findByCode(placeBranchIdOrCode)
+                        .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, "code", placeBranchIdOrCode)) :
+                placeRepository.findById(placeBranchIdOrCode)
+                        .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, "id", placeBranchIdOrCode));
+
+        var nameBuilding = PlaceType.BUILDING.getDisplayName() + " " + request.getCode();
 
         var placeBuildingDomain = Place.builder()
                 .placeType(PlaceType.BUILDING.toString())
                 .code(request.getCode())
-                .branch(placeBranchDomain.getBranch())
-                .name(PlaceType.BUILDING.getDisplayName() + " " + request.getCode())
+                .name(nameBuilding)
                 .layout(request.getLayout())
-                .status(DeleteStatusType.getDefaultString())
+                .status(DeleteStatusType.ACTIVE.toString())
                 .parentId(placeBranchDomain.getId())
                 .build();
 
+        var checkBuilding = placeRepository.findByPlaceTypeAndCode(placeBuildingDomain.getPlaceType(), placeBuildingDomain.getCode());
+        if (checkBuilding.isPresent()) {
+            placeBuildingDomain = checkBuilding.get();
+        } else {
+            placeBuildingDomain = placeRepository.save(placeBuildingDomain);
+        }
 
-        placeBuildingDomain = placeRepository.save(placeBuildingDomain);
+
+
 
         placeAllDomain.add(placeBuildingDomain);
 
 
         for (int i = 1; i <= request.getNumberFloor(); i++) {
-            if (request.getExceptions() != null && request.getExceptions().contains(i)) {
-                continue;
-            }
+            if (request.getExceptions() != null && request.getExceptions().contains(i)) continue;
 
-            String floorCode = String.valueOf(i);
+            var layout = i <= request.getLayouts().size() ? request.getLayouts().get(i - 1) : null;
+            var code = String.valueOf(i);
 
-            String layout = (i <= request.getLayouts().size()) ? request.getLayouts().get(i - 1) : null;
-
+            var nameFloor = PlaceType.FLOOR.getDisplayName() + " " + i;
             PlaceCreateRequest floorRequest = PlaceCreateRequest.builder()
                     .placeType(PlaceType.FLOOR.toString())
                     .parentId(placeBuildingDomain.getId().toString())
-                    .branchId(placeBranchDomain.getBranch().getId().toString())
                     .layout(layout)
-                    .code(floorCode)
+                    .name(nameFloor)
+                    .code(code)
                     .build();
-            var savedPlaceFloorDomain = placeEntityService.createPlaceFloor(placeBranchDomain.getBranch(), floorRequest);
+
+            var savedPlaceFloorDomain = placeEntityService.createPlaceFloor(floorRequest);
+
             placeAllDomain.add(savedPlaceFloorDomain);
         }
 
@@ -116,11 +122,11 @@ public class PlaceAppService {
         var placeDomain = placeRepository.findById(placeId)
                 .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, placeId));
 
-        if (request.getBranchId() != null) {
+        /*if (request.getBranchId() != null) {
             var branchDomain = branchRepository.findById(request.getBranchId())
                     .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND, request.getBranchId()));
             placeDomain.setBranch(branchDomain);
-        }
+        }*/
 
         placeAppMapper.updateDomainFromDto(request, placeDomain);
 

@@ -55,7 +55,6 @@ public class ServiceAppService {
                 .service(savedService)
                 .validFrom(Instant.now())
                 .unitPrice(request.getUnitPrice())
-                .active(true)
                 .build();
 
         var savedServicePrice = servicePriceHistoryRepository.save(servicePrice);
@@ -170,7 +169,6 @@ public class ServiceAppService {
 
         if (servicePriceOldDomain.isPresent()) {
             var oldPriceDomain = servicePriceOldDomain.get();
-            oldPriceDomain.setActive(false);
             oldPriceDomain.setValidEnd(validEnd);
             servicePriceHistoryRepository.save(oldPriceDomain);
 
@@ -180,7 +178,6 @@ public class ServiceAppService {
                 .service(serviceDomain)
                 .unitPrice(request.getUnitPrice())
                 .validFrom(validEnd)
-                .active(true)
                 .build();
 
         // logic add new roomClassPriceHistory

@@ -18,5 +18,4 @@ public class ServicePriceHistory {
     private BigDecimal unitPrice;
     private Instant validFrom;
     private Instant validEnd;
-    private boolean active;
 }

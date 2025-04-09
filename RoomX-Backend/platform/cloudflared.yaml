@@ -1,0 +1,13 @@
+networks:
+  roomx_network:
+    name: roomx_network
+    external: true
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared_tunnel_roomx
+    restart: always
+    #environment:
+    #TUNNEL_TOKEN: <TOKEN_CLOUDFLARED_TUNNEL>         # https://one.dash.cloudflare.com/networks/tunnels
+    networks:
+      - roomx_network

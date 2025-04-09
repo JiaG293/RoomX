@@ -15,7 +15,6 @@ import java.util.UUID;
 public class Place {
     private UUID id;
     private UUID parentId;
-    private Branch branch;
     private String name;
     private String code;
     private String layout;
@@ -24,10 +23,5 @@ public class Place {
     @Builder.Default
     private String placeType = PlaceType.BRANCH.toString();
 
-
-
-    public String getPlaceTypeDefault() {
-        return placeType != null ? placeType : PlaceType.BRANCH.toString();
-    }
 
 }

@@ -12,30 +12,30 @@ import java.util.*;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE/*,
         uses = {
                 BranchAppMapper.class
-        }
+        }*/
 )
 public interface PlaceAppMapper {
 
-    @Mapping(target = "branch", ignore = true)
+//    @Mapping(target = "branch", ignore = true)
     Place toDomain(PlaceCreateRequest request);
 
     PlaceResponse toResponse(Place domain);
 
-    @Mapping(target = "children", expression = "java(buildChildren(place, places))")
-    @Mapping(target = "branch", expression = "java(place.getParentId() == null ? branchAppMapper.toResponse(place.getBranch()) : null)")
+//    @Mapping(target = "children", expression = "java(buildChildren(place, places))")
+//    @Mapping(target = "branch", expression = "java(place.getParentId() == null ? branchAppMapper.toResponse(place.getBranch()) : null)")
     PlaceHierarchyResponse toResponseHierarchy(Place place, List<Place> places);
 
-    @Mapping(target = "branchId", source = "branch.id")
+//    @Mapping(target = "branchId", source = "branch.id")
     PlaceBranchResponse toResponseBranch(Place domain);
 
     @Mapping(target = "id", ignore = true)
     void updateDomainFromDto(PlaceUpdateRequest request, @MappingTarget Place domain);
 
 
-    default List<PlaceHierarchyResponse> buildChildren(Place place, List<Place> places) {
+  /*  default List<PlaceHierarchyResponse> buildChildren(Place place, List<Place> places) {
         List<PlaceHierarchyResponse> children = new ArrayList<>();
         for (Place p : places) {
             if (p.getParentId() != null && p.getParentId().equals(place.getId())) {
@@ -53,5 +53,5 @@ public interface PlaceAppMapper {
             }
         }
         return rootPlaces;
-    }
+    }*/
 }

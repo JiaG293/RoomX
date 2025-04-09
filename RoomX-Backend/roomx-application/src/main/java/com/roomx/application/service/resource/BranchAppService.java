@@ -1,16 +1,14 @@
+/*
 package com.roomx.application.service.resource;
 
 import com.roomx.application.mapper.PlaceAppMapper;
 import com.roomx.domain.model.aggrerate.Place;
 import com.roomx.domain.repository.PlaceRepository;
 import com.roomx.infrastructure.persistence.service.PlaceEntityService;
+import com.roomx.shared.base.filter.BranchFilter;
 import com.roomx.shared.dto.resource.request.*;
 import com.roomx.shared.dto.resource.response.BranchDetailResponse;
 import com.roomx.shared.dto.resource.response.BranchResponse;
-import com.roomx.application.mapper.BranchAppMapper;
-import com.roomx.domain.repository.BranchRepository;
-import com.roomx.shared.base.filter.BranchFilter;
-import com.roomx.infrastructure.persistence.service.BranchEntityService;
 import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.PlaceType;
 import com.roomx.shared.exception.exception.AppException;
@@ -30,9 +28,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BranchAppService {
-    private final BranchRepository branchRepository;
-    private final BranchAppMapper branchAppMapper;
-    private final BranchEntityService branchEntityService;
     private final PlaceRepository placeRepository;
     private final PlaceAppMapper placeAppMapper;
     private final PlaceEntityService placeEntityService;
@@ -175,3 +170,4 @@ public class BranchAppService {
         return response;
     }
 }
+*/

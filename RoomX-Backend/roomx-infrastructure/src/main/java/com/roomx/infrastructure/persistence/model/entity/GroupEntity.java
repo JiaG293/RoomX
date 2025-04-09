@@ -49,7 +49,7 @@ public class GroupEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id")
-    private BranchEntity branch;
+    private PlaceEntity branch;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

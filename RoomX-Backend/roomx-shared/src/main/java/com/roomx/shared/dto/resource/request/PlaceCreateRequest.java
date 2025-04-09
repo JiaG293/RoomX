@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class PlaceCreateRequest {
 
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private String branchId;
     private String parentId;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String code;

@@ -2,6 +2,7 @@ package com.roomx.controller.resource;
 
 
 import com.roomx.application.service.TestAppService;
+import com.roomx.shared.base.MeetingMessage;
 import com.roomx.shared.exception.api.ResultResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -23,7 +24,7 @@ public class TestController {
 
 
     @GetMapping
-    public ResultResponse<?> test() {
+    public ResultResponse<?> test1() {
 
         var result = testAppService.testAppService();
         return ResultResponse.<Object>builder()
@@ -32,7 +33,7 @@ public class TestController {
     }
 
     @PostMapping("/minio")
-    public ResultResponse<?> test(
+    public ResultResponse<?> test2(
             @RequestParam("files") List<MultipartFile> request,
             @RequestParam("makePrivate") boolean makePrivate,
             @RequestParam("path") String path
@@ -43,4 +44,25 @@ public class TestController {
                 .result(result)
                 .build();
     }
+
+    @GetMapping("/kafka/{data}")
+    public ResultResponse<?> test3(@PathVariable String data) {
+
+        var result = testAppService.testKafka(data);
+        return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/kafka1")
+    public ResultResponse<?> test4(@RequestBody MeetingMessage request) {
+
+        testAppService.testKafka1(request);
+        return ResultResponse.<Void>builder()
+                .build();
+    }
+
+
+
+
 }

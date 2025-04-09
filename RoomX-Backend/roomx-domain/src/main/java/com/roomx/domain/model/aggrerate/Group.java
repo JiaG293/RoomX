@@ -25,7 +25,7 @@ public class Group {
 
     private String groupCode;
 
-    private Branch branch;
+    private Place branch;
     private User user;
     private String status;
 

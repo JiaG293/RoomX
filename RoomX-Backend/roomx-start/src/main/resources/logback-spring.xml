@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <springProperty scope="context" name="appName" source="spring.application.name"/>
     <springProperty scope="context" name="lokiUri" source="loki.uri"/>
 
-    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+    <!--<appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <springProfile name="!dev">
             <filter class="ch.qos.logback.classic.filter.EvaluatorFilter">
                 <evaluator>
@@ -27,9 +27,17 @@
                 <sortByTime>true</sortByTime>
             </format>
         </springProfile>
-    </appender>
+    </appender>-->
 
     <!--<root level="INFO">
         <appender-ref ref="LOKI"/>
     </root>-->
+
+
+    <!--    KAFKA LOGGER-->
+    <logger name="org.apache.kafka" level="WARN"/>
+    <logger name="org.springframework.kafka" level="WARN"/>
+    <logger name="org.apache.kafka.clients" level="WARN"/>
+    <logger name="org.apache.kafka.common" level="WARN"/>
+    <logger name="org.springframework.kafka.listener" level="WARN"/>
 </configuration>

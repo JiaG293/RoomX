@@ -62,7 +62,6 @@ public class RoomClassAppService {
                 .validFrom(Instant.now())
                 .basePrice(request.getBasePrice())
                 .totalPrice(request.getBasePrice())
-                .active(true)
                 .build();
 
         var savedRoomClassPrice = roomClassPriceHistoryRepository.save(roomClassPriceHistory);
@@ -162,7 +161,6 @@ public class RoomClassAppService {
         var roomClassPriceOldDomain = roomClassPriceHistoryRepository.findLatestValidFrom(roomClassId);
         if (roomClassPriceOldDomain.isPresent()) {
             var oldPriceDomain = roomClassPriceOldDomain.get();
-            oldPriceDomain.setActive(false);
             oldPriceDomain.setValidEnd(validEnd);
             oldPriceDomain = roomClassPriceHistoryRepository.save(oldPriceDomain);
 
@@ -173,7 +171,6 @@ public class RoomClassAppService {
                 .roomClass(roomClassDomain)
                 .basePrice(request.getBasePrice())
                 .validFrom(validEnd)
-                .active(true)
                 .build();
 
 

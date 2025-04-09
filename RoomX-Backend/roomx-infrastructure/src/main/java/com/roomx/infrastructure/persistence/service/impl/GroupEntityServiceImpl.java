@@ -1,10 +1,8 @@
 package com.roomx.infrastructure.persistence.service.impl;
 
-import com.roomx.domain.model.aggrerate.Branch;
 import com.roomx.domain.model.aggrerate.Group;
 import com.roomx.domain.model.entity.GroupMember;
 import com.roomx.domain.model.vo.GroupMemberId;
-import com.roomx.domain.repository.BranchRepository;
 import com.roomx.domain.repository.GroupMemberRepository;
 import com.roomx.domain.repository.GroupRepository;
 import com.roomx.domain.repository.UserRepository;
@@ -27,7 +25,6 @@ public class GroupEntityServiceImpl implements GroupEntityService {
     private final GroupRepository groupRepository;
     private final GroupEntityMapper groupEntityMapper;
     private final UserRepository userRepository;
-    private final BranchRepository branchRepository;
     private final GroupMemberRepository groupMemberRepository;
 
 
@@ -43,7 +40,7 @@ public class GroupEntityServiceImpl implements GroupEntityService {
         var userDomain = userRepository.findById(UUID.fromString(userId), true)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        Branch branchDomain = null;
+       /* Branch branchDomain = null;
         if (
                 !request.getBranchId().isEmpty() &&
                         (request.getGroupType().equals(GroupType.DEPARTMENT.toString()) ||
@@ -51,13 +48,13 @@ public class GroupEntityServiceImpl implements GroupEntityService {
         ) {
             branchDomain = branchRepository.findById(request.getBranchId())
                     .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));
-        }
+        }*/
 
 
         var groupDomain = Group.builder()
                 .groupCode(request.getGroupCode())
                 .name(request.getName())
-                .branch(branchDomain)
+//                .branch(branchDomain)
                 .groupType(request.getGroupType())
                 .user(userDomain)
                 .status(DeleteStatusType.getDefaultString())

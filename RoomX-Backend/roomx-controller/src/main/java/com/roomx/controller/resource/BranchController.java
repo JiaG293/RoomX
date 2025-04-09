@@ -1,3 +1,4 @@
+/*
 package com.roomx.controller.resource;
 
 import com.roomx.shared.dto.resource.request.BranchCreateRequest;
@@ -25,7 +26,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BranchController {
-    BranchAppService branchAppService;
 
     @PostMapping
     public ResultResponse<?> createBranch(@Validated @RequestBody BranchCreateRequest branchCreateRequest) {
@@ -34,7 +34,8 @@ public class BranchController {
                 .build();
     }
 
-    /*@GetMapping("/search")
+    */
+/*@GetMapping("/search")
     public ResultResponse<?> searchBranchByName(
             @RequestParam String name,
             @RequestParam String code
@@ -42,7 +43,8 @@ public class BranchController {
         return ResultResponse.<List<BranchResponse>>builder()
                 .result(branchAppService.searchBranchByNameOrBranchCode(name, code))
                 .build();
-    }*/
+    }*//*
+
 
     @GetMapping("/all")
     public ResultResponse<?> getBranchSelectBox() {
@@ -107,3 +109,4 @@ public class BranchController {
 
 
 }
+*/

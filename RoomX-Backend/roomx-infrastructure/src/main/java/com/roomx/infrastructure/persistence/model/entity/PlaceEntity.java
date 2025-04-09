@@ -54,8 +54,4 @@ public class PlaceEntity {
     private String status;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "branch_id")
-    private BranchEntity branch;
-
 }

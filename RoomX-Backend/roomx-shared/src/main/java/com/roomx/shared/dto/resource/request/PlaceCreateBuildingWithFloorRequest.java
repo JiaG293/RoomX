@@ -17,8 +17,6 @@ public class PlaceCreateBuildingWithFloorRequest {
     private String code;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String layout;
-
-
     private int numberFloor;
     private List<Integer> exceptions;
     private List<String> layouts;

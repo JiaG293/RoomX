@@ -22,7 +22,6 @@ public class ServicePriceHistoryEntity {
     public static final String COLUMN_UNITPRICE_NAME = "unit_price";
     public static final String COLUMN_VALIDFROM_NAME = "valid_from";
     public static final String COLUMN_VALIDEND_NAME = "valid_end";
-    public static final String COLUMN_ACTIVE_NAME = "active";
 
 
     @Id
@@ -44,8 +43,6 @@ public class ServicePriceHistoryEntity {
     @Column(name = COLUMN_VALIDEND_NAME)
     private Instant validEnd;
 
-    @Column(name = COLUMN_ACTIVE_NAME)
-    private boolean active;
 
 
 }

@@ -57,7 +57,6 @@ public class EquipmentAppService {
                 .equipment(savedEquipment)
                 .validFrom(Instant.now())
                 .unitPrice(request.getUnitPrice())
-                .active(true)
                 .build();
 
         var savedEquipmentPrice = equipmentPriceHistoryRepository.save(equipmentPrice);
@@ -146,7 +145,6 @@ public class EquipmentAppService {
 
         if (equipmentPriceOldDomain.isPresent()) {
             var oldPriceDomain = equipmentPriceOldDomain.get();
-            oldPriceDomain.setActive(false);
             oldPriceDomain.setValidEnd(validEnd);
             oldPriceDomain = equipmentPriceHistoryRepository.save(oldPriceDomain);
 
@@ -156,7 +154,6 @@ public class EquipmentAppService {
                 .equipment(equipmentDomain)
                 .unitPrice(request.getUnitPrice())
                 .validFrom(validEnd)
-                .active(true)
                 .build();
 
         // logic add new roomClassPriceHistory

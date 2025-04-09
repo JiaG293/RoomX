@@ -1,6 +1,6 @@
 package com.roomx.infrastructure.persistence.service.impl;
 
-import com.roomx.domain.model.aggrerate.Branch;
+
 import com.roomx.domain.model.aggrerate.Place;
 import com.roomx.infrastructure.persistence.repository.specification.PlaceSpecification;
 import com.roomx.shared.enums.DeleteStatusType;
@@ -45,24 +45,28 @@ public class PlaceEntityServiceImpl implements PlaceEntityService {
 
     @Transactional
     @Override
-    public Place createPlaceFloor(Branch branchDomain, PlaceCreateRequest request){
+    public Place createPlaceFloor(PlaceCreateRequest request) {
         var placeBuilding = placeRepository.findById(request.getParentId())
                 .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND));
 
-        var checkPlaceFloorExist = placeRepository.findByPlaceTypeAndParentIdAndCode(PlaceType.FLOOR.toString(), request.getParentId(), request.getCode());
+        var checkPlaceFloorExist = placeRepository
+                .findByPlaceTypeAndParentIdAndCode(PlaceType.FLOOR.toString(), request.getParentId(), request.getCode());
 
-        if(checkPlaceFloorExist.isPresent()){
-            throw new AppException(ErrorCode.PLACE_CONFLICT, checkPlaceFloorExist.get().getId());
+        if (checkPlaceFloorExist.isPresent()) {
+            throw new AppException(ErrorCode.PLACE_CONFLICT, request.getPlaceType(), request.getCode());
         }
+
+        var nameFloor = request.getName() == null ?
+                PlaceType.FLOOR.getDisplayName() + " " + request.getCode():
+                request.getName();
 
         var placeFloorDomain = Place.builder()
                 .placeType(PlaceType.FLOOR.toString())
                 .parentId(placeBuilding.getId())
-                .branch(branchDomain)
                 .code(request.getCode())
-                .name(PlaceType.FLOOR.getDisplayName() + " " + request.getCode())
+                .name(nameFloor)
                 .layout(request.getLayout())
-                .status(DeleteStatusType.getDefaultString())
+                .status(DeleteStatusType.ACTIVE.toString())
                 .build();
 
 
@@ -72,45 +76,55 @@ public class PlaceEntityServiceImpl implements PlaceEntityService {
 
     @Transactional
     @Override
-    public Place createPlaceBuilding(Branch branchDomain, PlaceCreateRequest request){
-        var placeBranchDomain = placeRepository.findById(request.getParentId())
-                .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND));
+    public Place createPlaceBuilding(PlaceCreateRequest request) {
+        var placeBranchDomain = placeRepository.findByIdAndStatus(request.getParentId(), DeleteStatusType.ACTIVE.toString())
+                .orElseThrow(() -> new AppException(ErrorCode.PLACE_NOT_FOUND, request.getPlaceType(), request.getParentId()));
 
         var checkPlaceBuildingExist = placeRepository.findByPlaceTypeAndParentIdAndCode(PlaceType.BUILDING.toString(), request.getParentId(), request.getCode());
 
-        if(checkPlaceBuildingExist.isPresent()){
-            throw new AppException(ErrorCode.PLACE_CONFLICT, checkPlaceBuildingExist.get().getId());
+        if (checkPlaceBuildingExist.isPresent()) {
+            throw new AppException(ErrorCode.PLACE_CONFLICT, request.getPlaceType(), request.getCode());
         }
+
+        var nameBuilding = request.getName() == null ?
+                PlaceType.BUILDING.getDisplayName() + " " + request.getCode() :
+                request.getName();
 
         var placeBuildingDomain = Place.builder()
                 .placeType(PlaceType.BUILDING.toString())
                 .parentId(placeBranchDomain.getId())
-                .branch(branchDomain)
                 .code(request.getCode())
-                .name(PlaceType.BUILDING.getDisplayName() + " " + request.getCode())
+                .name(nameBuilding)
                 .layout(request.getLayout())
                 .status(DeleteStatusType.getDefaultString())
                 .build();
         return placeRepository.save(placeBuildingDomain);
     }
 
+    @Transactional
     @Override
-    public Place createPlaceBranch(Branch branchDomain, PlaceCreateRequest request) {
+    public Place createPlaceBranch(PlaceCreateRequest request) {
         var placeBranchDomain = placeRepository
-                .findByPlaceTypeAndBranchId(request.getPlaceType(), request.getBranchId());
+                .findByPlaceTypeAndCode(request.getPlaceType(), request.getCode());
 
-        if(placeBranchDomain.isPresent()){
-            throw new AppException(ErrorCode.PLACE_CONFLICT, request.getBranchId());
+        if (placeBranchDomain.isPresent()) {
+            throw new AppException(ErrorCode.PLACE_CONFLICT, request.getPlaceType(), request.getCode());
         }
+
+        var nameBranch = request.getName() == null ?
+                PlaceType.BRANCH.getDisplayName() :
+                request.getName();
 
         var placeDomain = Place.builder()
                 .placeType(PlaceType.BRANCH.toString())
-                .branch(branchDomain)
-                .name(branchDomain.getName())
-                .code(branchDomain.getBranchCode())
+                .name(nameBranch)
+                .code(request.getCode())
                 .layout(request.getLayout())
-                .status(DeleteStatusType.getDefaultString())
+                .status(DeleteStatusType.ACTIVE.toString())
+                .parentId(null)
                 .build();
         return placeRepository.save(placeDomain);
     }
+
+
 }

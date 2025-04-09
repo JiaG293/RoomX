@@ -31,11 +31,8 @@ public class EquipmentPriceHistoryEntityRepository implements EquipmentPriceHist
 
     @Override
     public EquipmentPriceHistory save(EquipmentPriceHistory equipmentPriceHistory) {
-        log.info("gia tri: {}", equipmentPriceHistory.isActive());
         var equipmentPriceHistoryEntity = equipmentPriceHistoryEntityMapper.toEntity(equipmentPriceHistory);
-        log.info("gia tri 2: {}", equipmentPriceHistoryEntity.isActive());
         var savedEquipmentPriceHistoryEntity = jpaEquipmentPriceHistoryEntityRepository.save(equipmentPriceHistoryEntity);
-        log.info("gia tri sau: {}", savedEquipmentPriceHistoryEntity.isActive());
         return equipmentPriceHistoryEntityMapper.toDomain(savedEquipmentPriceHistoryEntity);
     }
 

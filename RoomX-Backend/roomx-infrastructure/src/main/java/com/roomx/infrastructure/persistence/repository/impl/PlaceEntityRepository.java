@@ -29,6 +29,13 @@ public class PlaceEntityRepository implements PlaceRepository {
                 .map(placeEntityMapper::toDomain);
     }
 
+    @Override
+    public Optional<Place> findByIdAndStatus(String id, String status) {
+        return jpaPlaceEntityRepository
+                .findByIdAndStatus(UUID.fromString(id), status)
+                .map(placeEntityMapper::toDomain);
+    }
+
 
     @Override
     public Optional<Place> findByName(String name) {
@@ -49,14 +56,21 @@ public class PlaceEntityRepository implements PlaceRepository {
     @Override
     public Optional<Place> findByNameAndPlaceTypeAndBranchId(String name, String placeType, String branchId) {
         return jpaPlaceEntityRepository
-                .findByNameAndPlaceTypeAndBranchId(name, placeType, UUID.fromString(branchId))
+                .findByNameAndPlaceTypeAndId(name, placeType, UUID.fromString(branchId))
                 .map(placeEntityMapper::toDomain);
     }
 
     @Override
-    public Optional<Place> findByPlaceTypeAndBranchId(String placeType, String branchId) {
+    public Optional<Place> findByPlaceTypeAndCode(String placeType, String code) {
         return jpaPlaceEntityRepository
-                .findByPlaceTypeAndBranchId(placeType, UUID.fromString(branchId))
+                .findByPlaceTypeAndCode(placeType, code)
+                .map(placeEntityMapper::toDomain);
+    }
+
+    @Override
+    public Optional<Place> findByPlaceTypeAndCodeAndStatus(String placeType, String code, String status) {
+        return jpaPlaceEntityRepository
+                .findByPlaceTypeAndCodeAndStatus(placeType, code, status)
                 .map(placeEntityMapper::toDomain);
     }
 
@@ -115,7 +129,21 @@ public class PlaceEntityRepository implements PlaceRepository {
     @Override
     public Optional<Place> findByBranchIdAndPlaceTypeAndStatus(String branchId, String placeType, String status) {
         return jpaPlaceEntityRepository
-                .findByPlaceTypeAndStatusAndBranchId(placeType, status, UUID.fromString(branchId))
+                .findByPlaceTypeAndStatusAndId(placeType, status, UUID.fromString(branchId))
                 .map(placeEntityMapper::toDomainLazy);
+    }
+
+    @Override
+    public Optional<Place> findByCode(String code) {
+        return jpaPlaceEntityRepository
+                .findByCode(code)
+                .map(placeEntityMapper::toDomain);
+    }
+
+    @Override
+    public Optional<Place> findByPlaceTypeAndCodeAndParentId(String type, String code, String parentId) {
+        return jpaPlaceEntityRepository
+                .findByPlaceTypeAndCodeAndParentId(type, code, UUID.fromString(parentId))
+                .map(placeEntityMapper::toDomain);
     }
 }

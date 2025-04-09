@@ -39,7 +39,7 @@ public class Booking {
 
 
     public String getPlaceDetail(){
-        return room.getPlace().getBranch().getName() + " - " + room.getRoomCode();
+        return  " - " + room.getRoomCode();
     }
 
 }

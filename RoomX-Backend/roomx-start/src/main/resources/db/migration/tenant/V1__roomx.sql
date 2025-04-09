@@ -25,18 +25,14 @@ CREATE  TABLE booking_request_participant (
                                               participants         varchar(512)
 );
 
-CREATE  TABLE branch (
-                         branch_id            uuid  NOT NULL  ,
-                         name                 varchar(500)    ,
-                         phone_number         varchar(500)    ,
-                         email                varchar(500)    ,
-                         address              varchar(500)    ,
-                         branch_code          varchar(32)    ,
-                         created_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
-                         updated_at           timestamp DEFAULT CURRENT_TIMESTAMP   ,
-                         status               varchar    ,
-                         CONSTRAINT pk_chi_nhanh PRIMARY KEY ( branch_id ),
-                         CONSTRAINT unq_branch UNIQUE ( branch_code )
+CREATE  TABLE date_request_exception (
+                                         date_booking_id      uuid  NOT NULL  ,
+                                         booking_request_id   uuid    ,
+                                         "date"               date    ,
+                                         start_time           time    ,
+                                         end_time             time    ,
+                                         room_id              uuid    ,
+                                         CONSTRAINT pk_date_booking PRIMARY KEY ( date_booking_id )
 );
 
 CREATE  TABLE equipment (
@@ -89,7 +85,6 @@ CREATE  TABLE image_url (
 
 CREATE  TABLE place (
                         place_id             uuid  NOT NULL  ,
-                        branch_id            uuid    ,
                         name                 varchar    ,
                         layout               varchar    ,
                         place_type           varchar(32)  NOT NULL  ,
@@ -118,14 +113,13 @@ CREATE  TABLE room_class (
 );
 
 CREATE  TABLE room_class_price_history (
-                                           room_class_price_history uuid  NOT NULL  ,
+                                           room_class_price_history_id uuid  NOT NULL  ,
                                            room_class_id        uuid  NOT NULL  ,
                                            valid_from           timestamp    ,
                                            base_price           numeric    ,
                                            total_price          numeric    ,
                                            valid_end            timestamp    ,
-                                           active               boolean    ,
-                                           CONSTRAINT pk_room_class_price_history PRIMARY KEY ( room_class_price_history )
+                                           CONSTRAINT pk_room_class_price_history PRIMARY KEY ( room_class_price_history_id )
 );
 
 CREATE  TABLE service (
@@ -147,7 +141,6 @@ CREATE  TABLE service_price_history (
                                         unit_price           numeric    ,
                                         valid_from           timestamp    ,
                                         valid_end            timestamp    ,
-                                        active               boolean    ,
                                         CONSTRAINT pk_service_price_history PRIMARY KEY ( service_price_history_id )
 );
 
@@ -236,7 +229,7 @@ CREATE  TABLE group_member (
 
 CREATE  TABLE room (
                        room_id              uuid  NOT NULL  ,
-                       place_id             uuid  NOT NULL  ,
+                       floor_id             uuid  NOT NULL  ,
                        status               varchar(32)    ,
                        description          text    ,
                        room_class_id        uuid  NOT NULL  ,
@@ -307,6 +300,8 @@ ALTER TABLE booking_service ADD CONSTRAINT fk_booking_service_service FOREIGN KE
 
 ALTER TABLE booking_service ADD CONSTRAINT fk_booking_service_booking FOREIGN KEY ( booking_id ) REFERENCES booking( booking_id );
 
+ALTER TABLE date_request_exception ADD CONSTRAINT fk_date_request_exception_booking_request FOREIGN KEY ( booking_request_id ) REFERENCES booking_request( booking_request_id );
+
 ALTER TABLE equipment_price_history ADD CONSTRAINT fk_equipment_price_history_equipment FOREIGN KEY ( equipment_id ) REFERENCES equipment( equipment_id );
 
 ALTER TABLE equipment_request ADD CONSTRAINT fk_yeu_cau_thiet_bi_don_yeu_cau FOREIGN KEY ( booking_request_id ) REFERENCES booking_request( booking_request_id );
@@ -319,17 +314,15 @@ ALTER TABLE equipment_room_class ADD CONSTRAINT fk_loai_phong_thiet_bi_loai_phon
 
 ALTER TABLE "group" ADD CONSTRAINT fk_nhom_nguoi_dung FOREIGN KEY ( user_id ) REFERENCES "user"( user_id );
 
-ALTER TABLE "group" ADD CONSTRAINT fk_nhom_chi_nhanh FOREIGN KEY ( branch_id ) REFERENCES branch( branch_id );
+ALTER TABLE "group" ADD CONSTRAINT fk_group_place FOREIGN KEY ( branch_id ) REFERENCES place( place_id );
 
 ALTER TABLE group_member ADD CONSTRAINT fk_thanh_vien_nhom_nhom FOREIGN KEY ( group_id ) REFERENCES "group"( group_id );
 
 ALTER TABLE group_member ADD CONSTRAINT fk_thanh_vien_nhom_nguoi_dung FOREIGN KEY ( user_id ) REFERENCES "user"( user_id );
 
-ALTER TABLE place ADD CONSTRAINT fk_vi_tri_chi_nhanh FOREIGN KEY ( branch_id ) REFERENCES branch( branch_id );
-
 ALTER TABLE room ADD CONSTRAINT fk_phong_hop_loai_phong FOREIGN KEY ( room_class_id ) REFERENCES room_class( room_class_id );
 
-ALTER TABLE room ADD CONSTRAINT fk_phong_hop_vi_tri FOREIGN KEY ( place_id ) REFERENCES place( place_id );
+ALTER TABLE room ADD CONSTRAINT fk_phong_hop_vi_tri FOREIGN KEY ( floor_id ) REFERENCES place( place_id );
 
 ALTER TABLE room_class_price_history ADD CONSTRAINT fk_room_class_price_history_room_class FOREIGN KEY ( room_class_id ) REFERENCES room_class( room_class_id );
 

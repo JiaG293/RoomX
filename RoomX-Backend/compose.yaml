@@ -2,62 +2,31 @@ networks:
   roomx_network:
     name: roomx_network
     external: true
+volumes:
+  postgres-data:
+  keycloak-data:
 services:
   roomx-be:
     build:
-#      context: ./RoomX-Backend
-      dockerfile: Dockerfile
-    container_name: be_roomx
-    restart: always
+      context: .                    # Path Dockerfile
+      dockerfile: Dockerfile       # Name Dockerfile
+    container_name: roomx_be
     ports:
-      - 8888:8888
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
+      - 8888:8888  # Port expose
     env_file:
-      - .env
-    depends_on:
-      - postgres
-      - keycloak
-      - redis
-      - minio
-      - kafka
+      - .env              # Path .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     networks:
       - roomx_network
+    depends_on:
+      - keycloak
+      - postgres
+      - minio
+      - kafka
+      - redis
+    restart: on-failure
 
-
-
-#  # NGINX PROXY
-#  nginx:
-#    image: nginx:latest
-#    container_name: nginx_roomx
-#    restart: always
-#    ports:
-#      - 80:80
-#      - 443:443
-#    volumes:
-#      - ./platform/nginx/html:/usr/share/nginx/html
-#      #- ./platform/nginx/nginx.conf:/etc/nginx/nginx.conf
-#      - ./platform/nginx/conf.d:/etc/nginx/conf.d
-#      - ./platform/ssl:/etc/letsencrypt
-#    networks:
-#      - roomx_network
-
-#  #CERTBOT SSL Certificate
-#  certbot:
-#    image: certbot/certbot
-#    container_name: certbot_roomx
-#    volumes:
-#      - ./platform/ssl:/etc/letsencrypt
-#      - ./platform/nginx/html:/usr/share/nginx/html
-#    entrypoint: >
-#      /bin/sh -c "trap exit TERM;
-#      while :; do
-#        certbot renew --webroot -w /usr/share/nginx/html --quiet --no-self-upgrade;
-#        nginx -s reload;
-#        sleep 1d & wait $${!};
-#      done;"
-
-  # KEYCLOAK
   keycloak:
     image: quay.io/keycloak/keycloak:26.1.0
     container_name: keycloak_roomx
@@ -80,18 +49,18 @@ services:
       #KC_HTTPS_CLIENT_AUTH: none           # NONE | REQUEST | REQUIRED : No SSL/TLS client authentication required | Client SSL/TLS, server not required. | SSL/TLS client-server valid required
       #KC_PROXY_HEADERS: xforwarded          # Forward to hostname configuration
       #KC_HOSTNAME: https://kc.jiag.id.vn    # Config hostname alternative localhost
-      KC_PROXY_HEADERS: xforwarded
-      KC_HOSTNAME: https://keycloak.jiag.id.vn
+
     ports:
       - 5555:8080  # Changed to 5555 for external access to Keycloak
     command: start-dev # development
     restart: unless-stopped
-#    volumes:
-#      - ./storage/keycloak/data:/opt/keycloak/data  # Optional: bind mount for Keycloak data
+    volumes:
+      - ./storage/keycloak/data:/opt/keycloak/data  # Optional: bind mount for Keycloak data
     networks:
       - roomx_network
     depends_on:
       - postgres
+
 
 
   # POSTGRESQL 17
@@ -100,18 +69,17 @@ services:
     container_name: postgres_roomx
     volumes:
       - ./platform/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
-#      - ./storage/postgres/data:/var/lib/postgresql/data       # Need remove folder if run init.sql
+    #      - ./storage/postgres/data:/var/lib/postgresql/data       # Need remove folder if run init.sql
     environment:
       #POSTGRES_DB: roomx
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
     ports:
       - 5432:5432
     restart: unless-stopped
+
     networks:
       - roomx_network
-  #  volumes:
-  #    postgres-data:
 
   # REDIS
   redis:
@@ -121,13 +89,11 @@ services:
       - 6379:6379
       - 8001:8001 # UI
     environment:
-#      REDIS_USERNAME: admin
       REDIS_PASSWORD: admin123
       ALLOW_EMPTY_PASSWORD: no
-#    volumes:
-#      - ./storage/redis/redis.conf:/usr/local/etc/redis/redis.conf
-#      - ./storage/redis/data:/data
-    restart: always
+    volumes:
+      - ./storage/redis/data:/data
+    restart: unless-stopped
     networks:
       - roomx_network
 
@@ -154,7 +120,6 @@ services:
   kafka:
     image: bitnami/kafka:latest
     container_name: kafka_roomx
-    restart: unless-stopped
     ports:
       - 9092:9092                  # Broker Port
       - 9094:9094                  # Controller Port
@@ -165,7 +130,7 @@ services:
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094        # Define Kafka server-side socket listening ports
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT          # Define security protocols
-      KAFKA_CFG_ADVERTISED_LISTENERS: EXTERNAL://192.168.1.115:9193,PLAINTEXT://kafka1:9092         # Set advertised listener
+      KAFKA_CFG_ADVERTISED_LISTENERS: EXTERNAL://192.168.1.251:9094,PLAINTEXT://kafka:9092         # Set advertised listener
       KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT         # Interbroker listener name
       KAFKA_KRAFT_CLUSTER_ID: LelM2dIFQkiUFvXCEcqRWA        # Cluster ID for Kafka, must be the same across the cluster. Use a generated UUID
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093         # Cluster address
@@ -180,22 +145,22 @@ services:
       # Broker ID, must be unique
       KAFKA_BROKER_ID: 1
       KAFKA_CFG_NODE_ID: 1
-#    volumes:
-#      - ./storage/kafka/data:/bitnami/kafka
+    volumes:
+      - ./storage/kafka/data:/bitnami/kafka
     networks:
       - roomx_network
+    restart: unless-stopped
 
   # KAFKA UI
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui_roomx
+    container_name: kafkaui_roomx
     ports:
       - 9090:8080
     environment:
       KAFKA_CLUSTER_0_NAME: roomx
       KAFKA_CLUSTER_0_BOOTSTRAPSERVERS: kafka:9092
       DYNAMIC_CONFIG_ENABLED: true
-    restart: unless-stopped
     networks:
       - roomx_network
     depends_on:

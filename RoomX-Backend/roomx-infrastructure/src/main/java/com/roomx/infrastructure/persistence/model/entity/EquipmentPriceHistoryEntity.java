@@ -23,7 +23,6 @@ public class EquipmentPriceHistoryEntity {
     public static final String COLUMN_VALIDFROM_NAME = "valid_from";
     public static final String COLUMN_UNITPRICE_NAME = "unit_price";
     public static final String COLUMN_VALIDEND_NAME = "valid_end";
-    public static final String COLUMN_ISACTIVE_NAME = "active";
 
 
     @Id
@@ -39,9 +38,6 @@ public class EquipmentPriceHistoryEntity {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_VALIDFROM_NAME)
     private Instant validFrom;
-
-    @Column(name = COLUMN_ISACTIVE_NAME)
-    private boolean active;
 
     @Column(name = COLUMN_UNITPRICE_NAME)
     private BigDecimal unitPrice;
