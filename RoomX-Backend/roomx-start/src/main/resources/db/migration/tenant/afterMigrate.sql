@@ -32,13 +32,13 @@ VALUES ('nguyen van', 'admin', '1111111111', 'asgy2002@gmail.com', true, null, '
 
 --SANG DB
        ('first user1', 'name user1', '0323456688', 'puss@gmail.com', true, null, 'EMPLOYEE', 'user11',
-        '77110448-3ff5-432f-b156-26270323f4c1', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true),
+        '51af269b-e536-4ead-a6b7-981f7dd56bba', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true),
 
        ('first name', 'last name', '0323456588', 'giau1@gmail.com', true, null, 'EMPLOYEE', 'approver1',
         '311cce72-d660-4cce-8d83-ef6bafa09f76', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true),
 
        ('first admin1', 'name admin1', '0323256788', 'admin1@example.com', true, null, 'EMPLOYEE', 'admin11',
-        '90c92122-4a32-41aa-89f2-4e25b2d414d4', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true)
+        'e8646ba4-f747-4bd1-925c-de2dc8f63d07', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true)
 
 
 ON CONFLICT (user_id) DO NOTHING;
@@ -57,9 +57,9 @@ VALUES ('374e33ed-1d51-4298-a3be-b51b4d7529a3', 'ADMIN'),
        ('ea4e9c4c-a317-4064-8a5b-da2b339e4181', 'USER'),
 
        --SANG
-       ('77110448-3ff5-432f-b156-26270323f4c1', 'USER'),
+       ('51af269b-e536-4ead-a6b7-981f7dd56bba', 'USER'),
        ('90c92122-4a32-41aa-89f2-4e25b2d414d4', 'ADMIN'),
-       ('311cce72-d660-4cce-8d83-ef6bafa09f76', 'APPROVER')
+       ('e8646ba4-f747-4bd1-925c-de2dc8f63d07', 'APPROVER')
 
 ON CONFLICT (user_id, role_id) DO NOTHING;
 
