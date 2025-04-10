@@ -19,13 +19,13 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
     networks:
       - roomx_network
-    depends_on:
-      - keycloak
-      - postgres
-      - minio
-      - kafka
-      - redis
-    restart: on-failure
+#    depends_on:
+#      - keycloak
+#      - postgres
+#      - minio
+#      - kafka
+#      - redis
+    restart: always
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.1.0
