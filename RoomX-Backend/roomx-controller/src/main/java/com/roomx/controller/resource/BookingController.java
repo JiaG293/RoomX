@@ -91,11 +91,11 @@ public class BookingController {
                 .build();
     }
 
-    @GetMapping("/list")
+    @GetMapping("/request/list")
     public ResultResponse<?> getPageBookingRequest(
             @ModelAttribute BookingRequestApprovalRequest request,
             @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "-1") Integer size,
             @RequestParam(defaultValue = "updatedAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction
     ) {

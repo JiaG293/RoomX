@@ -457,13 +457,26 @@ public class BookingAppService {
             int size,
             String sortBy,
             String direction) {
-        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+        if (size == -1) {
+            size = Integer.MAX_VALUE;
+        }
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
         Pageable pageable = PageRequest.of(page, size, sort);
         LocalDate today = LocalDate.now();
 
         int currentYear = today.getYear();
-        int selectedYear = (request.getYear() != null && request.getYear() > 0) ? request.getYear() : currentYear;
-        int selectedMonth = (request.getMonth() != null && request.getMonth() >= 1 && request.getMonth() <= 12) ? request.getMonth() : today.getMonthValue();
+        int selectedYear = (request.getYear() != null && request.getYear() > 0)
+                ? request.getYear()
+                : currentYear;
+
+        int selectedMonth = (request.getMonth() != null && request.getMonth() >= 1 && request.getMonth() <= 12)
+                ? request.getMonth()
+                : today.getMonthValue();
 
         LocalDate startDate = LocalDate.of(selectedYear, selectedMonth, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
@@ -474,20 +487,21 @@ public class BookingAppService {
 
         log.info("Date range: {} -> {} | Instant range: {} -> {}", startDate, endDate, startInstant, endInstant);
 
-        Page<ApprovalForm> approvalFormPage = null;
+        Page<ApprovalForm> approvalFormPage;
+
         if (!roleEvaluator.hasAnyRoleType("approve")) {
             approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeWithBookingRequest(
                     ApprovalStatusType.getListCanApproval(), startInstant, endInstant, pageable);
-
         } else {
             approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeAndRequesterWithBookingRequest(
                     ApprovalStatusType.getListCanApproval(), startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
         }
 
         return approvalFormPage.map(approvalForm ->
-                bookingRequestAppMapper.toResponseFromApprovalForm(approvalForm.getBookingRequest(), approvalForm)
-        );
+                bookingRequestAppMapper.toResponseFromApprovalForm(
+                        approvalForm.getBookingRequest(), approvalForm));
     }
+
 
 
     public BookingDetailResponse getDetailBooking(String bookingId) {

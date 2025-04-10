@@ -2,6 +2,8 @@ package com.roomx.infrastructure.persistence.service.impl;
 
 import com.roomx.domain.model.aggrerate.ApprovalForm;
 import com.roomx.infrastructure.persistence.mapper.ApprovalFormEntityMapper;
+import com.roomx.infrastructure.persistence.model.projection.ApprovalFormProjection;
+import com.roomx.infrastructure.persistence.model.projection.BookingRequestFlatProjection;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaApprovalFormEntityRepository;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,16 @@ public class ApprovalFormEntityServiceImpl implements ApprovalFormEntityService 
 
     private final JpaApprovalFormEntityRepository jpaApprovalFormEntityRepository;
     private final ApprovalFormEntityMapper approvalFormEntityMapper;
+
+    @Override
+    public Page<BookingRequestFlatProjection> findAllByLastStatusAndDateRange(List<String> listStatusCanApproval, Instant startDate, Instant endDate, Pageable pageable) {
+        return
+                jpaApprovalFormEntityRepository.findBookingRequestApprovalsNative(
+                        listStatusCanApproval,
+                        startDate,
+                        endDate,
+                        pageable);
+    }
 
     @Override
     public Page<ApprovalForm> findAllByLastStatusInAndTimeRangeWithBookingRequest(List<String> listStatusCanApproval, Instant startDate, Instant endDate, Pageable pageable) {

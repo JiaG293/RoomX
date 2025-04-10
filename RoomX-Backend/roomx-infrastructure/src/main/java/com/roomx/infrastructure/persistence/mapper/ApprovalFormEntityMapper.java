@@ -2,6 +2,8 @@ package com.roomx.infrastructure.persistence.mapper;
 
 import com.roomx.domain.model.aggrerate.ApprovalForm;
 import com.roomx.infrastructure.persistence.model.entity.ApprovalFormEntity;
+import com.roomx.shared.dto.booking.response.BookingRequestResponse;
+import com.roomx.shared.dto.booking.response.BookingResponse;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",
@@ -15,6 +17,9 @@ public interface ApprovalFormEntityMapper {
 
     @Mapping(target = "bookingRequest", source = "bookingRequest")
     ApprovalForm toDomain(ApprovalFormEntity entity);
+
+
+
     ApprovalFormEntity toEntity(ApprovalForm domain);
 
     @AfterMapping
@@ -23,4 +28,6 @@ public interface ApprovalFormEntityMapper {
             target.getBookingRequest().setApprovalStatus(entity.getStatus());
         }
     }
+
+
 }

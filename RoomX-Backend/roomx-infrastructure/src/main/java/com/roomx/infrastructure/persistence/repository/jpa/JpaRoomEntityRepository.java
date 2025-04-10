@@ -45,4 +45,5 @@ public interface JpaRoomEntityRepository extends JpaRepository<RoomEntity, UUID>
             LIMIT 1
             """, nativeQuery = true)
     Optional<BigDecimal> findPriceByIdAndValidTimestamp(@Param("roomId") UUID roomId, @Param("timestamp") Instant timestamp);
+
 }

@@ -79,4 +79,5 @@ public class RoomEntityRepository implements RoomRepository {
         return jpaRoomEntityRepository
                 .findPriceByIdAndValidTimestamp(UUID.fromString(roomId), timestamp);
     }
+
 }

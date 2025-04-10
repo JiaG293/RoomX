@@ -1181,7 +1181,7 @@ public class RoomSchedulerAppService {
                 .collect(Collectors.toMap(DateRequestException::getDate, e -> e));
 
         List<Room> availableRooms = (branchId != null)
-                ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
+         ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
                 : roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
 
         Map<UUID, Room> roomMap = availableRooms.stream()

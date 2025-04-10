@@ -24,4 +24,5 @@ public interface RoomRepository {
     List<Room> findAllByPlaceIdAndStatus(String placeId, String status);
 
     Optional<BigDecimal> findPriceByIdAndValidTimestamp(String roomId, Instant timestamp);
+
 }

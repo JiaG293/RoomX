@@ -11,11 +11,15 @@ import com.roomx.infrastructure.distributed.kafka.config.KafkaTenantService;
 import com.roomx.infrastructure.minio.MinioService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
+import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import com.roomx.shared.base.MeetingMessage;
 import com.roomx.shared.enums.ApprovalStatusType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -27,6 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -45,6 +52,7 @@ public class TestAppService {
     private final DateRequestExceptionRepository dateRequestExceptionRepository;
     private final BookingRequestRepository bookingRequestRepository;
     private final ApprovalFormRepository approvalFormRepository;
+    private final ApprovalFormEntityService approvalFormEntityService;
 
 
 
@@ -61,9 +69,18 @@ public class TestAppService {
 
         redisTenantService.put("helo", "12", 30, TimeUnit.SECONDS);
 
-        List<ApprovalForm> pendingRequests = approvalFormRepository
-                .findAllBookingRequestWithInStatus(ApprovalStatusType.getListCanApproval());
-        return pendingRequests;
+        Sort sort = "desc".equalsIgnoreCase("desc")
+                ? Sort.by("updated_at").descending()
+                : Sort.by("updated_at").ascending();
+        ZoneId zoneId = ZoneId.systemDefault();
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
+        var result = approvalFormEntityService.findAllByLastStatusAndDateRange(
+                ApprovalStatusType.getListCanApproval(),
+                LocalDate.of(2025, 2, 1).atStartOfDay(zoneId).toInstant(),
+                LocalDate.of(2025, 6, 1).atTime(LocalTime.MAX).atZone(zoneId).toInstant(),
+                pageable
+        );
+        return result;
     }
 
     public Object testMinio(List<MultipartFile> request, boolean makePrivate, String path) {
