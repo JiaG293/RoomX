@@ -10,15 +10,19 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisTenantServiceImpl implements RedisTenantService {
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
 
     private String getTenantWithKey(String key) {
         return TenantContextHolder.getTenantIdentifier() + ":" + key;
@@ -114,4 +118,30 @@ public class RedisTenantServiceImpl implements RedisTenantService {
         String tenantKey = getTenantWithKey(key);
         redisTemplate.delete(tenantKey);
     }
+
+    @Override
+    public void rightPushObjectToList(String key, Object value) {
+        try {
+            String json = objectMapper.writeValueAsString(value);
+            redisTemplate.opsForList().rightPush(key, json);
+        } catch (Exception e) {
+            throw new RuntimeException("Error serializing object", e);
+        }
+    }
+
+    @Override
+    public <T> List<T> rangeObjectFromList(String key, long start, long end, Class<T> clazz) {
+        List<Object> rawList = redisTemplate.opsForList().range(key, start, end);
+        if (rawList == null) return Collections.emptyList();
+
+        return rawList.stream().map(obj -> {
+            try {
+                return objectMapper.readValue(obj.toString(), clazz);
+            } catch (Exception e) {
+                throw new RuntimeException("Error deserializing object", e);
+            }
+        }).collect(Collectors.toList());
+    }
+
+
 }

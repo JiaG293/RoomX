@@ -7,6 +7,7 @@ import com.roomx.domain.model.vo.BookingParticipantId;
 import com.roomx.domain.model.vo.EquipmentRequestId;
 import com.roomx.domain.model.vo.ServiceRequestId;
 import com.roomx.domain.service.BookingDomainService;
+import com.roomx.infrastructure.cache.redis.service.RoomCheckingCacheService;
 import com.roomx.infrastructure.persistence.dto.BookingFilter;
 import com.roomx.infrastructure.persistence.mapper.EquipmentRequestEntityMapper;
 import com.roomx.infrastructure.persistence.mapper.ServiceRequestEntityMapper;
@@ -96,6 +97,7 @@ public class BookingAppService {
     private final RoleEvaluator roleEvaluator;
     private final DateRequestExceptionRepository dateRequestExceptionRepository;
     private final DateRequestExceptionAppMapper dateRequestExceptionAppMapper;
+    private final RoomCheckingCacheService roomCheckingCacheService;
 
 
     /*@Transactional
@@ -179,6 +181,8 @@ public class BookingAppService {
 
         List<DateRequestException> dateExceptions = bookingRequestDomain.getDateRequestExceptions() != null ? bookingRequestDomain.getDateRequestExceptions() : Collections.EMPTY_LIST;
 
+        log.info("check date: {}", dateExceptions);
+
         var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
                 request.getBranchId(),
                 bookingRequestDomain.getOccurrences(),
@@ -195,18 +199,20 @@ public class BookingAppService {
                 .toList();
 
         if (!conflictedDates.isEmpty()) {
-            throw new AppException(ErrorCode.BOOKING_REQUEST_CONFLICT, conflictedDates);
+            throw new AppException(ErrorCode.BOOKING_REQUEST_CONFLICT, result, conflictedDates);
         }
 
         var savedBookingRequest = bookingRequestRepository.save(bookingRequestDomain);
         if (!dateExceptions.isEmpty()) {
             dateExceptions.forEach(date -> date.setBookingRequestId(savedBookingRequest.getId()));
 
-            var saveDateRequestException = dateRequestExceptionRepository.saveAll(dateExceptions);
+            dateRequestExceptionRepository.saveAll(dateExceptions);
+            savedBookingRequest.setDateRequestExceptions(dateExceptions);
 
-            log.info("data date: {}", saveDateRequestException.getFirst().getDate());
+            log.info("log date: {}", savedBookingRequest);
+//            roomCheckingCacheService.pushPendingBookingRequestToRedis();
+
         }
-
 
 
         log.info("Booking Request ID after save: {}", savedBookingRequest.getId());
@@ -269,20 +275,23 @@ public class BookingAppService {
         String branchId = (approvalFormDomain.getBookingRequest().getBranchId() != null)
                 ? approvalFormDomain.getBookingRequest().getBranchId().toString()
                 : null;
+
         var bookingRequestDomain = approvalFormDomain.getBookingRequest();
         var listOccurrences = bookingRequestDomain.getOccurrences();
-        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptional(
-                bookingRequestId,
+        var dateRequestExceptions = bookingRequestDomain.getDateRequestExceptions();
+
+        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
                 branchId,
                 listOccurrences,
+                dateRequestExceptions,
                 bookingRequestDomain.getStartTime(),
                 bookingRequestDomain.getEndTime(),
                 bookingRequestDomain.getCapacity(),
                 bookingRequestDomain.getParticipants(),
                 10
         );
-        return result;
 
+        return result;
     }
 
 
@@ -303,10 +312,13 @@ public class BookingAppService {
 
         var bookingRequestDomain = approvalFormDomain.getBookingRequest();
         var listOccurrences = bookingRequestDomain.getOccurrences();
-        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptional(
-                bookingRequestId,
+        var dateRequestExceptions = bookingRequestDomain.getDateRequestExceptions();
+
+        log.info("dulieu: {}", dateRequestExceptions);
+        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
                 branchId,
                 listOccurrences,
+                dateRequestExceptions,
                 bookingRequestDomain.getStartTime(),
                 bookingRequestDomain.getEndTime(),
                 bookingRequestDomain.getCapacity(),
@@ -321,7 +333,13 @@ public class BookingAppService {
 
         var bookingDomainList = new ArrayList<Booking>();
         if (dateConflictList.isEmpty()) {
+
+            // Map để tra nhanh thời gian ghi đè
+            var exceptionMap = dateRequestExceptions.stream()
+                    .collect(Collectors.toMap(DateRequestException::getDate, e -> e));
+
             result.forEach(occurrence -> {
+                log.info("room id {}", occurrence.getOptimalRoomId());
                 var roomDomain = Room.builder().id(UUID.fromString(occurrence.getOptimalRoomId())).build();
                 var totalPrice = roomRepository
                         .findPriceByIdAndValidTimestamp(
@@ -330,21 +348,33 @@ public class BookingAppService {
                         .orElse(BigDecimal.ZERO);
                 var bookingDomainId = UUID.randomUUID();
 
+                // Mặc định lấy thời gian từ booking request
+                LocalTime meetingStart = bookingRequestDomain.getStartTime();
+                LocalTime meetingEnd = bookingRequestDomain.getEndTime();
+
+                // Ghi đè thời gian nếu có exception
+                if (exceptionMap.containsKey(occurrence.getDate())) {
+                    var exception = exceptionMap.get(occurrence.getDate());
+                    if (exception.getStartTime() != null && exception.getEndTime() != null) {
+                        meetingStart = exception.getStartTime();
+                        meetingEnd = exception.getEndTime();
+                        log.info("Override meeting time on {}: {} - {}", occurrence.getDate(), meetingStart, meetingEnd);
+                    }
+                }
+
                 var bookingDomain = Booking.builder()
                         .id(bookingDomainId)
                         .bookingRequest(bookingRequestDomain)
                         .room(roomDomain)
                         .bookingCode(generateBookingCode(occurrence.getDate()))
-                        .meetingStart(bookingRequestDomain.getStartTime())
-                        .meetingEnd(bookingRequestDomain.getEndTime())
+                        .meetingStart(meetingStart)
+                        .meetingEnd(meetingEnd)
                         .meetingDate(occurrence.getDate())
                         .totalPrice(totalPrice)
                         .status(BookingStatusType.SCHEDULED.toString())
                         .count(1)
                         .build();
-                ;
                 bookingDomainList.add(bookingRepository.save(bookingDomain));
-
 
                 var bookingParticpantsDomainList = new ArrayList<BookingParticipant>();
                 bookingRequestDomain.getParticipants().forEach(participant -> {
@@ -356,7 +386,6 @@ public class BookingAppService {
                             .booking(bookingDomain)
                             .build();
                     bookingParticpantsDomainList.add(bookingParticipant);
-
                 });
                 bookingParticipantRepository.saveAll(bookingParticpantsDomainList);
             });
@@ -384,6 +413,7 @@ public class BookingAppService {
                 ))
                 .toList();
     }
+
 
 
     public Page<BookingResponse> filterSearchPageBookingAdmin(

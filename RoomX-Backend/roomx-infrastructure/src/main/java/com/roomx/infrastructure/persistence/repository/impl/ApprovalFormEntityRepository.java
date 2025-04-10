@@ -6,11 +6,15 @@ import com.roomx.domain.repository.ApprovalFormRepository;
 import com.roomx.infrastructure.persistence.mapper.ApprovalFormEntityMapper;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaApprovalFormEntityRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ApprovalFormEntityRepository implements ApprovalFormRepository {
@@ -44,6 +48,14 @@ public class ApprovalFormEntityRepository implements ApprovalFormRepository {
         return jpaApprovalFormEntityRepository
                 .findFirstByBookingRequestIdOrderByUpdatedAtDesc(UUID.fromString(bookingRequestId))
                 .map(approvalFormEntityMapper::toDomain);
+    }
+
+    @Override
+    public List<ApprovalForm> findAllBookingRequestWithInStatus(List<String> status) {
+        return jpaApprovalFormEntityRepository
+                .findAllByStatusIn(status)
+                .stream().map(approvalFormEntityMapper::toDomain)
+                .toList();
     }
 
 

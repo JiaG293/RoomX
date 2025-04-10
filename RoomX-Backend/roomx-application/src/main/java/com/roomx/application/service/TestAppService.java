@@ -1,6 +1,8 @@
 package com.roomx.application.service;
 
 import com.roomx.application.service.booking.RoomSchedulerAppService;
+import com.roomx.domain.model.aggrerate.ApprovalForm;
+import com.roomx.domain.repository.ApprovalFormRepository;
 import com.roomx.domain.repository.BookingRepository;
 import com.roomx.domain.repository.BookingRequestRepository;
 import com.roomx.domain.repository.DateRequestExceptionRepository;
@@ -11,6 +13,7 @@ import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
 import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import com.roomx.shared.base.MeetingMessage;
+import com.roomx.shared.enums.ApprovalStatusType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -41,6 +44,7 @@ public class TestAppService {
     private final RoomSchedulerAppService roomSchedulerAppService;
     private final DateRequestExceptionRepository dateRequestExceptionRepository;
     private final BookingRequestRepository bookingRequestRepository;
+    private final ApprovalFormRepository approvalFormRepository;
 
 
 
@@ -57,8 +61,9 @@ public class TestAppService {
 
         redisTenantService.put("helo", "12", 30, TimeUnit.SECONDS);
 
-
-        return "result";
+        List<ApprovalForm> pendingRequests = approvalFormRepository
+                .findAllBookingRequestWithInStatus(ApprovalStatusType.getListCanApproval());
+        return pendingRequests;
     }
 
     public Object testMinio(List<MultipartFile> request, boolean makePrivate, String path) {

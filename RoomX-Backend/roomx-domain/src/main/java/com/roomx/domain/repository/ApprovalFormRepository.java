@@ -3,8 +3,10 @@ package com.roomx.domain.repository;
 
 
 import com.roomx.domain.model.aggrerate.ApprovalForm;
+import com.roomx.domain.model.aggrerate.BookingRequest;
 
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ApprovalFormRepository {
@@ -13,4 +15,6 @@ public interface ApprovalFormRepository {
     Optional<ApprovalForm> findByBookingRequestIdAndLastStatusWithBookingRequest(String bookingRequestId, String status);
 
     Optional<ApprovalForm> findByBookingRequestIdLastStatusWithBookingRequest(String bookingRequestId);
+
+    List<ApprovalForm> findAllBookingRequestWithInStatus(List<String> status);
 }

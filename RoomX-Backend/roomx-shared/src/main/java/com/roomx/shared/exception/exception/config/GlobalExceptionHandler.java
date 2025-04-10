@@ -113,11 +113,6 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(exception, ErrorCode.UNCATEGORIZED_EXCEPTION);
     }
 
-    @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ResultResponse> handlingAppException(AppException exception) {
-        return buildErrorResponse(exception, exception.getErrorCode(), exception.getArgs());
-    }
-
     @ExceptionHandler(value = AccessDeniedException.class)
     ResponseEntity<ResultResponse> handlingAccessDeniedException(AccessDeniedException exception) {
         return buildErrorResponse(exception, ErrorCode.UNAUTHORIZED);
@@ -189,7 +184,47 @@ public class GlobalExceptionHandler {
 
     private String getMessage(String code, Object[] args) {
         Locale locale = LocaleContextHolder.getLocale();
-        return messageSource.getMessage(code, args, code, locale);
+        String rawMessage = messageSource.getMessage(code, null, code, locale);
+
+        // Nếu không có args hoặc args chỉ có 1 phần tử (dành cho result), xoá hết {index}
+        if (args == null || args.length <= 1) {
+            return rawMessage.replaceAll("\\{\\d+}", "");
+        }
+
+        // Format message với args từ args[1] trở đi
+        String formattedMessage = rawMessage;
+        for (int i = 1; i < args.length; i++) {
+            formattedMessage = formattedMessage.replace("{" + i + "}", String.valueOf(args[i]));
+        }
+
+        // Xoá các placeholder còn dư
+        return formattedMessage.replaceAll("\\{\\d+}", "");
+    }
+
+  /*  @ExceptionHandler(value = AppException.class)
+    ResponseEntity<ResultResponse> handlingAppException(AppException exception) {
+        return buildErrorResponse(exception, exception.getErrorCode(), exception.getArgs());
+    }*/
+
+    @ExceptionHandler(value = AppException.class)
+    ResponseEntity<ResultResponse> handlingAppException(AppException exception) {
+        ErrorCode errorCode = exception.getErrorCode();
+        Object[] args = exception.getArgs();
+        String errorId = UUID.randomUUID().toString();
+
+        if (args == null || args.length == 0) {
+            args = new Object[]{null, errorId}; // đảm bảo có ít nhất args[1] cho format
+        }
+
+        String message = getMessage(errorCode.getMessageKey(), args);
+
+        ResultResponse<Object> resultResponse = ResultResponse.builder()
+                .code(errorCode.getCode())
+                .message(message)
+                .result(args[0]) // result là arg đầu tiên
+                .build();
+
+        return new ResponseEntity<>(resultResponse, errorCode.getStatusCode());
     }
 
 }
