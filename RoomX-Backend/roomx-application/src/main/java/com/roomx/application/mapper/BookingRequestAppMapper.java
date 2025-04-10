@@ -45,4 +45,6 @@ public interface BookingRequestAppMapper {
     BookingUserRelatedResponse toResponseFromApprovalFormForUser(BookingRequest bookingRequest, @Context ApprovalForm approvalForm);
 
     BookingRequest toDomainChecking(CheckingBookingRequest request);
+
+    CheckingBookingRequest convertChecking(BookingRequestUserCreateRequest request);
 }

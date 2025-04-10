@@ -41,4 +41,8 @@ public class DateRequestExceptionEntity {
     @Column(name = COLUMN_ROOMID_NAME)
     private UUID roomId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booking_request_id")
+    private BookingRequestEntity bookingRequest;
+
 }

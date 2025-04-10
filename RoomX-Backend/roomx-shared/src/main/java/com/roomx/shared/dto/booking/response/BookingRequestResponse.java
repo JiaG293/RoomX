@@ -1,6 +1,7 @@
 package com.roomx.shared.dto.booking.response;
 
 
+import com.roomx.shared.dto.booking.request.DateRequestExceptionRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,5 +36,6 @@ public class BookingRequestResponse {
     private String approvalStatus;
     private Instant createdAt;
     private Instant updatedAt;
+    private List<DateRequestExceptionResponse> dateRequestExceptions;
 
 }

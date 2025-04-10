@@ -55,4 +55,7 @@ public class BookingRequestUserCreateRequest {
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     @Size(min = 2, message = "valid.booking_request.user_create.size.participants")
     private List<String> participants = new ArrayList<>();
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private List<DateRequestExceptionRequest> dateRequestExceptions;
 }

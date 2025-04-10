@@ -21,4 +21,6 @@ public class DateRequestException {
     private LocalTime startTime;
     private LocalTime endTime;
 
+    public DateRequestException(LocalDate date, LocalTime timeStart, LocalTime timeEnd) {
+    }
 }

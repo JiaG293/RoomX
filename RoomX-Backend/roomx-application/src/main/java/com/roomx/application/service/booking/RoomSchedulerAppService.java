@@ -1,5 +1,6 @@
 package com.roomx.application.service.booking;
 
+import com.roomx.infrastructure.cache.redis.service.RoomCheckingCacheService;
 import com.roomx.shared.dto.booking.base.TimeRange;
 import com.roomx.shared.dto.booking.base.TimeRangeWithDate;
 import com.roomx.domain.event.Event;
@@ -37,6 +38,7 @@ public class RoomSchedulerAppService {
     private final UserRepository userRepository;
     private final BookingParticipantRepository bookingParticipantRepository;
     private final PlaceRepository placeRepository;
+    private final RoomCheckingCacheService roomCheckingCacheService;
 
     public Optional<Room> findAvailableRoom(
             int requiredCapacity,
@@ -818,6 +820,176 @@ public class RoomSchedulerAppService {
     }*/
 
 
+//    public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+//            String branchId,
+//            List<LocalDate> occurrences,
+//            List<DateRequestException> dateRequestExceptions,
+//            LocalTime timeStart, LocalTime timeEnd,
+//            Integer capacity,
+//            List<String> participants,
+//            Integer bufferTime) {
+//
+//        // Tính ra participants size nếu người dùng không yêu cầu sức chứa
+//        List<RoomScheduleResultDto> results = new ArrayList<>();
+//        int requiredCapacity = (capacity != null && capacity > 0) ? capacity : participants.size() + 1;
+//
+//        Map<LocalDate, DateRequestException> exceptionMap = dateRequestExceptions.stream()
+//                .collect(Collectors.toMap(DateRequestException::getDate, e -> e));
+//
+//        // Lấy ra các phòng khả dụng tại thời điểm hiện tại
+//        List<Room> availableRooms = (branchId != null)
+//                ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
+//                : roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
+//
+//        // Duyệt qua tất cả các ngày để áp dụng sweepline
+//        for (LocalDate date : occurrences) {
+//            // Lấy tất cả các phòng hiện đang được họp hoặc đã lên lịch
+//            List<Booking> bookings = bookingRepository.findAllByMeetingDateAndContainsStatus(
+//                    date, BookingStatusType.getListAccept());
+//
+//            Map<UUID, List<Booking>> bookingsByRoom = bookings.stream()
+//                    .filter(b -> b.getRoom() != null)
+//                    .collect(Collectors.groupingBy(b -> b.getRoom().getId()));
+//
+//            LocalTime originalStart = timeStart;
+//            LocalTime originalEnd = timeEnd;
+//
+//            Room optimalRoom = availableRooms.stream()
+//                    .sorted(Comparator.comparingInt(r -> r.getRoomClass().getCapacity()))
+//                    .filter(room -> {
+//                        if (room.getRoomClass().getCapacity() < requiredCapacity) return false;
+//                        List<Booking> roomBookings = bookingsByRoom.getOrDefault(room.getId(), Collections.emptyList());
+//                        return !hasConflict(roomBookings, originalStart, originalEnd, bufferTime);
+//                    })
+//                    .findFirst()
+//                    .orElse(null);
+//
+//            if (optimalRoom != null) {
+//                results.add(new RoomScheduleResultDto(date, false, optimalRoom.getId().toString(), null));
+//                continue;
+//            }
+//
+//            // Gợi ý slot nếu không phòng nào trống (nhiều phòng một ngày)
+//            /*for (Room room : availableRooms) {
+//                if (room.getRoomClass().getCapacity() < requiredCapacity) continue;
+//
+//                List<Booking> roomBookings = bookingsByRoom.getOrDefault(room.getId(), Collections.emptyList());
+//                List<TimeRange> busy = roomBookings.stream()
+//                        .map(b -> new TimeRange(
+//                                b.getMeetingStart().minusMinutes(bufferTime),
+//                                b.getMeetingEnd().plusMinutes(bufferTime)))
+//                        .sorted(Comparator.comparing(TimeRange::start))
+//                        .collect(Collectors.toList());
+//
+//                List<TimeRange> free = findFreeTimeSlots(busy);
+//
+//                List<String> timeMorning = new ArrayList<>();
+//                List<String> timeAfternoon = new ArrayList<>();
+//
+//                for (TimeRange slot : free) {
+//                    LocalTime start = slot.start().plusMinutes(bufferTime);
+//                    LocalTime end = slot.end().minusMinutes(bufferTime);
+//                    if (!start.isBefore(end)) continue;
+//
+//                    if (end.isBefore(LocalTime.NOON)) {
+//                        timeMorning.add(start + " - " + end);
+//                    } else if (start.isAfter(LocalTime.NOON)) {
+//                        timeAfternoon.add(start + " - " + end);
+//                    } else {
+//                        if (start.isBefore(LocalTime.NOON)) {
+//                            timeMorning.add(start + " - " + LocalTime.NOON);
+//                        }
+//                        if (end.isAfter(LocalTime.NOON)) {
+//                            timeAfternoon.add(LocalTime.NOON + " - " + end);
+//                        }
+//                    }
+//                }
+//
+//                SuggestedTimeSlotDto suggestedTimeSlotDto = null;
+//                boolean hasConflict = true;
+//
+//                // Kiểm tra các date request exception thay thế thời gian
+//                if (exceptionMap.containsKey(date)) {
+//                    DateRequestException exception = exceptionMap.get(date);
+//                    LocalTime newStart = exception.getStartTime();
+//                    LocalTime newEnd = exception.getEndTime();
+//
+//                    for (TimeRange slot : free) {
+//                        LocalTime start = slot.start().plusMinutes(bufferTime);
+//                        LocalTime end = slot.end().minusMinutes(bufferTime);
+//                        if (!start.isBefore(end)) continue;
+//
+//                        if (!newStart.isBefore(start) && !newEnd.isAfter(end)) {
+//                            hasConflict = false;
+//                            break;
+//                        }
+//                    }
+//                }
+//
+//                if (hasConflict) {
+//                    if (!timeMorning.isEmpty() || !timeAfternoon.isEmpty()) {
+//                        suggestedTimeSlotDto = new SuggestedTimeSlotDto(timeMorning, timeAfternoon);
+//                    } else {
+//                        continue;
+//                    }
+//                }
+//
+//                results.add(new RoomScheduleResultDto(
+//                        date,
+//                        hasConflict,
+//                        room.getId().toString(),
+//                        suggestedTimeSlotDto
+//                ));
+//            }*/
+//
+//            // Chỉ lấy phòng tối ưu nhất
+//            for (Room room : availableRooms) {
+//                if (room.getRoomClass().getCapacity() < requiredCapacity) continue;
+//
+//                List<Booking> roomBookings = bookingsByRoom.getOrDefault(room.getId(), Collections.emptyList());
+//                List<TimeRange> busy = roomBookings.stream()
+//                        .map(b -> new TimeRange(
+//                                b.getMeetingStart().minusMinutes(bufferTime),
+//                                b.getMeetingEnd().plusMinutes(bufferTime)))
+//                        .sorted(Comparator.comparing(TimeRange::start))
+//                        .collect(Collectors.toList());
+//
+//                List<TimeRange> free = findFreeTimeSlots(busy);
+//
+//                List<String> timeMorning = new ArrayList<>();
+//                List<String> timeAfternoon = new ArrayList<>();
+//
+//                for (TimeRange slot : free) {
+//                    LocalTime start = slot.start().plusMinutes(bufferTime);
+//                    LocalTime end = slot.end().minusMinutes(bufferTime);
+//                    if (!start.isBefore(end)) continue;
+//
+//                    if (end.isBefore(LocalTime.NOON)) {
+//                        timeMorning.add(start + " - " + end);
+//                    } else if (start.isAfter(LocalTime.NOON)) {
+//                        timeAfternoon.add(start + " - " + end);
+//                    } else {
+//                        if (start.isBefore(LocalTime.NOON)) {
+//                            timeMorning.add(start + " - " + LocalTime.NOON);
+//                        }
+//                        if (end.isAfter(LocalTime.NOON)) {
+//                            timeAfternoon.add(LocalTime.NOON + " - " + end);
+//                        }
+//                    }
+//                }
+//
+//                if (!timeMorning.isEmpty() || !timeAfternoon.isEmpty()) {
+//                    results.add(new RoomScheduleResultDto(date, true, room.getId().toString(),
+//                            new SuggestedTimeSlotDto(timeMorning, timeAfternoon)));
+//                    break;
+//                }
+//            }
+//        }
+//
+//        return results;
+//    }
+
+
     public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
             String branchId,
             List<LocalDate> occurrences,
@@ -986,6 +1158,7 @@ public class RoomSchedulerAppService {
 
         return results;
     }
+
 
 
     private boolean hasConflict(List<Booking> bookings, LocalTime start, LocalTime end, int bufferTime) {

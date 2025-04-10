@@ -1,7 +1,8 @@
-package com.roomx.infrastructure.cache.redis;
+package com.roomx.infrastructure.cache.redis.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.roomx.infrastructure.cache.redis.service.RedisTenantService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RedisTenantServiceImpl implements RedisTenantService{
+public class RedisTenantServiceImpl implements RedisTenantService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     private String getTenantWithKey(String key) {

@@ -6,7 +6,10 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        uses = {
+            DateRequestExceptionEntityMapper.class
+        }
 )
 public interface BookingRequestEntityMapper {
     BookingRequest toDomain(BookingRequestEntity entity);

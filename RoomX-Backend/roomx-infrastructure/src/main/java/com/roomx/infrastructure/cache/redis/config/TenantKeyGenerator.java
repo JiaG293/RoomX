@@ -1,4 +1,4 @@
-package com.roomx.infrastructure.cache;
+package com.roomx.infrastructure.cache.redis.config;
 
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import org.springframework.cache.interceptor.KeyGenerator;

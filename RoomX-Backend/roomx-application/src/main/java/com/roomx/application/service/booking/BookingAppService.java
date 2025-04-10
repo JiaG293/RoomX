@@ -94,6 +94,8 @@ public class BookingAppService {
     private final BookingEquipmentAppMapper bookingEquipmentAppMapper;
     private final BookingParticitipantAppMapper bookingParticitipantAppMapper;
     private final RoleEvaluator roleEvaluator;
+    private final DateRequestExceptionRepository dateRequestExceptionRepository;
+    private final DateRequestExceptionAppMapper dateRequestExceptionAppMapper;
 
 
     /*@Transactional
@@ -152,7 +154,7 @@ public class BookingAppService {
         List<DateRequestException> dateExceptions = bookingRequestDomain.getDateRequestExceptions() != null ? bookingRequestDomain.getDateRequestExceptions() : Collections.EMPTY_LIST;
 
         log.info("check time: {}", dateExceptions);
-        List<RoomScheduleResultDto> resposne = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+        List<RoomScheduleResultDto> response = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
                 request.getBranchId(),
                 listOccurrences,
                 dateExceptions,
@@ -162,20 +164,51 @@ public class BookingAppService {
                 bookingRequestDomain.getParticipants(),
                 10
         );
-        return resposne;
+        return response;
     }
 
     @Transactional
     public BookingRequestResponse createBookingRequest(BookingRequestUserCreateRequest request) {
         var bookingRequestDomain = bookingRequestAppMapper.toDomainUser(request);
 
+
         bookingRequestDomain.setRequester(UUID.fromString(securityUtil.getCurrentUserId()));
         bookingRequestDomain.setEndDateApproval(Instant.now().plus(3, ChronoUnit.DAYS));
         bookingRequestDomain.setCreatedAt(Instant.now());
         bookingRequestDomain.setUpdatedAt(Instant.now());
 
+        List<DateRequestException> dateExceptions = bookingRequestDomain.getDateRequestExceptions() != null ? bookingRequestDomain.getDateRequestExceptions() : Collections.EMPTY_LIST;
+
+        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+                request.getBranchId(),
+                bookingRequestDomain.getOccurrences(),
+                dateExceptions,
+                bookingRequestDomain.getStartTime(),
+                bookingRequestDomain.getEndTime(),
+                bookingRequestDomain.getCapacity(),
+                bookingRequestDomain.getParticipants(),
+                10
+        );
+        List<LocalDate> conflictedDates = result.stream()
+                .filter(RoomScheduleResultDto::isHasConflict)
+                .map(RoomScheduleResultDto::getDate)
+                .toList();
+
+        if (!conflictedDates.isEmpty()) {
+            throw new AppException(ErrorCode.BOOKING_REQUEST_CONFLICT, conflictedDates);
+        }
 
         var savedBookingRequest = bookingRequestRepository.save(bookingRequestDomain);
+        if (!dateExceptions.isEmpty()) {
+            dateExceptions.forEach(date -> date.setBookingRequestId(savedBookingRequest.getId()));
+
+            var saveDateRequestException = dateRequestExceptionRepository.saveAll(dateExceptions);
+
+            log.info("data date: {}", saveDateRequestException.getFirst().getDate());
+        }
+
+
+
         log.info("Booking Request ID after save: {}", savedBookingRequest.getId());
 
         var servicesDomain = request.getServices().stream()

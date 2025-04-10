@@ -13,6 +13,7 @@ import java.util.Map;
 public class RoomScheduleResultDto{
     private LocalDate date;
     private boolean hasConflict;
+//    private boolean hasConflictRequest;
     private String optimalRoomId;
     private SuggestedTimeSlotDto suggestedTimeSlots;
 }

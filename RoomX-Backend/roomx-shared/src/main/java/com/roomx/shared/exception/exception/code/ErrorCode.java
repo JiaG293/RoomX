@@ -82,7 +82,11 @@ public enum ErrorCode {
     MINIO_FAILED(1000, "error.minio.failed", HttpStatus.BAD_GATEWAY),
     BOOKING_REQUEST_BAD_REQUEST(1000, "error.booking_request.bad_request", HttpStatus.BAD_REQUEST),
     BOOKING_APPROVE_CONFLICT(1000, "error.booking.approve.conflict", HttpStatus.CONFLICT),
-    BOOKING_NOTFOUND(1000, "error.booking.not_found", HttpStatus.NOT_FOUND);
+    BOOKING_NOTFOUND(1000, "error.booking.not_found", HttpStatus.NOT_FOUND),
+    KEYCLOAK_REALM_BAD_REQUEST(1000, "error.keycloak.bad_request", HttpStatus.BAD_REQUEST),
+    KEYCLOAK_REALM_CONFLICT(1000, "error.keycloak.conflict", HttpStatus.CONFLICT),
+    KEYCLOAK_REALM_NOT_FOUND(1000, "error.keycloak.not_found", HttpStatus.NOT_FOUND),
+    BOOKING_REQUEST_CONFLICT(1000, "error.booking_request.conflict", HttpStatus.CONFLICT);
 
 
 

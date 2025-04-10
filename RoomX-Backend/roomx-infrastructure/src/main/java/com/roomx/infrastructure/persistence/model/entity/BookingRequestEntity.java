@@ -103,4 +103,10 @@ public class BookingRequestEntity {
     @Column(name = "participants", length = 512)
     private List<String> participants = new ArrayList<>();
 
+    @OneToMany(mappedBy = "bookingRequest")
+    private List<DateRequestExceptionEntity> dateRequestExceptions = new ArrayList<>();
+
+    public BookingRequestEntity(UUID id) {
+        this.id = id;
+    }
 }

@@ -11,5 +11,7 @@ import org.mapstruct.ReportingPolicy;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface DateRequestExceptionAppMapper {
+
+
     DateRequestException toDomain(DateRequestExceptionRequest request);
 }

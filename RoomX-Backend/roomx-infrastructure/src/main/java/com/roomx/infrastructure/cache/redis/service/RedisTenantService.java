@@ -1,4 +1,4 @@
-package com.roomx.infrastructure.cache.redis;
+package com.roomx.infrastructure.cache.redis.service;
 
 import java.util.concurrent.TimeUnit;
 
