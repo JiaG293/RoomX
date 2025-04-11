@@ -58,7 +58,7 @@ VALUES ('374e33ed-1d51-4298-a3be-b51b4d7529a3', 'ADMIN'),
 
        --SANG
        ('51af269b-e536-4ead-a6b7-981f7dd56bba', 'USER'),
-       ('90c92122-4a32-41aa-89f2-4e25b2d414d4', 'ADMIN'),
+       ('e8646ba4-f747-4bd1-925c-de2dc8f63d07', 'ADMIN'),
        ('e8646ba4-f747-4bd1-925c-de2dc8f63d07', 'APPROVER')
 
 ON CONFLICT (user_id, role_id) DO NOTHING;
