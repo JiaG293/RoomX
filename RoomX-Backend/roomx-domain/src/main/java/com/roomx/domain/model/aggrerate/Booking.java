@@ -38,6 +38,7 @@ public class Booking {
     private List<BookingParticipant> participants = new ArrayList<>();
 
 
+
     public String getPlaceDetail(){
         return  " - " + room.getRoomCode();
     }

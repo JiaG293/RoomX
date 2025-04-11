@@ -96,15 +96,26 @@ spring:
       port: ${REDIS_PORT:6379}
       username: ${REDIS_USERNAME:}
       password: ${REDIS_PASSWORD:}
+      connect-timeout: 30000
       lettuce:
         pool:
           max-active: 10
           max-idle: 5
           min-idle: 5
-      connect-timeout: 30000
+      redisson:
+        pool:
+          max-active: 100
+          max-idle: 5
+        retry:
+            max-retry-attemps: ${REDIS_REDISSON_RETRY_MAX_RETRY_ATTEMPS:5} # 5 retries
+            initial-delay: ${REDIS_REDISSON_RETRY_INITIAL_DELAY:1000}     # 1000 miliseconds
+        circuitbreaker:
+          failure-rate-threshold: ${REDIS_REDISSON_CIRCUIBREAKER_FAILURE_RATE_THRESHOLD:50}   # 50%
+          wait-duration-in-open-state: ${REDIS_REDISSON_CIRCUIBREAKER_WAIT_DURATION_IN_OPEN_STATE:60}   # 60 seconds
+          sliding-window-size: ${REDIS_REDISSON_CIRCUIBREAKER_SLIDING_WINDOW_SIZE:10}   # 10
 
   kafka:
-    bootstrap-servers: ${KAFKA_SERVER_URL:localhost:9094}
+    bootstrap-servers: ${KAFKA_SERVER_URL:localhost:9092}
     listener:
       missing-topics-fatal: false
     consumer:
@@ -119,6 +130,11 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.trusted.packages: "*"
+        backoff.ms: ${KAFKA_PRODUCER_BACKOFF_MS:1000}    #  1000 miliseconds
+        retries: ${KAFKA_PRODUCER_RETRIES:3}      #  3 retries
+        delivery.timeout.ms: ${KAFKA_PRODUCER_DELIVERY_TIMEOUT_MS:120000}   # 2 minutes
+        request.timeout.ms: ${KAFKA_PRODUCER_REQUEST_TIMEOUT_MS:30000}     # 30 seconds
+        linger.ms: ${KAFKA_PRODUCER_LINGER_MS:5}       # 5 milliseconds
 minio:
   url: ${MINIO_URL:http://localhost:9000}
   domain: ${MINIO_DOMAIN:s3.domain.com}
@@ -161,6 +177,7 @@ resilience4j:
         waitDurationInOpenState: 5s
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
+
 keycloak:
   client-default: ${KEYCLOAK_CLIENT_DEFAULT:roomx-fe} # client mặc định cho app roomx
   realm: master
@@ -239,10 +256,11 @@ management:
 
 
 
-#logging:
-#  level:
+logging:
+  level:
 #    org.springframework.transaction: DEBUG
 #    org.hibernate.sql: DEBUG
+    org.hibernate.type.descriptor.BasicBinder: TRACE
 #  pattern:
 #    correlation: '[%X{traceId:-}-%X{spanId:-}] [%X{tenantId:-}] '
 

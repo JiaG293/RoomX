@@ -3,10 +3,7 @@ package com.roomx.controller.resource;
 import com.roomx.application.service.booking.BookingAppService;
 import com.roomx.shared.dto.TestRequest;
 import com.roomx.shared.dto.booking.request.*;
-import com.roomx.shared.dto.booking.response.BookingDetailResponse;
-import com.roomx.shared.dto.booking.response.BookingRequestResponse;
-import com.roomx.shared.dto.booking.response.BookingResponse;
-import com.roomx.shared.dto.booking.response.BookingWithPlaceResponse;
+import com.roomx.shared.dto.booking.response.*;
 import com.roomx.shared.dto.resource.request.BranchQueryRequest;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
@@ -101,6 +98,20 @@ public class BookingController {
     ) {
         var result = bookingAppService.getListPageBookingRequestAdminApproval(request, page, size, sortBy, direction);
         return ResultResponse.<Page<BookingRequestResponse>>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/list")
+    public ResultResponse<?> getPageBookingList(
+            @ModelAttribute BookingListRequest request,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "-1") Integer size,
+            @RequestParam(defaultValue = "updated_at") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        var result = bookingAppService.getListPageBooking(request, page, size, sortBy, direction);
+        return ResultResponse.<Page<BookingMiniumResponse>>builder()
                 .result(result)
                 .build();
     }

@@ -29,27 +29,25 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        // Create RedisTemplate object
+
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 
-        // Set the connection factory for Redis
+
         redisTemplate.setConnectionFactory(redisConnectionFactory);
 
-        // Create the Jackson2JsonRedisSerializer for serializing objects
+
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
 
-        // Configure key and value serializers for the RedisTemplate
+
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(serializer);
 
-        // Configure hash key and hash value serializers
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(serializer);
 
-        // Initialize the RedisTemplate
         redisTemplate.afterPropertiesSet();
 
-        // Return the configured RedisTemplate
+
         return redisTemplate;
     }
 }

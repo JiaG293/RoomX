@@ -11,6 +11,8 @@ import com.roomx.infrastructure.cache.redis.service.RoomCheckingCacheService;
 import com.roomx.infrastructure.persistence.dto.BookingFilter;
 import com.roomx.infrastructure.persistence.mapper.EquipmentRequestEntityMapper;
 import com.roomx.infrastructure.persistence.mapper.ServiceRequestEntityMapper;
+import com.roomx.infrastructure.persistence.model.dto.BookingDto;
+import com.roomx.infrastructure.persistence.model.entity.BookingEntity;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaBookingEntityRepository;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.persistence.service.BookingEntityService;
@@ -78,6 +80,7 @@ public class BookingAppService {
     private final BookingParticipantRepository bookingParticipantRepository;
     private final ApprovalFormRepository approvalFormRepository;
     private final UserAppMapper userAppMapper;
+    private final BookingAppMapper bookingAppMapper;
 
     private final BookingRepository bookingRepository;
     private final RoomSchedulerAppService roomSchedulerAppService;
@@ -86,7 +89,6 @@ public class BookingAppService {
     private final RoomClassRepository roomClassRepository;
 
     private final JpaBookingEntityRepository jpaBookingEntityRepository;
-    private final BookingAppMapper bookingAppMapper;
     private final ApprovalFormEntityService approvalFormEntityService;
     private final BookingEntityService bookingEntityService;
     private final BookingServiceRepository bookingServiceRepository;
@@ -450,6 +452,53 @@ public class BookingAppService {
         return bookingDomainPage.map(bookingAppMapper::toResponse);
     }
 
+    public Page<BookingMiniumResponse> getListPageBooking(
+            BookingListRequest request,
+            Integer page,
+            Integer size,
+            String sortBy,
+            String direction) {
+        if (size == -1) {
+            size = Integer.MAX_VALUE;
+        }
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        LocalDate today = LocalDate.now();
+
+        int currentYear = today.getYear();
+        int selectedYear = (request.getYear() != null && request.getYear() > 0)
+                ? request.getYear()
+                : currentYear;
+
+        int selectedMonth = (request.getMonth() != null && request.getMonth() >= 1 && request.getMonth() <= 12)
+                ? request.getMonth()
+                : today.getMonthValue();
+
+        LocalDate startDate = LocalDate.of(selectedYear, selectedMonth, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        String currentUserId = securityUtil.getCurrentUserId();
+        log.info("Date range: {} -> {} | Instant range: {} -> {}", startDate, endDate, startDate, endDate);
+
+        Page<BookingMiniumResponse> bookingDomain;
+
+        if (!roleEvaluator.hasAnyRoleType("approve") && (!request.isAdmin())) {
+            bookingDomain = bookingEntityService.findBookingsByTimeRangeAndUserId(startDate, endDate, currentUserId, pageable);
+        } else {
+            bookingDomain = bookingEntityService.findBookingsByTimeRange(startDate, endDate, pageable);
+        }
+
+        if (bookingDomain == null) {
+            return Page.empty(pageable);
+        }
+
+        // Trả về kết quả dưới dạng phân trang và chuyển đổi thành response
+        return bookingDomain;
+    }
 
     public Page<BookingRequestResponse> getListPageBookingRequestAdminApproval(
             BookingRequestApprovalRequest request,
@@ -589,5 +638,6 @@ public class BookingAppService {
         return true;
 
     }
+
 
 }

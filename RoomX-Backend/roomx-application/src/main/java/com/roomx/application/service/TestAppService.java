@@ -12,9 +12,11 @@ import com.roomx.infrastructure.minio.MinioService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
+import com.roomx.infrastructure.persistence.service.BookingEntityService;
 import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import com.roomx.shared.base.MeetingMessage;
 import com.roomx.shared.enums.ApprovalStatusType;
+import com.roomx.shared.enums.BookingStatusType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -53,7 +55,8 @@ public class TestAppService {
     private final BookingRequestRepository bookingRequestRepository;
     private final ApprovalFormRepository approvalFormRepository;
     private final ApprovalFormEntityService approvalFormEntityService;
-
+    private final BookingRepository bookingRepository;
+    private final BookingEntityService bookingEntityService;
 
 
     public Object testAppService() {
@@ -70,14 +73,14 @@ public class TestAppService {
         redisTenantService.put("helo", "12", 30, TimeUnit.SECONDS);
 
         Sort sort = "desc".equalsIgnoreCase("desc")
-                ? Sort.by("updated_at").descending()
-                : Sort.by("updated_at").ascending();
+                ? Sort.by("id").descending()
+                : Sort.by("id").ascending();
         ZoneId zoneId = ZoneId.systemDefault();
         Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
-        var result = approvalFormEntityService.findAllByLastStatusAndDateRange(
-                ApprovalStatusType.getListCanApproval(),
-                LocalDate.of(2025, 2, 1).atStartOfDay(zoneId).toInstant(),
-                LocalDate.of(2025, 6, 1).atTime(LocalTime.MAX).atZone(zoneId).toInstant(),
+        var result = bookingEntityService.findBookingsByTimeRangeAndUserId(
+                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2025, 12, 1),
+                "ea4e9c4c-a317-4064-8a5b-da2b339e4380",
                 pageable
         );
         return result;
@@ -126,7 +129,7 @@ public class TestAppService {
     }
 
 
-    public void testKafka1(MeetingMessage request){
+    public void testKafka1(MeetingMessage request) {
         kafkaTenantService.sendMessage(MeetingMessage.builder()
                 .message(request.getMessage())
                 .senderId(UUID.randomUUID().toString())
@@ -136,8 +139,6 @@ public class TestAppService {
                 .updatedAt(Instant.now())
                 .build(), "create-notification-topic");
     }
-
-
 
 
 }

@@ -3,6 +3,7 @@ package com.roomx.application.mapper;
 import com.roomx.domain.model.aggrerate.Booking;
 import com.roomx.domain.model.aggrerate.BookingRequest;
 import com.roomx.shared.dto.booking.response.BookingDetailResponse;
+import com.roomx.shared.dto.booking.response.BookingMiniumResponse;
 import com.roomx.shared.dto.booking.response.BookingResponse;
 import com.roomx.shared.dto.booking.response.BookingWithPlaceResponse;
 import org.mapstruct.*;
@@ -30,4 +31,6 @@ public interface BookingAppMapper {
     @Mapping(target = "previousRoomId", source = "previousRoom.id")
     BookingWithPlaceResponse toResponseWithPlace(Booking domain);
 
+//    @Mapping(target = "booDo")
+//    BookingMiniumResponse toResponseMinium(Booking booking);
 }

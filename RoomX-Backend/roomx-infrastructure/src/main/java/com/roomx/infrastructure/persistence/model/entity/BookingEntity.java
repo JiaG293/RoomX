@@ -40,7 +40,9 @@ public class BookingEntity {
     public static final String COLUMN_MEETINGDATE_NAME = "meeting_date";
     public static final String COLUMN_TITLE_NAME = "title";
     public static final String COLUMN_DESCRIPTION_NAME = "description";
-
+    public static final String JOINTABLE_USERS_NAME = "booking_participant";
+    public static final String JOINCOLUMNS_JOINCOLUMN_USERS_NAME = "booking_id";
+    public static final String INVERSEJOINCOLUMNS_JOINCOLUMN_USERS_NAME = "user_id";
 
     @Id
     @Column(name = COLUMN_ID_NAME, nullable = false)
@@ -96,7 +98,6 @@ public class BookingEntity {
 
     @Column(name = COLUMN_PREVIOUSROOMID_NAME)
     private UUID previousRoomId;
-
 
 
 }

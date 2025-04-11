@@ -1,4 +1,4 @@
-package com.roomx.shared.dto.resource.response;
+package com.roomx.shared.dto.booking.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PlaceNameResponse {
+public class RoomBookingResponse {
     private UUID id;
     private String code;
     private String name;

@@ -1,3 +1,4 @@
+/*
 package com.roomx.infrastructure.distributed.redisson.impl;
 
 import com.roomx.infrastructure.distributed.redisson.RedisDistributedLocker;
@@ -60,3 +61,4 @@ public class RedisDistributedLockerImpl implements RedisDistributedService {
         };
     }
 }
+*/
