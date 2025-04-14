@@ -152,24 +152,7 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('ADMIN') or #id == #jwt.subject")
-    @PostMapping("/check/{id}")
-    public ResultResponse<?> check(@PathVariable String id, @AuthenticationPrincipal Jwt jwt) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Map<String, String> response = new HashMap<>();
-        response.put("subject", id);
-        response.put("role", "ff");
-
-        return ResultResponse.<Map<String, String>>builder().result(response).build();
-    }
-
-    @GetMapping("/tenant/{data}")
-    public ResultResponse<?> getTenantCurrent(@PathVariable String data) {
-        log.info("getTenantCurrent: {}", userAppService.getUserDetail(data));
-
-        return ResultResponse.<String>builder().result(userAppService.getTenant()).build();
-    }
 
 
 

@@ -32,12 +32,13 @@ spring:
       minimum-idle: 5         # Số lượng kết nối tối thiểu trong pool
     type: com.zaxxer.hikari.HikariDataSource
   flyway:
-    baseline-on-migrate: true
-    locations: classpath:db/migration/default
+    baseline-on-migrate: true   # Chỉ tạo bảng từ jpa
+    locations: classpath:db/migration/tenant
     schemas: public
     enabled: true
     placeholders:
       schema: ${FLYWAY_PLACEHOLDERS:public}
+
 
   #    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:roomx}
   #    driver-class-name: org.postgresql.Driver
@@ -48,12 +49,12 @@ spring:
       ddl-auto: ${JPA_DDL_AUTO:none}
     properties: # Nếu hibernate không tìm thấy schema mặc định sẽ đi vào đây (cấp thấp hơn hikari)
       hibernate:
-#        generate_statistics: true
+        #        generate_statistics: true
         format_sql: true
         use_sql_comments: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
         hbm2ddl:
-          auto: update # không bật trong production
+          auto: ${JPA_DDL_AUTO:none} # không bật trong production
       #      default_schema: ${DB_SCHEMA_HIBERNATE:DEFAULT}
       defer-datasource-initialization: true   # Ngăn insert dữ liệu trước khi jpa mapping
   jackson:
@@ -107,12 +108,23 @@ spring:
           max-active: 100
           max-idle: 5
         retry:
-            max-retry-attemps: ${REDIS_REDISSON_RETRY_MAX_RETRY_ATTEMPS:5} # 5 retries
-            initial-delay: ${REDIS_REDISSON_RETRY_INITIAL_DELAY:1000}     # 1000 miliseconds
+          max-retry-attemps: ${REDIS_REDISSON_RETRY_MAX_RETRY_ATTEMPS:5} # 5 retries
+          initial-delay: ${REDIS_REDISSON_RETRY_INITIAL_DELAY:1000}     # 1000 miliseconds
         circuitbreaker:
           failure-rate-threshold: ${REDIS_REDISSON_CIRCUIBREAKER_FAILURE_RATE_THRESHOLD:50}   # 50%
           wait-duration-in-open-state: ${REDIS_REDISSON_CIRCUIBREAKER_WAIT_DURATION_IN_OPEN_STATE:60}   # 60 seconds
           sliding-window-size: ${REDIS_REDISSON_CIRCUIBREAKER_SLIDING_WINDOW_SIZE:10}   # 10
+
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+  thymeleaf:
+    prefix: classpath:/templates/mail
+    suffix: .html
+
+
+
 
   kafka:
     bootstrap-servers: ${KAFKA_SERVER_URL:localhost:9092}
@@ -258,8 +270,8 @@ management:
 
 logging:
   level:
-#    org.springframework.transaction: DEBUG
-#    org.hibernate.sql: DEBUG
+    #    org.springframework.transaction: DEBUG
+    #    org.hibernate.sql: DEBUG
     org.hibernate.type.descriptor.BasicBinder: TRACE
 #  pattern:
 #    correlation: '[%X{traceId:-}-%X{spanId:-}] [%X{tenantId:-}] '

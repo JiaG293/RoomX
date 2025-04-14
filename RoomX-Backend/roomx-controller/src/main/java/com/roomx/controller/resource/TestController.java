@@ -63,6 +63,13 @@ public class TestController {
     }
 
 
+    @GetMapping("/mail")
+    public ResultResponse<?> mail() {
+
+        testAppService.mail();
+        return ResultResponse.<Void>builder()
+                .build();
+    }
 
 
 }

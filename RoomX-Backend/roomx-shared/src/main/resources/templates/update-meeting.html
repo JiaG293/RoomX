@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhắc Nhở Cuộc Họp - Điều Chỉnh Lịch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+        h2 {
+            color: #333333;
+        }
+        p {
+            color: #666666;
+            font-size: 16px;
+        }
+        .button {
+            background-color: #28a745;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .footer {
+            font-size: 12px;
+            color: #888888;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 120px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img src="{{companyLogoUrl}}" alt="Company Logo">
+    <h2>Nhắc Nhở Cuộc Họp - Điều Chỉnh Lịch</h2>
+    <p>Chào <strong>{{participantName}}</strong>,</p>
+    <p>Thông báo về việc điều chỉnh lịch cuộc họp của bạn.</p>
+    <p>Cuộc họp nội bộ của công ty, trước đó dự kiến sẽ diễn ra vào <strong>{{originalMeetingDate}}</strong>, giờ đây đã được thay đổi thành <strong>{{updatedMeetingDate}}</strong> và sẽ diễn ra tại <strong>{{updatedMeetingLocation}}</strong>.</p>
+    <p><strong>Thông tin cuộc họp đã được điều chỉnh:</strong></p>
+    <ul style="list-style-type: none; padding: 0;">
+        <li><strong>Chủ đề:</strong>{{meetingPurpose}}</li>
+        <li><strong>Thời gian mới:</strong> {{updatedMeetingDate}}</li>
+        <li><strong>Địa điểm mới:</strong> {{updatedMeetingLocation}}</li>
+        <li><strong>Mô tả:</strong> {{meetingDescription}}</li>
+    </ul>
+    <p>Vui lòng tham gia đúng giờ theo lịch mới để không làm gián đoạn cuộc họp.</p>
+    <p class="footer">Nếu bạn không thể tham gia theo lịch mới, vui lòng thông báo cho chúng tôi sớm nhất có thể.</p>
+    <p>Liên hệ: <a href="mailto:{{contactEmail}}">{{contactEmail}}</a></p>
+</div>
+</body>
+</html>

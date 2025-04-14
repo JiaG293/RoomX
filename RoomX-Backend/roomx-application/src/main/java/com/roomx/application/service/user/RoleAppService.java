@@ -68,7 +68,7 @@ public class RoleAppService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN') && @roleEvaluator.hasHigherRole(#userId)")
+    @PreAuthorize("@roleEvaluator.hasAnyRoleType('approve') && @roleEvaluator.hasHigherRole(#userId)")
     public UserRoleResponse addRoleForUser(UUID userId, String roleName) {
         var userDomain = userRepository.findById(userId, true).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED, null, userId)
@@ -95,7 +95,7 @@ public class RoleAppService {
 
 
     @Transactional
-    @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN') && @roleEvaluator.hasHigherRole(#userId)")
+    @PreAuthorize("@roleEvaluator.hasAnyRoleType('approve') && @roleEvaluator.hasHigherRole(#userId)")
     public UserRoleResponse removeRoleForUser(UUID userId, String roleName) {
         var userDomain = userRepository.findById(userId, true).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED, userId.toString())

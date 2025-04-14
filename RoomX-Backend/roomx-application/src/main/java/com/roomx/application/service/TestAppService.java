@@ -10,6 +10,7 @@ import com.roomx.infrastructure.cache.redis.service.RedisTenantService;
 import com.roomx.infrastructure.distributed.kafka.config.KafkaTenantService;
 import com.roomx.infrastructure.minio.MinioService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
+import com.roomx.infrastructure.notification.EmailService;
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.persistence.service.BookingEntityService;
@@ -38,6 +39,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -57,6 +59,7 @@ public class TestAppService {
     private final ApprovalFormEntityService approvalFormEntityService;
     private final BookingRepository bookingRepository;
     private final BookingEntityService bookingEntityService;
+    private final EmailService emailService;
 
 
     public Object testAppService() {
@@ -138,6 +141,14 @@ public class TestAppService {
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build(), "create-notification-topic");
+    }
+
+    public void mail() {
+        emailService
+                .sendHtmlEmail("asgy2002@gmail.com",
+                        "subject",
+                        "update-meeting",
+                        Map.of("name", "test"));
     }
 
 

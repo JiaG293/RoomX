@@ -42,8 +42,10 @@ public class TenantFlywayMigrationInitializer implements InitializingBean, Order
 
     @Override
     public int getOrder() {
-        // Executed after the default schema initialization in FlywayMigrationInitializer.
         return 1;
     }
+
+
+
 
 }

@@ -1,5 +1,4 @@
-SET search_path TO ${schema}, "$user", public;
-
+SET search_path TO ${schema}, public;
 
 -- ROLE
 INSERT INTO "role" (role_id, description, level)
@@ -38,6 +37,9 @@ VALUES ('nguyen van', 'admin', '1111111111', 'asgy2002@gmail.com', true, null, '
         '311cce72-d660-4cce-8d83-ef6bafa09f76', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true),
 
        ('first admin1', 'name admin1', '0323256788', 'admin1@example.com', true, null, 'EMPLOYEE', 'admin11',
+        'e8646ba4-f747-4bd1-925c-de2dc8f63d07', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true),
+
+       ('huynh', 'van', '0928383838', 'sang@gmail.com', true, null, 'EMPLOYEE', '20060121',
         'e8646ba4-f747-4bd1-925c-de2dc8f63d07', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true)
 
 
@@ -59,12 +61,19 @@ VALUES ('3393e980-0503-454a-94ef-e43258639994', 'ADMIN'),
        --SANG
        ('51af269b-e536-4ead-a6b7-981f7dd56bba', 'USER'),
        ('e8646ba4-f747-4bd1-925c-de2dc8f63d07', 'ADMIN'),
-       ('e8646ba4-f747-4bd1-925c-de2dc8f63d07', 'APPROVER')
+       ('e8646ba4-f747-4bd1-925c-de2dc8f63d07', 'APPROVER'),
+       ('e8646ba4-f747-4bd1-925c-de2dc8f63d07', 'OWNER'),
+       ('e8646ba4-f747-4bd1-925c-de2dc8f63d07', 'SUPPORTER'),
+       ('e8646ba4-f747-4bd1-925c-de2dc8f63d07', 'USER'),
+       ('8abcb804-c5bf-449c-acc6-47d3a656a572', 'ADMIN'),
+       ('8abcb804-c5bf-449c-acc6-47d3a656a572', 'APPROVER'),
+       ('8abcb804-c5bf-449c-acc6-47d3a656a572', 'OWNER'),
+       ('8abcb804-c5bf-449c-acc6-47d3a656a572', 'SUPPORTER'),
+       ('8abcb804-c5bf-449c-acc6-47d3a656a572', 'USER')
+
+
 
 ON CONFLICT (user_id, role_id) DO NOTHING;
-
-
-
 
 
 -- PLACE
@@ -75,7 +84,7 @@ VALUES ('65f1d8a0-6885-4b51-a691-f843b279dd8b', 'Chi nhánh HCM', 'URL', 'BRANCH
         null, 'HANOI', 'ACTIVE'),
        ('f1d12862-8782-4cea-b0da-22e0b2579c46', 'Chi nhánh DN', 'URL', 'BRANCH',
         null, 'DANANG', 'ACTIVE'),
-       ('bbadcf08-52de-4914-9c1e-9abea4f66520','Tòa A25', 'lmao', 'BUILDING',
+       ('bbadcf08-52de-4914-9c1e-9abea4f66520', 'Tòa A25', 'lmao', 'BUILDING',
         '65f1d8a0-6885-4b51-a691-f843b279dd8b', 'A25', 'ACTIVE'),
        ('a84e8c68-7005-4889-be77-039b722e25e7', 'Tầng 1', 'url sơ đồ 1',
         'FLOOR', 'bbadcf08-52de-4914-9c1e-9abea4f66520', '1', 'ACTIVE'),
@@ -316,7 +325,8 @@ ON CONFLICT (room_class_id) DO NOTHING;
 --
 --
 -- ROOM CLASS PRICE
-insert into room_class_price_history (room_class_price_history_id, room_class_id, valid_from, base_price, total_price, valid_end)
+insert into room_class_price_history (room_class_price_history_id, room_class_id, valid_from, base_price, total_price,
+                                      valid_end)
 values ('ae18fe32-a949-41a9-91cc-8bf967609f27', '78ea8005-45a2-498f-87e3-701b24fdbc6c', '2025-03-28 04:44:43.907870',
         15000, 15000, null),
        ('19a2c604-4389-49ed-a7d8-b9ec0518bb04', 'a8738ec8-28bd-4847-8810-6a471221b5a7', '2025-03-28 04:44:46.745402',

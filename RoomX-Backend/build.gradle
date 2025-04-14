@@ -68,7 +68,6 @@ allprojects {
         implementation 'com.google.firebase:firebase-admin:9.4.3'
 
 
-
         //LOG OBSER
         runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
         implementation 'com.github.loki4j:loki-logback-appender:1.6.0'
@@ -105,6 +104,8 @@ allprojects {
 
 //root project
 dependencies {
+
+
     implementation project(':start')
 
 
@@ -186,7 +187,10 @@ project(':infrastructure') {
         testImplementation 'org.springframework.kafka:spring-kafka-test'
         implementation 'org.springframework.kafka:spring-kafka'
 
+        implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
+        implementation 'org.springframework.boot:spring-boot-starter-mail'
+        implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
     }
 }

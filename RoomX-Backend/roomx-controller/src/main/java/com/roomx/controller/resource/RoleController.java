@@ -49,13 +49,13 @@ public class RoleController {
 
 
 
-
+/*
     @PostMapping
     public ResultResponse<?> createRole(@RequestBody RoleCreateRequest roleCreateRequest) {
         return ResultResponse.<RoleInfoResponse>builder()
                 .result(roleAppService.createRole(roleCreateRequest))
                 .build();
-    }
+    }*/
 
     @DeleteMapping("/{roleName}")
     public ResultResponse<?> deleteRole(@PathVariable String roleName){

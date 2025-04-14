@@ -4,6 +4,7 @@ import com.roomx.domain.model.aggrerate.Role;
 import com.roomx.domain.repository.UserRepository;
 import com.roomx.shared.enums.RoleType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Component("roleEvaluator")
 @RequiredArgsConstructor
 public class RoleEvaluator {
@@ -40,6 +42,7 @@ public class RoleEvaluator {
                         .orElse(0))
                 .orElse(0);
 
+
         int targetLevel = userRepository.findById(targetUserId, true)
                 .map(user -> user.getRoles().stream()
                         .mapToInt(Role::getLevel)
@@ -47,6 +50,9 @@ public class RoleEvaluator {
                         .orElse(0))
                 .orElse(0);
 
+
+        log.info("user level: {}", userLevel);
+        log.info("target level: {}", targetLevel);
         return userLevel > targetLevel;
     }
 
