@@ -24,4 +24,6 @@ public interface BookingRepository {
     List<Booking> findAllByMeetingDateAndContainsStatusAndBookingRequestId(LocalDate date, List<String> listAccept, String bookingRequestId);
 
     List<Booking> findAllByMeetingDateAndContainsStatus(LocalDate date, List<String> listAccept);
+
+    List<Booking> findAllByMeetingDateInAndContainsStatus(List<LocalDate> occurrences, List<String> listAccept);
 }

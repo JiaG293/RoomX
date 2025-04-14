@@ -13,4 +13,5 @@ public class BookingListRequest {
     private Integer month;
     private Integer year;
     private boolean isAdmin = false;
+
 }

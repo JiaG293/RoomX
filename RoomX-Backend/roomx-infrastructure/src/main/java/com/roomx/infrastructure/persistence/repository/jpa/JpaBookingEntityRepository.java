@@ -15,6 +15,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -154,4 +155,7 @@ public interface JpaBookingEntityRepository extends JpaRepository<BookingEntity,
                      """,
             nativeQuery = true)
     Page<BookingProjection> findAllByMeetingDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
+
+    List<BookingEntity> findAllByMeetingDateInAndStatusIn(List<LocalDate> occurrences, List<String> listAccept);
+
 }

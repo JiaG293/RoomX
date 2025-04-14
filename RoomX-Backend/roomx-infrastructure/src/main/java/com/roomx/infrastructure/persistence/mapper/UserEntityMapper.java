@@ -10,17 +10,20 @@ import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring",
-        uses = RoleEntityMapper.class,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE)
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        uses = {
+                RoleEntityMapper.class
+        }
+
+)
 public interface UserEntityMapper {
 
-    UserEntityMapper INSTANCE = Mappers.getMapper(UserEntityMapper.class);
 
-    @Mapping(target = "roles", source = "roles")
+
     User toDomain(UserEntity entity);
 
-    @Mapping(target = "roles", source = "roles")
+
     UserEntity toEntity(User domain);
 
 }

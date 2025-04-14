@@ -3,6 +3,7 @@ package com.roomx.controller.resource;
 import com.roomx.shared.dto.user.request.UserCreateRequest;
 import com.roomx.shared.dto.user.request.UserQueryFilterRequest;
 import com.roomx.shared.dto.user.response.UserCreateResponse;
+import com.roomx.shared.dto.user.response.UserInfoReponse;
 import com.roomx.shared.dto.user.response.UserResponse;
 import com.roomx.shared.dto.user.response.UserRoleResponse;
 import com.roomx.application.service.user.RoleAppService;
@@ -70,22 +71,29 @@ public class UserController {
     }
 
 
-
-
-
-
-
-
-
     @PostMapping
     public ResultResponse<?> createUser(@Validated @RequestBody UserCreateRequest request) {
-        return ResultResponse.<UserCreateResponse>builder().result(userAppService.createUser(request)).build();
+        var result = userAppService.createUser(request);
+        return ResultResponse.<UserCreateResponse>builder()
+                .result(result)
+                .build();
     }
 
 
-    @GetMapping("/test")
-    public ResultResponse<?> test() {
-        return ResultResponse.<List<String>>builder().result(userAppService.getTest()).build();
+    @GetMapping("/{userId}")
+    public ResultResponse<?> getUserDetail(@PathVariable String userId) {
+        var result = userAppService.getDetailUser(userId);
+        return ResultResponse.<UserInfoReponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/info")
+    public ResultResponse<?> getUserInfo() {
+        var result = userAppService.getUserInfo();
+        return ResultResponse.<UserInfoReponse>builder()
+                .result(result)
+                .build();
     }
 
 

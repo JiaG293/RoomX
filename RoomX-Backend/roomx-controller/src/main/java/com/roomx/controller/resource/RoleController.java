@@ -1,7 +1,7 @@
 package com.roomx.controller.resource;
 
 import com.roomx.shared.dto.user.request.RoleCreateRequest;
-import com.roomx.shared.dto.user.response.RoleResponse;
+import com.roomx.shared.dto.user.response.RoleInfoResponse;
 import com.roomx.application.service.user.RoleAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
@@ -33,7 +33,7 @@ public class RoleController {
     @GetMapping("/all")
     public ResultResponse<?> getAllRole() {
         var result = roleAppService.findAllRole();
-        return ResultResponse.<List<RoleResponse>>builder()
+        return ResultResponse.<List<RoleInfoResponse>>builder()
                 .result(result)
                 .build();
     }
@@ -41,7 +41,7 @@ public class RoleController {
     @GetMapping("/{userId}/not-assigned")
     public ResultResponse<?> getRolesNotAssignToUser(@PathVariable String userId) {
         var result = roleAppService.findRolesNotAssignedToUser(userId);
-        return ResultResponse.<List<RoleResponse>>builder()
+        return ResultResponse.<List<RoleInfoResponse>>builder()
                 .result(result)
                 .build();
     }
@@ -52,7 +52,7 @@ public class RoleController {
 
     @PostMapping
     public ResultResponse<?> createRole(@RequestBody RoleCreateRequest roleCreateRequest) {
-        return ResultResponse.<RoleResponse>builder()
+        return ResultResponse.<RoleInfoResponse>builder()
                 .result(roleAppService.createRole(roleCreateRequest))
                 .build();
     }

@@ -23,16 +23,28 @@ public class RoleEvaluator {
     public boolean hasHigherRole(String targetId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() == null) {
-            return false; // Không có user nào đăng nhập
+            return false;
         }
-        int userLevel = userRepository.findById(UUID.fromString(authentication.getName()), true)
+
+        UUID currentUserId = UUID.fromString(authentication.getName());
+        UUID targetUserId = UUID.fromString(targetId);
+
+        if (currentUserId.equals(targetUserId)) {
+            return true;
+        }
+
+        int userLevel = userRepository.findById(currentUserId, true)
                 .map(user -> user.getRoles().stream()
                         .mapToInt(Role::getLevel)
                         .max()
                         .orElse(0))
                 .orElse(0);
-        int targetLevel = userRepository.findById(UUID.fromString(targetId), true)
-                .map(user -> user.getRoles().stream().mapToInt(Role::getLevel).max().orElse(0))
+
+        int targetLevel = userRepository.findById(targetUserId, true)
+                .map(user -> user.getRoles().stream()
+                        .mapToInt(Role::getLevel)
+                        .max()
+                        .orElse(0))
                 .orElse(0);
 
         return userLevel > targetLevel;

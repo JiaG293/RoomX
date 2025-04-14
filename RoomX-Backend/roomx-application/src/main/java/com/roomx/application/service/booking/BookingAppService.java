@@ -7,6 +7,7 @@ import com.roomx.domain.model.vo.BookingParticipantId;
 import com.roomx.domain.model.vo.EquipmentRequestId;
 import com.roomx.domain.model.vo.ServiceRequestId;
 import com.roomx.domain.service.BookingDomainService;
+import com.roomx.domain.service.ConflictBookingResolutionDomainService;
 import com.roomx.infrastructure.cache.redis.service.RoomCheckingCacheService;
 import com.roomx.infrastructure.persistence.dto.BookingFilter;
 import com.roomx.infrastructure.persistence.mapper.EquipmentRequestEntityMapper;
@@ -27,6 +28,7 @@ import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.persistence.mapper.BookingRequestEntityMapper;
 import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.enums.BookingStatusType;
+import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.RoleType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
@@ -100,6 +102,7 @@ public class BookingAppService {
     private final DateRequestExceptionRepository dateRequestExceptionRepository;
     private final DateRequestExceptionAppMapper dateRequestExceptionAppMapper;
     private final RoomCheckingCacheService roomCheckingCacheService;
+    private final ConflictBookingResolutionDomainService conflictBookingResolutionDomainService;
 
 
     /*@Transactional
@@ -158,16 +161,17 @@ public class BookingAppService {
         List<DateRequestException> dateExceptions = bookingRequestDomain.getDateRequestExceptions() != null ? bookingRequestDomain.getDateRequestExceptions() : Collections.EMPTY_LIST;
 
         log.info("check time: {}", dateExceptions);
-        List<RoomScheduleResultDto> response = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
-                request.getBranchId(),
-                listOccurrences,
-                dateExceptions,
-                bookingRequestDomain.getStartTime(),
-                bookingRequestDomain.getEndTime(),
-                bookingRequestDomain.getCapacity(),
-                bookingRequestDomain.getParticipants(),
-                10
-        );
+        List<RoomScheduleResultDto> response = roomSchedulerAppService.
+                checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+                        request.getBranchId(),
+                        listOccurrences,
+                        dateExceptions,
+                        bookingRequestDomain.getStartTime(),
+                        bookingRequestDomain.getEndTime(),
+                        bookingRequestDomain.getCapacity(),
+                        bookingRequestDomain.getParticipants(),
+                        10
+                );
         return response;
     }
 
@@ -417,7 +421,6 @@ public class BookingAppService {
     }
 
 
-
     public Page<BookingResponse> filterSearchPageBookingAdmin(
             BookingFilterRequest filter,
             int page,
@@ -492,6 +495,7 @@ public class BookingAppService {
             bookingDomain = bookingEntityService.findBookingsByTimeRange(startDate, endDate, pageable);
         }
 
+
         if (bookingDomain == null) {
             return Page.empty(pageable);
         }
@@ -550,7 +554,6 @@ public class BookingAppService {
                 bookingRequestAppMapper.toResponseFromApprovalForm(
                         approvalForm.getBookingRequest(), approvalForm));
     }
-
 
 
     public BookingDetailResponse getDetailBooking(String bookingId) {
@@ -629,14 +632,21 @@ public class BookingAppService {
     }*/
 
 
-    private String generateBookingCode(LocalDate meetingDate) {
-        return meetingDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-" + Long.toString(System.nanoTime(), 36).toUpperCase();
+    public List<BookingRequestResponse> suggestApprovalOrder() {
+        List<BookingRequest> pendingRequests = approvalFormRepository
+                .findAllBookingRequestWithInStatus(ApprovalStatusType.getListCanApproval())
+                .stream().map(ApprovalForm::getBookingRequest)
+                .toList();
+        var result = conflictBookingResolutionDomainService
+                .suggestApprovalOrder(pendingRequests)
+                .stream().map(bookingRequestAppMapper::toResponse).toList();
+
+        return result;
     }
 
-    public Object test() {
 
-        return true;
-
+    private String generateBookingCode(LocalDate meetingDate) {
+        return meetingDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-" + Long.toString(System.nanoTime(), 36).toUpperCase();
     }
 
 

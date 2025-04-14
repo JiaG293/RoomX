@@ -9,13 +9,9 @@ import org.mapstruct.*;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface RoleEntityMapper {
 
-    @Mappings({
-            @Mapping(target = "roleId", source = "id")
-    })
+    @Mapping(target = "roleId", source = "id")
     RoleEntity toEntity(Role domain);
 
-    @Mappings({
-            @Mapping(target = "id", source = "roleId")
-    })
+    @Mapping(target = "id", source = "roleId")
     Role toDomain(RoleEntity entity);
 }

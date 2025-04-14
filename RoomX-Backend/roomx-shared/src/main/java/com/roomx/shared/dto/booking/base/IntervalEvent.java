@@ -1,15 +1,17 @@
-package com.roomx.shared.dto.user.response;
+package com.roomx.shared.dto.booking.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
+import java.time.LocalTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleResponse {
-    private String roleName;
-    private int level;
+@Builder
+public class IntervalEvent {
+    LocalTime start;
+    LocalTime end;
 }

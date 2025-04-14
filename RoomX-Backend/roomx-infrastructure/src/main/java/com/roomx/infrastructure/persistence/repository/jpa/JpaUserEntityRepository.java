@@ -3,6 +3,7 @@ package com.roomx.infrastructure.persistence.repository.jpa;
 
 import com.roomx.infrastructure.persistence.model.entity.UserEntity;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -23,6 +24,7 @@ public interface JpaUserEntityRepository extends JpaRepository<UserEntity, UUID>
     @Query("SELECT u FROM UserEntity u JOIN u.roles r WHERE r.roleId = :roleId")
     List<UserEntity> findAllByRoleId(String roleId);
 
+    @EntityGraph(attributePaths = "roles")
     Optional<UserEntity> findByIdAndEnable(UUID id, boolean enabled);
 
     Optional<UserEntity> findByEmailAndEnable(String email, boolean enabled);

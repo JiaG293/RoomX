@@ -1,5 +1,6 @@
 package com.roomx.application.service.user;
 
+import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.dto.user.request.UserCreateRequest;
 import com.roomx.shared.dto.user.request.UserQueryFilterRequest;
 import com.roomx.shared.dto.user.response.UserCreateResponse;
@@ -22,6 +23,7 @@ import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.KeycloakNotFoundException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -30,11 +32,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserAppService{
@@ -46,12 +50,31 @@ public class UserAppService{
     private final UserEntitySpecRepository userEntitySpecRepository;
     private final KeycloakRoleServiceImpl keycloakRoleServiceImpl;
     private final UserAppMapper userAppMapper;
+    private final SecurityUtil securityUtil;
+    private final UserSpecification userSpecification;
 
 
-    public UserInfoReponse getUserInfo() {
-        return null;
+    @PreAuthorize("@roleEvaluator.hasHigherRole(#userId)")
+    public UserInfoReponse getDetailUser(String userId) {
+        var userDomain = userRepository.findById(UUID.fromString(userId), true)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED, null, userId));
+
+        return userAppMapper.toResponseInfo(userDomain);
     }
 
+    public UserInfoReponse getUserInfo() {
+
+        var userId = securityUtil.getCurrentUserId();
+
+        var userDomain = userRepository.findById(UUID.fromString(userId), true)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED, null, userId));
+
+        log.info(userDomain.getRoles().toString());
+
+        return userAppMapper.toResponseInfo(userDomain);
+    }
+
+    @PreAuthorize("@roleEvaluator.hasAnyRoleType('approve')")
     public Page<UserResponse> getListUserPages(UserQueryFilterRequest filterRequest, int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -168,7 +191,7 @@ public class UserAppService{
 
         return UserResponse.builder()
                 .userCode(userKeycloak.getUsername())
-                .userId(userKeycloak.getId())
+                .id(userKeycloak.getId())
                 .build();
     }
 

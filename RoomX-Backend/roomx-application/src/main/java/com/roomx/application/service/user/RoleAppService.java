@@ -1,7 +1,7 @@
 package com.roomx.application.service.user;
 
 import com.roomx.shared.dto.user.request.RoleCreateRequest;
-import com.roomx.shared.dto.user.response.RoleResponse;
+import com.roomx.shared.dto.user.response.RoleInfoResponse;
 import com.roomx.shared.dto.user.response.UserRoleResponse;
 import com.roomx.application.mapper.RoleAppMapper;
 import com.roomx.application.mapper.UserAppMapper;
@@ -34,18 +34,18 @@ public class RoleAppService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
 
-    public List<RoleResponse> findAllRole(){
+    public List<RoleInfoResponse> findAllRole(){
         return roleRepository.findAll().stream().map(roleAppMapper::toResponse).toList();
     }
 
-    public List<RoleResponse> findRolesNotAssignedToUser(String userId){
+    public List<RoleInfoResponse> findRolesNotAssignedToUser(String userId){
         return userRoleRepository.findRolesByUserId(UUID.fromString(userId)).stream().map(roleAppMapper::toResponse).collect(Collectors.toList());
     };
 
 
     @Transactional
     @PreAuthorize("hasRole('OWNER')")
-    public RoleResponse createRole(RoleCreateRequest roleCreateRequest) {
+    public RoleInfoResponse createRole(RoleCreateRequest roleCreateRequest) {
 
         try {
             // Tạo role keycloak

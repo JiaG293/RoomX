@@ -1,9 +1,6 @@
 package com.roomx.domain.model.aggrerate;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -13,7 +10,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
+@EqualsAndHashCode
 public class User {
     private UUID id;
     private String firstName;
@@ -25,7 +23,7 @@ public class User {
     private String userType;
     private String userCode;
 
-    private String status;
+//    private String status;
 
     @Builder.Default
     private boolean enable = true;

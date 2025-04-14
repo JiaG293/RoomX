@@ -6,11 +6,15 @@ import com.roomx.shared.dto.booking.request.*;
 import com.roomx.shared.dto.booking.response.*;
 import com.roomx.shared.dto.resource.request.BranchQueryRequest;
 import com.roomx.shared.exception.api.ResultResponse;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +43,7 @@ public class BookingController {
 
 
     @GetMapping("/checking")
-    public ResultResponse<?> createBookingRequest(
+    public ResultResponse<?> checkingBookingRequest(
             @Validated @RequestBody CheckingBookingRequest request) {
         var result = bookingAppService.checkingBookingRequest(request);
         return ResultResponse.<Object>builder()
@@ -61,6 +65,14 @@ public class BookingController {
             @PathVariable String bookingRequestId) {
         var result = bookingAppService.checkRoomSuitable(bookingRequestId);
         return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/approval-order")
+    public ResultResponse<?> getApprovalOrder() {
+        var result = bookingAppService.suggestApprovalOrder();
+        return ResultResponse.<List<BookingRequestResponse>>builder()
                 .result(result)
                 .build();
     }
@@ -126,11 +138,5 @@ public class BookingController {
                 .build();
     }
 
-    @PostMapping("/test")
-    public ResultResponse<?> test() {
-        var result = bookingAppService.test();
-        return ResultResponse.<Object>builder()
-                .result(result)
-                .build();
-    }
+
 }

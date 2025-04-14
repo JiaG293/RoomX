@@ -5,14 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
-public class TimeRange{
-    private LocalTime start;
-    private LocalTime end;
+public class BookingRequestEvent {
+    private LocalDateTime timestamp;
+    private String type;
+    private UUID bookingRequestId;
 }
-

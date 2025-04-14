@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRoleResponse {
-    private String userId;
+    private String id;
     private String userCode;
-    private List<RoleResponse> roles;
+    private List<RoleInfoResponse> roles;
 }
