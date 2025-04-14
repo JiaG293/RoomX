@@ -1,5 +1,8 @@
 package com.roomx.application.service.user;
 
+import com.roomx.domain.model.aggrerate.Role;
+import com.roomx.domain.repository.UserRoleRepository;
+import com.roomx.infrastructure.persistence.repository.impl.UserRoleEntityRepository;
 import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.dto.user.request.UserCreateRequest;
 import com.roomx.shared.dto.user.request.UserQueryFilterRequest;
@@ -8,6 +11,7 @@ import com.roomx.shared.dto.user.response.UserInfoReponse;
 import com.roomx.shared.dto.user.response.UserResponse;
 import com.roomx.application.mapper.UserAppMapper;
 import com.roomx.domain.model.aggrerate.User;
+import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.RoleType;
 import com.roomx.shared.enums.UserType;
 import com.roomx.domain.repository.RoleRepository;
@@ -41,17 +45,16 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserAppService{
+public class UserAppService {
 
     private final KeycloakUserServiceImpl keycloakUserServiceImpl;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final Keycloak keycloak;
     private final UserEntitySpecRepository userEntitySpecRepository;
-    private final KeycloakRoleServiceImpl keycloakRoleServiceImpl;
     private final UserAppMapper userAppMapper;
     private final SecurityUtil securityUtil;
-    private final UserSpecification userSpecification;
+    private final UserRoleEntityRepository userRoleEntityRepository;
+    private final UserRoleRepository userRoleRepository;
 
 
     @PreAuthorize("@roleEvaluator.hasHigherRole(#userId)")
@@ -114,13 +117,32 @@ public class UserAppService{
         userRepresentation.setCredentials(List.of(credential));
         userRepresentation.setEnabled(true);
 
+        Map<String, List<String>> attributes = new HashMap<>();
+
+        var roles = Optional.ofNullable(request.getRoles())
+                .filter(roleIds -> !roleIds.isEmpty())
+                .map(roleIds -> roleIds.stream()
+                        .map(roleRepository::findById)
+                        .flatMap(Optional::stream)
+                        .collect(Collectors.toSet())
+                ).orElseGet(() -> roleRepository.findById(RoleType.USER.toString())
+                        .map(Set::of)
+                        .orElseGet(HashSet::new)
+                );
+
+        if(roles.isEmpty()){
+            throw new AppException(ErrorCode.ROLE_NOT_FOUND, null, request.getRoles());
+        }
+
+        attributes.put("roles", roles.stream().map(Role::getId).toList());
+
+        userRepresentation.setAttributes(attributes);
+
         String userKeycloakId = null;
 
         try {
-            // Tạo user trên Keycloak
             keycloakUserServiceImpl.save(userRepresentation);
 
-            // Lấy user từ Keycloak
             var userKeycloakOpt = keycloakUserServiceImpl.findByUserCode(request.getUserCode());
             if (userKeycloakOpt.isEmpty()) {
                 throw new KeycloakNotFoundException("User not found in Keycloak after creation.");
@@ -129,20 +151,7 @@ public class UserAppService{
             var userKeycloak = userKeycloakOpt.get();
             userKeycloakId = userKeycloak.getId();
 
-            // Lấy role có tồn tại
-            var roles = Optional.ofNullable(request.getRoles())
-                    .filter(roleIds -> !roleIds.isEmpty())
-                    .map(roleIds -> roleIds.stream()
-                            .map(roleRepository::findById)
-                            .flatMap(Optional::stream)
-                            .collect(Collectors.toSet())
-                    ).orElseGet(() -> roleRepository.findById(RoleType.USER.toString())
-                            .map(Set::of)
-                            .orElseGet(HashSet::new)
-                    );
 
-
-            // Lưu user vào database
             var user = User.builder()
                     .id(UUID.fromString(userKeycloak.getId()))
                     .userCode(userKeycloak.getUsername())
@@ -159,15 +168,13 @@ public class UserAppService{
             userRepository.save(user);
 
             return UserCreateResponse.builder()
-                    .userId(user.getId().toString())
+                    .id(user.getId().toString())
                     .userCode(user.getUserCode())
                     .build();
 
         } catch (KeycloakNotFoundException ex) {
-            // Nếu không tìm thấy user trong Keycloak sau khi tạo, ném lỗi ngay lập tức
             throw new AppException(ErrorCode.CREATE_USER_FAILED);
         } catch (Exception ex) {
-            // Nếu có lỗi khi lưu database, xóa user khỏi Keycloak để rollback
             if (userKeycloakId != null) {
                 try {
                     keycloakUserServiceImpl.delete(userKeycloakId);
@@ -195,12 +202,42 @@ public class UserAppService{
                 .build();
     }
 
-    public List<String> getTest() {
 
-        return keycloakRoleServiceImpl.findAll();
+    public void hardDeleteUser(String userId) {
+        try {
+            keycloakUserServiceImpl.delete(userId);
+        } catch (Exception e) {
+            log.warn("Không thể xóa user trên Keycloak: {}", userId, e);
+        }
+
+        try {
+            userRepository.deleteUserRole(userId);
+            userRepository.delete(userId);
+        } catch (Exception e) {
+            log.warn("Không thể xóa user trong database: {}", userId, e);
+        }
     }
 
-    public User findApproverWithFree(){
+    public UserResponse activeUser(String userId) {
+        return null;
+    }
+
+    public void softDeleteUser(String userId) {
+        var userDomain = userRepository.findById(UUID.fromString(userId), true)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED, null, userId));
+
+        userDomain.setStatus(DeleteStatusType.INACTIVE.toString());
+        userRepository.save(userDomain);
+
+        var userKeycloakOpt = keycloakUserServiceImpl.findByUserCode(userDomain.getUserCode());
+        if (userKeycloakOpt.isEmpty()) {
+            throw new AppException(ErrorCode.USER_NOT_EXISTED, null, userId);
+        }
+        keycloakUserServiceImpl.changeStatusUser(userId, false);
+    }
+
+
+    public User findApproverWithFree() {
         var listUserRoleApproverDomain = userRepository.findAllUserWithRole(RoleType.APPROVER.toString());
         //Implement logic assign approver free
         Random random = new Random();

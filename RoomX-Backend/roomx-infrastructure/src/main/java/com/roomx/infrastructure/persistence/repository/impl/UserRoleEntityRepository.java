@@ -28,4 +28,5 @@ public class UserRoleEntityRepository implements UserRoleRepository {
         return jpaRoleEntityRepository.findRolesNotAssignedUser(userId).stream().map(roleEntityMapper::toDomain).toList();
     }
 
+
 }

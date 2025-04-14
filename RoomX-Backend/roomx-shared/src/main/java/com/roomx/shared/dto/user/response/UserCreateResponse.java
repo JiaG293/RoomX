@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserCreateResponse {
-    private String userId;
+    private String id;
     private String userCode;
 }

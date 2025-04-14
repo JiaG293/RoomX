@@ -29,4 +29,6 @@ public interface UserRepository {
     Optional<User> findByEmailAndStatus(String email, boolean enabled);
 
     Optional<UUID> findByEmailCustom(String email);
+
+    void deleteUserRole(String userId);
 }

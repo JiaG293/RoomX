@@ -1,5 +1,6 @@
 package com.roomx.application.service.user;
 
+import com.roomx.infrastructure.keycloak.service.impl.KeycloakUserServiceImpl;
 import com.roomx.shared.dto.user.request.RoleCreateRequest;
 import com.roomx.shared.dto.user.response.RoleInfoResponse;
 import com.roomx.shared.dto.user.response.UserRoleResponse;
@@ -33,6 +34,7 @@ public class RoleAppService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
+    private final KeycloakUserServiceImpl keycloakUserService;
 
     public List<RoleInfoResponse> findAllRole(){
         return roleRepository.findAll().stream().map(roleAppMapper::toResponse).toList();
@@ -48,11 +50,10 @@ public class RoleAppService {
     public RoleInfoResponse createRole(RoleCreateRequest roleCreateRequest) {
 
         try {
-            // Tạo role keycloak
+
             keycloakRoleService.createRole(roleCreateRequest.getRoleName(), roleCreateRequest.getDescription());
 
 
-            // Lưu role postgresql
             var savedRole = roleDomainService
                     .createRole(
                             roleCreateRequest.getRoleName(),
@@ -61,7 +62,6 @@ public class RoleAppService {
 
             return roleAppMapper.toResponse(savedRole);
         } catch (Exception e) {
-            // Rollback keycloak nếu có lỗi
             keycloakRoleService.deleteRole(roleCreateRequest.getRoleName());
             throw new AppException(ErrorCode.ROLE_CREATE_FAILED);
         }
@@ -71,16 +71,24 @@ public class RoleAppService {
     @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN') && @roleEvaluator.hasHigherRole(#userId)")
     public UserRoleResponse addRoleForUser(UUID userId, String roleName) {
         var userDomain = userRepository.findById(userId, true).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED, null, userId)
         );
 
         var roleDomain = roleRepository.findById(roleName).orElseThrow(
-                () -> new RuntimeException("Role not found")
+                () -> new AppException(ErrorCode.ROLE_NOT_FOUND, null, roleName)
         );
 
+
+        try {
+            keycloakUserService.addRole(userId.toString(), roleName);
+        }catch (Exception e) {
+            throw new AppException(ErrorCode.ROLE_CREATE_FAILED, null, "keycloak");
+        }
         userDomain.getRoles().add(roleDomain);
 
         userRepository.save(userDomain);
+
+
 
         return userAppMapper.toUserRoleResponse(userDomain);
     }
@@ -98,6 +106,12 @@ public class RoleAppService {
 
         if (!roleExists) {
             throw new AppException(ErrorCode.ROLE_REMOVED_FAILED, roleName);
+        }
+
+        try {
+            keycloakUserService.removeRole(userId.toString(), roleName);
+        }catch (Exception e) {
+            throw new AppException(ErrorCode.ROLE_REMOVED_FAILED, null, "keycloak");
         }
 
         userDomain.getRoles().removeIf(role -> role.getId().equals(roleName));

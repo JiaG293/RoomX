@@ -1,5 +1,6 @@
 package com.roomx.domain.model.aggrerate;
 
+import com.roomx.shared.enums.DeleteStatusType;
 import lombok.*;
 
 import java.time.Instant;
@@ -23,7 +24,8 @@ public class User {
     private String userType;
     private String userCode;
 
-//    private String status;
+    @Builder.Default
+    private String status = DeleteStatusType.ACTIVE.toString();
 
     @Builder.Default
     private boolean enable = true;

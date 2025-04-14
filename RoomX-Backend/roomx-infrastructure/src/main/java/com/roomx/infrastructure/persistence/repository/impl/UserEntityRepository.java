@@ -87,6 +87,11 @@ public class UserEntityRepository implements UserRepository, UserEntitySpecRepos
     }
 
     @Override
+    public void deleteUserRole(String userId) {
+         jpaUserEntityRepository.deleleUserRole(UUID.fromString(userId));
+    }
+
+    @Override
     public Page<UserEntity> findAll(Specification specification, Pageable pageable) {
         return jpaUserEntityRepository.findAll(specification, pageable);
     }

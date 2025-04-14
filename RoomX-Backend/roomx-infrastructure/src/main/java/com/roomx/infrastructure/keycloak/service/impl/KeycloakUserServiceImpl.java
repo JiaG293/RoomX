@@ -9,8 +9,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -55,9 +54,90 @@ public class KeycloakUserServiceImpl {
         keycloak.realm(getRealm()).users().get(id).remove();
     }
 
+    public void changeStatusUser(String id, boolean status) {
+        keycloak.realm(getRealm())
+                .users()
+                .get(id)
+                .update(new UserRepresentation() {{
+                    setEnabled(status);
+                }});
+    }
+
+
     public List<UserRepresentation> findAll() {
         return keycloak.realm(getRealm()).users().list();
     }
+
+    public void addRole(String id, String role) {
+        UserRepresentation user = keycloak.realm(getRealm())
+                .users()
+                .get(id)
+                .toRepresentation();
+
+        Map<String, List<String>> attributes = user.getAttributes();
+        if (attributes == null) {
+            attributes = new HashMap<>();
+        }
+
+        List<String> roles = attributes.get("roles");
+        if (roles == null) {
+            roles = new ArrayList<>();
+        }
+
+        if (!roles.contains(role)) {
+            roles.add(role);
+        }
+
+        attributes.put("roles", roles);
+        user.setAttributes(attributes);
+
+        keycloak.realm(getRealm())
+                .users()
+                .get(id)
+                .update(user);
+    }
+
+    public void removeRole(String id, String role) {
+        UserRepresentation user = keycloak.realm(getRealm())
+                .users()
+                .get(id)
+                .toRepresentation();
+
+        Map<String, List<String>> attributes = user.getAttributes();
+        if (attributes == null) {
+            attributes = new HashMap<>();
+        }
+
+        List<String> roles = attributes.get("roles");
+        if (roles != null) {
+            roles.remove(role);
+
+            attributes.put("roles", roles);
+            user.setAttributes(attributes);
+
+            keycloak.realm(getRealm())
+                    .users()
+                    .get(id)
+                    .update(user);
+        }
+    }
+
+    public void updateRoles(String id, List<String> newRoles) {
+        UserRepresentation user = keycloak.realm(getRealm())
+                .users()
+                .get(id)
+                .toRepresentation();
+
+        Map<String, List<String>> attributes = new HashMap<>();
+        attributes.put("roles", newRoles);
+        user.setAttributes(attributes);
+
+        keycloak.realm(getRealm())
+                .users()
+                .get(id)
+                .update(user);
+    }
+
 }
 
 

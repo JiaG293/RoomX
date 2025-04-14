@@ -98,6 +98,22 @@ public class UserController {
 
 
 
+    @DeleteMapping("/{userId}")
+    public ResultResponse<?> deleteUser(@PathVariable String userId) {
+        userAppService.softDeleteUser(userId);
+        return ResultResponse.<Void>builder()
+                .build();
+    }
+
+    @DeleteMapping("/delete/{userId}")
+    public ResultResponse<?> hardDeleteUser(@PathVariable String userId) {
+        userAppService.hardDeleteUser(userId);
+        return ResultResponse.<Void>builder()
+                .build();
+    }
+
+
+
 
 
 

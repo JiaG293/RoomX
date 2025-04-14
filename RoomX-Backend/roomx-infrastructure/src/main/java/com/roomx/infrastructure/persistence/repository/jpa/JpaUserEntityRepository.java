@@ -3,11 +3,9 @@ package com.roomx.infrastructure.persistence.repository.jpa;
 
 import com.roomx.infrastructure.persistence.model.entity.UserEntity;
 
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
@@ -31,4 +29,9 @@ public interface JpaUserEntityRepository extends JpaRepository<UserEntity, UUID>
 
     @Query("SELECT u.id FROM UserEntity u WHERE u.email = :email")
     Optional<UUID> findByEmailCustom(@Param("email") String email);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM user_role WHERE user_id = :userId", nativeQuery = true)
+    void deleleUserRole(@Param("userId") UUID userId);
 }

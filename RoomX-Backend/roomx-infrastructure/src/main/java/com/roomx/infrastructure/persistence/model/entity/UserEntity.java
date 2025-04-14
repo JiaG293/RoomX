@@ -38,7 +38,7 @@ public class UserEntity {
     public static final String JOINCOLUMNS_JOINCOLUMN_ROLES_NAME = "user_id";
     public static final String INVERSEJOINCOLUMNS_JOINCOLUMN_ROLES_NAME = "role_id";
     public static final String COLUMN_ENABLE_NAME = "enable";
-//    public static final String COLUMN_STATUS_NAME = "status";
+    public static final String COLUMN_STATUS_NAME = "status";
 
 
 
@@ -91,9 +91,9 @@ public class UserEntity {
     @Column(name = COLUMN_ENABLE_NAME)
     private Boolean enable;
 
-  /*  @Size(max = 32)
+    @Size(max = 32)
     @Column(name = COLUMN_STATUS_NAME, length = 32)
-    private String status;*/
+    private String status;
 
 
 
