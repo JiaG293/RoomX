@@ -162,7 +162,7 @@ public class BookingAppService {
 
         log.info("check time: {}", dateExceptions);
         List<RoomScheduleResultDto> response = roomSchedulerAppService.
-                checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+                checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV3(
                         request.getBranchId(),
                         listOccurrences,
                         dateExceptions,
@@ -179,8 +179,11 @@ public class BookingAppService {
     public BookingRequestResponse createBookingRequest(BookingRequestUserCreateRequest request) {
         var bookingRequestDomain = bookingRequestAppMapper.toDomainUser(request);
 
+        log.info("userId: {}", UUID.fromString(securityUtil.getCurrentUserId()));
+
 
         bookingRequestDomain.setRequester(UUID.fromString(securityUtil.getCurrentUserId()));
+
         bookingRequestDomain.setEndDateApproval(Instant.now().plus(3, ChronoUnit.DAYS));
         bookingRequestDomain.setCreatedAt(Instant.now());
         bookingRequestDomain.setUpdatedAt(Instant.now());
@@ -189,7 +192,7 @@ public class BookingAppService {
 
         log.info("check date: {}", dateExceptions);
 
-        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV3(
                 request.getBranchId(),
                 bookingRequestDomain.getOccurrences(),
                 dateExceptions,
@@ -286,7 +289,7 @@ public class BookingAppService {
         var listOccurrences = bookingRequestDomain.getOccurrences();
         var dateRequestExceptions = bookingRequestDomain.getDateRequestExceptions();
 
-        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV3(
                 branchId,
                 listOccurrences,
                 dateRequestExceptions,
@@ -321,7 +324,7 @@ public class BookingAppService {
         var dateRequestExceptions = bookingRequestDomain.getDateRequestExceptions();
 
         log.info("dulieu: {}", dateRequestExceptions);
-        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
+        var result = roomSchedulerAppService.checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV3(
                 branchId,
                 listOccurrences,
                 dateRequestExceptions,
