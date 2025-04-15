@@ -1,10 +1,12 @@
 package com.roomx.infrastructure.notification;
 
+import com.roomx.shared.enums.EmailTemplateType;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -26,15 +28,14 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String emailFrom;
 
-    public void sendHtmlEmail(String to, String subject, String templateName, Map<String, Object> params) {
+
+    public void sendHtmlEmail(String to, String subject, EmailTemplateType templateName, Map<String, Object> params) {
         try {
 
             Context context = new Context();
             context.setVariables(params);
 
-            String pathTemplate = "classpath:/templates/" + templateName + ".html";
-
-            String body = templateEngine.process(pathTemplate, context);
+            String body = templateEngine.process(templateName.toString(), context);
 
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();

@@ -36,7 +36,7 @@ VALUES ('nguyen van', 'admin', '1111111111', 'asgy2002@gmail.com', true, null, '
        ('first name', 'last name', '0323456588', 'giau1@gmail.com', true, null, 'EMPLOYEE', 'approver1',
         '311cce72-d660-4cce-8d83-ef6bafa09f76', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true),
 
-       ('first admin1', 'name admin1', '0323256788', 'admin1@example.com', true, null, 'EMPLOYEE', 'admin11',
+       ('first admin1', 'name admin1', '0323256788', 'admin1@example.com', true, null, 'EMPLOYEE', 'admin1',
         'e8646ba4-f747-4bd1-925c-de2dc8f63d07', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true),
 
        ('huynh', 'van', '0928383838', 'sang@gmail.com', true, null, 'EMPLOYEE', '20060121',

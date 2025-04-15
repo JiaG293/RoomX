@@ -18,6 +18,7 @@ import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import com.roomx.shared.base.MeetingMessage;
 import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.shared.enums.BookingStatusType;
+import com.roomx.shared.enums.EmailTemplateType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -147,8 +148,8 @@ public class TestAppService {
         emailService
                 .sendHtmlEmail("asgy2002@gmail.com",
                         "subject",
-                        "update-meeting",
-                        Map.of("name", "test"));
+                        EmailTemplateType.UPDATE_MEETING,
+                        Map.of("originalMeetingDate", "test"));
     }
 
 

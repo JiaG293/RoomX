@@ -6,23 +6,16 @@ import com.roomx.shared.dto.booking.request.*;
 import com.roomx.shared.dto.booking.response.*;
 import com.roomx.shared.dto.resource.request.BranchQueryRequest;
 import com.roomx.shared.exception.api.ResultResponse;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+
 
 @Slf4j
 @RestController
