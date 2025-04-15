@@ -202,16 +202,24 @@ public class BookingAppService {
                 bookingRequestDomain.getParticipants(),
                 10
         );
+
+        log.info("check result: {}", result.size());
+
         List<LocalDate> conflictedDates = result.stream()
                 .filter(RoomScheduleResultDto::isHasConflict)
                 .map(RoomScheduleResultDto::getDate)
                 .toList();
+
+        log.info("check conflictedDates: {}", conflictedDates);
 
         if (!conflictedDates.isEmpty()) {
             throw new AppException(ErrorCode.BOOKING_REQUEST_CONFLICT, result, conflictedDates);
         }
 
         var savedBookingRequest = bookingRequestRepository.save(bookingRequestDomain);
+
+
+
         if (!dateExceptions.isEmpty()) {
             dateExceptions.forEach(date -> date.setBookingRequestId(savedBookingRequest.getId()));
 
@@ -244,6 +252,8 @@ public class BookingAppService {
                 .toList();
 
 
+        log.info("services: {}", servicesDomain.size());
+
         var equipmentsDomain = request.getEquipments().stream()
                 .map(equipment -> {
                     var equipmentFind = equipmentRepository.findById(equipment.getEquipmentId())
@@ -260,6 +270,8 @@ public class BookingAppService {
                             .build();
                 })
                 .toList();
+
+        log.info("equipments: {}", equipmentsDomain.size());
 
         serviceRequestRepository.saveAll(servicesDomain);
         equipmentRequestRepository.saveAll(equipmentsDomain);
