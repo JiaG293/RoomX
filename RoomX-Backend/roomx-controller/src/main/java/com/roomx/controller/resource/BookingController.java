@@ -42,7 +42,7 @@ public class BookingController {
     }*/
 
 
-    @GetMapping("/checking")
+    @PostMapping("/checking")
     public ResultResponse<?> checkingBookingRequest(
             @Validated @RequestBody CheckingBookingRequest request) {
         var result = bookingAppService.checkingBookingRequest(request);
