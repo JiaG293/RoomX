@@ -40,8 +40,7 @@ VALUES ('nguyen van', 'admin', '1111111111', 'asgy2002@gmail.com', true, null, '
         'e8646ba4-f747-4bd1-925c-de2dc8f63d07', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true),
 
        ('huynh', 'van', '0928383838', 'sang@gmail.com', true, null, 'EMPLOYEE', '20060121',
-        'e8646ba4-f747-4bd1-925c-de2dc8f63d07', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true)
-
+        '8abcb804-c5bf-449c-acc6-47d3a656a572', '2025-03-10 11:26:26.000000', '2025-03-10 11:26:26.000000', true)
 
 ON CONFLICT (user_id) DO NOTHING;
 
