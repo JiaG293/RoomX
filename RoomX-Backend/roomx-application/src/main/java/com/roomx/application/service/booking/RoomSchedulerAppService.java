@@ -1162,8 +1162,6 @@ public class RoomSchedulerAppService {
 //    }
 
 
-
-
     public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV2(
             String branchId,
             List<LocalDate> occurrences,
@@ -1180,7 +1178,7 @@ public class RoomSchedulerAppService {
                 .collect(Collectors.toMap(DateRequestException::getDate, e -> e));
 
         List<Room> availableRooms = (branchId != null)
-         ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
+                ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
                 : roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
 
         Map<UUID, Room> roomMap = availableRooms.stream()
@@ -1346,8 +1344,6 @@ public class RoomSchedulerAppService {
     }
 
 
-
-
     private boolean hasConflict(List<Booking> bookings, LocalTime start, LocalTime end, int bufferTime) {
         for (Booking b : bookings) {
             LocalTime bStart = b.getMeetingStart().minusMinutes(bufferTime);
@@ -1378,18 +1374,6 @@ public class RoomSchedulerAppService {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV3(
             String branchId,
             List<LocalDate> occurrences,
@@ -1407,11 +1391,11 @@ public class RoomSchedulerAppService {
         Map<LocalDate, DateRequestException> exceptionMap = dateRequestExceptions.stream()
                 .collect(Collectors.toMap(DateRequestException::getDate, e -> e));
 
-        List<Room> availableRooms = (branchId != null || branchId.isEmpty())
+        List<Room> availableRooms = (branchId != null && !branchId.isEmpty())
                 ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
                 : roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
 
-        if(availableRooms.isEmpty()){
+        if (availableRooms.isEmpty()) {
             log.error("branchId not found");
             throw new AppException(ErrorCode.BRANCH_NOT_FOUND, null, branchId);
         }
@@ -1549,7 +1533,7 @@ public class RoomSchedulerAppService {
                 : null;
     }
 
-    private  List<TimeRange> findFreeTimeSlotsV3(List<TimeRange> busySlots) {
+    private List<TimeRange> findFreeTimeSlotsV3(List<TimeRange> busySlots) {
         List<TimeRange> free = new ArrayList<>();
         LocalTime current = LocalTime.MIN;
 
@@ -1566,16 +1550,6 @@ public class RoomSchedulerAppService {
 
         return free;
     }
-
-
-
-
-
-
-
-
-
-
 
 
 }
