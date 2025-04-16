@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nhắc Nhở Cuộc Họp - Điều Chỉnh Lịch</title>
+    <title>RoomX</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,24 +47,72 @@
 </head>
 <body>
 <div class="container">
-    <img th:src="${companyLogoUrl}" alt="Company Logo">
-    <h2>Nhắc Nhở Cuộc Họp - Điều Chỉnh Lịch</h2>
-    <p>Chào <strong th:text="${participantName}">[Tên người tham gia]</strong>,</p>
-    <p>Thông báo về việc điều chỉnh lịch cuộc họp của bạn.</p>
-    <p>Cuộc họp nội bộ của công ty, trước đó dự kiến sẽ diễn ra vào <strong th:text="${originalMeetingDate}">[Ngày cũ]</strong>,
-        giờ đây đã được thay đổi thành <strong th:text="${updatedMeetingDate}">[Ngày mới]</strong>
-        và sẽ diễn ra tại <strong th:text="${updatedMeetingLocation}">[Địa điểm mới]</strong>.</p>
+    <img src="https://i.imgur.com/gJZtx99.gif"
+         alt="RoomX Logo"
+         style="max-width: 120px; display: block; margin: 0 auto 20px;"/>
 
-    <p><strong>Thông tin cuộc họp đã được điều chỉnh:</strong></p>
-    <ul style="list-style-type: none; padding: 0;">
-        <li><strong>Chủ đề:</strong> <span th:text="${meetingPurpose}">[Chủ đề]</span></li>
-        <li><strong>Thời gian mới:</strong> <span th:text="${updatedMeetingDate}">[Thời gian mới]</span></li>
-        <li><strong>Địa điểm mới:</strong> <span th:text="${updatedMeetingLocation}">[Địa điểm mới]</span></li>
-        <li><strong>Mô tả:</strong> <span th:text="${meetingDescription}">[Mô tả]</span></li>
-    </ul>
+    <h2 th:text="'Nhắc Nhở Cuộc Họp - Điều Chỉnh Lịch'">Nhắc Nhở Cuộc Họp - Điều Chỉnh Lịch</h2>
+
+    <p>Chào <strong style="color: #28a745" th:text="${participantName}">[Tên người tham gia]</strong>,</p>
+    <p>Thông báo về việc điều chỉnh lịch cuộc họp của bạn.</p>
+
+    <p>
+        Cuộc họp nội bộ của công ty đã được điều chỉnh
+        <strong><span style="color: red" th:text="${meetingDate + ' ' +meetingStart}">[Ngày giờ họp]</span></strong>
+        tại <strong><span style="color: red" th:text="${branchName + ' - ' + meetingLocation}">[Địa điểm]</span></strong>.
+    </p>
+
+    <p><strong>Thông tin cuộc họp:</strong></p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Chi nhánh:</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><span th:text="${branchName}">[Chi nhánh]</span></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Chủ đề:</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><span th:text="${meetingPurpose}">[Chủ đề]</span></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Thời gian:</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><span th:text="${meetingDate}">[Thời gian]</span></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Giờ bắt đầu:</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><span th:text="${meetingStart}">[Thời gian bắt đầu]</span></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Giờ kết thúc:</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><span th:text="${meetingEnd}">[Thời gian kết thúc]</span></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Thời lượng:</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><span th:text="${meetingDuration}">[Thời lượng]</span></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Phòng:</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><span th:text="${roomName}">[Phòng]</span></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Địa điểm:</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><span th:text="${meetingLocation}">[Địa điểm]</span></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; vertical-align: center;"><strong>Mô tả:</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd; text-align: left; white-space: pre-wrap;">
+                <span th:text="${meetingDescription}">[Mô tả]</span>
+            </td>
+        </tr>
+    </table>
+
     <p>Vui lòng tham gia đúng giờ theo lịch mới để không làm gián đoạn cuộc họp.</p>
-    <p class="footer">Nếu bạn không thể tham gia theo lịch mới, vui lòng thông báo cho chúng tôi sớm nhất có thể.</p>
-    <p>Liên hệ: <a th:href="'mailto:' + ${contactEmail}" th:text="${contactEmail}">[Email]</a></p>
+
+    <p class="footer">
+        Nếu bạn không thể tham gia theo lịch mới, vui lòng thông báo cho chúng tôi sớm nhất có thể.
+    </p>
+
+    <p>
+        Liên hệ: <a th:href="'mailto:' + ${contactEmail}" th:text="${contactEmail}">[Email]</a>
+    </p>
 </div>
 </body>
 </html>

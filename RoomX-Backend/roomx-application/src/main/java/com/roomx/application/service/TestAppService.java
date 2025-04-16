@@ -3,8 +3,10 @@ package com.roomx.application.service;
 import com.roomx.application.service.booking.RoomSchedulerAppService;
 import com.roomx.domain.model.aggrerate.ApprovalForm;
 import com.roomx.domain.repository.*;
+import com.roomx.infrastructure.cache.redis.service.RedisFcmTokenService;
 import com.roomx.infrastructure.cache.redis.service.RedisTenantService;
 import com.roomx.infrastructure.distributed.kafka.config.KafkaTenantService;
+import com.roomx.infrastructure.firebase.FCMNotificationService;
 import com.roomx.infrastructure.minio.MinioService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.infrastructure.notification.EmailService;
@@ -13,8 +15,10 @@ import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomEntityReposito
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.persistence.service.BookingEntityService;
 import com.roomx.infrastructure.security.oauth.RoleEvaluator;
+import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.base.MeetingMessage;
 import com.roomx.shared.enums.*;
+import com.roomx.shared.event.BookingInfoEmailEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -58,6 +62,9 @@ public class TestAppService {
     private final BookingEntityService bookingEntityService;
     private final EmailService emailService;
     private final RoomRepository roomRepository;
+    private final RedisFcmTokenService redisFcmTokenService;
+    private final FCMNotificationService fcmNotificationService;
+    private final SecurityUtil securityUtil;
 
 
     public Object testAppService() {
@@ -148,11 +155,39 @@ public class TestAppService {
     }
 
     public void mail() {
-        emailService
-                .sendHtmlEmail("asgy2002@gmail.com",
-                        "subject",
-                        EmailTemplateType.UPDATE_MEETING,
-                        Map.of("originalMeetingDate", "test"));
+
+        String targetToken = "cQS43a8aCHFf9XaSlE43qu:APA91bEouduGtKTeJENftKmzgp1HAGSynwtOc0Jt5k1fkbwg1rPkVu9oD0t314cZpzThRhr05YrTc1flWvtrn1KO8fcyy1HhGu_hTGZqaDdiNytmPYk8IMQ";
+        String userId = securityUtil.getCurrentUserId();
+        redisFcmTokenService.addObjectToSet("fcm_token:user:" + userId, targetToken);
+        var bookingEvent = BookingInfoEmailEvent
+                .builder()
+                .id(UUID.randomUUID().toString())
+                .bookingId(UUID.randomUUID().toString())
+                .bookingRequestId(UUID.randomUUID().toString())
+                .userId(userId)
+                .participantName("Nguyễn Văn A")
+                .toEmail("asgy2002@gmail.com")
+                .fromEmail("asgy2002@gmail.com")
+                .branchName("Chi nhánh HCM")
+                .roomName("B45.341")
+                .meetingDate(LocalDate.of(2025, 10, 22))
+                .meetingLocation("Chi nhánh DN, tòa nhà B, tầng 25, phòng b45.341")
+                .meetingStart(LocalTime.of(10, 0))
+                .meetingEnd(LocalTime.of(11, 0))
+                .meetingTitle("purpose la kfjdalk jflaskdf asfd asfd as")
+                .meetingDescription("fklsjflksjfl ksjdf")
+                .meetingTitle("Testing title")
+                .emailType(EmailTemplateType.CONFIRM_MEETING)
+                .build();
+
+        fcmNotificationService.sendNotificationData(targetToken, "helo", "hi", bookingEvent);
+
+        kafkaTenantService.sendMessage(
+                bookingEvent,
+                "meeting-event-topic"
+        );
+
+
     }
 
 

@@ -57,34 +57,6 @@ public class EmailService {
         }
     }
 
-    public void sendHtmlEmailToMultipleRecipients(List<String> to, String subject, String templateName, Map<String, Object> params) {
-        try {
-
-            Context context = new Context();
-            context.setVariables(params);
-
-
-            String body = templateEngine.process(templateName, context);
-
-
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-
-
-            helper.setTo(to.toArray(new String[0]));
-            helper.setSubject(subject);
-            helper.setText(body, true);
-
-
-            helper.setFrom(emailFrom);
-
-
-            mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            log.error("Error sending email to multiple recipients", e);
-            e.printStackTrace();
-        }
-    }
 
 }
 

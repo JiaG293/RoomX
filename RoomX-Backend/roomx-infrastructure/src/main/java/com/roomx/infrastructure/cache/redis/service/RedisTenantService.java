@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.cache.redis.service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public interface RedisTenantService {
@@ -17,4 +18,6 @@ public interface RedisTenantService {
 
     void rightPushObjectToList(String key, Object value);
     <T> List<T> rangeObjectFromList(String key, long start, long end, Class<T> clazz);
+
+
 }
