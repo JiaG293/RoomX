@@ -26,9 +26,10 @@ public interface JpaRoomEntityRepository extends JpaRepository<RoomEntity, UUID>
 
     @EntityGraph(attributePaths = {"roomClass"})
     @Query("""
-            SELECT r FROM RoomEntity r 
-            LEFT JOIN FETCH r.place
-            WHERE r.status = :status AND r.place.id = :branchId 
+            SELECT r, pbg.parentId FROM RoomEntity r 
+            LEFT JOIN FETCH PlaceEntity pfl ON r.place.id = pfl.id
+            LEFT JOIN FETCH PlaceEntity pbg ON pfl.parentId= pbg.id
+            WHERE r.status = :status AND pbg.parentId = :branchId 
             """)
     List<RoomEntity> findAllByStatusBranchId(@Param("status") String status, @Param("branchId") UUID branchId);
 

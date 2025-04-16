@@ -12,6 +12,6 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 public class IntervalEvent {
-    LocalTime start;
-    LocalTime end;
+    private LocalTime start;
+    private LocalTime end;
 }

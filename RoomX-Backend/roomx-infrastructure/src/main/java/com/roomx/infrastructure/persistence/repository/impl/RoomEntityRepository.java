@@ -2,6 +2,7 @@ package com.roomx.infrastructure.persistence.repository.impl;
 
 import com.roomx.domain.model.aggrerate.Room;
 import com.roomx.domain.repository.RoomRepository;
+import com.roomx.infrastructure.persistence.mapper.PlaceEntityMapper;
 import com.roomx.infrastructure.persistence.mapper.RoomEntityMapper;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomEntityRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Repository
 @RequiredArgsConstructor
 public class RoomEntityRepository implements RoomRepository {
+    private final PlaceEntityMapper placeEntityMapper;
     private final JpaRoomEntityRepository jpaRoomEntityRepository;
     private final RoomEntityMapper roomEntityMapper;
 
@@ -65,6 +67,20 @@ public class RoomEntityRepository implements RoomRepository {
         return jpaRoomEntityRepository
                 .findAllByStatusBranchId(status, UUID.fromString(branchId))
                 .stream().map(roomEntityMapper::toDomain).toList();
+    }
+
+    @Override
+    public List<Room> findAllByBranchIdAndStatusMinimum(String branchId, String status) {
+        return jpaRoomEntityRepository
+                .findAllByStatusBranchId(status, UUID.fromString(branchId))
+                .stream().map(roomEntity -> Room.builder()
+                                .id(roomEntity.getId())
+                                .roomCode(roomEntity.getRoomCode())
+                                .status(roomEntity.getStatus())
+                                .description(roomEntity.getDescription())
+                                .place(placeEntityMapper.toDomain(roomEntity.getPlace()))
+                                .build()
+                        ).toList();
     }
 
     @Override

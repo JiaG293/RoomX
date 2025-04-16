@@ -6,14 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 
-@Builder@Data
-@AllArgsConstructor
 public class IntervalTree {
     private TreeMultimap<LocalTime, LocalTime> intervals;
 
@@ -22,7 +22,7 @@ public class IntervalTree {
     }
 
     public void addInterval(IntervalEvent interval) {
-        intervals.put(interval.start, interval.end);
+        intervals.put(interval.getStart(), interval.getEnd());
     }
 
     public boolean hasOverlap(LocalTime start, LocalTime end, int bufferTime) {

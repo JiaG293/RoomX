@@ -178,9 +178,9 @@ public class BookingAppService {
     @Transactional
     public BookingRequestResponse createBookingRequest(BookingRequestUserCreateRequest request) {
         var bookingRequestDomain = bookingRequestAppMapper.toDomainUser(request);
+        log.info("check request: {}", bookingRequestDomain);
 
-        log.info("userId: {}", UUID.fromString(securityUtil.getCurrentUserId()));
-
+        log.info("check user id: {}", securityUtil.getCurrentUserId());
 
         bookingRequestDomain.setRequester(UUID.fromString(securityUtil.getCurrentUserId()));
 

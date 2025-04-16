@@ -14,6 +14,8 @@ import com.roomx.domain.repository.*;
 import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.shared.enums.BookingStatusType;
 import com.roomx.shared.enums.RoomStatusType;
+import com.roomx.shared.exception.exception.AppException;
+import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -1401,34 +1403,43 @@ public class RoomSchedulerAppService {
         List<RoomScheduleResultDto> results = new ArrayList<>();
         int requiredCapacity = (capacity != null && capacity > 0) ? capacity : participants.size() + 1;
 
-        // 1. Chuẩn bị dữ liệu ban đầu
+        // Chuẩn bị dữ liệu ban đầu
         Map<LocalDate, DateRequestException> exceptionMap = dateRequestExceptions.stream()
                 .collect(Collectors.toMap(DateRequestException::getDate, e -> e));
 
-        List<Room> availableRooms = (branchId != null)
+        List<Room> availableRooms = (branchId != null || branchId.isEmpty())
                 ? roomRepository.findAllByBranchIdAndStatus(branchId, RoomStatusType.AVAILABLE.toString())
                 : roomRepository.findAllByStatus(RoomStatusType.AVAILABLE.toString());
+
+        if(availableRooms.isEmpty()){
+            log.error("branchId not found");
+            throw new AppException(ErrorCode.BRANCH_NOT_FOUND, null, branchId);
+        }
 
         Map<UUID, Room> roomMap = availableRooms.stream()
                 .collect(Collectors.toMap(Room::getId, r -> r));
 
-        // 2. Truy vấn booking cho tất cả các ngày trong 'occurrences' (Tối ưu hóa database call)
+        log.info("room available: {}", availableRooms.size());
+
+        // Truy vấn booking cho tất cả các ngày trong 'occurrences'
         List<Booking> allBookings = bookingRepository.findAllByMeetingDateInAndContainsStatus(
                 occurrences, BookingStatusType.getListAccept());
 
-        // 3. Xử lý cho từng ngày
+        // Xử lý cho từng ngày
         for (LocalDate date : occurrences) {
-            // 3.1 Lọc booking cho ngày hiện tại
+            // Lọc booking cho ngày hiện tại
             List<Booking> bookingsForDate = allBookings.stream()
                     .filter(b -> b.getMeetingDate().equals(date))
                     .toList();
 
-            // 3.2 Tạo Interval Tree cho từng phòng để kiểm tra xung đột nhanh chóng
+            // Tạo Interval Tree cho từng phòng để kiểm tra xung đột nhanh chóng
             Map<UUID, IntervalTree> roomIntervalTrees = new HashMap<>();
             for (Room room : availableRooms) {
                 roomIntervalTrees.put(room.getId(), new IntervalTree());
             }
             for (Booking booking : bookingsForDate) {
+                log.info("booking: id: {}, start: {}, end: {}", booking.getRoom().getId(), booking.getMeetingStart(), booking.getMeetingEnd());
+
                 if (booking.getRoom() != null) {
                     roomIntervalTrees.get(booking.getRoom().getId()).addInterval(new IntervalEvent(booking.getMeetingStart(), booking.getMeetingEnd()));
                 }
@@ -1438,7 +1449,7 @@ public class RoomSchedulerAppService {
             LocalTime originalEnd = timeEnd;
             Room forcedRoom = null;
 
-            // 3.3 Xử lý Exception nếu có
+            // Xử lý Exception nếu có
             if (exceptionMap.containsKey(date)) {
                 DateRequestException exception = exceptionMap.get(date);
                 if (exception.getStartTime() != null && exception.getEndTime() != null) {
@@ -1453,7 +1464,7 @@ public class RoomSchedulerAppService {
                 }
             }
 
-            // 3.4 Xử lý Forced Room
+            // Xử lý Forced Room
             if (forcedRoom != null) {
                 if (forcedRoom.getRoomClass().getCapacity() < requiredCapacity) {
                     results.add(new RoomScheduleResultDto(date, true, forcedRoom.getId().toString(), null));
@@ -1472,7 +1483,7 @@ public class RoomSchedulerAppService {
                 continue;
             }
 
-            // 3.5 Tìm Optimal Room (nếu không có Forced Room)
+            // Tìm Optimal Room (nếu không có Forced Room)
             LocalTime finalStart = originalStart;
             LocalTime finalEnd = originalEnd;
 
@@ -1488,7 +1499,7 @@ public class RoomSchedulerAppService {
                 continue;
             }
 
-            // 3.6 Gợi ý nếu không tìm được phòng tối ưu
+            // Gợi ý nếu không tìm được phòng tối ưu
             for (Room room : availableRooms) {
                 if (room.getRoomClass().getCapacity() < requiredCapacity) continue;
 

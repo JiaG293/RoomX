@@ -2,23 +2,19 @@ package com.roomx.application.service;
 
 import com.roomx.application.service.booking.RoomSchedulerAppService;
 import com.roomx.domain.model.aggrerate.ApprovalForm;
-import com.roomx.domain.repository.ApprovalFormRepository;
-import com.roomx.domain.repository.BookingRepository;
-import com.roomx.domain.repository.BookingRequestRepository;
-import com.roomx.domain.repository.DateRequestExceptionRepository;
+import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.cache.redis.service.RedisTenantService;
 import com.roomx.infrastructure.distributed.kafka.config.KafkaTenantService;
 import com.roomx.infrastructure.minio.MinioService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.infrastructure.notification.EmailService;
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
+import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomEntityRepository;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.persistence.service.BookingEntityService;
 import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import com.roomx.shared.base.MeetingMessage;
-import com.roomx.shared.enums.ApprovalStatusType;
-import com.roomx.shared.enums.BookingStatusType;
-import com.roomx.shared.enums.EmailTemplateType;
+import com.roomx.shared.enums.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -61,6 +57,7 @@ public class TestAppService {
     private final BookingRepository bookingRepository;
     private final BookingEntityService bookingEntityService;
     private final EmailService emailService;
+    private final RoomRepository roomRepository;
 
 
     public Object testAppService() {
@@ -74,9 +71,9 @@ public class TestAppService {
 
         var result = redisTenantService.getObject(key, HashMap.class);*/
 
-        redisTenantService.put("helo", "12", 30, TimeUnit.SECONDS);
+//        redisTenantService.put("helo", "12", 30, TimeUnit.SECONDS);
 
-        Sort sort = "desc".equalsIgnoreCase("desc")
+        /*Sort sort = "desc".equalsIgnoreCase("desc")
                 ? Sort.by("id").descending()
                 : Sort.by("id").ascending();
         ZoneId zoneId = ZoneId.systemDefault();
@@ -86,7 +83,13 @@ public class TestAppService {
                 LocalDate.of(2025, 12, 1),
                 "ea4e9c4c-a317-4064-8a5b-da2b339e4380",
                 pageable
-        );
+        );*/
+
+        var result = roomRepository
+                .findAllByBranchIdAndStatusMinimum(
+                        "65f1d8a0-6885-4b51-a691-f843b279dd8b",
+                        RoomStatusType.AVAILABLE.toString()
+                );
         return result;
     }
 

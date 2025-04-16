@@ -25,4 +25,6 @@ public interface RoomRepository {
 
     Optional<BigDecimal> findPriceByIdAndValidTimestamp(String roomId, Instant timestamp);
 
+
+    List<Room> findAllByBranchIdAndStatusMinimum(String branchId, String status);
 }
