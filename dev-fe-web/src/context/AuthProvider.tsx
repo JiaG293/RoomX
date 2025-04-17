@@ -3,6 +3,8 @@ import keycloak from "@/configs/keycloak.config";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "sonner";
+import { t } from "i18next";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -85,17 +87,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         sameSite: "Strict",
       });
       const decodedToken: any = jwtDecode(data.access_token);
-      const roles = decodedToken.aud || [];
-      console.log(roles);
+      const roles = decodedToken.roles || [];
+      console.log(roles)
 
       const userInfo = {
         email: decodedToken?.email,
         username: decodedToken?.preferred_username,
         roles,
       };
-
       return userInfo;
     } catch (error) {
+      toast.error("Đăng nhập thất bại");
       console.error("Login error:", error);
     }
   };
@@ -129,6 +131,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
       setToken(null);
       window.location.href = "/login";
+      toast.success("Đăng xuất thành công!");
     } catch (error) {
       console.error("Logout error:", error);
     }

@@ -1,6 +1,8 @@
-import React from "react";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button"; // Assuming Button is a custom UI component
+import { ScheduleService } from "@/services/admin/schedule.service";
+import { Calendar, Clock, User, DollarSign, Home, Phone, Mail } from "lucide-react"; // Importing Lucid Icons
 
 interface EventModalProps {
   event: any | null;
@@ -8,104 +10,125 @@ interface EventModalProps {
 }
 
 const EventModal: React.FC<EventModalProps> = ({ event, onClose }) => {
-  if (!event) return null; // Không hiển thị nếu không có sự kiện
+  const [eventDetails, setEventDetails] = useState<any>(null); // State to store event details
 
-  // Format thời gian
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-  };
+  // Fetch event details when the event is set or changes
+  useEffect(() => {
+    if (!event) {
+      return; // Return early if there's no event
+    }
 
-  // Đảm bảo roomPrice có giá trị hợp lệ, nếu không trả về giá trị mặc định là 0
-  const roomPrice = event.extendedProps.roomPrice ?? 0;
+    const fetchEventDetails = async () => {
+      try {
+        const scheduleService = new ScheduleService();
+        const data = await scheduleService.getDetailSchedule(event.id);
+        console.log("chi tiết:", data);
+        setEventDetails(data); 
+      } catch (error) {
+        console.error("Error fetching event details:", error);
+      }
+    };
 
-  // Đảm bảo attendees và devices là mảng hợp lệ trước khi gọi map
-  const attendees = Array.isArray(event.extendedProps.attendees) ? event.extendedProps.attendees : [];
-  const devices = Array.isArray(event.extendedProps.devices) ? event.extendedProps.devices : [];
+    fetchEventDetails();
+  }, [event]); 
+
+  if (!event) {
+    return null; 
+  }
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-h-[80%] overflow-auto max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-        <DialogTitle className="col-span-2">{event.title}</DialogTitle>
-        <DialogDescription className="col-span-2">
-          {/* Thông tin cơ bản */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <div className="font-bold text-lg">Chủ trì:</div>
-              <div>{event.extendedProps.host}</div>
-            </div>
-            <div>
-              <div className="font-bold text-lg">Phòng:</div>
-              <div>{event.extendedProps.room}</div>
-            </div>
-            <div>
-              <div className="font-bold text-lg">Tầng:</div>
-              <div>{event.extendedProps.floor}</div>
-            </div>
-            <div>
-              <div className="font-bold text-lg">Ghi chú:</div>
-              <div>{event.extendedProps.note}</div>
-            </div>
-            <div>
-              <div className="font-bold text-lg">Loại lịch:</div>
-              <div>{event.extendedProps.scheduleType}</div>
-            </div>
-            <div>
-              <div className="font-bold text-lg">Giá phòng:</div>
-              <div>{roomPrice.toLocaleString()} VND</div>
-            </div>
-            <div>
-              <div className="font-bold text-lg">Thời gian bắt đầu:</div>
-              <div>{formatTime(event.start)}</div>
-            </div>
-            <div>
-              <div className="font-bold text-lg">Thời gian kết thúc:</div>
-              <div>{formatTime(event.end)}</div>
-            </div>
-          </div>
+    <Dialog open={!!event} onOpenChange={(open) => !open && onClose()}>
+      <DialogTrigger />
+      <DialogContent className="w-[800px] max-h-[80vh] p-6 space-y-6 overflow-auto">
+        <DialogTitle className="text-xl font-semibold">Chi tiết sự kiện</DialogTitle>
+        <DialogDescription>
+          {eventDetails ? (
+            <>
+              {/* Event Info Card */}
+              <div className="space-y-4">
+                <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                  <div className="flex items-center space-x-2">
+                    <Calendar size={20} className="text-gray-500" />
+                    <p><strong>Mã sự kiện:</strong> {eventDetails.id}</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Clock size={20} className="text-gray-500" />
+                    <p><strong>Mã đặt chỗ:</strong> {eventDetails.bookingCode}</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Calendar size={20} className="text-gray-500" />
+                    <p><strong>Ngày họp:</strong> {eventDetails.meetingDate}</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Clock size={20} className="text-gray-500" />
+                    <p><strong>Giờ bắt đầu:</strong> {eventDetails.meetingStart}</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Clock size={20} className="text-gray-500" />
+                    <p><strong>Giờ kết thúc:</strong> {eventDetails.meetingEnd}</p>
+                  </div>
+                </div>
 
-          {/* Danh sách người tham gia */}
-          <div className="mt-4">
-            <div className="font-bold text-lg">Người tham gia:</div>
-            <div className="flex flex-wrap gap-2 max-w-full max-h-[60vh] overflow-y-auto">
-              {attendees.map((attendee: string, index: number) => (
-                <span
-                  key={index}
-                  className="cursor-pointer bg-blue-500 text-white rounded-full px-4 py-2 text-sm"
-                >
-                  {attendee}
-                </span>
-              ))}
-            </div>
-          </div>
+                {/* Room Info Card */}
+                <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                  <div className="flex items-center space-x-2">
+                    <Home size={20} className="text-gray-500" />
+                    <p><strong>Phòng:</strong> {eventDetails.room?.roomCode || "Chưa phân phòng"}</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <p><strong>Mô tả phòng:</strong> {eventDetails.room?.description || "Không có mô tả"}</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <p><strong>Tình trạng phòng:</strong> {eventDetails.room?.status || "Chưa cập nhật"}</p>
+                  </div>
+                </div>
 
-          {/* Danh sách thiết bị */}
-          <div className="mt-4">
-            <div className="font-bold text-lg">Thiết bị:</div>
-            <div className="flex flex-wrap gap-2 max-w-full max-h-[60vh] overflow-y-auto">
-              {devices.map((device: any, index: number) => (
-                <span
-                  key={index}
-                  className="cursor-pointer bg-green-500 text-white rounded-full px-4 py-2 text-sm"
-                >
-                  {device.name} - {device.pricePerHour.toLocaleString()} VND/giờ
-                </span>
-              ))}
-            </div>
-          </div>
+                {/* Participant Info Card */}
+                <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                  <div className="flex items-center space-x-2">
+                    <User size={20} className="text-gray-500" />
+                    <p><strong>Thành viên tham gia:</strong></p>
+                  </div>
+                  <ul className="list-disc pl-6 space-y-2">
+                    {eventDetails.participants?.map((participant: any) => (
+                      <li key={participant.participantId}>
+                        {participant.userCode} - {participant.email}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-          {/* Thông tin liên hệ */}
-          <div className="font-bold text-lg mt-4">Email:</div>
-          <div>{event.extendedProps.email}</div>
+                {/* Requester Info Card */}
+                <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                  <div className="flex items-center space-x-2">
+                    <User size={20} className="text-gray-500" />
+                    <p><strong>Yêu cầu bởi:</strong> {eventDetails.requester?.firstName} {eventDetails.requester?.lastName}</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Phone size={20} className="text-gray-500" />
+                    <p><strong>Số điện thoại:</strong> {eventDetails.requester?.phoneNumber}</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Mail size={20} className="text-gray-500" />
+                    <p><strong>Email:</strong> {eventDetails.requester?.email}</p>
+                  </div>
+                </div>
 
-          <div className="font-bold text-lg mt-2">Chi nhánh:</div>
-          <div>{event.extendedProps.branch}</div>
-
-          {/* Nút đóng modal */}
-          <div className="mt-4">
-            <Button onClick={onClose} variant="outline" size="sm">Đóng</Button>
-          </div>
+                {/* Status Info Card */}
+                <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                  <div className="flex items-center space-x-2">
+                    <p><strong>Tình trạng sự kiện:</strong> {eventDetails.status}</p>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <p>Đang tải thông tin sự kiện...</p>
+          )}
         </DialogDescription>
+        <DialogFooter>
+          <Button variant="secondary" onClick={onClose}>Đóng</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -17,16 +17,25 @@ type SelectedItem = {
   quantity: number
 }
 
+export type SelectedPerson = {
+  name: string
+}
+
 interface TagSelectProps {
   title?: string
   placeholder?: string
   data?: string[]
+  variant?: "default" | "people"
+  onChange?: (items: SelectedItem[]) => void
+
 }
 
 const TagSelect: React.FC<TagSelectProps> = ({
   title = "Items",
   placeholder = "Search items...",
   data = [],
+  variant = "default",
+  onChange
 }) => {
   const [query, setQuery] = useState("")
   const [options, setOptions] = useState<string[]>([])
@@ -41,6 +50,11 @@ const TagSelect: React.FC<TagSelectProps> = ({
     }, 300)
     return () => clearTimeout(timeout)
   }, [query, data])
+
+  useEffect(() => {
+    onChange?.(selectedItems)
+  }, [selectedItems, onChange])
+  
 
   const handleSelect = (item: string) => {
     const exists = selectedItems.find((i) => i.name === item)
@@ -112,23 +126,28 @@ const TagSelect: React.FC<TagSelectProps> = ({
                   variant="outline"
                   className="flex items-center gap-2 px-2 py-1"
                 >
-                  {item.name} ({item.quantity})
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-4 h-4 p-0 bg-transparent"
-                    onClick={() => updateQuantity(item.name, -1)}
-                  >
-                    <Minus className="w-3 h-3" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-4 h-4 p-0 bg-transparent"
-                    onClick={() => updateQuantity(item.name, 1)}
-                  >
-                    <Plus className="w-3 h-3" />
-                  </Button>
+                  {item.name}
+                  {variant === "default" && (
+                    <>
+                      <span>({item.quantity})</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-4 h-4 p-0 bg-transparent"
+                        onClick={() => updateQuantity(item.name, -1)}
+                      >
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-4 h-4 p-0 bg-transparent"
+                        onClick={() => updateQuantity(item.name, 1)}
+                      >
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </>
+                  )}
                   <Button
                     variant="ghost"
                     size="icon"

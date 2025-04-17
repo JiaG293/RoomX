@@ -5,8 +5,7 @@ import interactionPlugin from "@fullcalendar/interaction"; // Để có thể t�
 import PortalLayout from "@/layouts/portal-layout"; // Import layout của bạn
 import listPlugin from "@fullcalendar/list";
 import { ScheduleService } from "@/services/user/schedule.service";
-import { useAuth } from "@/context/AuthProvider";
-import EventModal from "@/components/admin/meetings/event-modal";
+import EventModal from "@/components/app/meetings/event-modal";
 
 const Home: React.FC = () => {
   const [viewMode, setViewMode] = useState<"dayGridMonth" | "listWeek">(
@@ -16,38 +15,40 @@ const Home: React.FC = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [modalEvent, setModalEvent] = useState<any>(null);
-  const { getUserInfo } = useAuth();
-
 
   const loadEvents = useCallback(async (month: number, year: number) => {
     try {
       const scheduleService = new ScheduleService();
-      const email = getUserInfo()?.email+"";
-      const data = await scheduleService.getAllSchedules(month, year, email);
-      console.log(data);
-      const formattedEvents = data.map((event: any) => ({
-        id: event._id,
-        title: event.note,
-        start: event.startTime,
-        end: event.endTime,
-        extendedProps: {
-          room: event.room || "Chưa có phòng", // Phòng mặc định
-          floor: event.floor || "Chưa có tầng", // Tầng mặc định
-          note: event.note || "Chưa có ghi chú", // Ghi chú mặc định
-          attendees: event.attendees || [], // Mảng người tham gia mặc định
-          devices: event.devices || [], // Mảng thiết bị mặc định
-          roomPrice: event.roomPrice || 0, // Giá phòng mặc định là 0
-          scheduleType: event.scheduleType || "Unknown", // Mặc định loại lịch
-          email: event.email || "N/A", // Email mặc định
-          branch: event.branch || "Unknown", // Chi nhánh mặc định
-          host: event.name || "Chưa có chủ trì", // Thêm chủ trì (dùng `name` làm chủ trì)
-        },
-      }));
+      const data = await scheduleService.getAllSchedules(month, year);
+      console.log(data.result.content);
+      const formattedEvents = data.result.content.map((event: any) => {
+        const startDateTime = new Date(`${event.meetingDate}T${event.meetingStart}`);
+        const endDateTime = new Date(`${event.meetingDate}T${event.meetingEnd}`);
+        return {
+          id: event.id,
+          title: event.title || "Không có tiêu đề",
+          start: startDateTime.toISOString(),
+          end: endDateTime.toISOString(),
+          extendedProps: {
+            room: event.room?.name || "Chưa có phòng",
+            floor: event.floor?.name || "Chưa có tầng",
+            note: event.description || "Chưa có ghi chú",
+            attendees: [], // Giữ nguyên mảng trống nếu chưa có
+            devices: [],
+            roomPrice: 0,
+            scheduleType: event.status || "Unknown",
+            email: event.email || "N/A",
+            branch: event.branch?.name || "Unknown",
+            host: event.name || "Chưa có chủ trì",
+          },
+        };
+      });
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error loading schedule:", error);
     }
   }, []);
+  
 
   useEffect(() => {
     loadEvents(currentMonth, currentYear);
@@ -84,6 +85,29 @@ const Home: React.FC = () => {
               setCurrentMonth(newMonth);
               setCurrentYear(newYear);
             }
+          }}
+          views={{
+            dayGridMonth: {
+              // Lịch tháng: giới hạn tối đa 2 dòng sự kiện mỗi ngày
+              dayMaxEvents: 2,
+              moreLinkText: "Xem thêm",
+
+            },
+            dayGridWeek: {
+              // Lịch tuần: giới hạn tối đa 10 sự kiện mỗi ngày
+              dayMaxEvents: 10,
+              moreLinkText: "Xem thêm",
+
+            },
+            dayGridDay: {
+              // Lịch ngày: không giới hạn số sự kiện
+              eventLimit: false, 
+              moreLinkText: "Xem thêm",
+            }
+          }}
+          moreLinkClick={(info) => {
+            // Khi nhấn "Xem thêm", chuyển sang chế độ xem ngày
+            info.view.calendar.changeView('dayGridDay', info.date);
           }}
         />
       </div>

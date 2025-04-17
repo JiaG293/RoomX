@@ -3,6 +3,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthProvider";
+import { toast } from "sonner";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,14 +17,17 @@ const LoginForm = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    // window.location.href = "/admin/home";
     try {
       const userInfo = await login(username, password);
 
       console.log("User info:", userInfo);
 
-      if (userInfo?.roles?.includes("realm-management")) {
+      if (userInfo?.roles?.includes("ADMIN")) {
+        toast.success("Đăng nhập thành công!");
         window.location.href = "/admin/home";
-      } else {
+      } else if (userInfo?.roles?.includes("USER")) {
+        toast.success("Đăng nhập thành công!");
         window.location.href = "/portal/home";
       }
     } catch (error) {

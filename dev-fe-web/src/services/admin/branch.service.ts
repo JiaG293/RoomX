@@ -12,7 +12,7 @@ export class BranchService {
     }
 
     try {
-      const response = await axios.get(`${API_BASE_URL}/branchs/all`, {
+      const response = await axios.get(`${API_BASE_URL}/places/hierarchy?placeType=BRANCH`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export class BranchService {
 
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/branchs/${id}`,
+        `${API_BASE_URL}/places/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -101,22 +101,22 @@ export class BranchService {
           "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
         },
       });
-      console.log(response.data.result.id);
-      await axios.post(
-        `${API_BASE_URL}/places`,
-        {
-          branchId: response.data.result.id,
-          layout: "url",
-          placeType: "BRANCH",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
-          },
-        }
-      );
+      // console.log(response.data.result.id);
+      // await axios.post(
+      //   `${API_BASE_URL}/places`,
+      //   {
+      //     branchId: response.data.result.id,
+      //     layout: "url",
+      //     placeType: "BRANCH",
+      //   },
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //       "Content-Type": "application/json",
+      //       "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+      //     },
+      //   }
+      // );
       console.log("oke")
       return response.data.result;
     } catch (error) {

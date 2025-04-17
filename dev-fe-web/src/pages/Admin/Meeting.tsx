@@ -24,18 +24,9 @@ const Meeting: React.FC = () => {
       console.log(data);
       const formattedEvents = data.map((event: any) => ({
         id: event.id,
-        title: event.bookingCode, // Booking code sẽ là tiêu đề sự kiện
+        title: event.title || "Chưa có tiêu đề", // Booking code sẽ là tiêu đề sự kiện
         start: `${event.meetingDate}T${event.meetingStart}`, // Định dạng thời gian bắt đầu
         end: `${event.meetingDate}T${event.meetingEnd}`, // Định dạng thời gian kết thúc
-        extendedProps: {
-          room: event.roomId || "Chưa có phòng", // ID phòng họp (có thể không có)
-          totalPrice: event.totalPrice || 0, // Giá tổng (nếu có)
-          status: event.status || "Unknown", // Trạng thái (ví dụ: "COMPLETED")
-          count: event.count || 0, // Số lượng người tham gia
-          bookingRequestId: event.bookingRequestId || "Unknown", // ID yêu cầu đặt phòng
-          createdAt: event.createdAt, // Ngày tạo
-          updatedAt: event.updatedAt, // Ngày cập nhật
-        },
       }));
       
       setEvents(formattedEvents);

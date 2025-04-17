@@ -5,49 +5,55 @@ import interactionPlugin from "@fullcalendar/interaction";
 import PortalLayout from "@/layouts/portal-layout";
 import listPlugin from "@fullcalendar/list";
 import { ScheduleService } from "@/services/admin/schedule.service";
-import { useAuth } from "@/context/AuthProvider";
 import { BookingModal } from "@/pages/App/BookingForm";
+import EventModal from "@/components/app/meetings/event-modal";
 
 const Booking: React.FC = () => {
-  const [viewMode, setViewMode] = useState<"dayGridMonth" | "listWeek">("dayGridMonth");
+  const [viewMode, setViewMode] = useState<"dayGridMonth" | "listWeek">(
+    "dayGridMonth"
+  );
   const [events, setEvents] = useState<any[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [modalEvent, setModalEvent] = useState<any>(null);
-  const { getUserInfo } = useAuth();
+  const [modalDay, setModalDay] = useState<any>(null);
 
   const loadEvents = useCallback(async (month: number, year: number) => {
     try {
-      const email = getUserInfo()?.email + "";
       const scheduleService = new ScheduleService();
       const data = await scheduleService.getAllSchedules(month, year);
       console.log(data);
-
-      // Format lại dữ liệu các sự kiện
-      const formattedEvents = data.map((event: any) => ({
-        id: event._id,
-        title: event.name,
-        start: event.startTime,
-        end: event.endTime,
-        extendedProps: {
-          room: event.room || "Chưa có phòng", 
-          floor: event.floor || "Chưa có tầng", 
-          note: event.note || "Chưa có ghi chú", 
-          attendees: event.attendees || [], 
-          devices: event.devices || [],
-          roomPrice: event.roomPrice || 0,
-          scheduleType: event.scheduleType || "Unknown", 
-          email: event.email || "N/A", 
-          branch: event.branch || "Unknown", 
-          host: event.name || "Chưa có chủ trì", 
-        },
-        classNames: event.email === email ? 'highlight-event' : '',  // Nếu email trùng khớp thì thêm class 'highlight-event'
-      }));
+      const formattedEvents = data.map((event: any) => {
+        const startDateTime = new Date(
+          `${event.meetingDate}T${event.meetingStart}`
+        );
+        const endDateTime = new Date(
+          `${event.meetingDate}T${event.meetingEnd}`
+        );
+        return {
+          id: event.id,
+          title: event.title || "Chưa có tiêu đề",
+          start: startDateTime.toISOString(),
+          end: endDateTime.toISOString(),
+          extendedProps: {
+            room: event.room?.name || "Chưa có phòng",
+            floor: event.floor?.name || "Chưa có tầng",
+            note: event.description || "Chưa có ghi chú",
+            attendees: [], // Giữ nguyên mảng trống nếu chưa có
+            devices: [],
+            roomPrice: 0,
+            scheduleType: event.status || "Unknown",
+            email: event.email || "N/A",
+            branch: event.branch?.name || "Unknown",
+            host: event.name || "Chưa có chủ trì",
+          },
+        };
+      });
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error loading schedule:", error);
     }
-  }, [getUserInfo]);
+  }, []);
 
   useEffect(() => {
     loadEvents(currentMonth, currentYear);
@@ -55,53 +61,88 @@ const Booking: React.FC = () => {
 
   return (
     <PortalLayout>
-      <div style={{ flex: 0.9 }}>
-      <FullCalendar
-  locale="vi"
-  plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
-  initialView={viewMode}
-  events={events}
-  dateClick={(info) => {
-    if (info.date.getMonth() + 1 === currentMonth) {
-      setModalEvent({ start: info.date.toISOString() });
-    }
-  }}
-  eventClick={(info) => setModalEvent(info.event)}
-  height="100%"
-  buttonText={{
-    today: "Hôm nay",
-    month: "Tháng",
-    week: "Tuần",
-    day: "Ngày",
-  }}
-  headerToolbar={{
-    left: "prev,next today",
-    center: "title",
-    right: "dayGridMonth,dayGridWeek,dayGridDay",
-  }}
-  datesSet={(info) => {
-    setCurrentMonth(info.view.currentStart.getMonth() + 1);
-    setCurrentYear(info.view.currentStart.getFullYear());
-  }}
-  dayCellClassNames={(arg) =>
-    arg.date.getMonth() + 1 !== currentMonth ? "disabled-day" : ""
-  }
-/>
+      <div style={{ flex: 1 }}>
+        <FullCalendar
+          locale="vi"
+          plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
+          initialView={viewMode}
+          events={events}
+          dateClick={(info) => {
+            console.log("Clicked date:", info.dateStr);
 
+            if (info.date.getMonth() + 1 === currentMonth) {
+              setModalDay({ start: info.dateStr });
+            }
+          }}
+          eventClick={(info) => {
+            const event = info.event;
+            setModalEvent(event);
+          }}
+          height="100%"
+          buttonText={{
+            today: "Hôm nay",
+            month: "Tháng",
+            week: "Tuần",
+            day: "Ngày",
+          }}
+          headerToolbar={{
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,dayGridWeek,dayGridDay",
+          }}
+          datesSet={(info) => {
+            setCurrentMonth(info.view.currentStart.getMonth() + 1);
+            setCurrentYear(info.view.currentStart.getFullYear());
+          }}
+          dayCellClassNames={(arg) =>
+            arg.date.getMonth() + 1 !== currentMonth ? "disabled-day" : ""
+          }
+          views={{
+            dayGridMonth: {
+              // Lịch tháng: giới hạn tối đa 2 dòng sự kiện mỗi ngày
+              dayMaxEvents: 2,
+              moreLinkText: "Xem thêm",
+            },
+            dayGridWeek: {
+              // Lịch tuần: giới hạn tối đa 10 sự kiện mỗi ngày
+              dayMaxEvents: 10,
+              moreLinkText: "Xem thêm",
+            },
+            dayGridDay: {
+              // Lịch ngày: không giới hạn số sự kiện
+              eventLimit: false,
+              moreLinkText: "Xem thêm",
+            },
+          }}
+          moreLinkClick={(info) => {
+            // Khi nhấn "Xem thêm", chuyển sang chế độ xem ngày
+            info.view.calendar.changeView("dayGridDay", info.date);
+          }}
+        />
       </div>
-      <BookingModal eventDate={modalEvent?.start} onClose={() => setModalEvent(null)} />
-              {/* Chú thích màu sắc */}
-      <div className="mt-4 flex gap-4">
-        <div className="flex items-center gap-2">
-          <span className="w-4 h-4 bg-yellow-400 rounded-sm"></span>
-          <span>Lịch của tôi</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="w-4 h-4 bg-blue-400 rounded-sm"></span>
-          <span>Lịch họp khác</span>
-        </div>
+      <BookingModal
+        eventDate={modalDay?.start}
+        onClose={() => setModalDay(null)}
+      />
+      <EventModal event={modalEvent} onClose={() => setModalEvent(null)} />
+          
+      {/* Chú thích màu sắc */}
+      <div className="mt-4 flex flex-col gap-2">
+        {/* <div className="flex gap-4">
+          <div className="flex items-center gap-2">
+            <span className="w-4 h-4 bg-yellow-400 rounded-sm"></span>
+            <span>Lịch của tôi</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-4 h-4 bg-blue-400 rounded-sm"></span>
+            <span>Lịch họp khác</span>
+          </div>
+        </div> */}
+        <p className="text-sm text-gray-600 italic">
+          * Chọn ngày để mở hộp thoại đặt lịch *
+        </p>
       </div>
-      </PortalLayout>
+    </PortalLayout>
   );
 };
 

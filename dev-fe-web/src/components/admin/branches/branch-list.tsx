@@ -31,20 +31,17 @@ const BranchList: React.FC = () => {
     setLoading(true);
     try {
       const branchService = new BranchService();
-      const data = await branchService.getListBranches(pageIndex + 1);
+      const data = await branchService.getAllBranches();
       console.log(data);
       setBranches(
-        data.content.map((branch: any) => ({
+        data.map((branch: any) => ({
           branchId: branch.id,
-          branchCode: branch.branchCode,
-          name: branch.name,
-          phoneNumber: branch.phoneNumber,
-          email: branch.email,
-          address: branch.address,
+          branchCode: branch.code,
+          name: branch.name
         }))
       );
 
-      setTotalPages(data.pagination.totalPages || 1);
+      // setTotalPages(data.pagination.totalPages || 1);
     } catch (error) {
       console.error("Failed to fetch branches:", error);
     } finally {

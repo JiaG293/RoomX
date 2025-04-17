@@ -1,12 +1,4 @@
 import { ColumnDef } from "@tanstack/react-table";
-import {  MoreHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -14,9 +6,9 @@ export type Branch = {
   branchId: string;
   branchCode: string;
   name: string;
-  email: string;
-  phoneNumber: string;
-  address: string;
+  // email: string;
+  // phoneNumber: string;
+  // address: string;
 };
 
 export const columns: ColumnDef<Branch>[] = [
@@ -33,7 +25,7 @@ export const columns: ColumnDef<Branch>[] = [
     accessorKey: "name",
     header: "Chi nhánh",
   },
-  {
+  /* {
     accessorKey: "email",
     header: "Email",
   },
@@ -44,7 +36,7 @@ export const columns: ColumnDef<Branch>[] = [
   {
     accessorKey: "address",
     header: "Địa chỉ",
-  },
+  }, */
   {
     id: "actions",
     cell: ({ row }) => {

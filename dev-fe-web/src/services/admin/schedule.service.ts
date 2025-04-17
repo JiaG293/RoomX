@@ -53,6 +53,29 @@ export class ScheduleService {
     }
   }
 
+  // Chi tiết lịch đã đặt
+  async getDetailSchedule(id: string) {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    } 
+
+    try { 
+      const response = await axios.get(`${API_BASE_URL}/bookings/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+        },
+      });
+      return response.data.result;  
+    } catch (error) {
+      console.error("Error fetching branches:", error);
+      throw error;
+    }
+  }
+
   // Thêm phương thức book lịch
   async bookSchedule(scheduleData: any) {
     const token = Cookies.get("token");

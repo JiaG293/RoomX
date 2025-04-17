@@ -20,9 +20,10 @@ export interface User {
   password: string;
   gender: string;
   email: string;
-  type: "EMPLOYEE" | "APPROVER";
-  roles: string[];
+  type: "EMPLOYEE";
+  roles: ("USER" | "APPROVER" | "ADMIN")[];
 }
+
 
 interface UserAddModalProps {
   onAddSuccess: () => void;
@@ -34,7 +35,8 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [userType, setUserType] = useState("employee");
+  const [userRole, setUserRole] = useState("USER");
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const userService = new UserService();
@@ -77,8 +79,8 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
       password: "password123",
       gender: "true",
       email: email,
-      type: userType === "employee" ? "EMPLOYEE" : "APPROVER",
-      roles: userType === "employee" ? ["USER"] : ["USER", "APPROVER"],
+      type: "EMPLOYEE",
+      roles: userRole === "USER" ? ["USER"] : ["USER", "APPROVER"],
     };
 
     try {
@@ -107,7 +109,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
     setFirstName("");
     setLastName("");
     setPhoneNumber("");
-    setUserType("employee");
+    setUserRole("USER");
   };
 
   return (
@@ -234,12 +236,12 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
             </label>
             <div className="relative">
               <select
-                value={userType}
-                onChange={(e) => setUserType(e.target.value)}
+                value={userRole}
+                onChange={(e) => setUserRole(e.target.value)}
                 className="w-full p-2 bg-transparent border border-gray-300 rounded-md pl-10"
               >
-                <option value="employee">Nhân Viên</option>
-                <option value="approver">Kiểm duyệt viên</option>
+                <option value="USER">Nhân Viên</option>
+                <option value="APPROVER">Kiểm duyệt viên</option>
               </select>
               <Users
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"

@@ -17,9 +17,9 @@ const BranchEdit: React.FC = () => {
   const [id, setId] = useState("");
   const [branchCode, setBranchCode] = useState("");
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [address, setAddress] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [phoneNumber, setPhoneNumber] = useState("");
+  // const [address, setAddress] = useState("");
 
   useEffect(() => {
     if (!branchId) return;
@@ -27,16 +27,15 @@ const BranchEdit: React.FC = () => {
       try {
         const service = new BranchService();
         const branchData = await service.getDetailBranch(branchId);
-        console.log(branchId);
         console.log(branchData);
         // const branchData = data.content[0];
-        setId(branchData.id);
-        setBranch(branchData);
-        setBranchCode(branchData.branchCode || "");
-        setName(branchData.name || "");
-        setEmail(branchData.email || "");
-        setPhoneNumber(branchData.phoneNumber || "");
-        setAddress(branchData.address || "");
+        setId(branchData.branch.id);
+        setBranch(branchData.branch);
+        setBranchCode(branchData.branch.code || "");
+        setName(branchData.branch.name || "");
+        // setEmail(branchData.email || "");
+        // setPhoneNumber(branchData.phoneNumber || "");
+        // setAddress(branchData.address || "");
       } catch (err) {
         toast.error("Có lỗi xảy ra");
       } finally {
@@ -50,7 +49,7 @@ const BranchEdit: React.FC = () => {
   const handleUpdate = async () => {
     if (!branchId) return;
 
-    const updatedData = { name, email, phoneNumber, address };
+    const updatedData = { name, /* email, phoneNumber, address */ };
 
     try {
       const service = new BranchService();
@@ -99,7 +98,7 @@ const BranchEdit: React.FC = () => {
               />
             </div>
 
-            <div>
+            {/* <div>
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -125,7 +124,7 @@ const BranchEdit: React.FC = () => {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
               />
-            </div>
+            </div> */}
 
             <Button className="w-full" onClick={handleUpdate}>
               Cập Nhật
