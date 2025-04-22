@@ -5,9 +5,7 @@ import com.roomx.domain.model.vo.BookingEquipmentId;
 import com.roomx.domain.repository.BookingEquipmentRepository;
 import com.roomx.infrastructure.persistence.mapper.BookingEquipmentEntityIdMapper;
 import com.roomx.infrastructure.persistence.mapper.BookingEquipmentEntityMapper;
-import com.roomx.infrastructure.persistence.mapper.BookingServiceEntityMapper;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaBookingEquipmentEntityRepository;
-import com.roomx.infrastructure.persistence.repository.jpa.JpaBookingServiceEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +15,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class BookingEquipmentEntityRepositoryImpl implements BookingEquipmentRepository {
+public class BookingEquipmentEntityRepository implements BookingEquipmentRepository {
     private final BookingEquipmentEntityMapper bookingEquipmentEntityMapper;
     private final BookingEquipmentEntityIdMapper bookingEquipmentEntityIdMapper;
     private final JpaBookingEquipmentEntityRepository jpaBookingEquipmentEntityRepository;

@@ -1,7 +1,6 @@
 package com.roomx.application.mapper;
 
 
-import com.roomx.domain.model.aggrerate.User;
 import com.roomx.domain.model.entity.BookingParticipant;
 import com.roomx.shared.dto.booking.response.BookingParticipantResponse;
 import org.mapstruct.Mapper;
@@ -16,7 +15,7 @@ import org.mapstruct.ReportingPolicy;
                 UserAppMapper.class
         }
 )
-public interface BookingParticitipantAppMapper {
+public interface BookingParticipantAppMapper {
 
 
     @Mapping(target = "participantId", source = "user.id")

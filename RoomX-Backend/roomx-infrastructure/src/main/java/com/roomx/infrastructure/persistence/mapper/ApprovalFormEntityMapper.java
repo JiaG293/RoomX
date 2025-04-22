@@ -19,6 +19,8 @@ public interface ApprovalFormEntityMapper {
     ApprovalForm toDomain(ApprovalFormEntity entity);
 
 
+    @Mapping(target = "bookingRequest", ignore = true)
+    ApprovalForm toDomainMin(ApprovalFormEntity entity);
 
     ApprovalFormEntity toEntity(ApprovalForm domain);
 

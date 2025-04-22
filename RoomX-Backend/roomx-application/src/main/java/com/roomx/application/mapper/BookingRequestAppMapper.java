@@ -5,6 +5,7 @@ import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.shared.dto.booking.request.BookingRequestCreateRequest;
 import com.roomx.shared.dto.booking.request.BookingRequestUserCreateRequest;
 import com.roomx.shared.dto.booking.request.CheckingBookingRequest;
+import com.roomx.shared.dto.booking.response.BookingRequestDetailResponse;
 import com.roomx.shared.dto.booking.response.BookingRequestResponse;
 import com.roomx.domain.model.aggrerate.BookingRequest;
 import com.roomx.shared.dto.booking.response.BookingUserRelatedResponse;
@@ -47,4 +48,12 @@ public interface BookingRequestAppMapper {
     BookingRequest toDomainChecking(CheckingBookingRequest request);
 
     CheckingBookingRequest convertChecking(BookingRequestUserCreateRequest request);
+
+
+    @Mapping(target = "requester", ignore = true)
+    @Mapping(target = "services", ignore = true)
+    @Mapping(target = "equipments", ignore = true)
+    @Mapping(target = "room.id", source = "roomId")
+    @Mapping(target = "branch.id", source = "branchId")
+    BookingRequestDetailResponse toResponseDetail(BookingRequest domain);
 }

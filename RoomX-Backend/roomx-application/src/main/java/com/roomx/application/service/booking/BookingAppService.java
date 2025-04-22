@@ -12,30 +12,24 @@ import com.roomx.infrastructure.cache.redis.service.RoomCheckingCacheService;
 import com.roomx.infrastructure.persistence.dto.BookingFilter;
 import com.roomx.infrastructure.persistence.mapper.EquipmentRequestEntityMapper;
 import com.roomx.infrastructure.persistence.mapper.ServiceRequestEntityMapper;
-import com.roomx.infrastructure.persistence.model.dto.BookingDto;
-import com.roomx.infrastructure.persistence.model.entity.BookingEntity;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaBookingEntityRepository;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.persistence.service.BookingEntityService;
-import com.roomx.infrastructure.persistence.service.PageableQueryService;
 import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
 import com.roomx.shared.dto.booking.request.*;
 import com.roomx.shared.dto.booking.response.*;
 import com.roomx.application.service.resource.RoomAppService;
+import com.roomx.shared.dto.resource.response.RoomResponse;
 import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.persistence.mapper.BookingRequestEntityMapper;
 import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.enums.BookingStatusType;
-import com.roomx.shared.enums.DeleteStatusType;
-import com.roomx.shared.enums.RoleType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -48,16 +42,14 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.time.temporal.WeekFields;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingAppService {
+    private final PlaceAppMapper placeAppMapper;
     private final ServiceAppMapper serviceAppMapper;
     private final EquipmentAppMapper equipmentAppMapper;
     private final EquipmentRequestEntityMapper equipmentRequestEntityMapper;
@@ -97,12 +89,15 @@ public class BookingAppService {
     private final BookingEquipmentRepository bookingEquipmentRepository;
     private final BookingServiceAppMapper bookingServiceAppMapper;
     private final BookingEquipmentAppMapper bookingEquipmentAppMapper;
-    private final BookingParticitipantAppMapper bookingParticitipantAppMapper;
+    private final BookingParticipantAppMapper bookingParticitipantAppMapper;
     private final RoleEvaluator roleEvaluator;
     private final DateRequestExceptionRepository dateRequestExceptionRepository;
     private final DateRequestExceptionAppMapper dateRequestExceptionAppMapper;
     private final RoomCheckingCacheService roomCheckingCacheService;
     private final ConflictBookingResolutionDomainService conflictBookingResolutionDomainService;
+    private final PlaceRepository placeRepository;
+    private final RoomAppMapper roomAppMapper;
+
 
 
     /*@Transactional
@@ -215,6 +210,15 @@ public class BookingAppService {
         if (!conflictedDates.isEmpty()) {
             throw new AppException(ErrorCode.BOOKING_REQUEST_CONFLICT, result, conflictedDates);
         }
+
+
+        var uniqueParticipants = bookingRequestDomain.getParticipants().stream()
+                .map(String::trim)
+                .map(String::toLowerCase)
+                .distinct()
+                .toList();
+
+        bookingRequestDomain.setParticipants(uniqueParticipants);
 
         var savedBookingRequest = bookingRequestRepository.save(bookingRequestDomain);
 
@@ -566,7 +570,7 @@ public class BookingAppService {
         Page<ApprovalForm> approvalFormPage;
 
         if (!roleEvaluator.hasAnyRoleType("approve")) {
-            if(isAdmin){
+            if (isAdmin) {
                 approvalFormPage = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
                         statusList, startInstant, endInstant, null, pageable);
             } else {
@@ -679,4 +683,53 @@ public class BookingAppService {
     }
 
 
+    public BookingRequestDetailResponse getDetailBookingRequest(String bookingRequestId) {
+        var bookingRequestDomain = bookingRequestRepository.findById(bookingRequestId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_REQUEST_NOT_FOUND, null, bookingRequestId));
+
+        var bookingRequestDetailResponse = bookingRequestAppMapper.toResponseDetail(bookingRequestDomain);
+
+        var approvalFormDomain = approvalFormRepository.findByBookingRequestIdLastStatus(bookingRequestId).orElse(null);
+        if (approvalFormDomain != null) {
+            bookingRequestDetailResponse.setApprovalStatus(approvalFormDomain.getStatus());
+            bookingRequestDomain.setCreatedAt(approvalFormDomain.getCreatedAt());
+            bookingRequestDomain.setUpdatedAt(approvalFormDomain.getUpdatedAt());
+        }
+
+        var requesterDomain = userRepository
+                .findByIdAll(bookingRequestDomain.getRequester().toString())
+                .orElse(null);
+
+        bookingRequestDetailResponse.setRequester(userAppMapper.toResponse(requesterDomain));
+
+
+        var servicesBooking = serviceRequestRepository
+                .findAllByBookingRequestId(bookingRequestDomain.getId().toString())
+                .stream()
+                .map(serviceRequestAppMapper::toResponse)
+                .toList();
+
+        var equipmentsBooking = equipmentRequestRepository
+                .findAllByBookingRequestId(bookingRequestDomain.getId().toString())
+                .stream()
+                .map(equipmentRequestAppMapper::toResponse)
+                .toList();
+
+        bookingRequestDetailResponse.setBranch(
+                placeRepository.findById(bookingRequestDomain.getBranchId().toString())
+                        .map(placeAppMapper::toResponse)
+                        .orElse(null)
+        );
+
+        bookingRequestDetailResponse.setRoom(
+                Optional.ofNullable(bookingRequestDomain.getRoomId())
+                        .flatMap(roomId -> roomRepository.findById(roomId.toString()))
+                        .map(roomAppMapper::toResponse)
+                        .orElse(null)
+        );
+
+        bookingRequestDetailResponse.setEquipments(equipmentsBooking);
+        bookingRequestDetailResponse.setServices(servicesBooking);
+        return bookingRequestDetailResponse;
+    }
 }

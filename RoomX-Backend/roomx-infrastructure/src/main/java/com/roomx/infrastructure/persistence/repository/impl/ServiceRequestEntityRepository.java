@@ -65,4 +65,13 @@ public class ServiceRequestEntityRepository implements ServiceRequestRepository 
                 .stream().map(serviceRequestEntityMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ServiceRequest> findAllByBookingRequestId(String bookingRequestId) {
+        return jpaServiceRequestEntityRepository
+                .findAllByBookingRequestId(UUID.fromString(bookingRequestId))
+                .stream().map(serviceRequestEntityMapper::toDomain)
+                .toList();
+
+    }
 }

@@ -1,5 +1,6 @@
 package com.roomx.application.mapper;
 
+import com.roomx.domain.model.aggrerate.Service;
 import com.roomx.shared.dto.booking.request.ServiceBookingRequest;
 import com.roomx.domain.model.entity.ServiceRequest;
 import com.roomx.shared.dto.booking.response.ServiceRequestResponse;

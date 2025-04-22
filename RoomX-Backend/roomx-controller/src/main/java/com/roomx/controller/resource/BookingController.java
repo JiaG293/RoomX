@@ -131,5 +131,15 @@ public class BookingController {
                 .build();
     }
 
+    @GetMapping("/request/{bookingRequestId}")
+    public ResultResponse<?> getDetailBookingRequest(
+            @PathVariable String bookingRequestId
+    ) {
+        var result = bookingAppService.getDetailBookingRequest(bookingRequestId);
+        return ResultResponse.<BookingRequestDetailResponse>builder()
+                .result(result)
+                .build();
+    }
+
 
 }

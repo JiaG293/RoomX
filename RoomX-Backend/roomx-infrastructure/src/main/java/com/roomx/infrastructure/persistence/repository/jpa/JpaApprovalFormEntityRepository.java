@@ -1,5 +1,6 @@
 package com.roomx.infrastructure.persistence.repository.jpa;
 
+import com.roomx.domain.model.aggrerate.BookingRequest;
 import com.roomx.infrastructure.persistence.model.entity.ApprovalFormEntity;
 import com.roomx.infrastructure.persistence.model.projection.BookingApprovalRequestProjection;
 import com.roomx.infrastructure.persistence.model.projection.BookingRequestFlatProjection;
@@ -201,5 +202,5 @@ public interface JpaApprovalFormEntityRepository extends JpaRepository<ApprovalF
     );
 
 
-
+    Optional<ApprovalFormEntity> findByBookingRequestIdOrderByUpdatedAtDesc(UUID bookingRequestId);
 }

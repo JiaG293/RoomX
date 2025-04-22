@@ -57,4 +57,12 @@ public class EquipmentRequestEntityRepository implements EquipmentRequestReposit
         var savedEquipmentRequestEntityList = jpaEquipmentRequestEntityRepository.saveAll(equipmentRequestEntityList);
         return savedEquipmentRequestEntityList.stream().map(equipmentRequestEntityMapper::toDomain).toList();
     }
+
+    @Override
+    public List<EquipmentRequest> findAllByBookingRequestId(String bookingRequestId) {
+        return jpaEquipmentRequestEntityRepository
+                .findAllByBookingRequestId(UUID.fromString(bookingRequestId))
+                .stream().map(equipmentRequestEntityMapper::toDomain)
+                .toList();
+    }
 }
