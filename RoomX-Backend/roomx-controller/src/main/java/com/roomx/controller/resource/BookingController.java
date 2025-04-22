@@ -91,8 +91,9 @@ public class BookingController {
 
     @PostMapping("/{bookingRequestId}/cancel")
     public ResultResponse<?> cancelBooking(
-            @PathVariable String bookingRequestId) {
-        var result = bookingAppService.approveBooking(bookingRequestId);
+            @PathVariable String bookingRequestId,
+            @RequestBody ApprovalFormRejectRequest request) {
+        var result = bookingAppService.cancelBooking(bookingRequestId, request);
         return ResultResponse.<Object>builder()
                 .result(result)
                 .build();
@@ -100,8 +101,9 @@ public class BookingController {
 
     @PostMapping("/{bookingRequestId}/modification")
     public ResultResponse<?> modificationBooking(
-            @PathVariable String bookingRequestId) {
-        var result = bookingAppService.approveBooking(bookingRequestId);
+            @PathVariable String bookingRequestId,
+            @RequestBody ApprovalFormRejectRequest request) {
+        var result = bookingAppService.modificationBooking(bookingRequestId, request);
         return ResultResponse.<Object>builder()
                 .result(result)
                 .build();
