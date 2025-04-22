@@ -79,6 +79,34 @@ public class BookingController {
                 .build();
     }
 
+    @PostMapping("/{bookingRequestId}/reject")
+    public ResultResponse<?> rejectBooking(
+            @PathVariable String bookingRequestId,
+            @RequestBody ApprovalFormRejectRequest request) {
+        var result = bookingAppService.rejectBooking(bookingRequestId, request);
+        return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/{bookingRequestId}/cancel")
+    public ResultResponse<?> cancelBooking(
+            @PathVariable String bookingRequestId) {
+        var result = bookingAppService.approveBooking(bookingRequestId);
+        return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/{bookingRequestId}/modification")
+    public ResultResponse<?> modificationBooking(
+            @PathVariable String bookingRequestId) {
+        var result = bookingAppService.approveBooking(bookingRequestId);
+        return ResultResponse.<Object>builder()
+                .result(result)
+                .build();
+    }
+
 
     @GetMapping("/filters")
     public ResultResponse<?> filterPageWithAdmin(

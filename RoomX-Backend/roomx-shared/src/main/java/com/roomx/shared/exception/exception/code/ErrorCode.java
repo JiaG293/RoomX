@@ -87,7 +87,8 @@ public enum ErrorCode {
     KEYCLOAK_REALM_CONFLICT(1000, "error.keycloak.conflict", HttpStatus.CONFLICT),
     KEYCLOAK_REALM_NOT_FOUND(1000, "error.keycloak.not_found", HttpStatus.NOT_FOUND),
     BOOKING_REQUEST_CONFLICT(1000, "error.booking_request.conflict", HttpStatus.CONFLICT),
-    ROLE_NOT_FOUND(1000, "error.role.not_found", HttpStatus.NOT_FOUND);
+    ROLE_NOT_FOUND(1000, "error.role.not_found", HttpStatus.NOT_FOUND),
+    BOOKING_REJECT_BAD_REQUEST(1000, "error.booking_reject.bad_request", HttpStatus.BAD_REQUEST);
 
 
 

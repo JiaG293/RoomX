@@ -97,6 +97,7 @@ public class BookingAppService {
     private final ConflictBookingResolutionDomainService conflictBookingResolutionDomainService;
     private final PlaceRepository placeRepository;
     private final RoomAppMapper roomAppMapper;
+    private final ApprovalFormAppMapper approvalFormAppMapper;
 
 
 
@@ -743,21 +744,22 @@ public class BookingAppService {
                 .findByBookingRequestIdLastStatusWithBookingRequest(bookingRequestId)
                 .orElseThrow(() -> new AppException(ErrorCode.APPROVAL_FORM_NOT_FOUND));
 
-        if (ApprovalStatusType.getListCantApproval().contains(approvalFormDomain.getStatus())) {
-            throw new AppException(ErrorCode.BOOKING_APPROVE_CONFLICT, bookingRequestId);
+        if (!ApprovalStatusType.getListCanApproval().contains(approvalFormDomain.getStatus())) {
+            throw new AppException(ErrorCode.BOOKING_REJECT_BAD_REQUEST, approvalFormDomain.getStatus(), bookingRequestId);
         }
 
         var newStatusApprovalFormDomain = ApprovalForm.builder()
-                .status(ApprovalStatusType.CANCELLED.toString())
+                .status(ApprovalStatusType.REJECT.toString())
                 .note(request.getNote())
                 .updatedAt(Instant.now())
                 .createdAt(Instant.now())
+                .bookingRequest(BookingRequest.builder().id(UUID.fromString(bookingRequestId)).build())
                 .approver(UUID.fromString(securityUtil.getCurrentUserId()))
                 .build();
 
         var savedDomain = approvalFormRepository.save(newStatusApprovalFormDomain);
 
-        return savedDomain;
+        return approvalFormAppMapper.toResponse(savedDomain);
     }
 
 
