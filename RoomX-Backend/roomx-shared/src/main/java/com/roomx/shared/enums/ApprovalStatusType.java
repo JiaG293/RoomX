@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 public enum ApprovalStatusType {
     PENDING("Đang chờ duyệt"),
     APPROVED("Đã duyệt"),
-    REJECTED("Từ chối"),
     CANCELLED("Hủy"),
     CONFLICT("Xung đột có thể cập nhật");
     private static final Map<String, ApprovalStatusType> DISPLAY_NAME_MAP = Stream.of(values())
@@ -34,6 +33,10 @@ public enum ApprovalStatusType {
     }
 
     public static List<String> getListCantApproval(){
-        return List.of(CANCELLED.toString(), REJECTED.toString(), APPROVED.toString());
+        return List.of(CANCELLED.toString(), APPROVED.toString());
+    }
+
+    public static List<String> getList(){
+        return List.of(CANCELLED.toString(), APPROVED.toString(), PENDING.toString(), CONFLICT.toString());
     }
 }

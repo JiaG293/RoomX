@@ -31,4 +31,8 @@ public enum BookingStatusType {
     public static List<String> getListAccept(){
         return List.of(SCHEDULED.toString(), IN_PROGRESS.toString());
     }
+
+    public static List<String> getList(){
+        return List.of(SCHEDULED.toString(), IN_PROGRESS.toString(), COMPLETED.toString(), MOVED.toString(), CANCELLED.toString());
+    }
 }

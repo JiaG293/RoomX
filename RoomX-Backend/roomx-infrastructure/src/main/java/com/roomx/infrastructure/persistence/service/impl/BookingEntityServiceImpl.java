@@ -102,6 +102,35 @@ public class BookingEntityServiceImpl implements BookingEntityService {
     }
 
     @Override
+    public Page<BookingMiniumResponse> findBookingsByTimeRangeAndUserIdAndStatus(LocalDate startDate, LocalDate endDate, String userId, String status, Pageable pageable) {
+        var result = jpaBookingEntityRepository
+                .findAllByMeetingDateBetweenAndUserIdAndStatus(startDate, endDate, UUID.fromString(userId), status, pageable);
+
+        var content = result.getContent().stream()
+                .map(booking -> BookingMiniumResponse.builder()
+                        .id(booking.getId())
+                        .title(booking.getTitle())
+                        .description(booking.getDescription())
+                        .bookingCode(booking.getBookingCode())
+                        .room(new RoomBookingResponse(booking.getId(), booking.getRoomCode(), booking.getRoomName()))
+                        .floor(new PlaceNameResponse(booking.getFloorId(), booking.getFloorCode(), booking.getFloorName()))
+                        .building(new PlaceNameResponse(booking.getBuildingId(), booking.getBuildingCode(), booking.getBuildingName()))
+                        .branch(new PlaceNameResponse(booking.getBranchId(), booking.getBranchCode(), booking.getBranchName()))
+                        .previousRoom(booking.getRoomPreviousId())
+                        .meetingStart(booking.getMeetingStart())
+                        .meetingEnd(booking.getMeetingEnd())
+                        .meetingDate(booking.getMeetingDate())
+                        .count(booking.getCount())
+                        .status(booking.getStatus())
+                        .createdAt(booking.getCreatedAt())
+                        .updatedAt(booking.getUpdatedAt())
+                        .build())
+                .toList();
+
+        return new PageImpl<>(content, pageable, result.getTotalElements());
+    }
+
+    @Override
     public Page<BookingMiniumResponse> findBookingsByTimeRange(LocalDate startDate, LocalDate endDate, Pageable pageable) {
         var result = jpaBookingEntityRepository
                 .findAllByMeetingDateBetween(startDate, endDate, pageable);
@@ -130,7 +159,34 @@ public class BookingEntityServiceImpl implements BookingEntityService {
         return new PageImpl<>(content, pageable, result.getTotalElements());
     }
 
+    @Override
+    public Page<BookingMiniumResponse> findBookingsByTimeRangeAndStatus(LocalDate startDate, LocalDate endDate, String status, Pageable pageable) {
+        var result = jpaBookingEntityRepository
+                .findAllByMeetingDateBetweenAndStatus(startDate, endDate, status, pageable);
 
+        var content = result.getContent().stream()
+                .map(booking -> BookingMiniumResponse.builder()
+                        .id(booking.getId())
+                        .title(booking.getTitle())
+                        .description(booking.getDescription())
+                        .bookingCode(booking.getBookingCode())
+                        .room(new RoomBookingResponse(booking.getId(), booking.getRoomCode(), booking.getRoomName()))
+                        .floor(new PlaceNameResponse(booking.getFloorId(), booking.getFloorCode(), booking.getFloorName()))
+                        .building(new PlaceNameResponse(booking.getBuildingId(), booking.getBuildingCode(), booking.getBuildingName()))
+                        .branch(new PlaceNameResponse(booking.getBranchId(), booking.getBranchCode(), booking.getBranchName()))
+                        .previousRoom(booking.getRoomPreviousId())
+                        .meetingStart(booking.getMeetingStart())
+                        .meetingEnd(booking.getMeetingEnd())
+                        .meetingDate(booking.getMeetingDate())
+                        .count(booking.getCount())
+                        .status(booking.getStatus())
+                        .createdAt(booking.getCreatedAt())
+                        .updatedAt(booking.getUpdatedAt())
+                        .build())
+                .toList();
+
+        return new PageImpl<>(content, pageable, result.getTotalElements());
+    }
 
 
 }

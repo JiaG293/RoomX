@@ -11,6 +11,7 @@ import com.roomx.infrastructure.minio.MinioService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.infrastructure.notification.EmailService;
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
+import com.roomx.infrastructure.persistence.repository.jpa.JpaApprovalFormEntityRepository;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomEntityRepository;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.persistence.service.BookingEntityService;
@@ -38,10 +39,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -65,6 +63,7 @@ public class TestAppService {
     private final RedisFcmTokenService redisFcmTokenService;
     private final FCMNotificationService fcmNotificationService;
     private final SecurityUtil securityUtil;
+    private final JpaApprovalFormEntityRepository jpaApprovalFormEntityRepository;
 
 
     public Object testAppService() {
@@ -80,23 +79,37 @@ public class TestAppService {
 
 //        redisTenantService.put("helo", "12", 30, TimeUnit.SECONDS);
 
-        /*Sort sort = "desc".equalsIgnoreCase("desc")
-                ? Sort.by("id").descending()
-                : Sort.by("id").ascending();
+        Sort sort = "desc".equalsIgnoreCase("desc")
+                ? Sort.by("b.updated_at").descending()
+                : Sort.by("b.updated_at").ascending();
         ZoneId zoneId = ZoneId.systemDefault();
         Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
-        var result = bookingEntityService.findBookingsByTimeRangeAndUserId(
+        /*var result = bookingEntityService.findBookingsByTimeRangeAndUserId(
                 LocalDate.of(2025, 1, 1),
                 LocalDate.of(2025, 12, 1),
                 "ea4e9c4c-a317-4064-8a5b-da2b339e4380",
                 pageable
         );*/
 
-        var result = roomRepository
-                .findAllByBranchIdAndStatusMinimum(
-                        "65f1d8a0-6885-4b51-a691-f843b279dd8b",
-                        RoomStatusType.AVAILABLE.toString()
-                );
+//        var result = jpaApprovalFormEntityRepository.test(
+////                List.of("APPROVED"),
+////                List.of(),
+//                ApprovalStatusType.getList(),
+//                LocalDate.of(2025, 4, 1).atStartOfDay(zoneId).toInstant(),
+//                LocalDate.of(2025, 4, 30).atTime(LocalTime.MAX).atZone(zoneId).toInstant(),
+//                UUID.fromString("3393e980-0503-454a-94ef-e43258639994"),
+//                pageable
+//        );
+        var result = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
+                ApprovalStatusType.getList(),
+                LocalDate.of(2025, 4, 1).atStartOfDay(zoneId).toInstant(),
+                LocalDate.of(2025, 4, 30).atTime(LocalTime.MAX).atZone(zoneId).toInstant(),
+//                "3393e980-0503-454a-94ef-e43258639994",
+                null,
+                pageable
+        );
+
+
         return result;
     }
 

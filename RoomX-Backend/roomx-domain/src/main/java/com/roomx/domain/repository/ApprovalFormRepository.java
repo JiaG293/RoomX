@@ -13,4 +13,5 @@ public interface ApprovalFormRepository {
     Optional<ApprovalForm> findByBookingRequestIdLastStatusWithBookingRequest(String bookingRequestId);
 
     List<ApprovalForm> findAllBookingRequestWithInStatus(List<String> status);
+
 }

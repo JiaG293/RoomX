@@ -26,6 +26,9 @@ public interface BookingEntityService {
 
     Page<BookingMiniumResponse> findBookingsByTimeRangeAndUserId(LocalDate startDate, LocalDate endDate, String userId, Pageable pageable);
 
+    Page<BookingMiniumResponse> findBookingsByTimeRangeAndUserIdAndStatus(LocalDate startDate, LocalDate endDate, String userId, String status, Pageable pageable);
+
     Page<BookingMiniumResponse> findBookingsByTimeRange(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
+    Page<BookingMiniumResponse> findBookingsByTimeRangeAndStatus(LocalDate startDate, LocalDate endDate, String status, Pageable pageable);
 }

@@ -219,7 +219,6 @@ public class BookingAppService {
         var savedBookingRequest = bookingRequestRepository.save(bookingRequestDomain);
 
 
-
         if (!dateExceptions.isEmpty()) {
             dateExceptions.forEach(date -> date.setBookingRequestId(savedBookingRequest.getId()));
 
@@ -487,6 +486,8 @@ public class BookingAppService {
         Pageable pageable = PageRequest.of(page, size, sort);
         LocalDate today = LocalDate.now();
 
+        String status = (request.getStatus() != null && BookingStatusType.getList().contains(request.getStatus().toUpperCase())) ? request.getStatus().toUpperCase() : null;
+
         int currentYear = today.getYear();
         int selectedYear = (request.getYear() != null && request.getYear() > 0)
                 ? request.getYear()
@@ -505,9 +506,9 @@ public class BookingAppService {
         Page<BookingMiniumResponse> bookingDomain;
 
         if (!roleEvaluator.hasAnyRoleType("approve") && (!request.isAdmin())) {
-            bookingDomain = bookingEntityService.findBookingsByTimeRangeAndUserId(startDate, endDate, currentUserId, pageable);
+            bookingDomain = bookingEntityService.findBookingsByTimeRangeAndUserIdAndStatus(startDate, endDate, currentUserId, status, pageable);
         } else {
-            bookingDomain = bookingEntityService.findBookingsByTimeRange(startDate, endDate, pageable);
+            bookingDomain = bookingEntityService.findBookingsByTimeRangeAndStatus(startDate, endDate, status, pageable);
         }
 
 
@@ -515,7 +516,6 @@ public class BookingAppService {
             return Page.empty(pageable);
         }
 
-        // Trả về kết quả dưới dạng phân trang và chuyển đổi thành response
         return bookingDomain;
     }
 
@@ -546,6 +546,14 @@ public class BookingAppService {
                 ? request.getMonth()
                 : today.getMonthValue();
 
+        List<String> statusList = (request.getStatus() != null ? Arrays.stream(request.getStatus().split(","))
+                .map(String::trim)
+                .map(String::toUpperCase)
+                .filter(s -> ApprovalStatusType.getList().contains(s))
+                .collect(Collectors.toList()) : List.of());
+
+        Boolean isAdmin = request.getIsAdmin() ? request.getIsAdmin() : false;
+
         LocalDate startDate = LocalDate.of(selectedYear, selectedMonth, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
@@ -558,11 +566,17 @@ public class BookingAppService {
         Page<ApprovalForm> approvalFormPage;
 
         if (!roleEvaluator.hasAnyRoleType("approve")) {
-            approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeWithBookingRequest(
-                    ApprovalStatusType.getListCanApproval(), startInstant, endInstant, pageable);
+            if(isAdmin){
+                approvalFormPage = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
+                        statusList, startInstant, endInstant, null, pageable);
+            } else {
+                approvalFormPage = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
+                        statusList, startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
+            }
+
         } else {
-            approvalFormPage = approvalFormEntityService.findAllByLastStatusInAndTimeRangeAndRequesterWithBookingRequest(
-                    ApprovalStatusType.getListCanApproval(), startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
+            approvalFormPage = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
+                    statusList, startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
         }
 
         return approvalFormPage.map(approvalForm ->

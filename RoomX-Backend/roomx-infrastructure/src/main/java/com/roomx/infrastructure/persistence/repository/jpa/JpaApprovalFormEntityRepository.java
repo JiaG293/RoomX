@@ -1,9 +1,8 @@
 package com.roomx.infrastructure.persistence.repository.jpa;
 
 import com.roomx.infrastructure.persistence.model.entity.ApprovalFormEntity;
-import com.roomx.infrastructure.persistence.model.projection.ApprovalFormProjection;
+import com.roomx.infrastructure.persistence.model.projection.BookingApprovalRequestProjection;
 import com.roomx.infrastructure.persistence.model.projection.BookingRequestFlatProjection;
-import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,9 +29,14 @@ public interface JpaApprovalFormEntityRepository extends JpaRepository<ApprovalF
 
     Page<ApprovalFormEntity> findAllByStatusInAndUpdatedAtIsBetween(List<String> listStatusCanApproval, Instant startDate, Instant endDate, Pageable pageable);
 
+    Page<ApprovalFormEntity> findAllByStatusInAndUpdatedAtIsBetweenAndStatus(List<String> listStatusCanApproval, Instant startDate, Instant endDate, String status, Pageable pageable);
+
     Optional<ApprovalFormEntity> findFirstByBookingRequestIdOrderByUpdatedAtDesc(UUID bookingRequestId);
 
     Page<ApprovalFormEntity> findAllByStatusInAndBookingRequestRequesterAndUpdatedAtIsBetween(List<String> listStatusCanApproval, UUID requester, Instant startDate, Instant endDate, Pageable pageable);
+
+    Page<ApprovalFormEntity> findAllByStatusInAndBookingRequestRequesterAndUpdatedAtIsBetweenAndStatus(List<String> listStatusCanApproval, UUID requester, Instant startDate, Instant endDate, String status, Pageable pageable);
+
 
     List<ApprovalFormEntity> findAllByStatusIn(List<String> status);
 
@@ -99,7 +103,7 @@ public interface JpaApprovalFormEntityRepository extends JpaRepository<ApprovalF
         CONCAT(bd.code, f.code, r.room_code) AS room_name, 
         r.room_code as room_code,
 
-        br.branch_id,  -- Tham chiếu từ bảng booking_request
+        br.branch_id,  
         b.name as branch_name,
         b.code as branch_code,
 
@@ -139,5 +143,63 @@ public interface JpaApprovalFormEntityRepository extends JpaRepository<ApprovalF
             @Param("endDate") Instant endDate,
             Pageable pageable
     );
+
+
+
+
+    @Query(
+            value = """
+        SELECT 
+            a.created_at,
+            a.updated_at,
+            a.status,
+            a.approver,
+            b.booking_request_id,
+            b.priority,
+            b.days_of_week,
+            b.start_time,
+            b.end_time,
+            b.end_date,
+            b.start_date,
+            b.recurrence_interval,
+            b.recurrence_type,
+            b.capacity,
+            b.requester,
+            b.branch_id,
+            b.room_id,
+            b.title,
+            b.description
+        FROM (
+            SELECT DISTINCT ON (booking_request_id) *
+            FROM approval_form
+            WHERE updated_at BETWEEN :startDate AND :endDate
+            AND (:listStatus IS NULL OR status IN :listStatus)
+            ORDER BY booking_request_id, updated_at DESC
+        ) a
+        JOIN booking_request b ON a.booking_request_id = b.booking_request_id
+        WHERE (:requester IS NULL OR b.requester = CAST(:requester AS UUID))
+        ORDER BY b.created_at DESC
+        """,
+            countQuery = """
+        SELECT COUNT(*) FROM (
+            SELECT DISTINCT ON (booking_request_id) *
+            FROM approval_form
+            WHERE updated_at BETWEEN :startDate AND :endDate
+            AND (:listStatus IS NULL OR status IN :listStatus)
+        ) a
+        JOIN booking_request b ON a.booking_request_id = b.booking_request_id
+       WHERE (:requester IS NULL OR b.requester = CAST(:requester AS UUID))
+        """,
+            nativeQuery = true
+    )
+    Page<BookingApprovalRequestProjection> findAllByListStatusAndTimeRangeWithBookingRequest(
+            @Param("listStatus") List<String> listStatus,
+            @Param("startDate") Instant startDate,
+            @Param("endDate") Instant endDate,
+            @Param("requester") String requester,
+            Pageable pageable
+    );
+
+
 
 }

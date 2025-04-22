@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class BookingListRequest {
     private Integer month;
     private Integer year;
+    private String status;
     private boolean isAdmin = false;
 
 }
