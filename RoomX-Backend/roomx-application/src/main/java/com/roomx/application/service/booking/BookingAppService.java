@@ -732,4 +732,33 @@ public class BookingAppService {
         bookingRequestDetailResponse.setServices(servicesBooking);
         return bookingRequestDetailResponse;
     }
+
+
+
+
+    @PreAuthorize("@roleEvaluator.hasAnyRoleType('approve')")
+    @Transactional
+    public Object rejectBooking(String bookingRequestId, ApprovalFormRejectRequest request) {
+        var approvalFormDomain = approvalFormRepository
+                .findByBookingRequestIdLastStatusWithBookingRequest(bookingRequestId)
+                .orElseThrow(() -> new AppException(ErrorCode.APPROVAL_FORM_NOT_FOUND));
+
+        if (ApprovalStatusType.getListCantApproval().contains(approvalFormDomain.getStatus())) {
+            throw new AppException(ErrorCode.BOOKING_APPROVE_CONFLICT, bookingRequestId);
+        }
+
+        var newStatusApprovalFormDomain = ApprovalForm.builder()
+                .status(ApprovalStatusType.CANCELLED.toString())
+                .note(request.getNote())
+                .updatedAt(Instant.now())
+                .createdAt(Instant.now())
+                .approver(UUID.fromString(securityUtil.getCurrentUserId()))
+                .build();
+
+        var savedDomain = approvalFormRepository.save(newStatusApprovalFormDomain);
+
+        return savedDomain;
+    }
+
+
 }

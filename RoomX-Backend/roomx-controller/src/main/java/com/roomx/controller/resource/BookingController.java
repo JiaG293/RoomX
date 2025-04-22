@@ -70,7 +70,7 @@ public class BookingController {
                 .build();
     }
 
-    @PostMapping("/{bookingRequestId}")
+    @PostMapping("/{bookingRequestId}/approve")
     public ResultResponse<?> approveBooking(
             @PathVariable String bookingRequestId) {
         var result = bookingAppService.approveBooking(bookingRequestId);
@@ -78,6 +78,7 @@ public class BookingController {
                 .result(result)
                 .build();
     }
+
 
     @GetMapping("/filters")
     public ResultResponse<?> filterPageWithAdmin(
