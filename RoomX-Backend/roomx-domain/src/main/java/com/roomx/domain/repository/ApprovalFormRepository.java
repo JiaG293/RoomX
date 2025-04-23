@@ -1,7 +1,10 @@
 package com.roomx.domain.repository;
 
+import com.google.api.gax.paging.Page;
 import com.roomx.domain.model.aggrerate.ApprovalForm;
+import com.roomx.domain.model.aggrerate.BookingRequest;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,5 +17,7 @@ public interface ApprovalFormRepository {
 
     List<ApprovalForm> findAllBookingRequestWithInStatus(List<String> status);
     Optional<ApprovalForm> findByBookingRequestIdLastStatus(String bookingRequestId);
+
+    List<ApprovalForm> findAllByStatusAndTimeRangeWithBookingRequest(List<String> listStatus, Instant startDate, Instant endDate, String requester);
 
 }

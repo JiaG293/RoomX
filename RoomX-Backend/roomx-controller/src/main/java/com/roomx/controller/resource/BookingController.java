@@ -172,5 +172,19 @@ public class BookingController {
                 .build();
     }
 
+    @GetMapping("/meetings")
+    public ResultResponse<?> listBooking(
+            @ModelAttribute MeetingListAllRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "-1") int size,
+            @RequestParam(defaultValue = "updated_at") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        var result = bookingAppService.getListAll(request, page, size, sortBy, direction);
+        return ResultResponse.<Page<BookingResponse>>builder()
+                .result(result)
+                .build();
+    }
+
 
 }

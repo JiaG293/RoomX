@@ -31,6 +31,7 @@ public interface BookingAppMapper {
     @Mapping(target = "previousRoomId", source = "previousRoom.id")
     BookingWithPlaceResponse toResponseWithPlace(Booking domain);
 
-//    @Mapping(target = "booDo")
-//    BookingMiniumResponse toResponseMinium(Booking booking);
+
+    @Mapping(target = "bookingRequestId", source = "id")
+    BookingResponse convertResponseMinium(BookingMiniumResponse response);
 }

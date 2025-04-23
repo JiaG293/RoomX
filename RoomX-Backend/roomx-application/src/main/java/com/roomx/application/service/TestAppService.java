@@ -100,15 +100,21 @@ public class TestAppService {
 //                UUID.fromString("3393e980-0503-454a-94ef-e43258639994"),
 //                pageable
 //        );
-        var result = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
-                ApprovalStatusType.getList(),
-                LocalDate.of(2025, 4, 1).atStartOfDay(zoneId).toInstant(),
-                LocalDate.of(2025, 4, 30).atTime(LocalTime.MAX).atZone(zoneId).toInstant(),
-//                "3393e980-0503-454a-94ef-e43258639994",
-                null,
-                pageable
-        );
-
+//        var result = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
+//                ApprovalStatusType.getList(),
+//                LocalDate.of(2025, 4, 1).atStartOfDay(zoneId).toInstant(),
+//                LocalDate.of(2025, 4, 30).atTime(LocalTime.MAX).atZone(zoneId).toInstant(),
+////                "3393e980-0503-454a-94ef-e43258639994",
+//                null,
+//                pageable
+//        );
+        var result = approvalFormRepository
+                .findAllByStatusAndTimeRangeWithBookingRequest(
+                        ApprovalStatusType.getListCanApproval(),
+                        LocalDate.of(2025, 4, 1).atStartOfDay(zoneId).toInstant(),
+                        LocalDate.of(2025, 6, 30).atTime(LocalTime.MAX).atZone(zoneId).toInstant(),
+                        null
+                );
 
         return result;
     }

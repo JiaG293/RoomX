@@ -288,4 +288,63 @@ public interface JpaBookingEntityRepository extends JpaRepository<BookingEntity,
             @Param("endDate") LocalDate endDate,
             @Param("status") String status,
             Pageable pageable);
+
+
+    @Query(value = """
+                               SELECT
+                                   b.booking_id AS id,
+                                   b.title,
+                                   b.description,
+                                   b.booking_code,
+            
+                                   r.room_id,
+                                   r.room_code,
+                                   concat(bl.code, '.', p.code, r.room_code) AS room_name,
+            
+                                   br.place_id AS branch_id,
+                                   br.code AS branch_code,
+                                   br.name AS branch_name,
+            
+                                   bl.place_id AS building_id,
+                                   bl.code AS building_code,
+                                   bl.name AS building_name,
+            
+                                   p.place_id AS floor_id,
+                                   p.code AS floor_code,
+                                   p.name AS floor_name,
+            
+                                   pr.room_id AS room_previous_id,
+            
+                                   b.meeting_start,
+                                   b.meeting_end,
+                                   b.meeting_date,
+                                   b.count,
+                                   b.status,
+                                   b.created_at,
+                                   b.updated_at
+                        FROM booking b
+                                 JOIN
+                             room r ON b.room_id = r.room_id
+                                 JOIN
+                             place p ON r.place_id = p.place_id 
+                                 LEFT JOIN
+                             room pr ON b.previous_room_id = pr.room_id
+                                 LEFT JOIN
+                             place bl ON p.parent_id = bl.place_id AND bl.place_type = 'BUILDING'
+                                LEFT JOIN
+                             place br ON bl.parent_id = br.place_id AND br.place_type = 'BRANCH'
+                        WHERE b.meeting_date BETWEEN :startDate AND :endDate
+                         AND (:statusList IS NULL OR b.status = :statusList)
+            """,
+            countQuery = """
+                    SELECT COUNT(b.booking_id) FROM booking b
+                    WHERE b.meeting_date BETWEEN :startDate AND :endDate
+                    AND (:statusList IS NULL OR b.status = :statusList)
+                    """,
+            nativeQuery = true)
+    Page<BookingProjection> findAllByMeetingDateBetweenAndStatusList(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("statusList") List<String> statusList,
+            Pageable pageable);
 }

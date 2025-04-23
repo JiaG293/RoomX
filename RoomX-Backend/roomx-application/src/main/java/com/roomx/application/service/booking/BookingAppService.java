@@ -30,10 +30,7 @@ import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +41,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -735,8 +733,6 @@ public class BookingAppService {
     }
 
 
-
-
     @PreAuthorize("@roleEvaluator.hasAnyRoleType('approve')")
     @Transactional
     public Object rejectBooking(String bookingRequestId, ApprovalFormRejectRequest request) {
@@ -812,4 +808,101 @@ public class BookingAppService {
     }
 
 
+    @PreAuthorize("@roleEvaluator.hasAnyRoleType('approve')")
+    @Transactional(readOnly = true)
+    public Page<BookingResponse> getListAll(MeetingListAllRequest request, int page, int size, String sortBy, String direction) {
+        if (size == -1) {
+            size = Integer.MAX_VALUE;
+        }
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        LocalDate today = LocalDate.now();
+        ZoneId zoneId = ZoneId.systemDefault();
+
+
+        List<String> statusList = (request.getStatus() != null && !request.getStatus().isEmpty())
+                ? Arrays.stream(request.getStatus().split(","))
+                .map(String::trim)
+                .map(String::toUpperCase)
+                .filter(s -> BookingStatusType.getList().contains(s) && !s.equals("PENDING"))
+                .toList()
+                : List.of(BookingStatusType.SCHEDULED.toString());
+
+        int currentYear = today.getYear();
+        int selectedYear = (request.getYear() != null && request.getYear() > 0) ? request.getYear() : currentYear;
+        int selectedMonth = (request.getMonth() != null && request.getMonth() >= 1 && request.getMonth() <= 12) ? request.getMonth() : today.getMonthValue();
+
+        LocalDate startDate = LocalDate.of(selectedYear, selectedMonth, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
+        Instant endInstant = endDate.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
+
+        String currentUserId = securityUtil.getCurrentUserId();
+        log.info("Date range: {} -> {} | Instant range: {} -> {}", startDate, endDate, startInstant, endInstant);
+
+
+        Page<BookingMiniumResponse> existingBookings = bookingEntityService
+                .findBookingsByTimeRangeAndStatusList(startDate, endDate, statusList, pageable);
+
+
+        List<Booking> newPendingBookings = new ArrayList<>();
+        if (request.getStatus() == null || request.getStatus().contains("PENDING")) {
+            List<ApprovalForm> approvalForms = approvalFormRepository
+                    .findAllByStatusAndTimeRangeWithBookingRequest(
+                            List.of(ApprovalStatusType.PENDING.toString()),
+                            startInstant,
+                            endInstant,
+                            null
+                    );
+
+            for (ApprovalForm form : approvalForms) {
+                BookingRequest requestDomain = form.getBookingRequest();
+
+                if (requestDomain != null && requestDomain.getOccurrences() != null) {
+                    for (LocalDate occurrenceStr : requestDomain.getOccurrences()) {
+                        LocalDate occurrence = occurrenceStr;
+                        if ((occurrence.isEqual(startDate) || occurrence.isAfter(startDate)) &&
+                                (occurrence.isEqual(endDate) || occurrence.isBefore(endDate))) {
+
+                            Booking booking = Booking.builder()
+                                    .title(requestDomain.getTitle())
+                                    .description(requestDomain.getDescription())
+                                    .bookingRequest(requestDomain)
+                                    .meetingStart(requestDomain.getStartTime())
+                                    .meetingEnd(requestDomain.getEndTime())
+                                    .meetingDate(occurrence)
+                                    .status("PENDING")
+                                    .build();
+
+                            newPendingBookings.add(booking);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        List<BookingResponse> allResponses = existingBookings.stream()
+                .map(bookingAppMapper::convertResponseMinium)
+                .collect(Collectors.toList());
+
+
+        if (!newPendingBookings.isEmpty()) {
+            allResponses.addAll(
+                    newPendingBookings.stream().map(bookingAppMapper::toResponse).collect(Collectors.toList())
+            );
+        }
+
+
+        int total = allResponses.size();
+        int fromIndex = Math.min(page * size, total);
+        int toIndex = Math.min(fromIndex + size, total);
+        List<BookingResponse> pageContent = allResponses.subList(fromIndex, toIndex);
+
+        return new PageImpl<>(pageContent, pageable, total);
+    }
 }
