@@ -34,15 +34,15 @@ public interface JpaRoomClassPriceHistoryEntityRepository extends JpaRepository<
                     COALESCE(SUM(eph.unit_price * erc.quantity), 0) AS totalPrice
                 FROM room_class rc
                 LEFT JOIN room_class_price_history rcp 
-                    ON rcp.room_class_id = rc.room_class_id AND rcp.active = TRUE
+                    ON rcp.room_class_id = rc.room_class_id
                 LEFT JOIN service_room_class src 
                     ON src.room_class_id = rc.room_class_id
                 LEFT JOIN service_price_history sph 
-                    ON sph.service_id = src.service_id AND sph.active = TRUE
+                    ON sph.service_id = src.service_id
                 LEFT JOIN equipment_room_class erc 
                     ON erc.room_class_id = rc.room_class_id
                 LEFT JOIN equipment_price_history eph 
-                    ON eph.equipment_id = erc.equipment_id AND eph.active = TRUE
+                    ON eph.equipment_id = erc.equipment_id
                 WHERE rc.room_class_id = :roomClassId
                 GROUP BY rc.room_class_id, rc.room_class_code
             """, nativeQuery = true)

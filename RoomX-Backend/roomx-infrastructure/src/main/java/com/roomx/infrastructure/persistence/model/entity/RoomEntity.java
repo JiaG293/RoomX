@@ -29,7 +29,7 @@ public class RoomEntity {
 
     @Id
     @Column(name = COLUMN_ID_NAME, nullable = false)
-//    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Size(max = 32)
