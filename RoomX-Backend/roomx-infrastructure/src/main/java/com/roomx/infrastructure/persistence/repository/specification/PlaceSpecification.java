@@ -35,11 +35,11 @@ public class PlaceSpecification {
 
                 List<String> searchFields = StringUtils.hasText(filter.getSearchBy()) ?
                         Arrays.asList(filter.getSearchBy().split(",")) :
-                        List.of("id", "parentId", "branch", "name", "code");
+                        List.of("id", "parentId", "name", "code");
 
                 Map<String, Expression<String>> fieldMapping = new HashMap<>();
                 fieldMapping.put("id", criteriaBuilder.toString(root.get("id")));
-                fieldMapping.put("branch", criteriaBuilder.toString(root.get("branch")));
+                fieldMapping.put("parentId", criteriaBuilder.toString(root.get("parentId")));
                 fieldMapping.put("code", criteriaBuilder.lower(root.get("code")));
                 fieldMapping.put("name", criteriaBuilder.lower(root.get("name")));
 
