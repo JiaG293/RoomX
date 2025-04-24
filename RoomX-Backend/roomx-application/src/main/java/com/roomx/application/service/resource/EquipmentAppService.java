@@ -1,6 +1,7 @@
 package com.roomx.application.service.resource;
 
 
+import com.roomx.application.mapper.EquipmentPriceHistoryAppMapper;
 import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import com.roomx.domain.repository.EquipmentPriceHistoryRepository;
@@ -36,6 +37,7 @@ public class EquipmentAppService {
     private final EquipmentAppMapper equipmentAppMapper;
     private final EquipmentEntityService equipmentEntityService;
     private final EquipmentPriceHistoryRepository equipmentPriceHistoryRepository;
+    private final EquipmentPriceHistoryAppMapper equipmentPriceHistoryAppMapper;
 
     @Transactional
     public EquipmentResponse createEquipment(EquipmentCreateRequest request) {
@@ -69,13 +71,20 @@ public class EquipmentAppService {
     @Transactional
     public EquipmentResponse updateEquipmentById(String equipmentId, EquipmentUpdateRequest request) {
         var equipmentDomain = equipmentRepository.findById(equipmentId)
-                .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND, equipmentId));
+                .orElseThrow(() -> new AppException(ErrorCode.EQUIPMENT_NOT_FOUND, null, equipmentId));
+        var equipmentPriceDomain = equipmentPriceHistoryRepository
+                .findLatestValidFrom(equipmentDomain.getId().toString())
+                .orElse(null);
 
+        log.info("services: {}", equipmentDomain);
         equipmentAppMapper.updateDomainFromDto(request, equipmentDomain);
-
+        log.info("service updated: {}", equipmentDomain);
 
         var savedEquipment = equipmentRepository.save(equipmentDomain);
-        return equipmentAppMapper.toResponse(savedEquipment);
+
+        var responseEquipment = equipmentAppMapper.toResponse(savedEquipment);
+        responseEquipment.setPrice(equipmentPriceHistoryAppMapper.toResponse(equipmentPriceDomain));
+        return responseEquipment;
     }
 
     @Transactional
@@ -164,10 +173,6 @@ public class EquipmentAppService {
 
         return equipmentAppMapper.toResponse(equipmentDomain);
     }
-
-
-
-
 
 
 }

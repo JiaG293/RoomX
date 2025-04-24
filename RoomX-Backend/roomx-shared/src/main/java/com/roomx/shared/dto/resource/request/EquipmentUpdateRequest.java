@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -24,4 +25,6 @@ public class EquipmentUpdateRequest {
     private String description;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private BigDecimal unitPrice;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private List<String> imageUrls;
 }
