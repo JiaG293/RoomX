@@ -16,22 +16,22 @@ import java.util.*;
 public class EquipmentSpecification {
 
     public static Specification<EquipmentEntity> searchFilterEquipment(EquipmentFilter filter) {
+        log.info("\n\n filter searchBy : {} \n \n keyword: {} \n\n", filter.getSearchBy(), filter.getKeyword());
+
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
 
             Join<EquipmentEntity, EquipmentPriceHistoryEntity> priceHistoryJoin = root.join("priceHistories", JoinType.LEFT);
-            Predicate activePrice = criteriaBuilder.isTrue(priceHistoryJoin.get("active"));
             Subquery<Instant> maxValidFromSubquery = query.subquery(Instant.class);
             Root<EquipmentPriceHistoryEntity> subRoot = maxValidFromSubquery.from(EquipmentPriceHistoryEntity.class);
             maxValidFromSubquery.select(
                     criteriaBuilder.greatest(subRoot.<Instant>get("validFrom"))
             ).where(
-                    criteriaBuilder.equal(subRoot.get("equipment"), root),
-                    criteriaBuilder.isTrue(subRoot.get("active"))
+                    criteriaBuilder.equal(subRoot.get("equipment"), root)
             );
 
             Predicate latestPrice = criteriaBuilder.equal(priceHistoryJoin.get("validFrom"), maxValidFromSubquery);
-            predicate = criteriaBuilder.and(predicate, activePrice, latestPrice);
+            predicate = criteriaBuilder.and(predicate, latestPrice);
 
             // Lọc theo status
             if (StringUtils.hasText(filter.getStatus())) {

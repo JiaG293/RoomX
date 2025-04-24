@@ -120,7 +120,7 @@ public class EquipmentAppService {
 
         EquipmentFilter equipmentFilter = EquipmentFilter.builder()
                 .keyword(filter.keyword())
-                .searchBy(filter.keyword())
+                .searchBy(filter.searchBy())
                 .status(filter.status())
                 .brand(filter.brand())
                 .fromPrice(filter.fromPrice())
