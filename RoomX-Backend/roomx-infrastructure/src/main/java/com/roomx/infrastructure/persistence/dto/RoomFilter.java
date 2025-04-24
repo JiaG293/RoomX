@@ -2,37 +2,29 @@ package com.roomx.infrastructure.persistence.dto;
 
 import com.roomx.domain.model.aggrerate.Place;
 import com.roomx.domain.model.aggrerate.RoomClass;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.roomx.shared.base.BaseFilter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class RoomFilter {
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+public class RoomFilter extends BaseFilter {
     private String id;
     private String roomCode;
     private String status;
-    private String description;
-//    private BigDecimal startPrice;
-//    private BigDecimal endPrice;
-    // place
-    private String building;
-    private String floor;
-    private String placeName;
+    private BigDecimal startPrice;
+    private BigDecimal endPrice;
 
-    // place.branch
-    private String slug;
-    private String branchCode;
-    private String branchName;
+    private String branchId;
+    private String buildingId;
+    private String floorId;
 
-    // room class
-    private String roomClassCode;
-    private int capacity;
+    private Integer capacity;
 
 
 }

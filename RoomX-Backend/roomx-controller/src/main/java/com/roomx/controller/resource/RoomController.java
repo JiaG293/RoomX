@@ -1,9 +1,11 @@
 package com.roomx.controller.resource;
 
 import com.roomx.shared.dto.resource.request.RoomCreateRequest;
+import com.roomx.shared.dto.resource.request.RoomFilterRequest;
 import com.roomx.shared.dto.resource.request.RoomQueryRequest;
 import com.roomx.shared.dto.resource.request.RoomUpdateStatusRequest;
 import com.roomx.shared.dto.resource.response.RoomDetailResponse;
+import com.roomx.shared.dto.resource.response.RoomFilterResponse;
 import com.roomx.shared.dto.resource.response.RoomResponse;
 import com.roomx.application.service.resource.RoomAppService;
 import com.roomx.shared.exception.api.ResultResponse;
@@ -50,15 +52,15 @@ public class RoomController {
 
     @GetMapping("/filters")
     public ResultResponse<?> getListPageService(
-            @ModelAttribute RoomQueryRequest filter,
+            @ModelAttribute RoomFilterRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "roomCode") String sortBy,
+            @RequestParam(defaultValue = "room_code") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
         var result = roomAppService.getListRoomPages(filter, page, size, sortBy, direction);
 
-        return ResultResponse.<Page<RoomResponse>>builder()
+        return ResultResponse.<Page<RoomFilterResponse>>builder()
                 .result(result)
                 .build();
     }

@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -52,6 +54,9 @@ public class RoomClassEntity {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = COLUMN_UPDATEDAT_NAME)
     private Instant updatedAt;
+
+    @Transient
+    private RoomClassPriceHistoryEntity roomClassPrice;
 
 
 

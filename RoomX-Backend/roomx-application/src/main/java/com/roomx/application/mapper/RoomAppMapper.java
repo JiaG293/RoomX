@@ -1,7 +1,9 @@
 package com.roomx.application.mapper;
 
+import com.roomx.infrastructure.persistence.model.projection.RoomProjection;
 import com.roomx.shared.dto.resource.request.RoomCreateRequest;
 import com.roomx.shared.dto.resource.response.RoomDetailResponse;
+import com.roomx.shared.dto.resource.response.RoomFilterResponse;
 import com.roomx.shared.dto.resource.response.RoomResponse;
 import com.roomx.domain.model.aggrerate.Room;
 import org.mapstruct.Mapper;
@@ -34,5 +36,5 @@ public interface RoomAppMapper {
     RoomDetailResponse toResponseDetail(Room domain);
 
 
-
+    RoomFilterResponse toResponseFilter(RoomProjection roomProjection);
 }

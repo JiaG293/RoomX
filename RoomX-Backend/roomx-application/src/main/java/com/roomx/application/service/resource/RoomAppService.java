@@ -1,10 +1,12 @@
 package com.roomx.application.service.resource;
 
 import com.roomx.domain.repository.RoomClassPriceHistoryRepository;
-import com.roomx.shared.dto.resource.request.RoomQueryRequest;
-import com.roomx.shared.dto.resource.request.RoomCreateRequest;
-import com.roomx.shared.dto.resource.request.RoomUpdateStatusRequest;
+import com.roomx.infrastructure.persistence.dto.EquipmentFilter;
+import com.roomx.infrastructure.persistence.model.projection.RoomProjection;
+import com.roomx.shared.dto.resource.request.*;
+import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.shared.dto.resource.response.RoomDetailResponse;
+import com.roomx.shared.dto.resource.response.RoomFilterResponse;
 import com.roomx.shared.dto.resource.response.RoomResponse;
 import com.roomx.application.mapper.RoomAppMapper;
 import com.roomx.domain.model.aggrerate.Room;
@@ -88,8 +90,8 @@ public class RoomAppService {
         return null;
     }
 
-    public Page<RoomResponse> getListRoomPages(
-            RoomQueryRequest filterRequest,
+    public Page<RoomFilterResponse> getListRoomPages(
+            RoomFilterRequest filter,
             int page,
             int size,
             String sortBy,
@@ -98,24 +100,24 @@ public class RoomAppService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         RoomFilter roomFilter = RoomFilter.builder()
-                .id(filterRequest.getId())
-                .roomCode(filterRequest.getRoomCode())
-                .status(filterRequest.getStatus())
-                .description(filterRequest.getDescription())
-                .building(filterRequest.getBuilding())
-                .floor(filterRequest.getFloor())
-                .placeName(filterRequest.getPlaceName())
-                .slug(filterRequest.getSlug())
-                .branchName(filterRequest.getBranchName())
-                .branchCode(filterRequest.getBranchCode())
+                .id(filter.id())
+                .roomCode(filter.roomCode())
+                .status(filter.status())
+                .branchId(filter.branchId())
+                .buildingId(filter.buildingId())
+                .floorId(filter.floorId())
+                .capacity(filter.capacity())
+                .startPrice(filter.startPrice())
+                .endPrice(filter.endPrice())
                 .build();
 
 
-        var roomDomainPage = roomEntityService.filterPageRooms(roomFilter, pageable, filterRequest.isCompareType());
-
-
-        return roomDomainPage.map(roomAppMapper::toResponse);
+        return roomEntityService
+                .filterSearchPageRooms(roomFilter, pageable)
+                .map(roomAppMapper::toResponseFilter);
     }
+
+
 
     public Room getRoomFree(String roomId) {
         var roomDomain = roomRepository.findById(roomId)

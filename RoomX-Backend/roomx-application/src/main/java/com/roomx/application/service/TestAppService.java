@@ -1,7 +1,13 @@
 package com.roomx.application.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roomx.application.service.booking.RoomSchedulerAppService;
 import com.roomx.domain.model.aggrerate.ApprovalForm;
+import com.roomx.domain.model.aggrerate.Room;
+import com.roomx.domain.model.aggrerate.RoomClass;
 import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.cache.redis.service.RedisFcmTokenService;
 import com.roomx.infrastructure.cache.redis.service.RedisTenantService;
@@ -11,10 +17,15 @@ import com.roomx.infrastructure.minio.MinioService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.infrastructure.notification.EmailService;
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
+import com.roomx.infrastructure.persistence.mapper.RoomEntityMapper;
+import com.roomx.infrastructure.persistence.model.entity.RoomEntity;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaApprovalFormEntityRepository;
+import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomClassPriceHistoryEntityRepository;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomEntityRepository;
+import com.roomx.infrastructure.persistence.repository.specification.RoomSpecification;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.persistence.service.BookingEntityService;
+import com.roomx.infrastructure.persistence.service.RoomEntityService;
 import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.base.MeetingMessage;
@@ -64,6 +75,10 @@ public class TestAppService {
     private final FCMNotificationService fcmNotificationService;
     private final SecurityUtil securityUtil;
     private final JpaApprovalFormEntityRepository jpaApprovalFormEntityRepository;
+    private final RoomEntityService roomEntityService;
+    private final JpaRoomClassPriceHistoryEntityRepository jpaRoomClassPriceHistoryEntityRepository;
+    private final JpaRoomEntityRepository jpaRoomEntityRepository;
+    private final RoomEntityMapper roomEntityMapper;
 
 
     public Object testAppService() {
@@ -80,8 +95,8 @@ public class TestAppService {
 //        redisTenantService.put("helo", "12", 30, TimeUnit.SECONDS);
 
         Sort sort = "desc".equalsIgnoreCase("desc")
-                ? Sort.by("b.updated_at").descending()
-                : Sort.by("b.updated_at").ascending();
+                ? Sort.by("status").descending()
+                : Sort.by("status").ascending();
         ZoneId zoneId = ZoneId.systemDefault();
         Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
         /*var result = bookingEntityService.findBookingsByTimeRangeAndUserId(
@@ -108,16 +123,40 @@ public class TestAppService {
 //                null,
 //                pageable
 //        );
-        var result = approvalFormRepository
-                .findAllByStatusAndTimeRangeWithBookingRequest(
-                        ApprovalStatusType.getListCanApproval(),
-                        LocalDate.of(2025, 4, 1).atStartOfDay(zoneId).toInstant(),
-                        LocalDate.of(2025, 6, 30).atTime(LocalTime.MAX).atZone(zoneId).toInstant(),
-                        null
+//        var result = approvalFormRepository
+//                .findAllByStatusAndTimeRangeWithBookingRequest(
+//                        ApprovalStatusType.getListCanApproval(),
+//                        LocalDate.of(2025, 4, 1).atStartOfDay(zoneId).toInstant(),
+//                        LocalDate.of(2025, 6, 30).atTime(LocalTime.MAX).atZone(zoneId).toInstant(),
+//                        null
+//                );
+
+//        var result = roomEntityService.filterSearchPageRooms(
+//                RoomFilter.builder()
+//                        .build(),
+//                pageable
+//        );
+
+        RoomFilter roomFilter = new RoomFilter();
+        var result = jpaRoomEntityRepository.findRoomsWithFilters(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                pageable
                 );
 
         return result;
     }
+
+
 
     public Object testMinio(List<MultipartFile> request, boolean makePrivate, String path) {
         var result = new ArrayList<String>();
@@ -142,7 +181,7 @@ public class TestAppService {
                 MessageBuilder.withPayload(
                                 RoomFilter.builder()
                                         .id(data)
-                                        .branchCode(data)
+
                                         .build()
                         ).setHeader(KafkaHeaders.TOPIC, "topic-a")
                         .setHeader("tenant-id", TenantContextHolder.getRequiredTenantIdentifier())

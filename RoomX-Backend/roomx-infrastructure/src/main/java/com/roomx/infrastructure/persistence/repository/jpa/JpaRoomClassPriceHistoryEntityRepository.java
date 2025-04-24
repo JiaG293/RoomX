@@ -2,7 +2,10 @@ package com.roomx.infrastructure.persistence.repository.jpa;
 
 import com.roomx.infrastructure.persistence.model.entity.RoomClassPriceHistoryEntity;
 
+import com.roomx.infrastructure.persistence.model.entity.RoomEntity;
 import com.roomx.shared.dto.resource.base.RoomClassPriceCalculateDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -59,4 +62,5 @@ public interface JpaRoomClassPriceHistoryEntityRepository extends JpaRepository<
             LIMIT 1
             """, nativeQuery = true)
     Optional<BigDecimal> findPriceByRoomClassIdValidTime(@Param("roomClassId") UUID roomClassId, @Param("timestamp") String timestamp);
+
 }

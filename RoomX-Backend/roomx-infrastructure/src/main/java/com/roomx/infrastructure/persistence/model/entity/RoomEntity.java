@@ -1,5 +1,6 @@
 package com.roomx.infrastructure.persistence.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -51,6 +52,7 @@ public class RoomEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_class_id", nullable = false)
+    @JsonIgnore
     private RoomClassEntity roomClass;
 
 
