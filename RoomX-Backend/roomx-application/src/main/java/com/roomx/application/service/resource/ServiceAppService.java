@@ -1,6 +1,7 @@
 package com.roomx.application.service.resource;
 
 
+import com.roomx.application.mapper.ServicePriceHistoryAppMapper;
 import com.roomx.domain.model.aggrerate.Service;
 import com.roomx.domain.model.entity.ServicePriceHistory;
 import com.roomx.domain.repository.ServicePriceHistoryRepository;
@@ -34,10 +35,11 @@ public class ServiceAppService {
     private final ServiceAppMapper serviceAppMapper;
     private final ServiceEntityService serviceEntityService;
     private final ServicePriceHistoryRepository servicePriceHistoryRepository;
+    private final ServicePriceHistoryAppMapper servicePriceHistoryAppMapper;
 
 
     @Transactional
-    public ServiceResponse createService(ServiceCreateRequest request){
+    public ServiceResponse createService(ServiceCreateRequest request) {
         var serviceDomainCheckCode = serviceRepository.findByServiceCode(request.getServiceCode());
 
         if (serviceDomainCheckCode.isPresent()) {
@@ -64,20 +66,25 @@ public class ServiceAppService {
     }
 
     @Transactional
-    public ServiceResponse updateServiceById(String serviceId, ServiceUpdateRequest request){
+    public ServiceResponse updateServiceById(String serviceId, ServiceUpdateRequest request) {
         var serviceDomain = serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND, serviceId));
+                .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND, null, serviceId));
+        var servicePriceDomain = servicePriceHistoryRepository
+                .findLatestValidFrom(serviceDomain.getId().toString())
+                .orElse(null);
 
-        log.info("domain: {}", serviceDomain.getName());
+        log.info("services: {}", serviceDomain);
         serviceAppMapper.updateDomainFromDto(request, serviceDomain);
-        log.info("domainUpdate: {}", serviceDomain.getName());
-
+        log.info("service updated: {}", serviceDomain);
         var savedService = serviceRepository.save(serviceDomain);
-        return serviceAppMapper.toResponse(savedService);
+
+        var responseService = serviceAppMapper.toResponse(savedService);
+        responseService.setPrice(servicePriceHistoryAppMapper.toResponse(servicePriceDomain));
+        return responseService;
     }
 
     @Transactional
-    public void deleteServiceById(String serviceId){
+    public void deleteServiceById(String serviceId) {
         var serviceDomain = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND, serviceId));
         serviceDomain.setStatus(DeleteStatusType.INACTIVE.toString());
@@ -137,7 +144,7 @@ public class ServiceAppService {
             int page,
             int size,
             String sortBy,
-            String direction){
+            String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -155,7 +162,6 @@ public class ServiceAppService {
 
         return serviceDomainPage.map(serviceAppMapper::toResponse);
     }
-
 
 
     @Transactional
@@ -188,8 +194,6 @@ public class ServiceAppService {
 
         return serviceAppMapper.toResponse(serviceDomain);
     }
-
-
 
 
 }
