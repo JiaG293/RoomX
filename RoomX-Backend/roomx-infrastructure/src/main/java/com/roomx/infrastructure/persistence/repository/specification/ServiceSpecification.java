@@ -19,18 +19,16 @@ public class ServiceSpecification {
             Predicate predicate = criteriaBuilder.conjunction();
 
             Join<ServiceEntity, ServicePriceHistoryEntity> priceHistoryJoin = root.join("priceHistories", JoinType.LEFT);
-            Predicate activePrice = criteriaBuilder.isTrue(priceHistoryJoin.get("active"));
             Subquery<Instant> maxValidFromSubquery = query.subquery(Instant.class);
             Root<ServicePriceHistoryEntity> subRoot = maxValidFromSubquery.from(ServicePriceHistoryEntity.class);
             maxValidFromSubquery.select(
                     criteriaBuilder.greatest(subRoot.<Instant>get("validFrom"))
             ).where(
-                    criteriaBuilder.equal(subRoot.get("service"), root),
-                    criteriaBuilder.isTrue(subRoot.get("active"))
+                    criteriaBuilder.equal(subRoot.get("service"), root)
             );
 
             Predicate latestPrice = criteriaBuilder.equal(priceHistoryJoin.get("validFrom"), maxValidFromSubquery);
-            predicate = criteriaBuilder.and(predicate, activePrice, latestPrice);
+            predicate = criteriaBuilder.and(predicate, latestPrice);
 
 
             if (StringUtils.hasText(filter.getStatus())) {
