@@ -54,7 +54,6 @@ CREATE  TABLE equipment_price_history (
                                           valid_from           timestamp DEFAULT CURRENT_TIMESTAMP   ,
                                           unit_price           numeric    ,
                                           valid_end            timestamp    ,
-                                          active               boolean    ,
                                           CONSTRAINT pk_equipment_price_history PRIMARY KEY ( equipment_price_history_id )
 );
 
