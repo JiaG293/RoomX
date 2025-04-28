@@ -62,7 +62,7 @@ public class ApprovalFormEntityRepository implements ApprovalFormRepository {
     @Override
     public Optional<ApprovalForm> findByBookingRequestIdLastStatus(String bookingRequestId) {
         return jpaApprovalFormEntityRepository
-                .findByBookingRequestIdOrderByUpdatedAtDesc(UUID.fromString(bookingRequestId))
+                .findTopByBookingRequestIdOrderByUpdatedAtDesc(UUID.fromString(bookingRequestId))
                 .map(approvalFormEntityMapper::toDomainMin);
     }
 

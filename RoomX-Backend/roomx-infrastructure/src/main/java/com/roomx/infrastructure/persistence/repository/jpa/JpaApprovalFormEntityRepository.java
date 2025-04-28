@@ -243,5 +243,5 @@ public interface JpaApprovalFormEntityRepository extends JpaRepository<ApprovalF
     );
 
 
-    Optional<ApprovalFormEntity> findByBookingRequestIdOrderByUpdatedAtDesc(UUID bookingRequestId);
+    Optional<ApprovalFormEntity> findTopByBookingRequestIdOrderByUpdatedAtDesc(UUID bookingRequestId);
 }
