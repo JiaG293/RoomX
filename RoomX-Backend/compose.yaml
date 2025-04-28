@@ -105,6 +105,8 @@ services:
     environment:
       MINIO_ROOT_USER: admin
       MINIO_ROOT_PASSWORD: admin123
+      MINIO_DOMAIN: "https://s3.jiag.id.vn"
+      MINIO_TLS_ENABLE: "false"
     command: server /data --console-address ":9001"
     ports:
       - 9000:9000                                    # API
