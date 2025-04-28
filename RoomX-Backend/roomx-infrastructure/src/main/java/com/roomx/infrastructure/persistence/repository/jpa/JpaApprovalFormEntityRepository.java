@@ -172,11 +172,11 @@ public interface JpaApprovalFormEntityRepository extends JpaRepository<ApprovalF
                         SELECT DISTINCT ON (booking_request_id) *
                         FROM approval_form
                         WHERE updated_at BETWEEN :startDate AND :endDate
-                        AND (:listStatus IS NULL OR status IN :listStatus)
                         ORDER BY booking_request_id, updated_at DESC
                     ) a
                     JOIN booking_request b ON a.booking_request_id = b.booking_request_id
-                    WHERE (:requester IS NULL OR b.requester = CAST(:requester AS UUID))
+                    WHERE (:listStatus IS NULL OR a.status IN :listStatus)
+                        AND (:requester IS NULL OR b.requester = CAST(:requester AS UUID))
                     ORDER BY b.created_at DESC
                     """,
             countQuery = """

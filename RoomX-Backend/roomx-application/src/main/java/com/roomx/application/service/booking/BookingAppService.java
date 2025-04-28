@@ -555,7 +555,7 @@ public class BookingAppService {
                 .filter(s -> ApprovalStatusType.getList().contains(s))
                 .collect(Collectors.toList()) : List.of());
 
-        Boolean isAdmin = request.getIsAdmin() ? request.getIsAdmin() : false;
+        Boolean isAdmin = (request.getIsAdmin() && roleEvaluator.hasAnyRoleType("approve")) ? request.getIsAdmin() : false;
 
         LocalDate startDate = LocalDate.of(selectedYear, selectedMonth, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
