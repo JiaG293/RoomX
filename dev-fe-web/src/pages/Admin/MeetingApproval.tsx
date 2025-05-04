@@ -9,6 +9,7 @@ import "@/styles/calendar-style.css";
 import { ScheduleService } from "@/services/admin/schedule.service";
 import { toast } from "sonner";
 import { dA } from "node_modules/@fullcalendar/core/internal-common";
+import EventModalApproval from "@/components/admin/meetings/event-modal-approval";
 
 interface EventType {
   id: string;
@@ -35,6 +36,7 @@ const MeetingApproval: React.FC = () => {
   const [events, setEvents] = useState<EventType[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [modalEvent, setModalEvent] = useState<any>(null);
 
   const loadEvents = useCallback(async (month: number, year: number) => {
     try {
@@ -44,7 +46,7 @@ const MeetingApproval: React.FC = () => {
 
       const formattedEvents: EventType[] = data.map((event: any) => ({
         id: event.id,
-        title: event.bookingCode || "Chưa có tiêu đề",
+        title: event.title || "Chưa có tiêu đề",
         start: `${event.startDate}T${event.startTime}`,
         end: `${event.endDate}T${event.endTime}`,
         extendedProps: {
@@ -58,10 +60,18 @@ const MeetingApproval: React.FC = () => {
           recurrenceType: event.recurrenceType || "Không xác định",
           recurrenceInterval: event.recurrenceInterval || 0,
           daysOfWeek: event.daysOfWeek || "Không có lịch",
-          createdAt: event.createdAt,
-          updatedAt: event.updatedAt,
+          createdAt: event.createdAt || "",
+          updatedAt: event.updatedAt || "",
+          description: event.description || "Không có mô tả",
+          services: event.services || [],
+          equipments: event.equipments || [],
+          priority: event.priority ?? 0,
+          branchId: event.branchId || null,
+          roomId: event.roomId || null,
         },
       }));
+      
+
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error loading schedule:", error);
@@ -72,18 +82,6 @@ const MeetingApproval: React.FC = () => {
     loadEvents(currentMonth, currentYear);
   }, [currentMonth, currentYear, loadEvents]);
 
-  const handleApprove = (eventId: string) => {
-    const scheduleService = new ScheduleService();
-    scheduleService.approveSchedules(eventId);
-    // tải dữ liệu mới
-    toast.success("Duyệt lịch họp!");
-    loadEvents(currentMonth, currentYear);
-  };
-
-  const handleCancel = (eventId: string) => {
-    alert(`Huỷ sự kiện ID: ${eventId}`);
-  };
-
   return (
     <CMSLayout title="Phê duyệt lịch họp">
       <div style={{ flex: 0.9 }}>
@@ -92,6 +90,9 @@ const MeetingApproval: React.FC = () => {
           plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
           initialView={"listWeek"}
           events={events}
+          eventClick={(info) => {
+            setModalEvent(info.event);
+          }}
           eventContent={(eventInfo) => (
             <div
               style={{
@@ -101,36 +102,6 @@ const MeetingApproval: React.FC = () => {
               }}
             >
               <span>{eventInfo.event.title}</span>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  gap: "10px",
-                }}
-              >
-                <button
-                  onClick={() => handleApprove(eventInfo.event.id)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    color: "#4CAF50",
-                    cursor: "pointer",
-                  }}
-                >
-                  <Check size={18} />
-                </button>
-                <button
-                  onClick={() => handleCancel(eventInfo.event.id)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    color: "#F44336",
-                    cursor: "pointer",
-                  }}
-                >
-                  <X size={18} />
-                </button>
-              </div>
             </div>
           )}
           height="100%"
@@ -155,6 +126,8 @@ const MeetingApproval: React.FC = () => {
           }}
         />
       </div>
+      <EventModalApproval event={modalEvent} onClose={() => setModalEvent(null)} />
+
     </CMSLayout>
   );
 };

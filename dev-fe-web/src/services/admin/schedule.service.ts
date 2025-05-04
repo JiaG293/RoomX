@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_HOST;
 
@@ -38,7 +39,7 @@ export class ScheduleService {
     } 
 
     try { 
-      const response = await axios.get(`${API_BASE_URL}/bookings/list`, {
+      const response = await axios.get(`${API_BASE_URL}/bookings/request/list`, {
         params: { month, year },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -113,8 +114,11 @@ export class ScheduleService {
           },
         }
       );
+      toast.success("Duyệt lịch thành công!");
       return response.data;
     } catch (error) {
+      toast.error("Có lỗi khi duyệt lịch!");
+
       console.error("Error approving schedule:", error);
       throw error;
     }

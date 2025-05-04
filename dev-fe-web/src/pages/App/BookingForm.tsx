@@ -227,12 +227,53 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       const response = await scheduleService.checkSchedule(scheduleData);
       console.log(response.result);
       setScheduleResult(response.result); // Cập nhật state
-      toast.success("Lịch hợp lệ!");
-    } catch (error) {
+      const hasConflict = response.result.some((item: any) => item.hasConflict);
+
+      if (hasConflict) {
+        toast.warning("Một số ngày bị trùng lịch. Vui lòng kiểm tra lại! 🕒");
+      } else {
+        toast.success("Lịch hợp lệ! ✅");
+      }    } catch (error) {
       console.error(error);
       toast.error("Có lỗi xảy ra khi kiểm tra lịch.");
     }
   };
+
+  // Đặt lịch
+const handleBook = async () => {
+  const isValid = await checkValid();
+  if (!isValid) return;
+
+  const formatDateOnly = (date: Date) => date.toISOString().split("T")[0];
+  const storedExceptions = localStorage.getItem("dateRequestExceptions");
+  const parsedExceptions = storedExceptions
+    ? JSON.parse(storedExceptions)
+    : [];
+
+  const scheduleData = {
+    title,
+    description,
+    recurrenceType: "DAILY",
+    capacity,
+    startDate: formatDateOnly(new Date(startDate!)),
+    endDate: formatDateOnly(new Date(endDate!)),
+    startTime: startTime,
+    endTime: endTime,
+    daysOfWeek: ["MO", "TU", "WE", "TH", "FR", "SA", "SU"].join(","),
+    participants: ["user004.roomx@gmail.com", "user005.roomx@gmail.com"],
+    dateRequestExceptions: parsedExceptions,
+  };
+
+  const scheduleService = new ScheduleService();
+  try {
+    const response = await scheduleService.createSchedule(scheduleData);
+    
+   } catch (error) {
+    console.error(error);
+    toast.error("Có lỗi xảy ra khi đặt lịch.");
+  }
+};
+
 
   // reset clear dữ liệu
   const resetForm = () => {
@@ -323,7 +364,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   />
                 </div>
 
-                {/* Ngày và giờ bắt đầu */}
+                {/* Ngày */}
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1 space-y-2">
                     <Label>Ngày bắt đầu</Label>
@@ -335,14 +376,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     />
                   </div>
                   <div className="flex-1 space-y-2">
-                    <Label>Giờ bắt đầu</Label>
-                    <TimePicker value={startTime} onChange={setStartTime} />
-                  </div>
-                </div>
-
-                {/* Ngày và giờ kết thúc */}
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1 space-y-2">
                     <Label>Ngày kết thúc</Label>
                     <DatePicker
                       selected={endDate}
@@ -350,6 +383,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       dateFormat="dd-MM-yyyy"
                       className="w-full border px-3 py-2 rounded-md bg-transparent"
                     />
+                  </div>
+                  
+                </div>
+
+                {/* Giờ */}
+                <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 space-y-2">
+                    <Label>Giờ bắt đầu</Label>
+                    <TimePicker value={startTime} onChange={setStartTime} />
                   </div>
                   <div className="flex-1 space-y-2">
                     <Label>Giờ kết thúc</Label>
@@ -387,7 +429,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <CheckingTable data={scheduleResult} />
 
             <div className="mt-6 flex justify-end">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-xl shadow-md transition-all duration-300">
+              <button 
+                onClick={handleBook} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-xl shadow-md transition-all duration-300">
                 📅 Đặt lịch ngay
               </button>
             </div>

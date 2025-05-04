@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_HOST;
 
@@ -51,8 +52,10 @@ export class ScheduleService {
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
+      toast.success("Đặt lịch thành công")
       return response.data;  
     } catch (error) {
+      toast.error("Đặt lịch thất bại")
       console.error("Error fetching branches:", error);
       throw error;
     }

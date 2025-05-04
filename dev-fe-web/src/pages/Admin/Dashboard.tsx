@@ -1,21 +1,63 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Users, Calendar, CheckCircle, DollarSign } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
 import CMSLayout from "@/layouts/cms-layout";
 
 const stats = [
   { title: "Số phòng", value: 15, icon: <Calendar className="w-6 h-6" /> },
-  { title: "Lượt đặt hôm nay", value: 8, icon: <CheckCircle className="w-6 h-6" /> },
+  {
+    title: "Lượt đặt hôm nay",
+    value: 8,
+    icon: <CheckCircle className="w-6 h-6" />,
+  },
   { title: "Người dùng", value: 200, icon: <Users className="w-6 h-6" /> },
-  { title: "Tổng chi phí", value: "$12,500", icon: <DollarSign className="w-6 h-6" /> },
+  {
+    title: "Tổng chi phí",
+    value: "$12,500",
+    icon: <DollarSign className="w-6 h-6" />,
+  },
 ];
 
 const bookings = [
-  { id: 1, room: "Phòng hội nghị A", user: "John Doe", time: "10:00 - 11:00", status: "Đã xác nhận" },
-  { id: 2, room: "Phòng họp B", user: "Jane Smith", time: "14:00 - 15:00", status: "Chờ xử lý" },
-  { id: 3, room: "Phòng họp C", user: "Mike Johnson", time: "16:00 - 17:00", status: "Đã hủy" },
+  {
+    id: 1,
+    room: "Phòng hội nghị A",
+    user: "John Doe",
+    time: "10:00 - 11:00",
+    status: "Đã xác nhận",
+  },
+  {
+    id: 2,
+    room: "Phòng họp B",
+    user: "Jane Smith",
+    time: "14:00 - 15:00",
+    status: "Chờ xử lý",
+  },
+  {
+    id: 3,
+    room: "Phòng họp C",
+    user: "Mike Johnson",
+    time: "16:00 - 17:00",
+    status: "Đã hủy",
+  },
 ];
 
 const bookingChartData = [
@@ -38,86 +80,104 @@ const revenueChartData = [
 
 const Dashboard: React.FC = () => {
   return (
-    <CMSLayout title='Trang chủ'>
-      <div className="p-6 space-y-6">
+    <CMSLayout title="Trang chủ">
+      <div className="p-4 space-y-4 h-full flex flex-col">
+        {/* Tổng quan nhanh */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
-            <Card key={index} className="shadow-lg">
+            <Card key={index} className="shadow-xl rounded-lg hover:scale-105 transition-all">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">{stat.icon}{stat.title}</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-700">
+                  {stat.icon}
+                  {stat.title}
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold text-blue-600">{stat.value}</p>
+                <p className="text-xl font-bold text-blue-400">{stat.value}</p>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle>Đặt phòng gần đây</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Phòng</TableHead>
-                  <TableHead>Người dùng</TableHead>
-                  <TableHead>Thời gian</TableHead>
-                  <TableHead>Trạng thái</TableHead>
-                  <TableHead>Hành động</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {bookings.map(booking => (
-                  <TableRow key={booking.id}>
-                    <TableCell>{booking.id}</TableCell>
-                    <TableCell>{booking.room}</TableCell>
-                    <TableCell>{booking.user}</TableCell>
-                    <TableCell>{booking.time}</TableCell>
-                    <TableCell>{booking.status}</TableCell>
-                    <TableCell>
-                      <Button size="sm" variant="outline">Quản lý</Button>
-                    </TableCell>
+        {/* Nội dung chính */}
+        <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0">
+          {/* Bảng đặt phòng */}
+          <Card className="flex-1 shadow-xl flex flex-col min-h-0 overflow-hidden rounded-lg">
+            <CardHeader>
+              <CardTitle className="text-lg font-medium text-gray-800">Đặt phòng gần đây</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-auto p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-sm text-gray-600">ID</TableHead>
+                    <TableHead className="text-sm text-gray-600">Phòng</TableHead>
+                    <TableHead className="text-sm text-gray-600">Người dùng</TableHead>
+                    <TableHead className="text-sm text-gray-600">Thời gian</TableHead>
+                    <TableHead className="text-sm text-gray-600">Trạng thái</TableHead>
+                    <TableHead className="text-sm text-gray-600">Hành động</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                </TableHeader>
+                <TableBody>
+                  {bookings.map((booking) => (
+                    <TableRow key={booking.id}>
+                      <TableCell className="text-sm text-gray-700">{booking.id}</TableCell>
+                      <TableCell className="text-sm text-gray-700">{booking.room}</TableCell>
+                      <TableCell className="text-sm text-gray-700">{booking.user}</TableCell>
+                      <TableCell className="text-sm text-gray-700">{booking.time}</TableCell>
+                      <TableCell className="text-sm text-gray-700">{booking.status}</TableCell>
+                      <TableCell>
+                        <Button size="sm" variant="outline" className="text-gray-700 hover:bg-gray-100">
+                          Quản lý
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
 
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle>Thống kê đặt phòng</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={bookingChartData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="bookings" fill="#3b82f6" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+          {/* Biểu đồ */}
+          <div className="flex-1 flex flex-col gap-6 min-h-0">
+            <Card className="shadow-xl flex-1 flex flex-col min-h-0 rounded-lg">
+              <CardHeader>
+                <CardTitle className="text-lg font-medium text-gray-800">Thống kê đặt phòng</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={bookingChartData}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="bookings" fill="#3b82f6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle>Thống kê chi phí</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={revenueChartData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="revenue" fill="#10b981" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+            <Card className="shadow-xl flex-1 flex flex-col min-h-0 rounded-lg">
+              <CardHeader>
+                <CardTitle className="text-lg font-medium text-gray-800">Thống kê chi phí</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={revenueChartData}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#10b981"
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </CMSLayout>
   );
