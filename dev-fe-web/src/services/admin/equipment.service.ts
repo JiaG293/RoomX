@@ -1,5 +1,7 @@
+import { AuthService } from "@/services/auth.service";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_HOST;
 
@@ -22,8 +24,21 @@ export class EquipmentService {
       console.log(response.data.result)
 
       return response.data.result;
-    } catch (error) {
-      console.error("Error fetching equipments:", error);
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+  
+      if (
+        error?.response?.status === 401 &&
+        responseData?.code === 1007
+      ) {
+        console.log("gọi hàm refreshtoken")
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+  
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
     }
   }
@@ -47,8 +62,21 @@ export class EquipmentService {
         }
       );
       return response.data.result;
-    } catch (error) {
-      console.error("Error creating equipment:", error);
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+  
+      if (
+        error?.response?.status === 401 &&
+        responseData?.code === 1007
+      ) {
+        console.log("gọi hàm refreshtoken")
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+  
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
     }
   }

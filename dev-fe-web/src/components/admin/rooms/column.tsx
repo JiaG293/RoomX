@@ -13,11 +13,17 @@ import { Link } from "react-router-dom";
 export interface RoomType {
   id: string;
   roomCode: string;
-  roomClassId: string;
-  placeId: string;
+  imageUrls: string[] | null;
   description: string;
   status: string;
-  totalPrice: number;
+  floorPlaceId: string;
+  buildingPlaceId: string | null;
+  branchPlaceId: string;
+  roomClassId: string;
+  roomClassCode: string;
+  capacity: number;
+  equipments: any[];
+  services: any[];
 }
 
 export const columns: ColumnDef<RoomType>[] = [
@@ -29,6 +35,15 @@ export const columns: ColumnDef<RoomType>[] = [
   {
     accessorKey: "roomCode",
     header: "Mã phòng",
+  },
+  {
+    accessorKey: "roomClassCode",
+    header: "Loại phòng",
+  },
+  {
+    accessorKey: "capacity",
+    header: "Sức chứa",
+    cell: ({ row }) => `${row.original.capacity} người`,
   },
   {
     accessorKey: "description",
@@ -43,12 +58,8 @@ export const columns: ColumnDef<RoomType>[] = [
     header: "Trạng thái",
   },
   {
-    accessorKey: "totalPrice",
-    header: "Giá phòng",
-    cell: ({ row }) => `${row.original.totalPrice.toLocaleString()} VND`,
-  },
-  {
     id: "actions",
+    header: "Thao tác",
     cell: ({ row }) => {
       return (
         <DropdownMenu>

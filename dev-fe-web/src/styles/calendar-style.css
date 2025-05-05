@@ -125,3 +125,28 @@
   border: 2px solid rgb(57, 89, 235) !important; 
 }
 
+
+
+/*màu cho tình trạng lịch */
+
+/* Đã hoàn tất: xanh dương */
+.fc-event.event-completed {
+  background-color: #E3F2FD !important;
+  border: none;
+  color: #1E88E5 !important;
+}
+.fc-event.event-completed .fc-event-time,
+.fc-event.event-completed .fc-event-title {
+  color: #1E88E5 !important;
+}
+
+/* Đã lên lịch: xám */
+.fc-event.event-scheduled {
+  background-color: #F5F5F5 !important;
+  border: none;
+  color: #9E9E9E !important;
+}
+.fc-event.event-scheduled .fc-event-time,
+.fc-event.event-scheduled .fc-event-title {
+  color: #9E9E9E !important;
+}

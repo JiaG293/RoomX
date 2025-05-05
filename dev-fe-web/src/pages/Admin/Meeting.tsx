@@ -7,10 +7,11 @@ import listPlugin from "@fullcalendar/list";
 import "@/styles/calendar-style.css";
 import { ScheduleService } from "@/services/admin/schedule.service";
 import EventModal from "@/components/admin/meetings/event-modal"; // Import component EventModal
+import timeGridPlugin from "@fullcalendar/timegrid";
 
 const Meeting: React.FC = () => {
   const [viewMode, setViewMode] = useState<
-    "dayGridMonth" | "listWeek" | "dayGridDay"
+    "dayGridMonth" | "listWeek" | "timeGridPlugin"
   >("dayGridMonth");
   const [events, setEvents] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
@@ -22,13 +23,20 @@ const Meeting: React.FC = () => {
       const scheduleService = new ScheduleService();
       const data = await scheduleService.getAllSchedules(month, year);
       console.log(data);
-      const formattedEvents = data.map((event: any) => ({
-        id: event.id,
-        title: event.title || "Chưa có tiêu đề", // Booking code sẽ là tiêu đề sự kiện
-        start: `${event.meetingDate}T${event.meetingStart}`, // Định dạng thời gian bắt đầu
-        end: `${event.meetingDate}T${event.meetingEnd}`, // Định dạng thời gian kết thúc
-      }));
-      
+
+      const formattedEvents = data.map((event: any) => {
+        const statusClass =
+          event.status === "COMPLETED" ? "event-completed" : "event-scheduled";
+
+        return {
+          id: event.id,
+          title: event.title || event.bookingCode || "Chưa có tiêu đề",
+          start: `${event.meetingDate}T${event.meetingStart}`,
+          end: `${event.meetingDate}T${event.meetingEnd}`,
+          className: statusClass,
+        };
+      });
+
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error loading schedule:", error);
@@ -44,7 +52,12 @@ const Meeting: React.FC = () => {
       <div style={{ flex: 0.9 }}>
         <FullCalendar
           locale="vi"
-          plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
+          plugins={[
+            dayGridPlugin,
+            listPlugin,
+            interactionPlugin,
+            timeGridPlugin,
+          ]}
           initialView={viewMode}
           events={events}
           eventClick={(info) => {
@@ -61,7 +74,7 @@ const Meeting: React.FC = () => {
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "dayGridMonth,dayGridWeek,dayGridDay",
+            right: "dayGridMonth,dayGridWeek,timeGridDay",
           }}
           datesSet={(info) => {
             const newMonth = info.view.currentStart.getMonth() + 1;
@@ -76,25 +89,35 @@ const Meeting: React.FC = () => {
               // Lịch tháng: giới hạn tối đa 2 dòng sự kiện mỗi ngày
               dayMaxEvents: 2,
               moreLinkText: "Xem thêm",
-
             },
             dayGridWeek: {
               // Lịch tuần: giới hạn tối đa 10 sự kiện mỗi ngày
               dayMaxEvents: 10,
               moreLinkText: "Xem thêm",
-
             },
-            dayGridDay: {
+            timeGridDay: {
               // Lịch ngày: không giới hạn số sự kiện
-              eventLimit: false, 
+              eventLimit: false,
               moreLinkText: "Xem thêm",
-            }
+            },
           }}
           moreLinkClick={(info) => {
             // Khi nhấn "Xem thêm", chuyển sang chế độ xem ngày
-            info.view.calendar.changeView('dayGridDay', info.date);
+            info.view.calendar.changeView("timeGridDay", info.date);
           }}
         />
+      {/* Chú thích */}
+      <div style={{ display: "flex", marginTop: "10px", justifyContent: "flex-start", paddingLeft: "10px" }}>
+  <div style={{ display: "flex", alignItems: "center", marginRight: "10px" }}>
+    <div style={{ width: "12px", height: "12px", backgroundColor: "#9E9E9E", marginRight: "5px" }}></div>
+    <span style={{ fontSize: "12px" }}>Chưa hoàn thành</span>
+  </div>
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ width: "12px", height: "12px", backgroundColor: "#1E88E5", marginRight: "5px" }}></div>
+    <span style={{ fontSize: "12px" }}>Hoàn thành</span>
+  </div>
+</div>
+
       </div>
 
       {/* Sử dụng EventModal */}
