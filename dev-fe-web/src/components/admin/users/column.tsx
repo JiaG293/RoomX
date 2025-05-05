@@ -1,15 +1,6 @@
-import DisableUserDialog from "@/components/admin/users/user-disable";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { User } from "@/types/UserType";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react"; // Import icon từ lucide-react
 import { Link } from "react-router-dom";
 
 export const columns: ColumnDef<User>[] = [
@@ -48,19 +39,14 @@ export const columns: ColumnDef<User>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const isEven = row.index % 2 === 0;
       return (
         <Button
           asChild
-          variant={isEven ? "secondary" : "outline"}
-          className={`px-4 py-2 text-sm font-medium ${
-            isEven
-              ? "bg-gray-100 hover:bg-gray-200"
-              : "bg-blue-100 hover:bg-blue-200"
-          }`}
+          className="px-3 py-2 bg-[var(--view-button-bg)] text-[var(--view-button-text)] hover:bg-[var(--view-button-bg-hover)] hover:shadow-lg transform transition-transform duration-200 ease-in-out rounded-[var(--view-button-border-radius)] shadow-[var(--view-button-box-shadow)]"
         >
           <Link
             to={`/admin/users/${row.original.userId}`}
+            className="w-full h-full flex justify-center items-center text-[var(--view-button-text)] font-medium text-xs"
           >
             Xem chi tiết
           </Link>

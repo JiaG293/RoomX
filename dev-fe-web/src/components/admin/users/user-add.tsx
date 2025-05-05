@@ -126,7 +126,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
         </button>
       </DialogTrigger>
 
-      <DialogContent className="p-6 bg-white rounded-lg shadow-lg max-w-lg mx-auto">
+      <DialogContent className="p-6 bg-background rounded-lg shadow-lg max-w-lg mx-auto">
         <DialogTitle className="text-xl font-semibold mb-4">
           Tạo người dùng mới
         </DialogTitle>
@@ -136,7 +136,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
 
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           <div className="col-span-1 relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Mã nhân viên
             </label>
             <div className="relative">
@@ -155,7 +155,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1 relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Email
             </label>
             <div className="relative">
@@ -174,7 +174,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1 relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Họ
             </label>
             <div className="relative">
@@ -193,7 +193,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1 relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Tên
             </label>
             <div className="relative">
@@ -212,7 +212,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1 relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Số điện thoại
             </label>
             <div className="relative">
@@ -231,7 +231,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1 relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Loại người dùng
             </label>
             <div className="relative">

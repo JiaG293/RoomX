@@ -91,7 +91,7 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
         </button>
       </DialogTrigger>
 
-      <DialogContent className="p-6 bg-white rounded-lg shadow-lg max-w-lg mx-auto">
+      <DialogContent className="p-6 bg-background rounded-lg shadow-lg max-w-lg mx-auto">
         <DialogTitle className="text-xl font-semibold mb-4">
           Tạo chi nhánh mới
         </DialogTitle>
@@ -101,7 +101,7 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
 
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Mã chi nhánh
             </label>
             <input
@@ -114,7 +114,7 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Tên chi nhánh
             </label>
             <input
@@ -127,7 +127,7 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Email
             </label>
             <input
@@ -140,7 +140,7 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Số điện thoại
             </label>
             <input
@@ -153,7 +153,7 @@ const BranchAddModal: React.FC<BranchAddModalProps> = ({ onAddSuccess }) => {
           </div>
 
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
               Địa chỉ
             </label>
             <input

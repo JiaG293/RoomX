@@ -82,7 +82,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(true);
       Cookies.set("token", data.access_token);
       Cookies.set("refreshToken", data.refresh_token || "", {
-        expires: 7,
         secure: true,
         sameSite: "Strict",
       });

@@ -3,16 +3,12 @@
 import * as React from "react";
 import {
   Home,
-  BarChart,
   User,
   Users,
   MapPin,
   Calendar,
-  CheckCircle,
-  UserPlus,
   Monitor,
-  Building2,
-  Coffee,
+  BookOpenText,
 } from "lucide-react";
 
 import { NavMain } from "@/components/admin/custom/nav-main";
@@ -26,6 +22,7 @@ import {
 import { NavUser } from "@/components/admin/custom/nav-user";
 import { useAuth } from "@/context/AuthProvider";
 import { useTranslation } from "react-i18next";
+import { title } from "process";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { getUserInfo } = useAuth();
@@ -116,11 +113,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ],
       },
       
+      // {
+      //   title: t("menu_thong_ke"),
+      //   url: "/admin/statistics",
+      //   icon: BarChart,
+      //   color: "text-green-500",
+      // }
       {
-        title: t("menu_thong_ke"),
-        url: "/admin/statistics",
-        icon: BarChart,
+        title: "Hướng dẫn",
+        url: "#",
+        icon: BookOpenText,
         color: "text-green-500",
+        items: [
+          {
+            title: t("menu_quan_ly_dat_phong"),
+            url: "/admin/meetings",
+          },
+          {
+            title: t("menu_phe_duyet_cuoc_hop"),
+            url: "/admin/meetings/room-approvals",
+          },
+        ],
       }
 
     ],

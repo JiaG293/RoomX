@@ -22,26 +22,36 @@ const Meeting: React.FC = () => {
     try {
       const scheduleService = new ScheduleService();
       const data = await scheduleService.getAllSchedules(month, year);
-      console.log(data);
-
-      const formattedEvents = data.map((event: any) => {
-        const statusClass =
-          event.status === "COMPLETED" ? "event-completed" : "event-scheduled";
-
-        return {
-          id: event.id,
-          title: event.title || event.bookingCode || "Chưa có tiêu đề",
-          start: `${event.meetingDate}T${event.meetingStart}`,
-          end: `${event.meetingDate}T${event.meetingEnd}`,
-          className: statusClass,
-        };
-      });
-
+  
+      const formattedEvents = data
+        .map((event: any) => {
+          const eventDate = new Date(event.meetingDate);
+          if (
+            eventDate.getMonth() + 1 !== month || 
+            eventDate.getFullYear() !== year
+          ) {
+            return null; // Loại bỏ sự kiện không thuộc tháng đang xem
+          }
+  
+          const statusClass =
+            event.status === "COMPLETED" ? "event-completed" : "event-scheduled";
+  
+          return {
+            id: event.id,
+            title: event.title || "Chưa có tiêu đề",
+            start: `${event.meetingDate}T${event.meetingStart}`,
+            end: `${event.meetingDate}T${event.meetingEnd}`,
+            className: statusClass,
+          };
+        })
+        .filter((event: any) => event !== null); // Loại bỏ null
+  
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error loading schedule:", error);
     }
   }, []);
+  
 
   useEffect(() => {
     loadEvents(currentMonth, currentYear);
@@ -110,7 +120,7 @@ const Meeting: React.FC = () => {
       <div style={{ display: "flex", marginTop: "10px", justifyContent: "flex-start", paddingLeft: "10px" }}>
   <div style={{ display: "flex", alignItems: "center", marginRight: "10px" }}>
     <div style={{ width: "12px", height: "12px", backgroundColor: "#9E9E9E", marginRight: "5px" }}></div>
-    <span style={{ fontSize: "12px" }}>Chưa hoàn thành</span>
+    <span style={{ fontSize: "12px" }}>Lên lịch</span>
   </div>
   <div style={{ display: "flex", alignItems: "center" }}>
     <div style={{ width: "12px", height: "12px", backgroundColor: "#1E88E5", marginRight: "5px" }}></div>

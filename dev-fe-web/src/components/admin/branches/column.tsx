@@ -6,9 +6,6 @@ export type Branch = {
   branchId: string;
   branchCode: string;
   name: string;
-  // email: string;
-  // phoneNumber: string;
-  // address: string;
 };
 
 export const columns: ColumnDef<Branch>[] = [
@@ -25,31 +22,14 @@ export const columns: ColumnDef<Branch>[] = [
     accessorKey: "name",
     header: "Chi nhánh",
   },
-  /* {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "phoneNumber",
-    header: "Số điện thoại",
-  },
-  {
-    accessorKey: "address",
-    header: "Địa chỉ",
-  }, */
   {
     id: "actions",
     cell: ({ row }) => {
-      const isEven = row.index % 2 === 0;
+      // const isEven = row.index % 2 === 0;
       return (
         <Button
           asChild
-          variant={isEven ? "secondary" : "outline"}
-          className={`px-4 py-2 text-sm font-medium ${
-            isEven
-              ? "bg-gray-100 hover:bg-gray-200"
-              : "bg-blue-100 hover:bg-blue-200"
-          }`}
+          className="px-3 py-2 bg-[var(--view-button-bg)] text-[var(--view-button-text)] hover:bg-[var(--view-button-bg-hover)] hover:shadow-lg transform transition-transform duration-200 ease-in-out rounded-[var(--view-button-border-radius)] shadow-[var(--view-button-box-shadow)]"
         >
           <Link
             to={`/admin/branches/${row.original.branchId}`}

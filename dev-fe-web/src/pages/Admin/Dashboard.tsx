@@ -85,9 +85,12 @@ const Dashboard: React.FC = () => {
         {/* Tổng quan nhanh */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
-            <Card key={index} className="shadow-xl rounded-lg hover:scale-105 transition-all">
+            <Card
+              key={index}
+              className="shadow-xl rounded-lg hover:scale-105 transition-all"
+            >
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-700">
+                <CardTitle className="flex items-center gap-2 text-xl font-semibold text-card-foreground">
                   {stat.icon}
                   {stat.title}
                 </CardTitle>
@@ -104,30 +107,69 @@ const Dashboard: React.FC = () => {
           {/* Bảng đặt phòng */}
           <Card className="flex-1 shadow-xl flex flex-col min-h-0 overflow-hidden rounded-lg">
             <CardHeader>
-              <CardTitle className="text-lg font-medium text-gray-800">Đặt phòng gần đây</CardTitle>
+              <CardTitle className="text-lg font-medium text-foreground">
+                Đặt phòng gần đây
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex-1 overflow-auto p-0">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-sm text-gray-600">ID</TableHead>
-                    <TableHead className="text-sm text-gray-600">Phòng</TableHead>
-                    <TableHead className="text-sm text-gray-600">Người dùng</TableHead>
-                    <TableHead className="text-sm text-gray-600">Thời gian</TableHead>
-                    <TableHead className="text-sm text-gray-600">Trạng thái</TableHead>
-                    <TableHead className="text-sm text-gray-600">Hành động</TableHead>
+                    <TableHead className="text-sm text-card-foreground">ID</TableHead>
+                    <TableHead className="text-sm text-card-foreground">
+                      Phòng
+                    </TableHead>
+                    <TableHead className="text-sm text-card-foreground">
+                      Người dùng
+                    </TableHead>
+                    <TableHead className="text-sm text-card-foreground">
+                      Thời gian
+                    </TableHead>
+                    <TableHead className="text-sm text-card-foreground">
+                      Trạng thái
+                    </TableHead>
+                    <TableHead className="text-sm text-card-foreground">
+                      Hành động
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {bookings.map((booking) => (
                     <TableRow key={booking.id}>
-                      <TableCell className="text-sm text-gray-700">{booking.id}</TableCell>
-                      <TableCell className="text-sm text-gray-700">{booking.room}</TableCell>
-                      <TableCell className="text-sm text-gray-700">{booking.user}</TableCell>
-                      <TableCell className="text-sm text-gray-700">{booking.time}</TableCell>
-                      <TableCell className="text-sm text-gray-700">{booking.status}</TableCell>
+                      <TableCell className="text-sm text-card-foreground">
+                        {booking.id}
+                      </TableCell>
+                      <TableCell className="text-sm text-card-foreground">
+                        {booking.room}
+                      </TableCell>
+                      <TableCell className="text-sm text-card-foreground">
+                        {booking.user}
+                      </TableCell>
+                      <TableCell className="text-sm text-card-foreground">
+                        {booking.time}
+                      </TableCell>
+                      <TableCell className="text-sm w-32">
+                        <span
+                          className="px-2 py-1 rounded-full text-white text-xs"
+                          style={{
+                            backgroundColor: `hsl(var(--${
+                              booking.status === "Đã xác nhận"
+                                ? "status-confirmed"
+                                : booking.status === "Đã hủy"
+                                ? "status-cancelled"
+                                : "status-pending"
+                            }))`,
+                          }}
+                        >
+                          {booking.status}
+                        </span>
+                      </TableCell>
                       <TableCell>
-                        <Button size="sm" variant="outline" className="text-gray-700 hover:bg-gray-100">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-card-foreground hover:bg-card-foreground/10"
+                        >
                           Quản lý
                         </Button>
                       </TableCell>
@@ -142,7 +184,9 @@ const Dashboard: React.FC = () => {
           <div className="flex-1 flex flex-col gap-6 min-h-0">
             <Card className="shadow-xl flex-1 flex flex-col min-h-0 rounded-lg">
               <CardHeader>
-                <CardTitle className="text-lg font-medium text-gray-800">Thống kê đặt phòng</CardTitle>
+                <CardTitle className="text-lg font-medium text-card-foreground">
+                  Thống kê đặt phòng
+                </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
@@ -158,7 +202,9 @@ const Dashboard: React.FC = () => {
 
             <Card className="shadow-xl flex-1 flex flex-col min-h-0 rounded-lg">
               <CardHeader>
-                <CardTitle className="text-lg font-medium text-gray-800">Thống kê chi phí</CardTitle>
+                <CardTitle className="text-lg font-medium text-card-foreground">
+                  Thống kê chi phí
+                </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
