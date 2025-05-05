@@ -17,6 +17,7 @@ import Service from "@/pages/Admin/Service/Service";
 import Equipment from "@/pages/Admin/Equipment/Equipment";
 import Room from "@/pages/Admin/Room/Room";
 import Booking from "@/pages/App/Booking";
+import About from "@/pages/Admin/Guide/About";
 
 export const RootRouter = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ export const RootRouter = createBrowserRouter([
       {
         path: "/admin/rooms",
         element: <Room />,
+      },
+      {
+        path: "/admin/about",
+        element: <About />,
       },
       
     ],

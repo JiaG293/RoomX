@@ -126,12 +126,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         color: "text-green-500",
         items: [
           {
-            title: t("menu_quan_ly_dat_phong"),
-            url: "/admin/meetings",
+            title: "Hướng dẫn sử dụng",
+            url: "/admin/guides",
           },
           {
-            title: t("menu_phe_duyet_cuoc_hop"),
-            url: "/admin/meetings/room-approvals",
+            title: "Về chúng tôi",
+            url: "/admin/about",
           },
         ],
       }
