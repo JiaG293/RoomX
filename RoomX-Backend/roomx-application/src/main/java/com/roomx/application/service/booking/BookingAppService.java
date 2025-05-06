@@ -339,6 +339,7 @@ public class BookingAppService {
                 : null;
 
         var bookingRequestDomain = approvalFormDomain.getBookingRequest();
+        log.info("dulieu: {}", bookingRequestDomain.getTitle());
         var listOccurrences = bookingRequestDomain.getOccurrences();
         var dateRequestExceptions = bookingRequestDomain.getDateRequestExceptions();
 
