@@ -211,8 +211,8 @@ public interface JpaBookingEntityRepository extends JpaRepository<BookingEntity,
                                 LEFT JOIN
                              place br ON bl.parent_id = br.place_id AND br.place_type = 'BRANCH'
                         WHERE b.meeting_date BETWEEN :startDate AND :endDate
-                             AND bp.user_id = :userId
                              AND (:status IS NULL OR b.status = :status)
+                             AND bp.user_id = :userId
             """,
             countQuery = """
                     SELECT COUNT(b.booking_id) FROM booking b

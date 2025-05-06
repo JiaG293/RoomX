@@ -1693,6 +1693,59 @@ GROUP BY
 ORDER BY r.room_code DESC
 
 
+SELECT
+    b.booking_id AS id,
+    b.title,
+    b.description,
+    b.booking_code,
 
+    r.room_id,
+    r.room_code,
+    concat(bl.code, '.', p.code, r.room_code) AS room_name,
 
+    br.place_id AS branch_id,
+    br.code AS branch_code,
+    br.name AS branch_name,
+
+    bl.place_id AS building_id,
+    bl.code AS building_code,
+    bl.name AS building_name,
+
+    p.place_id AS floor_id,
+    p.code AS floor_code,
+    p.name AS floor_name,
+
+    pr.room_id AS room_previous_id,
+
+    b.meeting_start,
+    b.meeting_end,
+    b.meeting_date,
+    b.count,
+    b.status,
+    b.created_at,
+    b.updated_at,
+
+    bp.user_id
+FROM booking b
+         JOIN
+     booking_participant bp ON b.booking_id = bp.booking_id
+         JOIN
+     "user" u ON bp.user_id = u.user_id
+         JOIN
+     room r ON b.room_id = r.room_id
+         JOIN
+     place p ON r.place_id = p.place_id -- Đây là place_id của floor
+         LEFT JOIN
+     room pr ON b.previous_room_id = pr.room_id
+         -- Join để lấy thông tin branch và building từ parent_id của place
+         LEFT JOIN
+     place bl ON p.parent_id = bl.place_id AND bl.place_type = 'BUILDING'
+         LEFT JOIN
+     place br ON bl.parent_id = br.place_id AND br.place_type = 'BRANCH'
+WHERE b.meeting_date BETWEEN '2025-05-01' AND '2025-05-31'
+  AND (:status IS NULL OR b.status = :status)
+--   AND bp.user_id = :userId
+
+-- ea4e9c4c-a317-4064-8a5b-da2b338e4180
+-- ea4e9c4c-a317-4064-8a5b-da2b339e4580
 

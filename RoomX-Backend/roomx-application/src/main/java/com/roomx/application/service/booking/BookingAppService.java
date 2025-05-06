@@ -210,14 +210,19 @@ public class BookingAppService {
             throw new AppException(ErrorCode.BOOKING_REQUEST_CONFLICT, result, conflictedDates);
         }
 
-
-        var uniqueParticipants = bookingRequestDomain.getParticipants().stream()
+        var userDomain = userRepository.findById(UUID.fromString(securityUtil.getCurrentUserId()), true)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        List<String> participantListHasOwner = new ArrayList<>(bookingRequestDomain.getParticipants());
+        participantListHasOwner.add(userDomain.getEmail());
+        var uniqueParticipants = participantListHasOwner.stream()
                 .map(String::trim)
                 .map(String::toLowerCase)
                 .distinct()
                 .toList();
 
+
         bookingRequestDomain.setParticipants(uniqueParticipants);
+
 
         var savedBookingRequest = bookingRequestRepository.save(bookingRequestDomain);
 
@@ -387,6 +392,8 @@ public class BookingAppService {
 
                 var bookingDomain = Booking.builder()
                         .id(bookingDomainId)
+                        .title(bookingRequestDomain.getTitle())
+                        .description(bookingRequestDomain.getDescription())
                         .bookingRequest(bookingRequestDomain)
                         .room(roomDomain)
                         .bookingCode(generateBookingCode(occurrence.getDate()))
