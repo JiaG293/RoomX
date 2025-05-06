@@ -303,4 +303,1396 @@ order by
     afe1_0.updated_at desc
 LIMIT 1
 
+SELECT br.booking_request_id,
+       br.title,
+       br.description,
+       br.recurrence_type,
+       br.start_date,
+       br.end_date,
+       br.start_time,
+       br.end_time,
+       br.days_of_week,
+       br.recurrence_interval,
+       br.capacity,
+       br.priority,
+       af.status                            AS approval_status,
+       af.created_at,
+       af.updated_at,
+
+       r.room_id,
+       CONCAT(bd.code, f.code, r.room_code) AS room_name,
+       r.room_code                          as room_code,
+
+       br.branch_id, -- Tham chiếu từ bảng booking_request
+       b.name                               as branch_name,
+       b.code                               as branch_code,
+
+       bd.place_id,
+       bd.name                              as building_name,
+       bd.code                              as building_code,
+
+       f.place_id,
+       f.name                               as floor_name,
+       f.code                               as floor_code
+
+FROM approval_form af
+         JOIN booking_request br ON br.booking_request_id = af.booking_request_id
+         JOIN room r ON r.room_id = br.room_id
+         LEFT JOIN place b ON b.place_id = br.branch_id AND b.place_type = 'BRANCH'
+         LEFT JOIN place bd ON bd.place_id = r.place_id AND bd.place_type = 'BUILDING' AND
+                               bd.parent_id = b.place_id -- Phân biệt với parent_id
+         LEFT JOIN place f ON f.place_id = r.place_id AND f.place_type = 'FLOOR' AND
+                              f.parent_id = bd.place_id -- Phân biệt với parent_id
+
+WHERE af.status IN ('PENDING', 'CONFLICT')
+  AND af.updated_at BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806'
+ORDER BY af.updated_at DESC
+
+
+SELECT br.booking_request_id,
+       br.title,
+       br.description,
+       br.recurrence_type,
+       br.start_date,
+       br.end_date,
+       br.start_time,
+       br.end_time,
+       br.days_of_week,
+       br.recurrence_interval,
+       br.capacity,
+       br.priority,
+       af.status                            AS approval_status,
+       af.created_at,
+       af.updated_at,
+
+       r.room_id,
+       CONCAT(bd.code, f.code, r.room_code) AS room_name,
+       r.room_code                          as room_code,
+
+       br.branch_id,
+       b.name                               as branch_name,
+       b.code                               as branch_code,
+
+       bd.place_id,
+       bd.name                              as building_name,
+       bd.code                              as building_code,
+
+       f.place_id,
+       f.name                               as floor_name,
+       f.code                               as floor_code
+
+FROM approval_form af
+         JOIN booking_request br ON br.booking_request_id = af.booking_request_id
+         JOIN room r ON r.room_id = br.room_id
+         LEFT JOIN place b ON b.place_id = br.branch_id AND b.place_type = 'BRANCH'
+         LEFT JOIN place bd ON bd.place_id = r.place_id AND bd.place_type = 'BUILDING' AND bd.parent_id = b.place_id
+         LEFT JOIN place f ON f.place_id = r.place_id AND f.place_type = 'FLOOR' AND f.parent_id = bd.place_id;
+
+
+
+SELECT br.booking_request_id,
+       br.title,
+       br.description,
+       br.recurrence_type,
+       br.start_date,
+       br.end_date,
+       br.start_time,
+       br.end_time,
+       br.days_of_week,
+       br.recurrence_interval,
+       br.capacity,
+       br.priority,
+       af.status AS approval_status,
+       af.created_at,
+       af.updated_at
+
+--     r.room_id
+--     CONCAT(bd.code, f.code, r.room_code) AS room_name,
+--     r.room_code as room_code,
+--
+--     br.branch_id,  -- Tham chiếu từ bảng booking_request
+--     b.name as branch_name,
+--     b.code as branch_code,
+--
+--     bd.place_id,
+--     bd.name as building_name,
+--     bd.code as building_code,
+--
+--     f.place_id,
+--     f.name as floor_name,
+--     f.code as floor_code
+
+FROM approval_form af
+         JOIN booking_request br ON br.booking_request_id = af.booking_request_id
+--          JOIN room r ON r.room_id = br.room_id
+--          LEFT JOIN place b ON b.place_id = br.branch_id AND b.place_type = 'BRANCH'
+--          LEFT JOIN place bd ON bd.place_id = r.place_id AND bd.place_type = 'BUILDING' AND bd.parent_id = b.place_id  -- Phân biệt với parent_id
+--          LEFT JOIN place f ON f.place_id = r.place_id AND f.place_type = 'FLOOR' AND f.parent_id = bd.place_id  -- Phân biệt với parent_id
+
+WHERE af.status IN ('PENDING', 'CONFLICT')
+  AND af.updated_at BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806'
+\
+
+
+SELECT b.*
+FROM booking b
+         JOIN booking_participant p ON b.booking_id = p.booking_id
+         JOIN "user" u ON p.user_id = u.user_id
+WHERE b.meeting_date
+
+SELECT b.*
+FROM booking b
+         JOIN booking_participant p ON b.booking_id = p.booking_id
+         JOIN "user" u ON p.user_id = u.user_id
+WHERE b.meeting_date BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806'
+  AND b.status IN ('SCHEDULED', 'IN_PROGRESS')
+--   AND u.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4380';
+
+SELECT p.user_id
+FROM booking_participant p
+         LEFT JOIN "user" u ON p.user_id = u.user_id
+WHERE u.user_id IS NULL;
+
+SELECT p.user_id
+FROM booking_participant p
+         LEFT JOIN "user" u ON p.user_id = u.user_id
+WHERE u.user_id IS NULL;
+
+SELECT *
+FROM booking
+WHERE meeting_date BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806';
+
+SELECT *
+FROM booking
+WHERE status IN ('SCHEDULED', 'IN_PROGRESS');
+
+SELECT b.booking_id, p.user_id, u.user_id
+FROM booking_participant p
+         JOIN "user" u ON p.user_id = u.user_id
+         JOIN booking b ON p.booking_id = b.booking_id
+WHERE b.meeting_date BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806';
+
+SELECT b.*
+FROM booking b
+         JOIN booking_participant p ON b.booking_id = p.booking_id
+         LEFT JOIN "user" u ON p.user_id = u.user_id
+WHERE b.meeting_date BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806'
+  AND b.status IN ('SCHEDULED', 'IN_PROGRESS');
+
+SELECT b.*
+FROM booking b
+         JOIN booking_participant p ON b.booking_id = p.booking_id
+         JOIN "user" u ON p.user_id = u.user_id
+WHERE b.meeting_date BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806'
+  AND u.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4380'
+
+SELECT b.booking_id    AS id,
+       b.title,
+       b.description,
+       b.booking_code,
+       r.room_id       AS room_id,
+       p.place_id      AS branch,
+       p.place_id      AS building,
+       p.place_id      AS floor,
+       pr.room_id      AS previous_room_id,
+       b.meeting_start AS meeting_start,
+       b.meeting_end   AS meeting_end,
+       b.meeting_date  AS meeting_date,
+       b.count,
+       b.status,
+       b.created_at,
+       b.updated_at
+FROM booking b
+         JOIN
+     booking_participant bp ON b.booking_id = bp.booking_id
+         JOIN
+     "user" u ON bp.user_id = u.user_id
+         JOIN
+     room r ON b.room_id = r.room_id
+         JOIN
+     place p ON r.place_id = p.place_id
+         LEFT JOIN
+     room pr ON b.previous_room_id = pr.room_id
+WHERE b.meeting_date BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806'
+  AND u.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4380'
+
+
+
+SELECT b.booking_id      AS id,
+       b.title,
+       b.description,
+       b.booking_code,
+       r.room_id         AS room_id,
+       branch.place_id   AS branch_id,
+       branch.name       AS branch_name,
+       building.place_id AS building_id,
+       building.name     AS building_name,
+       floor.place_id    AS floor_id,
+       floor.name        AS floor_name,
+       pr.room_id        AS previous_room_id,
+       b.meeting_start,
+       b.meeting_end,
+       b.meeting_date,
+       b.count,
+       b.status,
+       b.created_at,
+       b.updated_at
+FROM booking b
+         JOIN booking_participant bp ON b.booking_id = bp.booking_id
+         JOIN "user" u ON bp.user_id = u.user_id
+         JOIN room r ON b.room_id = r.room_id
+         JOIN place branch ON r.place_id = branch.place_id AND branch.place_type = 'BRANCH'
+         JOIN place building ON branch.parent_id = building.place_id AND building.place_type = 'BUILDING'
+         JOIN place floor ON building.parent_id = floor.place_id AND floor.place_type = 'FLOOR'
+         LEFT JOIN room pr ON b.previous_room_id = pr.room_id
+WHERE b.meeting_date BETWEEN '2025-02-01' AND '2025-09-01'
+--   AND u.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4380'
+
+
+SELECT b.booking_id    AS id,
+       b.title,
+       b.description,
+       b.booking_code,
+       r.room_id       AS room_id,
+       br.place_id     AS branch,
+       bl.place_id     AS building,
+       fl.place_id     AS floor,
+       pr.room_id      AS previous_room_id,
+       b.meeting_start AS meeting_start,
+       b.meeting_end   AS meeting_end,
+       b.meeting_date  AS meeting_date,
+       b.count,
+       b.status,
+       b.created_at,
+       b.updated_at
+FROM booking b
+         JOIN
+     booking_participant bp ON b.booking_id = bp.booking_id
+         JOIN
+     "user" u ON bp.user_id = u.user_id
+         JOIN
+     room r ON b.room_id = r.room_id
+         JOIN
+     place p ON r.place_id = p.place_id
+         LEFT JOIN
+     room pr ON b.previous_room_id = pr.room_id
+         LEFT JOIN
+     place br ON p.parent_id = br.place_id AND br.place_type = 'BRANCH'
+         LEFT JOIN
+     place bl ON p.parent_id = bl.place_id AND bl.place_type = 'BUILDING'
+         LEFT JOIN
+     place fl ON p.parent_id = fl.place_id AND fl.place_type = 'FLOOR'
+WHERE b.meeting_date BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806'
+  AND u.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4380';
+
+
+SELECT b.booking_id    AS id,
+       b.title,
+       b.description,
+       b.booking_code,
+       r.room_id       AS room_id,
+       br.place_id     AS branch,
+       bl.place_id     AS building,
+       p.place_id      AS floor,
+       pr.room_id      AS previous_room_id,
+       b.meeting_start AS meeting_start,
+       b.meeting_end   AS meeting_end,
+       b.meeting_date  AS meeting_date,
+       b.count,
+       b.status,
+       b.created_at,
+       b.updated_at
+FROM booking b
+         JOIN
+     booking_participant bp ON b.booking_id = bp.booking_id
+         JOIN
+     "user" u ON bp.user_id = u.user_id
+         JOIN
+     room r ON b.room_id = r.room_id
+         JOIN
+     place p ON r.place_id = p.place_id -- Đây là place_id của floor
+         LEFT JOIN
+     room pr ON b.previous_room_id = pr.room_id
+         -- Join để lấy thông tin branch và building từ parent_id của place
+         LEFT JOIN
+     place br ON p.parent_id = br.place_id AND br.place_type = 'BRANCH'
+         LEFT JOIN
+     place bl ON p.parent_id = bl.place_id AND bl.place_type = 'BUILDING'
+WHERE b.meeting_date BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806'
+  AND u.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4380';
+
+
+SELECT b.booking_id    AS id,
+       b.title,
+       b.description,
+       b.booking_code,
+       r.room_id       AS room_id,
+       p.place_id      AS floor,
+       bl.place_id     AS building,
+       br.place_id     AS branch,
+       pr.room_id      AS previous_room_id,
+       b.meeting_start AS meeting_start,
+       b.meeting_end   AS meeting_end,
+       b.meeting_date  AS meeting_date,
+       b.count,
+       b.status,
+       b.created_at,
+       b.updated_at
+FROM booking b
+         JOIN
+     booking_participant bp ON b.booking_id = bp.booking_id
+         JOIN
+     "user" u ON bp.user_id = u.user_id
+         JOIN
+     room r ON b.room_id = r.room_id
+         JOIN
+     place p ON r.place_id = p.place_id -- Đây là place_id của floor
+         LEFT JOIN
+     room pr ON b.previous_room_id = pr.room_id
+         -- Join để tìm Building từ Floor thông qua parent_id
+         LEFT JOIN
+     place bl ON p.parent_id = bl.place_id AND bl.place_type = 'BUILDING'
+         -- Join để tìm Branch từ Building thông qua parent_id
+         LEFT JOIN
+     place br ON bl.parent_id = br.place_id AND br.place_type = 'BRANCH'
+WHERE b.meeting_date BETWEEN '2025-02-01 16:00:49.903806' AND '2025-09-01 16:00:49.903806'
+  AND u.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4380';
+
+
+
+SELECT b.booking_id    AS id,
+       b.title,
+       b.description,
+       b.booking_code,
+       r.room_id       AS room_id,
+       p.place_id      AS floor_id,
+       p.name          AS floor_name,
+       p.code          AS floor_code,
+       bl.place_id     AS building_id,
+       bl.name         AS building_name,
+       bl.code         AS building_code,
+       br.place_id     AS branch_id,
+       br.name         AS branch_name,
+       br.code         AS branch_code,
+       pr.room_id      AS previous_room_id,
+       b.meeting_start AS meeting_start,
+       b.meeting_end   AS meeting_end,
+       b.meeting_date  AS meeting_date,
+       b.count,
+       b.status,
+       b.created_at,
+       b.updated_at
+FROM booking b
+         JOIN
+     booking_participant bp ON b.booking_id = bp.booking_id
+         JOIN
+     "user" u ON bp.user_id = u.user_id
+         JOIN
+     room r ON b.room_id = r.room_id
+         JOIN
+     place p ON r.place_id = p.place_id -- Đây là place_id của floor
+         LEFT JOIN
+     room pr ON b.previous_room_id = pr.room_id
+         -- Join để tìm Building từ Floor thông qua parent_id
+         LEFT JOIN
+     place bl ON p.parent_id = bl.place_id AND bl.place_type = 'BUILDING'
+         -- Join để tìm Branch từ Building thông qua parent_id
+         LEFT JOIN
+     place br ON bl.parent_id = br.place_id AND br.place_type = 'BRANCH'
+WHERE b.meeting_date BETWEEN '2025-02-01' AND '2025-09-01'
+  AND u.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4380';
+
+
+SELECT *
+FROM booking as b
+         LEFT JOIN booking_participant bp on b.booking_id = bp.booking_id
+WHERE bp.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4380'
+  AND b.meeting_date BETWEEN '2025-08-01' AND '2025-10-01'
+
+
+SELECT b.booking_id    AS id,
+       b.title,
+       b.description,
+       b.booking_code,
+       r.room_id       AS room_id,
+       r.room_code     AS room_code,
+       r.room_code     AS room_name,
+       p.place_id      AS floor_id,
+       p.name          AS floor_name,
+       p.code          AS floor_code,
+       bl.place_id     AS building_id,
+       bl.name         AS building_name,
+       bl.code         AS building_code,
+       br.place_id     AS branch_id,
+       br.name         AS branch_name,
+       br.code         AS branch_code,
+       pr.room_id      AS room_previous_id,
+       b.meeting_start AS meeting_start,
+       b.meeting_end   AS meeting_end,
+       b.meeting_date  AS meeting_date,
+       b.count,
+       b.status,
+       b.created_at,
+       b.updated_at
+FROM booking b
+         JOIN
+     booking_participant bp ON b.booking_id = bp.booking_id
+         JOIN
+     "user" u ON bp.user_id = u.user_id
+         JOIN
+     room r ON b.room_id = r.room_id
+         JOIN
+     place p ON r.place_id = p.place_id -- Đây là place_id của floor
+         LEFT JOIN
+     room pr ON b.previous_room_id = pr.room_id
+         -- Join để tìm Building từ Floor thông qua parent_id
+         LEFT JOIN
+     place bl ON p.parent_id = bl.place_id AND bl.place_type = 'BUILDING'
+         -- Join để tìm Branch từ Building thông qua parent_id
+         LEFT JOIN
+     place br ON bl.parent_id = br.place_id AND br.place_type = 'BRANCH'
+WHERE b.meeting_date BETWEEN :startDate AND :endDate
+  AND bp.user_id = :userId;
+
+SELECT b.booking_id                              AS id,
+       b.title,
+       b.description,
+       b.booking_code                            AS bookingCode,
+
+       r.room_id                                 AS roomId,
+       r.room_code                               AS roomCode,
+       concat(bl.code, '.', p.code, r.room_code) AS roomName,
+
+       br.place_id                               AS branchId,
+       br.code                                   AS branchCode,
+       br.name                                   AS branchName,
+
+       bl.place_id                               AS buildingId,
+       bl.code                                   AS buildingCode,
+       bl.name                                   AS buildingName,
+
+       p.place_id                                AS floorId,
+       p.code                                    AS floorCode,
+       p.name                                    AS floorName,
+
+       pr.room_id                                AS roomPreviousId,
+
+       b.meeting_start                           AS meetingStart,
+       b.meeting_end                             AS meetingEnd,
+       b.meeting_date                            AS meetingDate,
+       b.count,
+       b.status,
+       b.created_at                              AS createdAt,
+       b.updated_at                              AS updatedAt
+FROM booking b
+         JOIN
+     booking_participant bp ON b.booking_id = bp.booking_id
+         JOIN
+     "user" u ON bp.user_id = u.user_id
+         JOIN
+     room r ON b.room_id = r.room_id
+         JOIN
+     place p ON r.place_id = p.place_id -- Đây là place_id của floor
+         LEFT JOIN
+     room pr ON b.previous_room_id = pr.room_id
+         -- Join để lấy thông tin branch và building từ parent_id của place
+         LEFT JOIN
+     place bl ON p.parent_id = bl.place_id AND bl.place_type = 'BUILDING'
+         LEFT JOIN
+     place br ON bl.parent_id = br.place_id AND br.place_type = 'BRANCH'
+WHERE bp.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4380'
+  AND b.meeting_date BETWEEN '2025-01-01' AND '2025-12-01'
+
+
+select ue1_0.user_id,
+       ue1_0.avatar_image,
+       ue1_0.created_at,
+       ue1_0.email,
+       ue1_0.enable,
+       ue1_0.first_name,
+       ue1_0.gender,
+       ue1_0.last_name,
+       ue1_0.phone_number,
+       r1_0.user_id,
+       r1_1.role_id,
+       r1_1.description,
+       r1_1.level,
+       ue1_0.updated_at,
+       ue1_0.user_code,
+       ue1_0.user_type
+from "user" ue1_0
+         left join
+     user_role r1_0
+     on ue1_0.user_id = r1_0.user_id
+         left join
+     role r1_1
+     on r1_1.role_id = r1_0.role_id
+where ue1_0.user_id = '374e33ed-1d51-4298-a3be-b51b4d7529a3'
+  and ue1_0.enable = true
+
+
+SELECT *
+FROM room r
+         LEFT JOIN place pfl ON r.place_id = pfl.place_id
+         LEFT JOIN place pbg ON pfl.parent_id = pbg.place_id
+-- LEFT JOIN place pbh ON pbh.parent_id = pbg.place_id AND pbh.place_type = 'BRANCH'
+-- WHERE r.status = 'ACTIVE'
+--   AND r.place_id = '65f1d8a0-6885-4b51-a691-f843b279dd8b'
+
+SELECT *
+FROM room r
+         LEFT JOIN place pfl
+                   ON r.place_id = pfl.place_id
+         LEFT JOIN place pbg
+                   ON pfl.parent_id = pbg.place_id
+WHERE pbg.status = 'ACTIVE'
+  AND pbg.parent_id = '65f1d8a0-6885-4b51-a691-f843b279dd8b';
+
+
+*/
+select re1_0.room_id,
+       re1_0.description,
+       re1_0.place_id,
+       re1_0.room_class_id,
+       rc1_0.room_class_id,
+       rc1_0.capacity,
+       rc1_0.created_at,
+       rc1_0.room_class_code,
+       rc1_0.status,
+       rc1_0.updated_at,
+       re1_0.room_code,
+       re1_0.status,
+       pe2_0.parent_id
+from room re1_0
+         left join
+     place pe1_0
+     on re1_0.place_id = pe1_0.place_id
+         left join
+     place pe2_0
+     on pe1_0.parent_id = pe2_0.place_id
+         join
+     room_class rc1_0
+     on rc1_0.room_class_id = re1_0.room_class_id
+where re1_0.status=?
+  and pe2_0.parent_id=?
+
+
+SELECT *
+FROM approval_form a
+         JOIN (SELECT booking_request_id, MAX(updated_at) AS latest_updated
+               FROM approval_form
+               GROUP BY booking_request_id) latest
+              ON a.booking_request_id = latest.booking_request_id AND a.updated_at = latest.latest_updated
+         JOIN booking_request b ON a.booking_request_id = b.booking_request_id
+WHERE
+--     a.status IN ('APPROVED', 'PENDING')
+--     a.status IN ('APPROVED') AND
+    b.requester = '3393e980-0503-454a-94ef-e43258639994'
+  AND a.updated_at BETWEEN '2025-04-01' AND '2025-04-30';
+--   AND (  IS NULL OR :status = '' OR a.status = :status)
+
+
+SELECT DISTINCT ON (a.booking_request_id) b.*, a.status, a.created_at, a.updated_at, a.approver
+FROM approval_form a
+         LEFT JOIN booking_request b ON a.booking_request_id = b.booking_request_id
+WHERE
+--     status = 'APPROVED' AND
+    b.requester = '3393e980-0503-454a-94ef-e43258639994'
+  AND a.updated_at BETWEEN '2025-04-01' AND '2025-04-30'
+ORDER BY a.booking_request_id, a.updated_at DESC, a.created_at DESC;
+
+
+SELECT b.*, a.status, a.created_at, a.updated_at, a.approver
+FROM (SELECT DISTINCT ON (booking_request_id) *
+      FROM approval_form
+      WHERE updated_at BETWEEN '2025-06-01' AND '2025-07-30'
+      ORDER BY booking_request_id, updated_at DESC) a
+         JOIN booking_request b ON a.booking_request_id = b.booking_request_id
+WHERE b.requester = '3393e980-0503-454a-94ef-e43258639994'
+
+
+SELECT a.*,
+       b.booking_request_id,
+       b.priority,
+       b.days_of_week,
+       b.start_time,
+       b.end_time,
+       b.end_date,
+       b.start_date,
+       b.recurrence_interval,
+       b.recurrence_type,
+       b.capacity,
+       b.requester,
+       b.branch_id,
+       b.room_id,
+       b.title,
+       b.description
+FROM (SELECT DISTINCT ON (booking_request_id) *
+      FROM approval_form
+      WHERE updated_at BETWEEN '2025-06-01' AND '2025-07-30'
+      ORDER BY booking_request_id, updated_at DESC) a
+         JOIN booking_request b ON a.booking_request_id = b.booking_request_id
+WHERE b.requester = '3393e980-0503-454a-94ef-e43258639994'
+ORDER BY b.created_at DESC
+
+
+
+select COUNT(*)
+from booking_request
+
+
+SELECT r.*, rc.*, rp.*
+FROM room r
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+
+
+SELECT r.*, rc.*, rp.*
+FROM room r
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+WHERE (:id IS NULL OR r.room_id = CAST(:id AS UUID))
+  AND (:roomCode IS NULL OR r.room_code ILIKE '%:roomCode%')
+  AND (:status IS NULL OR r.status = :status)
+  AND (
+    :branchId IS NULL AND :buildingId IS NULL AND :floorId IS NULL OR
+        -- Case 1: Filter by branch ID
+    (:branchId IS NOT NULL AND r.place_id = CAST(:branchId AS UUID)) OR
+        -- Case 2: Filter by building ID
+    (:buildingId IS NOT NULL AND r.place_id = CAST(:buildingId AS UUID)) OR
+        -- Case 3: Filter by floor ID
+    (:floorId IS NOT NULL AND r.place_id = CAST(:floorId AS UUID))
+    )
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (:startPrice IS NULL OR rp.total_price >= :startPrice)
+  AND (:endPrice IS NULL OR rp.total_price <= :endPrice)
+  AND (
+    :searchBy IS NULL OR :keyword IS NULL OR
+    (:searchBy = 'roomCode' AND r.room_code ILIKE '%:keyword%') OR
+    (:searchBy = 'status' AND r.status ILIKE '%:keyword%')
+    )
+
+
+
+SELECT r.*, rc.*, rp.*
+FROM room r
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+         LEFT JOIN place p ON r.place_id = p.place_id
+WHERE (:id IS NULL OR r.room_id = CAST(:id AS UUID))
+  AND (:roomCode IS NULL OR r.room_code ILIKE CONCAT('%', :roomCode, '%'))
+  AND (:status IS NULL OR r.status = :status)
+  AND (
+    -- Case when branchId is provided, get rooms in this branch and its floors
+    :branchId IS NOT NULL AND p.place_type = 'BRANCH' AND p.place_id = CAST(:branchId AS UUID)
+        OR
+        -- Case when buildingId is provided, get rooms in this building and its floors
+    :buildingId IS NOT NULL AND p.place_type = 'BUILDING' AND p.place_id = CAST(:buildingId AS UUID)
+        OR
+        -- Case when floorId is provided, get rooms in this floor
+    :floorId IS NOT NULL AND p.place_type = 'FLOOR' AND p.place_id = CAST(:floorId AS UUID)
+        OR
+        -- If no filters are provided, return all rooms
+    :branchId IS NULL AND :buildingId IS NULL AND :floorId IS NULL
+    )
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (:startPrice IS NULL OR rp.total_price >= :startPrice)
+  AND (:endPrice IS NULL OR rp.total_price <= :endPrice)
+  AND (
+    :searchBy IS NULL OR :keyword IS NULL OR
+    ( :searchBy = 'roomCode' AND r.room_code ILIKE CONCAT('%', :keyword, '%') ) OR
+    ( :searchBy = 'status' AND r.status ILIKE CONCAT('%', :keyword, '%') )
+    )
+
+SELECT r.*, rc.*, rp.*
+FROM room r
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+WHERE (:id IS NULL OR r.room_id = CAST(:id AS UUID))
+  AND (:roomCode IS NULL OR r.room_code ILIKE '%:roomCode%')
+  AND (:status IS NULL OR r.status = :status)
+  AND (
+    :branchId IS NULL AND :buildingId IS NULL AND :floorId IS NULL OR
+        -- Lọc theo chi nhánh
+    (:branchId IS NOT NULL AND r.place_id IN (
+        SELECT place_id FROM place WHERE place_type = 'BRANCH' AND place_id = CAST(:branchId AS UUID)
+    )) OR
+        -- Lọc theo tòa nhà thuộc chi nhánh
+    (:buildingId IS NOT NULL AND r.place_id IN (
+        SELECT place_id FROM place WHERE place_type = 'BUILDING' AND parent_id = CAST(:branchId AS UUID)
+    )) OR
+        -- Lọc theo tầng thuộc tòa nhà của chi nhánh
+    (:floorId IS NOT NULL AND r.place_id IN (
+        SELECT place_id FROM place WHERE place_type = 'FLOOR' AND parent_id IN (
+            SELECT place_id
+            FROM place
+            WHERE place_type = 'BUILDING' AND parent_id = CAST(:branchId AS UUID)
+        )
+    ))
+    )
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (:startPrice IS NULL OR rp.total_price >= :startPrice)
+  AND (:endPrice IS NULL OR rp.total_price <= :endPrice)
+  AND (
+    :searchBy IS NULL OR :keyword IS NULL OR
+    ( :searchBy = 'roomCode' AND r.room_code ILIKE '%:keyword%' ) OR
+    ( :searchBy = 'status' AND r.status ILIKE '%:keyword%' )
+    )
+
+
+
+
+
+
+
+
+SELECT r.room_id, r.room_code, r.status, r.description,
+       rc.room_class_id, rc.room_class_code, rc.capacity,
+       rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+       pf.place_id AS floor_place_id,
+       pf.parent_id AS building_place_id,
+       pbg.parent_id AS branch_place_id
+FROM room r
+-- JOIN với bảng place cho loại FLOOR (pf)
+         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
+-- JOIN với bảng place cho loại BUILDING (pbg), sử dụng parent_id của FLOOR
+         LEFT JOIN place pbg ON pf.parent_id = pbg.place_id AND pbg.place_type = 'BUILDING'
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+WHERE
+    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+  AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
+  AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (
+    :searchBy IS NULL OR :keyword IS NULL OR
+    ( :searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%' ) OR
+    ( :searchBy = 'status' AND r.status ILIKE '%' || :keyword || '%' ) OR
+    ( :searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%' ) OR
+    ( :searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%' ) OR
+    ( :searchBy = 'id' AND r.room_id = :keyword )
+    )
+  AND (
+    :searchBy IS NULL OR :keyword IS NULL OR
+    ( :searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%' ) OR
+    ( :searchBy = 'status' AND r.status ILIKE '%' || :keyword || '%' )
+    )
+
+
+
+SELECT r.room_id, r.room_code, r.status, r.description,
+       rc.room_class_id, rc.room_class_code, rc.capacity,
+       rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+       pf.place_id AS floor_place_id,
+       pf.parent_id AS building_place_id,
+       pbg.parent_id AS branch_place_id
+FROM room r
+-- JOIN với bảng place cho loại FLOOR (pf)
+         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
+-- JOIN với bảng place cho loại BUILDING (pbg), sử dụng parent_id của FLOOR
+         LEFT JOIN place pbg ON pf.parent_id = pbg.place_id AND pbg.place_type = 'BUILDING'
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+WHERE
+    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+  AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
+  AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (
+    (:startPrice IS NULL AND :endPrice IS NULL) OR
+    (rp.total_price BETWEEN COALESCE(:startPrice, 0) AND COALESCE(:endPrice, 1e12))
+    )
+  AND (
+    :searchBy IS NULL OR :keyword IS NULL OR
+    ( :searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%' ) OR
+    ( :searchBy = 'status' AND r.status ILIKE '%' || :keyword || '%' ) OR
+    ( :searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%' ) OR
+    ( :searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%' ) OR
+    ( :searchBy = 'id' AND r.room_id = :keyword )
+    )
+
+
+
+
+SELECT r.room_id, r.room_code, r.status, r.description,
+       rc.room_class_id, rc.room_class_code, rc.capacity,
+       rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+       pf.place_id AS floor_place_id,
+       pf.parent_id AS building_place_id,
+       pbg.parent_id AS branch_place_id
+FROM room r
+         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
+         LEFT JOIN place pbg ON pf.parent_id = pbg.place_id AND pbg.place_type = 'BUILDING'
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+WHERE
+    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+  AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
+  AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (
+    (:startPrice IS NULL AND :endPrice IS NULL)
+        OR (rp.total_price BETWEEN COALESCE(:startPrice, 0) AND COALESCE(:endPrice, 1e12))
+    )
+  AND (
+    :keyword IS NULL OR (
+        (:searchBy IS NULL AND (
+            r.room_code ILIKE '%' || :keyword || '%' OR
+            r.status = :keyword OR
+            r.description ILIKE '%' || :keyword || '%' OR
+            rc.room_class_code ILIKE '%' || :keyword || '%' OR
+            CAST(r.room_id AS TEXT) = :keyword
+            )) OR
+        (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'status' AND r.status = '%' || :keyword || '%') OR
+        (:searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'id' AND CAST(r.room_id AS TEXT) = :keyword)
+        )
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT r.room_id, r.room_code, r.status, r.description,
+       rc.room_class_id, rc.room_class_code, rc.capacity,
+       rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+       pf.place_id AS floor_place_id,
+       pf.parent_id AS building_place_id,
+       pbg.parent_id AS branch_place_id
+FROM room r
+         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
+         LEFT JOIN place pbg ON pf.parent_id = pbg.place_id AND pbg.place_type = 'BUILDING'
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+WHERE
+    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+  AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
+  AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (
+    (:startPrice IS NULL AND :endPrice IS NULL)
+        OR (rp.total_price BETWEEN COALESCE(:startPrice, 0) AND COALESCE(:endPrice, 1e12))
+    )
+  AND (:status IS NULL OR r.status = :status)
+  AND (
+    :keyword IS NULL OR (
+        (:searchBy IS NULL AND (
+            r.room_code ILIKE '%' || :keyword || '%' OR
+            r.description ILIKE '%' || :keyword || '%' OR
+            rc.room_class_code ILIKE '%' || :keyword || '%' OR
+            CAST(r.room_id AS TEXT) = :keyword
+            )) OR
+        (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'id' AND CAST(r.room_id AS TEXT) = :keyword)
+        )
+    )
+
+
+SELECT
+    r.room_id, r.room_code, r.status, r.description,
+    rc.room_class_id, rc.room_class_code, rc.capacity,
+    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+    pf.place_id AS floor_place_id,
+    pf.parent_id AS building_place_id,
+    pbg.parent_id AS branch_place_id,
+
+    json_agg(DISTINCT jsonb_build_object(
+            'equipmentId', eq.equipment_id,
+            'equipmentName', eq.name,
+            'equipmentCode', eq.equipment_code,
+            'description', eq.description,
+            'brand', eq.brand,
+            'quantity', erc.quantity,
+            'price', ep.current_price
+                      )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
+
+    json_agg(DISTINCT jsonb_build_object(
+            'serviceId', sv.service_id,
+            'serviceCode', sv.service_code,
+            'note', sv.note,
+            'serviceName', sv.name,
+            'quantity', src.quantity,
+            'price', sp.current_price
+                      )) FILTER (WHERE sv.service_id IS NOT NULL) AS services
+
+FROM room r
+         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
+         LEFT JOIN place pbg ON pf.parent_id = pbg.place_id AND pbg.place_type = 'BUILDING'
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+
+-- Giá room class
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+
+-- Thiết bị
+         LEFT JOIN equipment_room_class erc ON erc.room_class_id = rc.room_class_id
+         LEFT JOIN equipment eq ON eq.equipment_id = erc.equipment_id
+
+-- Giá thiết bị mới nhất
+         LEFT JOIN LATERAL (
+    SELECT eph.unit_price current_price
+    FROM equipment_price_history eph
+    WHERE eph.equipment_id = eq.equipment_id
+      AND eph.valid_from <= NOW()
+      AND (eph.valid_end IS NULL OR eph.valid_end > NOW())
+    ORDER BY eph.valid_from DESC
+    LIMIT 1
+    ) ep ON TRUE
+
+-- Dịch vụ
+         LEFT JOIN service_room_class src ON src.room_class_id = rc.room_class_id
+         LEFT JOIN service sv ON sv.service_id = src.service_id
+
+-- Giá dịch vụ mới nhất
+         LEFT JOIN LATERAL (
+    SELECT sph.unit_price AS current_price
+    FROM service_price_history sph
+    WHERE sph.service_id = sv.service_id
+      AND sph.valid_from <= NOW()
+      AND (sph.valid_end IS NULL OR sph.valid_end > NOW())
+    ORDER BY sph.valid_from DESC
+    LIMIT 1
+    ) sp ON TRUE
+
+WHERE
+    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+  AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
+  AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (
+    (:startPrice IS NULL AND :endPrice IS NULL)
+        OR (rp.total_price BETWEEN COALESCE(:startPrice, 0) AND COALESCE(:endPrice, 1e12))
+    )
+  AND (:status IS NULL OR r.status = :status)
+  AND (
+    :keyword IS NULL OR (
+        (:searchBy IS NULL AND (
+            r.room_code ILIKE '%' || :keyword || '%' OR
+            r.description ILIKE '%' || :keyword || '%' OR
+            rc.room_class_code ILIKE '%' || :keyword || '%' OR
+            CAST(r.room_id AS UUID) = :keyword
+            )) OR
+        (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'id' AND CAST(r.room_id AS UUID) = :keyword)
+        )
+    )
+
+GROUP BY
+    r.room_id, r.room_code, r.status, r.description,
+    rc.room_class_id, rc.room_class_code, rc.capacity,
+    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+    pf.place_id, pf.parent_id,
+    pbg.parent_id
+
+
+
+
+
+
+
+
+
+
+
+SELECT
+    r.room_id, r.room_code, r.status, r.description,
+    rc.room_class_id, rc.room_class_code, rc.capacity,
+    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+    pf.place_id AS floor_place_id,
+    pf.parent_id AS building_place_id,
+    pbg.parent_id AS branch_place_id,
+
+    json_agg(DISTINCT jsonb_build_object(
+            'equipmentId', eq.equipment_id,
+            'equipmentName', eq.name,
+            'equipmentCode', eq.equipment_code,
+            'description', eq.description,
+            'brand', eq.brand,
+            'quantity', erc.quantity,
+            'price', ep.current_price
+                      )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
+
+    json_agg(DISTINCT jsonb_build_object(
+            'serviceId', sv.service_id,
+            'serviceCode', sv.service_code,
+            'note', sv.note,
+            'serviceName', sv.name,
+            'quantity', src.quantity,
+            'price', sp.current_price
+                      )) FILTER (WHERE sv.service_id IS NOT NULL) AS services
+
+FROM room r
+         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
+         LEFT JOIN place pbg ON pf.parent_id = pbg.place_id AND pbg.place_type = 'BUILDING'
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+
+         LEFT JOIN equipment_room_class erc ON erc.room_class_id = rc.room_class_id
+         LEFT JOIN equipment eq ON eq.equipment_id = erc.equipment_id
+
+         LEFT JOIN LATERAL (
+    SELECT eph.unit_price current_price
+    FROM equipment_price_history eph
+    WHERE eph.equipment_id = eq.equipment_id
+      AND eph.valid_from <= NOW()
+      AND (eph.valid_end IS NULL OR eph.valid_end > NOW())
+    ORDER BY eph.valid_from DESC
+    LIMIT 1
+    ) ep ON TRUE
+
+         LEFT JOIN service_room_class src ON src.room_class_id = rc.room_class_id
+         LEFT JOIN service sv ON sv.service_id = src.service_id
+
+         LEFT JOIN LATERAL (
+    SELECT sph.unit_price AS current_price
+    FROM service_price_history sph
+    WHERE sph.service_id = sv.service_id
+      AND sph.valid_from <= NOW()
+      AND (sph.valid_end IS NULL OR sph.valid_end > NOW())
+    ORDER BY sph.valid_from DESC
+    LIMIT 1
+    ) sp ON TRUE
+
+WHERE
+    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+  AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
+  AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (
+    (:startPrice IS NULL AND :endPrice IS NULL)
+        OR (rp.total_price BETWEEN COALESCE(:startPrice, 0) AND COALESCE(:endPrice, 1e12))
+    )
+  AND (:status IS NULL OR r.status = :status)
+  AND (
+    :keyword IS NULL OR (
+        (:searchBy IS NULL AND (
+            r.room_code ILIKE '%' || :keyword || '%' OR
+            r.description ILIKE '%' || :keyword || '%' OR
+            rc.room_class_code ILIKE '%' || :keyword || '%' OR
+            r.room_id = CAST(:keyword AS UUID)
+            )) OR
+        (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'id' AND r.room_id = CAST(:keyword AS UUID))
+        )
+    )
+GROUP BY
+    r.room_id, r.room_code, r.status, r.description,
+    rc.room_class_id, rc.room_class_code, rc.capacity,
+    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+    pf.place_id, pf.parent_id,
+    pbg.parent_id
+
+
+
+SELECT
+    r.room_id, r.room_code, r.status, r.description,
+    rc.room_class_id, rc.room_class_code, rc.capacity,
+    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+    pf.place_id AS floor_place_id,
+    pf.parent_id AS building_place_id,
+    pbg.parent_id AS branch_place_id,
+
+    json_agg(DISTINCT jsonb_build_object(
+            'equipmentId', eq.equipment_id,
+            'equipmentName', eq.name,
+            'equipmentCode', eq.equipment_code,
+            'description', eq.description,
+            'brand', eq.brand,
+            'quantity', erc.quantity,
+            'price', ep.current_price
+                      )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
+
+    json_agg(DISTINCT jsonb_build_object(
+            'serviceId', sv.service_id,
+            'serviceCode', sv.service_code,
+            'note', sv.note,
+            'serviceName', sv.name,
+            'quantity', src.quantity,
+            'price', sp.current_price
+                      )) FILTER (WHERE sv.service_id IS NOT NULL) AS services,
+    (
+        SELECT json_agg(url ORDER BY image_order)
+        FROM
+            image_url
+        WHERE entity_id = r.room_id
+    ) AS
+        image_urls
+
+FROM room r
+         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
+         LEFT JOIN place pbg ON pf.parent_id = pbg.place_id AND pbg.place_type = 'BUILDING'
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+
+         LEFT JOIN equipment_room_class erc ON erc.room_class_id = rc.room_class_id
+         LEFT JOIN equipment eq ON eq.equipment_id = erc.equipment_id
+
+         LEFT JOIN LATERAL (
+    SELECT eph.unit_price current_price
+    FROM equipment_price_history eph
+    WHERE eph.equipment_id = eq.equipment_id
+      AND eph.valid_from <= NOW()
+      AND (eph.valid_end IS NULL OR eph.valid_end > NOW())
+    ORDER BY eph.valid_from DESC
+    LIMIT 1
+    ) ep ON TRUE
+
+         LEFT JOIN service_room_class src ON src.room_class_id = rc.room_class_id
+         LEFT JOIN service sv ON sv.service_id = src.service_id
+
+         LEFT JOIN LATERAL (
+    SELECT sph.unit_price AS current_price
+    FROM service_price_history sph
+    WHERE sph.service_id = sv.service_id
+      AND sph.valid_from <= NOW()
+      AND (sph.valid_end IS NULL OR sph.valid_end > NOW())
+    ORDER BY sph.valid_from DESC
+    LIMIT 1
+    ) sp ON TRUE
+
+WHERE
+    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+  AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
+  AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (
+    (:startPrice IS NULL AND :endPrice IS NULL)
+        OR (rp.total_price BETWEEN COALESCE(:startPrice, 0) AND COALESCE(:endPrice, 1e12))
+    )
+  AND (:status IS NULL OR r.status = :status)
+  AND (
+    :keyword IS NULL OR (
+        (:searchBy IS NULL AND (
+            r.room_code ILIKE '%' || :keyword || '%' OR
+            r.description ILIKE '%' || :keyword || '%' OR
+            rc.room_class_code ILIKE '%' || :keyword || '%' OR
+            r.room_id = CAST(:keyword AS UUID)
+            )) OR
+        (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'id' AND r.room_id = CAST(:keyword AS UUID))
+        )
+    )
+GROUP BY
+    r.room_id, r.room_code, r.status, r.description,
+    rc.room_class_id, rc.room_class_code, rc.capacity,
+    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+    pf.place_id, pf.parent_id,
+    pbg.parent_id
+ORDER BY r.room_code DESC
+
+
+SELECT
+    r.room_id, r.room_code, r.status, r.description,
+    rc.room_class_id, rc.room_class_code, rc.capacity,
+    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+    pf.place_id AS floor_place_id,
+    pf.parent_id AS building_place_id,
+    pbg.parent_id AS branch_place_id,
+
+    json_agg(DISTINCT jsonb_build_object(
+            'id', eq.equipment_id,
+            'name', eq.name,
+            'equipmentCode', eq.equipment_code,
+            'description', eq.description,
+            'brand', eq.brand,
+            'quantity', erc.quantity,
+            'price', ep.current_price
+                      )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
+
+    json_agg(DISTINCT jsonb_build_object(
+            'id', sv.service_id,
+            'serviceCode', sv.service_code,
+            'note', sv.note,
+            'description', sv.description,
+            'name', sv.name,
+            'quantity', src.quantity,
+            'price', sp.current_price
+                      )) FILTER (WHERE sv.service_id IS NOT NULL) AS services,
+    (   SELECT array_agg(url ORDER BY image_order)
+        FROM image_url
+        WHERE entity_id = r.room_id
+    ) AS image_urls
+
+FROM room r
+         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
+         LEFT JOIN place pbg ON pf.parent_id = pbg.place_id AND pbg.place_type = 'BUILDING'
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
+
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
+
+         LEFT JOIN equipment_room_class erc ON erc.room_class_id = rc.room_class_id
+         LEFT JOIN equipment eq ON eq.equipment_id = erc.equipment_id
+
+         LEFT JOIN LATERAL (
+    SELECT eph.unit_price current_price
+    FROM equipment_price_history eph
+    WHERE eph.equipment_id = eq.equipment_id
+      AND eph.valid_from <= NOW()
+      AND (eph.valid_end IS NULL OR eph.valid_end > NOW())
+    ORDER BY eph.valid_from DESC
+    LIMIT 1
+    ) ep ON TRUE
+
+         LEFT JOIN service_room_class src ON src.room_class_id = rc.room_class_id
+         LEFT JOIN service sv ON sv.service_id = src.service_id
+
+         LEFT JOIN LATERAL (
+    SELECT sph.unit_price AS current_price
+    FROM service_price_history sph
+    WHERE sph.service_id = sv.service_id
+      AND sph.valid_from <= NOW()
+      AND (sph.valid_end IS NULL OR sph.valid_end > NOW())
+    ORDER BY sph.valid_from DESC
+    LIMIT 1
+    ) sp ON TRUE
+
+WHERE
+    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+  AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
+  AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (
+    (:startPrice IS NULL AND :endPrice IS NULL)
+        OR (rp.total_price BETWEEN COALESCE(:startPrice, 0) AND COALESCE(:endPrice, 1e12))
+    )
+  AND (:status IS NULL OR r.status = :status)
+  AND (
+    :keyword IS NULL OR (
+        (:searchBy IS NULL AND (
+            r.room_code ILIKE '%' || :keyword || '%' OR
+            r.description ILIKE '%' || :keyword || '%' OR
+            rc.room_class_code ILIKE '%' || :keyword || '%' OR
+            r.room_id = CAST(:keyword AS UUID)
+            )) OR
+        (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'id' AND r.room_id = CAST(:keyword AS UUID))
+        )
+    )
+GROUP BY
+    r.room_id, r.room_code, r.status, r.description,
+    rc.room_class_id, rc.room_class_code, rc.capacity,
+    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+    pf.place_id, pf.parent_id,
+    pbg.parent_id
+ORDER BY r.room_code DESC
+
+
+
+
 

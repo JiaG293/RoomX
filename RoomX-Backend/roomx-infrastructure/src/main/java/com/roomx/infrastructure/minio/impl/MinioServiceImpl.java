@@ -1,5 +1,7 @@
 package com.roomx.infrastructure.minio.impl;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.roomx.infrastructure.minio.MinioService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.shared.exception.exception.AppException;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -28,6 +31,9 @@ public class MinioServiceImpl implements MinioService {
 
     @Value("${minio.bucket-policy-custom}")
     private String customBucketPolicy;
+
+    @Value("${minio.host-proxy}")
+    private String hostProxy;
 
     private String getTenantBucketName() {
         return TenantContextHolder.getRequiredTenantIdentifier().toLowerCase();
@@ -72,7 +78,8 @@ public class MinioServiceImpl implements MinioService {
             String path,
             Boolean makePrivate,
             Integer duration,
-            TimeUnit timeType
+            TimeUnit timeType,
+            Map<String, String> metadata
     ) {
         String bucketName = getTenantBucketName();
         String originalFileName = file.getOriginalFilename();
@@ -93,15 +100,20 @@ public class MinioServiceImpl implements MinioService {
         String objectPathPublic = "public/" + objectPath;
 
         try {
-            minioClient.putObject(PutObjectArgs.builder()
+            var putObjectArgs = PutObjectArgs.builder()
                     .bucket(bucketName)
                     .object(makePrivate ? objectPath : objectPathPublic)
                     .stream(file.getInputStream(), file.getSize(), -1)
-                    .contentType(file.getContentType())
-                    .build());
+                    .contentType(file.getContentType());
+
+            if (metadata != null && !metadata.isEmpty()) {
+                putObjectArgs.userMetadata(metadata);
+            }
+
+            minioClient.putObject(putObjectArgs.build());
 
             return makePrivate ? generateSignedUrl(objectPath, duration, timeType)
-                    :getFileUrl(objectPathPublic);
+                    : getFileUrl(objectPathPublic);
         } catch (Exception e) {
             log.error("Failed to upload file '{}' to bucket '{}' at path '{}': {}", file.getOriginalFilename(), bucketName, objectPath, e.getMessage(), e);
             throw new AppException(ErrorCode.MINIO_FAILED, file.getOriginalFilename());
@@ -114,12 +126,13 @@ public class MinioServiceImpl implements MinioService {
             String path,
             Boolean makePrivate,
             Integer duration,
-            TimeUnit timeTye
+            TimeUnit timeType,
+            Map<String, String> metadata
     ) {
         List<String> uploadedFileUrls = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
-                var fileUrl = uploadFile(file, path, makePrivate, duration, timeTye);
+                var fileUrl = uploadFile(file, path, makePrivate, duration, timeType, metadata);
 
                 uploadedFileUrls.add(fileUrl);
             } catch (Exception e) {
@@ -129,19 +142,31 @@ public class MinioServiceImpl implements MinioService {
         return uploadedFileUrls;
     }
 
+// Giả định hostProxy được inject hoặc cấu hình
+// @Value("${minio.public-endpoint}") // Ví dụ cấu hình public endpoint
+// private String hostProxy;
+
     @Override
     public String getFileUrl(String filePath) {
+
         var bucketName = getTenantBucketName();
+        String publicUrl;
+
         try {
-            return minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(Method.GET)
-                            .bucket(bucketName)
-                            .object(filePath)
-                            .build());
+            String baseUrl = hostProxy.endsWith("/") ? hostProxy.substring(0, hostProxy.length() - 1) : hostProxy;
+            String cleanedFilePath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
+
+            publicUrl = String.format("%s/%s/%s",
+                    baseUrl,
+                    bucketName,
+                    cleanedFilePath);
+
+            log.debug("Generated public URL for {}: {}", filePath, publicUrl);
+            return publicUrl;
+
         } catch (Exception e) {
-            log.error("getFileUrl: Failed to generate custom file URL for file '{}' in bucket '{}': {}", filePath, bucketName, e.getMessage(), e);
-            throw new AppException(ErrorCode.MINIO_FAILED, filePath);
+            log.error("getFileUrl: Failed to generate public URL for file '{}' in bucket '{}': {}", filePath, bucketName, e.getMessage(), e);
+            throw new AppException(ErrorCode.MINIO_FAILED, filePath, "Failed to generate public URL: " + e.getMessage());
         }
     }
 

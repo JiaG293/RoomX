@@ -162,7 +162,7 @@ public class TestAppService {
         var result = new ArrayList<String>();
 
         request.forEach(file -> {
-            result.add(minioService.uploadFile(file, path, makePrivate, 7, TimeUnit.DAYS));
+            result.add(minioService.uploadFile(file, path, makePrivate, 7, TimeUnit.DAYS, null));
         });
 
 
