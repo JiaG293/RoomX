@@ -832,6 +832,8 @@ public class BookingAppService {
                 .toList()
                 : List.of(BookingStatusType.SCHEDULED.toString());
 
+        log.info("statusList: {}", statusList);
+
         int currentYear = today.getYear();
         int selectedYear = (request.getYear() != null && request.getYear() > 0) ? request.getYear() : currentYear;
         int selectedMonth = (request.getMonth() != null && request.getMonth() >= 1 && request.getMonth() <= 12) ? request.getMonth() : today.getMonthValue();
@@ -893,7 +895,7 @@ public class BookingAppService {
 
         if (!newPendingBookings.isEmpty()) {
             allResponses.addAll(
-                    newPendingBookings.stream().map(bookingAppMapper::toResponse).collect(Collectors.toList())
+                    newPendingBookings.stream().map(bookingAppMapper::toResponse).toList()
             );
         }
 
