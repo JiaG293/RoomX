@@ -1749,3 +1749,38 @@ WHERE b.meeting_date BETWEEN '2025-05-01' AND '2025-05-31'
 -- ea4e9c4c-a317-4064-8a5b-da2b338e4180
 -- ea4e9c4c-a317-4064-8a5b-da2b339e4580
 
+
+
+SELECT
+    a.created_at,
+    a.updated_at,
+    a.status,
+    a.approver,
+    b.booking_request_id,
+    b.priority,
+    b.days_of_week,
+    b.start_time,
+    b.end_time,
+    b.end_date,
+    b.start_date,
+    b.recurrence_interval,
+    b.recurrence_type,
+    b.capacity,
+    b.requester,
+    b.branch_id,
+    b.room_id,
+    b.title,
+    b.description
+FROM (
+         SELECT DISTINCT ON (booking_request_id) *
+         FROM approval_form
+         WHERE updated_at BETWEEN :startDate AND :endDate
+         ORDER BY booking_request_id, updated_at DESC
+     ) a
+         JOIN booking_request b ON a.booking_request_id = b.booking_request_id
+WHERE (:listStatus IS NULL OR a.status IN :listStatus)
+  AND (:requester IS NULL OR b.requester = CAST(:requester AS UUID))
+ORDER BY b.created_at DESC
+
+--     3e4d3bc3-1c92-498e-9adc-108ed53a42e5
+

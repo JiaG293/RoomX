@@ -149,23 +149,23 @@ public interface JpaApprovalFormEntityRepository extends JpaRepository<ApprovalF
     @Query(
             value = """
                     SELECT 
-                        a.created_at,
-                        a.updated_at,
+                        a.created_at AS createdAt,
+                        a.updated_at AS updatedAt,
                         a.status,
                         a.approver,
-                        b.booking_request_id,
+                        b.booking_request_id AS bookingRequestId,
                         b.priority,
-                        b.days_of_week,
-                        b.start_time,
-                        b.end_time,
-                        b.end_date,
-                        b.start_date,
-                        b.recurrence_interval,
-                        b.recurrence_type,
+                        b.days_of_week AS daysOfWeek,
+                        b.start_time  AS startTime,
+                        b.end_time AS endTime,
+                        b.end_date AS endDate,
+                        b.start_date AS startDate,
+                        b.recurrence_interval AS recurrenceInterval,
+                        b.recurrence_type  AS recurrenceType,
                         b.capacity,
                         b.requester,
-                        b.branch_id,
-                        b.room_id,
+                        b.branch_id AS branchId,
+                        b.room_id AS roomId,
                         b.title,
                         b.description
                     FROM (
@@ -177,7 +177,6 @@ public interface JpaApprovalFormEntityRepository extends JpaRepository<ApprovalF
                     JOIN booking_request b ON a.booking_request_id = b.booking_request_id
                     WHERE (:listStatus IS NULL OR a.status IN :listStatus)
                         AND (:requester IS NULL OR b.requester = CAST(:requester AS UUID))
-                    ORDER BY b.created_at DESC
                     """,
             countQuery = """
                      SELECT COUNT(*) FROM (

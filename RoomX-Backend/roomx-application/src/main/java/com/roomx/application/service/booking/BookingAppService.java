@@ -576,19 +576,15 @@ public class BookingAppService {
 
         Page<ApprovalForm> approvalFormPage;
 
-        if (!roleEvaluator.hasAnyRoleType("approve")) {
-            if (isAdmin) {
-                approvalFormPage = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
-                        statusList, startInstant, endInstant, null, pageable);
-            } else {
-                approvalFormPage = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
-                        statusList, startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
-            }
-
+        String userId;
+        if (roleEvaluator.hasAnyRoleType("approve") && isAdmin) {
+            userId = null;
         } else {
-            approvalFormPage = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
-                    statusList, startInstant, endInstant, securityUtil.getCurrentUserId(), pageable);
+            userId = securityUtil.getCurrentUserId();
         }
+
+        approvalFormPage = approvalFormEntityService.findAllByStatusAndTimeRangeWithBookingRequest(
+                statusList, startInstant, endInstant, userId, pageable);
 
         return approvalFormPage.map(approvalForm ->
                 bookingRequestAppMapper.toResponseFromApprovalForm(

@@ -129,8 +129,8 @@ public class BookingController {
             @ModelAttribute BookingRequestApprovalRequest request,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "-1") Integer size,
-            @RequestParam(defaultValue = "b.updated_at") String sortBy,
-            @RequestParam(defaultValue = "desc") String direction
+            @RequestParam(defaultValue = "updatedAt") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
     ) {
         var result = bookingAppService.getListPageBookingRequestAdminApproval(request, page, size, sortBy, direction);
         return ResultResponse.<Page<BookingRequestResponse>>builder()
