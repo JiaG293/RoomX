@@ -96,12 +96,16 @@ public class RoomAppService {
             int size,
             String sortBy,
             String direction){
+        if (size == -1) {
+            size = Integer.MAX_VALUE;
+        }
+
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
         RoomFilter roomFilter = RoomFilter.builder()
-                .id(filter.id())
-                .roomCode(filter.roomCode())
+                .keyword(filter.keyword())
+                .searchBy(filter.searchBy())
                 .status(filter.status())
                 .branchId(filter.branchId())
                 .buildingId(filter.buildingId())

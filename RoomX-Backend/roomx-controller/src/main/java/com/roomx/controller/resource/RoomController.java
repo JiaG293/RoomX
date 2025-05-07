@@ -55,7 +55,7 @@ public class RoomController {
             @ModelAttribute RoomFilterRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "room_code") String sortBy,
+            @RequestParam(defaultValue = "capacity") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
         var result = roomAppService.getListRoomPages(filter, page, size, sortBy, direction);

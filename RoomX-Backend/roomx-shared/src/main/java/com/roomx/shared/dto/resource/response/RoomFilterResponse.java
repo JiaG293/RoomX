@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -28,6 +29,8 @@ public class RoomFilterResponse {
     private String roomClassId;
     private String roomClassCode;
     private Integer capacity;
+
+    private BigDecimal totalPrice;
 
     private List<EquipmentPriceDto> equipments;
     private List<ServicePriceDto> services;

@@ -55,12 +55,12 @@ public interface JpaRoomEntityRepository extends JpaRepository<RoomEntity, UUID>
     @Query(
             value = """
     SELECT
-        r.room_id AS id, r.room_code, r.status, r.description,
-        rc.room_class_id, rc.room_class_code, rc.capacity,
-        rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-        pf.place_id AS floor_place_id,
-        pf.parent_id AS building_place_id,
-        pbg.parent_id AS branch_place_id,
+        r.room_id AS id, r.room_code AS roomCode, r.status AS status, r.description AS decription,
+        rc.room_class_id AS roomClassId, rc.room_class_code AS roomClassCode, rc.capacity AS capacity,
+        rp.total_price AS totalPrice, rp.base_price AS basePrice, rp.valid_from AS validFrom, rp.valid_end AS validEnd,
+        pf.place_id AS floorPlaceId,
+        pf.parent_id AS buildingPlaceId,
+        pbg.parent_id AS branchPlaceId,
         
         json_agg(DISTINCT jsonb_build_object(
                 'id', eq.equipment_id,
@@ -86,7 +86,7 @@ public interface JpaRoomEntityRepository extends JpaRepository<RoomEntity, UUID>
         ( SELECT array_agg(url ORDER BY image_order)
             FROM image_url
             WHERE entity_id = r.room_id
-        ) AS image_urls
+        ) AS imageUrls
 
     FROM room r
         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
@@ -159,7 +159,8 @@ public interface JpaRoomEntityRepository extends JpaRepository<RoomEntity, UUID>
         rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
         pf.place_id, pf.parent_id,
         pbg.parent_id
-    ORDER BY r.room_code DESC
+    ORDER BY
+    CASE WHEN :#{#pageable.sort.isEmpty()} THEN NULL ELSE NULL END
     """,
             countQuery = """
     SELECT COUNT(DISTINCT r.room_id)
@@ -206,8 +207,6 @@ public interface JpaRoomEntityRepository extends JpaRepository<RoomEntity, UUID>
             nativeQuery = true
     )
     Page<RoomProjection> findRoomsWithFilters(
-            @Param("id") String id,
-            @Param("roomCode") String roomCode,
             @Param("status") String status,
             @Param("startPrice") BigDecimal startPrice,
             @Param("endPrice") BigDecimal endPrice,

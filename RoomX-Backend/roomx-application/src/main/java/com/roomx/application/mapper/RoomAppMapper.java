@@ -36,5 +36,6 @@ public interface RoomAppMapper {
     RoomDetailResponse toResponseDetail(Room domain);
 
 
+    @Mapping(target = "buildingPlaceId", source = "buildingPlaceId")
     RoomFilterResponse toResponseFilter(RoomProjection roomProjection);
 }

@@ -21,12 +21,13 @@ public interface RoomProjection {
     String getDescription();
     List<String> getImageUrls();
     UUID getFloorPlaceId();
-    String getBuildingId();
-    String getBranchPlaceId();
+    UUID getBuildingPlaceId();
+    UUID getBranchPlaceId();
 
     UUID getRoomClassId();
     String getRoomClassCode();
     Integer getCapacity();
+    BigDecimal getTotalPrice();
 
     @JsonIgnore
     String getServicesJson();

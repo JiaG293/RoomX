@@ -7,9 +7,6 @@ public record RoomFilterRequest(
         String keyword,
         String searchBy,
 
-        String id,
-        String roomCode,
-
         BigDecimal startPrice,
         BigDecimal endPrice,
 

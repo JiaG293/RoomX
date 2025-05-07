@@ -1,3 +1,4 @@
+/*
 package com.roomx.infrastructure.persistence.repository.specification;
 
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
@@ -59,3 +60,4 @@ public class RoomSpecification {
         };
     }
 }
+*/

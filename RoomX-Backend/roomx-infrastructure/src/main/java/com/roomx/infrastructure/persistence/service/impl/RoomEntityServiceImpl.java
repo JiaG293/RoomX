@@ -10,7 +10,6 @@ import com.roomx.infrastructure.persistence.model.base.SearchCriteria;
 import com.roomx.infrastructure.persistence.model.entity.RoomEntity;
 import com.roomx.infrastructure.persistence.model.projection.RoomProjection;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomEntityRepository;
-import com.roomx.infrastructure.persistence.repository.specification.RoomSpecification;
 import com.roomx.infrastructure.persistence.service.RoomEntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,10 +62,10 @@ public class RoomEntityServiceImpl implements RoomEntityService {
                                 .roomClassPriceHistories(roomProjection.getE)
                                 .build())
                         .build());*/
+
+        log.info("filterla: {}", filter);
         return jpaRoomEntityRepository
                 .findRoomsWithFilters(
-                        filter.getId(),
-                        filter.getRoomCode(),
                         filter.getStatus(),
                         filter.getStartPrice(),
                         filter.getEndPrice(),

@@ -22,7 +22,6 @@ import com.roomx.infrastructure.persistence.model.entity.RoomEntity;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaApprovalFormEntityRepository;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomClassPriceHistoryEntityRepository;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomEntityRepository;
-import com.roomx.infrastructure.persistence.repository.specification.RoomSpecification;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.persistence.service.BookingEntityService;
 import com.roomx.infrastructure.persistence.service.RoomEntityService;
@@ -139,8 +138,6 @@ public class TestAppService {
 
         RoomFilter roomFilter = new RoomFilter();
         var result = jpaRoomEntityRepository.findRoomsWithFilters(
-                null,
-                null,
                 null,
                 null,
                 null,
