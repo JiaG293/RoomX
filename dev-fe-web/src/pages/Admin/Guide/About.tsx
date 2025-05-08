@@ -143,10 +143,10 @@ const About: React.FC = () => {
           </p>
           <ul className="mt-4 space-y-2">
             <li className="flex items-center gap-2">
-              <Mail size={16} /> <span>contact@roomx.dev</span>
+              <Mail size={16} /> <span>giau32002@gmail.com</span>
             </li>
             <li className="flex items-center gap-2">
-              <Phone size={16} /> <span>+84 123 456 789</span>
+              <Mail size={16} /> <span>huynhvansang.020102@gmail.com</span>
             </li>
             <li className="flex items-center gap-2">
               <Github size={16} />{" "}

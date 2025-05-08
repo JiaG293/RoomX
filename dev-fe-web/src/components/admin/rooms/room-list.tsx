@@ -14,10 +14,17 @@ import RoomAddModal from "@/components/admin/rooms/room-add";
 export interface RoomType {
   id: string;
   roomCode: string;
-  roomClassId: string;
-  placeId: string;
+  imageUrls: string[] | null;
   description: string;
   status: string;
+  floorPlaceId: string;
+  buildingPlaceId: string | null;
+  branchPlaceId: string;
+  roomClassId: string;
+  roomClassCode: string;
+  capacity: number;
+  equipments: any[];
+  services: any[];
   totalPrice: number;
 }
 
@@ -37,6 +44,7 @@ const RoomList: React.FC = () => {
     try {
       const roomService = new RoomService();
       const data = await roomService.getListRooms(pageIndex, 10);
+      console.log(data);
       setRooms(data.content || []);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -49,10 +57,10 @@ const RoomList: React.FC = () => {
     fetchRooms();
   }, [pageIndex]);
 
-  // Lọc phòng theo từ khóa tìm kiếm
-  const filteredRooms = rooms.filter((room) =>
-    room.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // // Lọc phòng theo từ khóa tìm kiếm
+  // const filteredRooms = rooms.filter((room) =>
+  //   room.description.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   return (
     <div className="flex-1">
@@ -82,7 +90,7 @@ const RoomList: React.FC = () => {
         <div className="flex-1 min-h-[80vh]">
           <DataTable
             columns={columns}
-            data={filteredRooms}
+            data={rooms}
             pageIndex={pageIndex}
             pageSize={10}
             pageCount={totalPages}

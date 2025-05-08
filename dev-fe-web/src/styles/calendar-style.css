@@ -175,3 +175,168 @@
 .fc-timegrid-all-day {
   display: none !important;
 }
+
+
+
+
+/* ---------------------------------------------------- */
+/* === LIGHT MODE === */
+.fc .fc-list {
+  background-color: white !important;
+  color: #1f2937 !important; /* text-gray-800 */
+}
+
+.fc .fc-list-day {
+  background-color: #f3f4f6 !important; /* bg-gray-100 */
+  color: #111827 !important; /* text-gray-900 */
+  font-weight: 600 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.fc .fc-list-day-cushion {
+  padding: 0.75rem 1.25rem !important;
+  font-size: 1rem !important;
+}
+
+.fc .fc-list-event {
+  background-color: #f9fafb !important; /* bg-gray-50 */
+  border-left: 4px solid #3b82f6 !important; /* blue-500 */
+  border-radius: 0.5rem !important; /* rounded-md */
+  margin: 0.25rem 0.75rem !important;
+  transition: background 0.2s ease !important;
+}
+
+.fc .fc-list-event:hover {
+  background-color: #e5e7eb !important; /* bg-gray-200 */
+}
+
+.fc .fc-list-event-title,
+.fc .fc-list-event-time {
+  padding: 0.75rem 1rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+.fc .fc-toolbar {
+  background-color: #f9fafb !important;
+  color: #1f2937 !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 0.5rem !important;
+  margin-bottom: 1rem !important;
+  font-weight: 500 !important;
+}
+
+/* === DARK MODE === */
+.dark .fc .fc-list {
+  background-color: #0f172a !important; /* slate-900 */
+  color: #e2e8f0 !important; /* slate-200 */
+}
+
+.dark .fc .fc-list-day {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important; /* slate-100 */
+  border-bottom: 1px solid #334155 !important; /* slate-700 */
+}
+
+.dark .fc .fc-list-day-cushion {
+  padding: 0.75rem 1.25rem !important;
+  font-size: 1rem !important;
+}
+
+.dark .fc .fc-list-event {
+  background-color: #1e293b !important; /* slate-800 */
+  border-left: 4px solid #3b82f6 !important;
+  border-radius: 0.5rem !important;
+  margin: 0.25rem 0.75rem !important;
+  transition: background 0.2s ease !important;
+}
+
+.dark .fc .fc-list-event:hover {
+  background-color: #334155 !important; /* slate-700 */
+}
+
+.dark .fc .fc-list-event-title,
+.dark .fc .fc-list-event-time {
+  padding: 0.75rem 1rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+.dark .fc .fc-toolbar {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 0.5rem !important;
+  margin-bottom: 1rem !important;
+  font-weight: 500 !important;
+}
+
+/* ===== LIGHT MODE ===== */
+.fc .fc-list-day-cushion {
+  background-color: #f3f4f6 !important; /* bg-gray-100 */
+  color: #1f2937 !important; /* text-gray-800 */
+  font-weight: 600 !important;
+  padding: 0.75rem 1.25rem !important;
+  font-size: 1rem !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.fc .fc-cell-shaded {
+  background-color: #f9fafb !important; /* bg-gray-50 */
+  color: #1f2937 !important; /* text-gray-800 */
+}
+
+/* Hover for day cushion */
+.fc .fc-list-day-cushion:hover {
+  background-color: #e5e7eb !important; /* bg-gray-200 */
+  cursor: default;
+}
+
+/* ===== DARK MODE ===== */
+.dark .fc .fc-list-day-cushion {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important; /* slate-100 */
+  font-weight: 600 !important;
+  padding: 0.75rem 1.25rem !important;
+  font-size: 1rem !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+.dark .fc .fc-cell-shaded {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f8fafc !important;
+}
+
+/* Hover for day cushion in dark mode */
+.dark .fc .fc-list-day-cushion:hover {
+  background-color: #334155 !important; /* slate-700 */
+  cursor: default;
+}
+
+
+/* Hover effect for entire event in LIGHT mode */
+.fc .fc-list-event:hover {
+  background-color: #e5e7eb !important; /* bg-gray-200 */
+}
+
+.fc .fc-list-event:hover .fc-list-event-title,
+.fc .fc-list-event:hover .fc-list-event-time {
+  color: #111827 !important; /* text-gray-900 */
+  font-weight: 600 !important;
+}
+
+/* Hover effect for entire event in DARK mode */
+.dark .fc .fc-list-event:hover {
+  background-color: #334155 !important; /* slate-700 */
+}
+
+.dark .fc .fc-list-event:hover .fc-list-event-title,
+.dark .fc .fc-list-event:hover .fc-list-event-time {
+  background-color: #334155 !important;
+  color: #f8fafc !important; /* slate-50 */
+  font-weight: 600 !important;
+}
+
+.fc-list-event-graphic{
+  display: none !important;
+}

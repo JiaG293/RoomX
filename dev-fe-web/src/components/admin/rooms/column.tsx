@@ -6,6 +6,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { BranchService } from "@/services/admin/branch.service";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -24,6 +25,7 @@ export interface RoomType {
   capacity: number;
   equipments: any[];
   services: any[];
+  totalPrice: number;
 }
 
 export const columns: ColumnDef<RoomType>[] = [
@@ -36,54 +38,38 @@ export const columns: ColumnDef<RoomType>[] = [
     accessorKey: "roomCode",
     header: "Mã phòng",
   },
-  {
-    accessorKey: "roomClassCode",
-    header: "Loại phòng",
-  },
+  // {
+  //   accessorKey: "roomClassCode",
+  //   header: "Loại phòng",
+  // },
   {
     accessorKey: "capacity",
     header: "Sức chứa",
     cell: ({ row }) => `${row.original.capacity} người`,
   },
   {
-    accessorKey: "description",
-    header: "Mô tả",
-    cell: ({ row }) =>
-      row.original.description.length > 50
-        ? row.original.description.substring(0, 50) + "..."
-        : row.original.description,
+    accessorKey: "totalPrice",
+    header: "Giá hiện tại",
+    cell: ({ row }) => `${row.original.totalPrice.toLocaleString()} VNĐ`,
   },
-  {
-    accessorKey: "status",
-    header: "Trạng thái",
-  },
+
+  // {
+  //   accessorKey: "status",
+  //   header: "Trạng thái",
+  // },
   {
     id: "actions",
     header: "Thao tác",
     cell: ({ row }) => {
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0 bg-transparent">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <Link to={`/admin/rooms/${row.original.id}`}>Xem chi tiết</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                alert(`Chỉnh sửa phòng: ${row.original.roomCode}`);
-              }}
-            >
-              Cập nhật
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button
+          asChild
+          className="px-3 py-2 bg-transparent text-[var(--view-button-text)] hover:bg-[var(--view-button-bg-hover)] hover:shadow-lg transform transition-transform duration-200 ease-in-out rounded-[var(--view-button-border-radius)] shadow-[var(--view-button-box-shadow)]"
+        >
+          <Link to={`/admin/rooms/${row.original.id}`}
+          
+          >Xem chi tiết</Link>
+        </Button>
       );
     },
   },
