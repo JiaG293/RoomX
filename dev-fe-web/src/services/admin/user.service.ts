@@ -50,15 +50,13 @@ export class UserService {
     }
 
     try {
-      const response = await axios.get(`${API_BASE_URL}/users`, {
-        params: { userId, size: 1, page: 0 },
+      const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
           "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
         },
       });
-      console.log(response.data.result.content[0]);
       return response.data;
     } catch (error: any) {
       const responseData = error?.response?.data;

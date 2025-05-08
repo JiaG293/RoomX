@@ -35,7 +35,8 @@ export class AuthService {
       // Nếu refresh token hết hạn hoặc không hợp lệ
       if (errorData?.error === "invalid_grant") {
         console.warn("⚠️ Refresh token không hợp lệ hoặc hết hạn. Đăng xuất.");
-        this.logout();
+        console.log("lỗi gì test", error);
+        // this.logout();
       } else {
         console.error("❌ Lỗi không xác định khi refresh token:", error);
         this.logout();

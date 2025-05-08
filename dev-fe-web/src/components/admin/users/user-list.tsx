@@ -62,15 +62,15 @@ console.log(loading)
     fetchUsers();
   }, [pageIndex]);
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.userCode.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterType === "all" || user.userType === filterType;
-    return matchesSearch && matchesFilter;
-  });
+  // const filteredUsers = users.filter((user) => {
+  //   const matchesSearch =
+  //     user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     user.userCode.toLowerCase().includes(searchTerm.toLowerCase());
+  //   const matchesFilter = filterType === "all" || user.userType === filterType;
+  //   return matchesSearch && matchesFilter;
+  // });
 
   return (
     <div className="flex-1">
@@ -91,9 +91,8 @@ console.log(loading)
             <SelectValue placeholder="Filter by role" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tất cả</SelectItem>
-            <SelectItem value="nhan_vien">Nhân Viên</SelectItem>
-            <SelectItem value="apporver">Kiểm duyệt viên</SelectItem>
+            <SelectItem value="active">Hoạt động</SelectItem>
+            <SelectItem value="inactive">Vô hiệu hoá</SelectItem>
           </SelectContent>
         </Select>
         <ToggleGroup
@@ -115,7 +114,7 @@ console.log(loading)
         <div className="flex-1 min-h-[80vh] ">
           <DataTable
             columns={columns}
-            data={filteredUsers}
+            data={users}
             pageIndex={pageIndex}
             pageSize={10}
             pageCount={totalPages}
@@ -128,7 +127,7 @@ console.log(loading)
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-          {filteredUsers.map((user) => (
+          {users.map((user) => (
             <UserItem key={user.userId} user={user} />
           ))}
         </div>
