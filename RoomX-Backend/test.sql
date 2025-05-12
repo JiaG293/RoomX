@@ -262,45 +262,39 @@ WHERE unaccent(CONCAT(b.name, ' ',
 
 
 
-EXPLAIN ANALYZE select count(*) from equipment
+EXPLAIN ANALYZE
+select count(*)
+from equipment
 
 
-select
-    afe1_0.approval_form_id,
-    afe1_0.approver,
-    afe1_0.booking_request_id,
-    afe1_0.created_at,
-    afe1_0.note,
-    afe1_0.status,
-    afe1_0.updated_at
-from
-    approval_form afe1_0
-        join
-    booking_request br1_0
-    on br1_0.booking_request_id=afe1_0.booking_request_id
-where
-    br1_0.booking_request_id='5870c428-78cf-456e-a412-37e92aea48d3'
-  and afe1_0.status='PENDING'
-order by
-    afe1_0.updated_at desc
+select afe1_0.approval_form_id,
+       afe1_0.approver,
+       afe1_0.booking_request_id,
+       afe1_0.created_at,
+       afe1_0.note,
+       afe1_0.status,
+       afe1_0.updated_at
+from approval_form afe1_0
+         join
+     booking_request br1_0
+     on br1_0.booking_request_id = afe1_0.booking_request_id
+where br1_0.booking_request_id = '5870c428-78cf-456e-a412-37e92aea48d3'
+  and afe1_0.status = 'PENDING'
+order by afe1_0.updated_at desc
 
-select
-    afe1_0.approval_form_id,
-    afe1_0.approver,
-    afe1_0.booking_request_id,
-    afe1_0.created_at,
-    afe1_0.note,
-    afe1_0.status,
-    afe1_0.updated_at
-from
-    approval_form afe1_0
-        join
-    booking_request br1_0
-    on br1_0.booking_request_id=afe1_0.booking_request_id
-where
-    br1_0.booking_request_id='a2a7bde0-ff45-4939-9b34-350d3c739a99'
-order by
-    afe1_0.updated_at desc
+select afe1_0.approval_form_id,
+       afe1_0.approver,
+       afe1_0.booking_request_id,
+       afe1_0.created_at,
+       afe1_0.note,
+       afe1_0.status,
+       afe1_0.updated_at
+from approval_form afe1_0
+         join
+     booking_request br1_0
+     on br1_0.booking_request_id = afe1_0.booking_request_id
+where br1_0.booking_request_id = 'a2a7bde0-ff45-4939-9b34-350d3c739a99'
+order by afe1_0.updated_at desc
 LIMIT 1
 
 SELECT br.booking_request_id,
@@ -1024,8 +1018,8 @@ WHERE (:id IS NULL OR r.room_id = CAST(:id AS UUID))
   AND (:endPrice IS NULL OR rp.total_price <= :endPrice)
   AND (
     :searchBy IS NULL OR :keyword IS NULL OR
-    ( :searchBy = 'roomCode' AND r.room_code ILIKE CONCAT('%', :keyword, '%') ) OR
-    ( :searchBy = 'status' AND r.status ILIKE CONCAT('%', :keyword, '%') )
+    (:searchBy = 'roomCode' AND r.room_code ILIKE CONCAT('%', :keyword, '%')) OR
+    (:searchBy = 'status' AND r.status ILIKE CONCAT('%', :keyword, '%'))
     )
 
 SELECT r.*, rc.*, rp.*
@@ -1046,43 +1040,46 @@ WHERE (:id IS NULL OR r.room_id = CAST(:id AS UUID))
   AND (
     :branchId IS NULL AND :buildingId IS NULL AND :floorId IS NULL OR
         -- Lọc theo chi nhánh
-    (:branchId IS NOT NULL AND r.place_id IN (
-        SELECT place_id FROM place WHERE place_type = 'BRANCH' AND place_id = CAST(:branchId AS UUID)
-    )) OR
+    (:branchId IS NOT NULL AND
+     r.place_id IN (SELECT place_id FROM place WHERE place_type = 'BRANCH' AND place_id = CAST(:branchId AS UUID))) OR
         -- Lọc theo tòa nhà thuộc chi nhánh
-    (:buildingId IS NOT NULL AND r.place_id IN (
-        SELECT place_id FROM place WHERE place_type = 'BUILDING' AND parent_id = CAST(:branchId AS UUID)
-    )) OR
+    (:buildingId IS NOT NULL AND r.place_id IN (SELECT place_id
+                                                FROM place
+                                                WHERE place_type = 'BUILDING'
+                                                  AND parent_id = CAST(:branchId AS UUID))) OR
         -- Lọc theo tầng thuộc tòa nhà của chi nhánh
-    (:floorId IS NOT NULL AND r.place_id IN (
-        SELECT place_id FROM place WHERE place_type = 'FLOOR' AND parent_id IN (
-            SELECT place_id
-            FROM place
-            WHERE place_type = 'BUILDING' AND parent_id = CAST(:branchId AS UUID)
-        )
-    ))
+    (:floorId IS NOT NULL AND r.place_id IN (SELECT place_id
+                                             FROM place
+                                             WHERE place_type = 'FLOOR'
+                                               AND parent_id IN (SELECT place_id
+                                                                 FROM place
+                                                                 WHERE place_type = 'BUILDING'
+                                                                   AND parent_id = CAST(:branchId AS UUID))))
     )
   AND (:capacity IS NULL OR rc.capacity >= :capacity)
   AND (:startPrice IS NULL OR rp.total_price >= :startPrice)
   AND (:endPrice IS NULL OR rp.total_price <= :endPrice)
   AND (
     :searchBy IS NULL OR :keyword IS NULL OR
-    ( :searchBy = 'roomCode' AND r.room_code ILIKE '%:keyword%' ) OR
-    ( :searchBy = 'status' AND r.status ILIKE '%:keyword%' )
+    (:searchBy = 'roomCode' AND r.room_code ILIKE '%:keyword%') OR
+    (:searchBy = 'status' AND r.status ILIKE '%:keyword%')
     )
 
 
 
-
-
-
-
-
-SELECT r.room_id, r.room_code, r.status, r.description,
-       rc.room_class_id, rc.room_class_code, rc.capacity,
-       rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-       pf.place_id AS floor_place_id,
-       pf.parent_id AS building_place_id,
+SELECT r.room_id,
+       r.room_code,
+       r.status,
+       r.description,
+       rc.room_class_id,
+       rc.room_class_code,
+       rc.capacity,
+       rp.total_price,
+       rp.base_price,
+       rp.valid_from,
+       rp.valid_end,
+       pf.place_id   AS floor_place_id,
+       pf.parent_id  AS building_place_id,
        pbg.parent_id AS branch_place_id
 FROM room r
 -- JOIN với bảng place cho loại FLOOR (pf)
@@ -1099,32 +1096,39 @@ FROM room r
     ORDER BY rp.valid_from DESC
     LIMIT 1
     ) rp ON TRUE
-WHERE
-    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+WHERE (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
   AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
   AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
   AND (:capacity IS NULL OR rc.capacity >= :capacity)
   AND (
     :searchBy IS NULL OR :keyword IS NULL OR
-    ( :searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%' ) OR
-    ( :searchBy = 'status' AND r.status ILIKE '%' || :keyword || '%' ) OR
-    ( :searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%' ) OR
-    ( :searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%' ) OR
-    ( :searchBy = 'id' AND r.room_id = :keyword )
+    (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
+    (:searchBy = 'status' AND r.status ILIKE '%' || :keyword || '%') OR
+    (:searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%') OR
+    (:searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%') OR
+    (:searchBy = 'id' AND r.room_id = :keyword)
     )
   AND (
     :searchBy IS NULL OR :keyword IS NULL OR
-    ( :searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%' ) OR
-    ( :searchBy = 'status' AND r.status ILIKE '%' || :keyword || '%' )
+    (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
+    (:searchBy = 'status' AND r.status ILIKE '%' || :keyword || '%')
     )
 
 
 
-SELECT r.room_id, r.room_code, r.status, r.description,
-       rc.room_class_id, rc.room_class_code, rc.capacity,
-       rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-       pf.place_id AS floor_place_id,
-       pf.parent_id AS building_place_id,
+SELECT r.room_id,
+       r.room_code,
+       r.status,
+       r.description,
+       rc.room_class_id,
+       rc.room_class_code,
+       rc.capacity,
+       rp.total_price,
+       rp.base_price,
+       rp.valid_from,
+       rp.valid_end,
+       pf.place_id   AS floor_place_id,
+       pf.parent_id  AS building_place_id,
        pbg.parent_id AS branch_place_id
 FROM room r
 -- JOIN với bảng place cho loại FLOOR (pf)
@@ -1141,8 +1145,7 @@ FROM room r
     ORDER BY rp.valid_from DESC
     LIMIT 1
     ) rp ON TRUE
-WHERE
-    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+WHERE (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
   AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
   AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
   AND (:capacity IS NULL OR rc.capacity >= :capacity)
@@ -1152,21 +1155,28 @@ WHERE
     )
   AND (
     :searchBy IS NULL OR :keyword IS NULL OR
-    ( :searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%' ) OR
-    ( :searchBy = 'status' AND r.status ILIKE '%' || :keyword || '%' ) OR
-    ( :searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%' ) OR
-    ( :searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%' ) OR
-    ( :searchBy = 'id' AND r.room_id = :keyword )
+    (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
+    (:searchBy = 'status' AND r.status ILIKE '%' || :keyword || '%') OR
+    (:searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%') OR
+    (:searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%') OR
+    (:searchBy = 'id' AND r.room_id = :keyword)
     )
 
 
 
-
-SELECT r.room_id, r.room_code, r.status, r.description,
-       rc.room_class_id, rc.room_class_code, rc.capacity,
-       rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-       pf.place_id AS floor_place_id,
-       pf.parent_id AS building_place_id,
+SELECT r.room_id,
+       r.room_code,
+       r.status,
+       r.description,
+       rc.room_class_id,
+       rc.room_class_code,
+       rc.capacity,
+       rp.total_price,
+       rp.base_price,
+       rp.valid_from,
+       rp.valid_end,
+       pf.place_id   AS floor_place_id,
+       pf.parent_id  AS building_place_id,
        pbg.parent_id AS branch_place_id
 FROM room r
          LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
@@ -1181,8 +1191,7 @@ FROM room r
     ORDER BY rp.valid_from DESC
     LIMIT 1
     ) rp ON TRUE
-WHERE
-    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+WHERE (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
   AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
   AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
   AND (:capacity IS NULL OR rc.capacity >= :capacity)
@@ -1209,20 +1218,19 @@ WHERE
 
 
 
-
-
-
-
-
-
-
-
-
-SELECT r.room_id, r.room_code, r.status, r.description,
-       rc.room_class_id, rc.room_class_code, rc.capacity,
-       rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-       pf.place_id AS floor_place_id,
-       pf.parent_id AS building_place_id,
+SELECT r.room_id,
+       r.room_code,
+       r.status,
+       r.description,
+       rc.room_class_id,
+       rc.room_class_code,
+       rc.capacity,
+       rp.total_price,
+       rp.base_price,
+       rp.valid_from,
+       rp.valid_end,
+       pf.place_id   AS floor_place_id,
+       pf.parent_id  AS building_place_id,
        pbg.parent_id AS branch_place_id
 FROM room r
          LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
@@ -1237,8 +1245,7 @@ FROM room r
     ORDER BY rp.valid_from DESC
     LIMIT 1
     ) rp ON TRUE
-WHERE
-    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+WHERE (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
   AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
   AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
   AND (:capacity IS NULL OR rc.capacity >= :capacity)
@@ -1263,32 +1270,39 @@ WHERE
     )
 
 
-SELECT
-    r.room_id, r.room_code, r.status, r.description,
-    rc.room_class_id, rc.room_class_code, rc.capacity,
-    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-    pf.place_id AS floor_place_id,
-    pf.parent_id AS building_place_id,
-    pbg.parent_id AS branch_place_id,
+SELECT r.room_id,
+       r.room_code,
+       r.status,
+       r.description,
+       rc.room_class_id,
+       rc.room_class_code,
+       rc.capacity,
+       rp.total_price,
+       rp.base_price,
+       rp.valid_from,
+       rp.valid_end,
+       pf.place_id                                                     AS floor_place_id,
+       pf.parent_id                                                    AS building_place_id,
+       pbg.parent_id                                                   AS branch_place_id,
 
-    json_agg(DISTINCT jsonb_build_object(
-            'equipmentId', eq.equipment_id,
-            'equipmentName', eq.name,
-            'equipmentCode', eq.equipment_code,
-            'description', eq.description,
-            'brand', eq.brand,
-            'quantity', erc.quantity,
-            'price', ep.current_price
-                      )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
+       json_agg(DISTINCT jsonb_build_object(
+               'equipmentId', eq.equipment_id,
+               'equipmentName', eq.name,
+               'equipmentCode', eq.equipment_code,
+               'description', eq.description,
+               'brand', eq.brand,
+               'quantity', erc.quantity,
+               'price', ep.current_price
+                         )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
 
-    json_agg(DISTINCT jsonb_build_object(
-            'serviceId', sv.service_id,
-            'serviceCode', sv.service_code,
-            'note', sv.note,
-            'serviceName', sv.name,
-            'quantity', src.quantity,
-            'price', sp.current_price
-                      )) FILTER (WHERE sv.service_id IS NOT NULL) AS services
+       json_agg(DISTINCT jsonb_build_object(
+               'serviceId', sv.service_id,
+               'serviceCode', sv.service_code,
+               'note', sv.note,
+               'serviceName', sv.name,
+               'quantity', src.quantity,
+               'price', sp.current_price
+                         )) FILTER (WHERE sv.service_id IS NOT NULL)   AS services
 
 FROM room r
          LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
@@ -1336,8 +1350,7 @@ FROM room r
     LIMIT 1
     ) sp ON TRUE
 
-WHERE
-    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+WHERE (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
   AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
   AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
   AND (:capacity IS NULL OR rc.capacity >= :capacity)
@@ -1361,49 +1374,47 @@ WHERE
         )
     )
 
-GROUP BY
-    r.room_id, r.room_code, r.status, r.description,
-    rc.room_class_id, rc.room_class_code, rc.capacity,
-    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-    pf.place_id, pf.parent_id,
-    pbg.parent_id
+GROUP BY r.room_id, r.room_code, r.status, r.description,
+         rc.room_class_id, rc.room_class_code, rc.capacity,
+         rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+         pf.place_id, pf.parent_id,
+         pbg.parent_id
 
 
 
+SELECT r.room_id,
+       r.room_code,
+       r.status,
+       r.description,
+       rc.room_class_id,
+       rc.room_class_code,
+       rc.capacity,
+       rp.total_price,
+       rp.base_price,
+       rp.valid_from,
+       rp.valid_end,
+       pf.place_id                                                     AS floor_place_id,
+       pf.parent_id                                                    AS building_place_id,
+       pbg.parent_id                                                   AS branch_place_id,
 
+       json_agg(DISTINCT jsonb_build_object(
+               'equipmentId', eq.equipment_id,
+               'equipmentName', eq.name,
+               'equipmentCode', eq.equipment_code,
+               'description', eq.description,
+               'brand', eq.brand,
+               'quantity', erc.quantity,
+               'price', ep.current_price
+                         )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
 
-
-
-
-
-
-
-SELECT
-    r.room_id, r.room_code, r.status, r.description,
-    rc.room_class_id, rc.room_class_code, rc.capacity,
-    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-    pf.place_id AS floor_place_id,
-    pf.parent_id AS building_place_id,
-    pbg.parent_id AS branch_place_id,
-
-    json_agg(DISTINCT jsonb_build_object(
-            'equipmentId', eq.equipment_id,
-            'equipmentName', eq.name,
-            'equipmentCode', eq.equipment_code,
-            'description', eq.description,
-            'brand', eq.brand,
-            'quantity', erc.quantity,
-            'price', ep.current_price
-                      )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
-
-    json_agg(DISTINCT jsonb_build_object(
-            'serviceId', sv.service_id,
-            'serviceCode', sv.service_code,
-            'note', sv.note,
-            'serviceName', sv.name,
-            'quantity', src.quantity,
-            'price', sp.current_price
-                      )) FILTER (WHERE sv.service_id IS NOT NULL) AS services
+       json_agg(DISTINCT jsonb_build_object(
+               'serviceId', sv.service_id,
+               'serviceCode', sv.service_code,
+               'note', sv.note,
+               'serviceName', sv.name,
+               'quantity', src.quantity,
+               'price', sp.current_price
+                         )) FILTER (WHERE sv.service_id IS NOT NULL)   AS services
 
 FROM room r
          LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
@@ -1446,8 +1457,7 @@ FROM room r
     LIMIT 1
     ) sp ON TRUE
 
-WHERE
-    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+WHERE (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
   AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
   AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
   AND (:capacity IS NULL OR rc.capacity >= :capacity)
@@ -1470,154 +1480,51 @@ WHERE
         (:searchBy = 'id' AND r.room_id = CAST(:keyword AS UUID))
         )
     )
-GROUP BY
-    r.room_id, r.room_code, r.status, r.description,
-    rc.room_class_id, rc.room_class_code, rc.capacity,
-    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-    pf.place_id, pf.parent_id,
-    pbg.parent_id
+GROUP BY r.room_id, r.room_code, r.status, r.description,
+         rc.room_class_id, rc.room_class_code, rc.capacity,
+         rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+         pf.place_id, pf.parent_id,
+         pbg.parent_id
 
 
 
-SELECT
-    r.room_id, r.room_code, r.status, r.description,
-    rc.room_class_id, rc.room_class_code, rc.capacity,
-    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-    pf.place_id AS floor_place_id,
-    pf.parent_id AS building_place_id,
-    pbg.parent_id AS branch_place_id,
+SELECT r.room_id,
+       r.room_code,
+       r.status,
+       r.description,
+       rc.room_class_id,
+       rc.room_class_code,
+       rc.capacity,
+       rp.total_price,
+       rp.base_price,
+       rp.valid_from,
+       rp.valid_end,
+       pf.place_id                                                     AS floor_place_id,
+       pf.parent_id                                                    AS building_place_id,
+       pbg.parent_id                                                   AS branch_place_id,
 
-    json_agg(DISTINCT jsonb_build_object(
-            'equipmentId', eq.equipment_id,
-            'equipmentName', eq.name,
-            'equipmentCode', eq.equipment_code,
-            'description', eq.description,
-            'brand', eq.brand,
-            'quantity', erc.quantity,
-            'price', ep.current_price
-                      )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
+       json_agg(DISTINCT jsonb_build_object(
+               'equipmentId', eq.equipment_id,
+               'equipmentName', eq.name,
+               'equipmentCode', eq.equipment_code,
+               'description', eq.description,
+               'brand', eq.brand,
+               'quantity', erc.quantity,
+               'price', ep.current_price
+                         )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
 
-    json_agg(DISTINCT jsonb_build_object(
-            'serviceId', sv.service_id,
-            'serviceCode', sv.service_code,
-            'note', sv.note,
-            'serviceName', sv.name,
-            'quantity', src.quantity,
-            'price', sp.current_price
-                      )) FILTER (WHERE sv.service_id IS NOT NULL) AS services,
-    (
-        SELECT json_agg(url ORDER BY image_order)
-        FROM
-            image_url
-        WHERE entity_id = r.room_id
-    ) AS
-        image_urls
-
-FROM room r
-         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
-         LEFT JOIN place pbg ON pf.parent_id = pbg.place_id AND pbg.place_type = 'BUILDING'
-         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
-
-         LEFT JOIN LATERAL (
-    SELECT *
-    FROM room_class_price_history rp
-    WHERE rp.room_class_id = rc.room_class_id
-      AND rp.valid_from <= NOW()
-      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
-    ORDER BY rp.valid_from DESC
-    LIMIT 1
-    ) rp ON TRUE
-
-         LEFT JOIN equipment_room_class erc ON erc.room_class_id = rc.room_class_id
-         LEFT JOIN equipment eq ON eq.equipment_id = erc.equipment_id
-
-         LEFT JOIN LATERAL (
-    SELECT eph.unit_price current_price
-    FROM equipment_price_history eph
-    WHERE eph.equipment_id = eq.equipment_id
-      AND eph.valid_from <= NOW()
-      AND (eph.valid_end IS NULL OR eph.valid_end > NOW())
-    ORDER BY eph.valid_from DESC
-    LIMIT 1
-    ) ep ON TRUE
-
-         LEFT JOIN service_room_class src ON src.room_class_id = rc.room_class_id
-         LEFT JOIN service sv ON sv.service_id = src.service_id
-
-         LEFT JOIN LATERAL (
-    SELECT sph.unit_price AS current_price
-    FROM service_price_history sph
-    WHERE sph.service_id = sv.service_id
-      AND sph.valid_from <= NOW()
-      AND (sph.valid_end IS NULL OR sph.valid_end > NOW())
-    ORDER BY sph.valid_from DESC
-    LIMIT 1
-    ) sp ON TRUE
-
-WHERE
-    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
-  AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
-  AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
-  AND (:capacity IS NULL OR rc.capacity >= :capacity)
-  AND (
-    (:startPrice IS NULL AND :endPrice IS NULL)
-        OR (rp.total_price BETWEEN COALESCE(:startPrice, 0) AND COALESCE(:endPrice, 1e12))
-    )
-  AND (:status IS NULL OR r.status = :status)
-  AND (
-    :keyword IS NULL OR (
-        (:searchBy IS NULL AND (
-            r.room_code ILIKE '%' || :keyword || '%' OR
-            r.description ILIKE '%' || :keyword || '%' OR
-            rc.room_class_code ILIKE '%' || :keyword || '%' OR
-            r.room_id = CAST(:keyword AS UUID)
-            )) OR
-        (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
-        (:searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%') OR
-        (:searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%') OR
-        (:searchBy = 'id' AND r.room_id = CAST(:keyword AS UUID))
-        )
-    )
-GROUP BY
-    r.room_id, r.room_code, r.status, r.description,
-    rc.room_class_id, rc.room_class_code, rc.capacity,
-    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-    pf.place_id, pf.parent_id,
-    pbg.parent_id
-ORDER BY r.room_code DESC
-
-
-SELECT
-    r.room_id, r.room_code, r.status, r.description,
-    rc.room_class_id, rc.room_class_code, rc.capacity,
-    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-    pf.place_id AS floor_place_id,
-    pf.parent_id AS building_place_id,
-    pbg.parent_id AS branch_place_id,
-
-    json_agg(DISTINCT jsonb_build_object(
-            'id', eq.equipment_id,
-            'name', eq.name,
-            'equipmentCode', eq.equipment_code,
-            'description', eq.description,
-            'brand', eq.brand,
-            'quantity', erc.quantity,
-            'price', ep.current_price
-                      )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
-
-    json_agg(DISTINCT jsonb_build_object(
-            'id', sv.service_id,
-            'serviceCode', sv.service_code,
-            'note', sv.note,
-            'description', sv.description,
-            'name', sv.name,
-            'quantity', src.quantity,
-            'price', sp.current_price
-                      )) FILTER (WHERE sv.service_id IS NOT NULL) AS services,
-    (   SELECT array_agg(url ORDER BY image_order)
+       json_agg(DISTINCT jsonb_build_object(
+               'serviceId', sv.service_id,
+               'serviceCode', sv.service_code,
+               'note', sv.note,
+               'serviceName', sv.name,
+               'quantity', src.quantity,
+               'price', sp.current_price
+                         )) FILTER (WHERE sv.service_id IS NOT NULL)   AS services,
+       (SELECT json_agg(url ORDER BY image_order)
         FROM image_url
-        WHERE entity_id = r.room_id
-    ) AS image_urls
+        WHERE entity_id = r.room_id)                                   AS
+                                                                          image_urls
 
 FROM room r
          LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
@@ -1660,8 +1567,7 @@ FROM room r
     LIMIT 1
     ) sp ON TRUE
 
-WHERE
-    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+WHERE (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
   AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
   AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
   AND (:capacity IS NULL OR rc.capacity >= :capacity)
@@ -1684,48 +1590,156 @@ WHERE
         (:searchBy = 'id' AND r.room_id = CAST(:keyword AS UUID))
         )
     )
-GROUP BY
-    r.room_id, r.room_code, r.status, r.description,
-    rc.room_class_id, rc.room_class_code, rc.capacity,
-    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-    pf.place_id, pf.parent_id,
-    pbg.parent_id
+GROUP BY r.room_id, r.room_code, r.status, r.description,
+         rc.room_class_id, rc.room_class_code, rc.capacity,
+         rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+         pf.place_id, pf.parent_id,
+         pbg.parent_id
 ORDER BY r.room_code DESC
 
 
-SELECT
-    b.booking_id AS id,
-    b.title,
-    b.description,
-    b.booking_code,
+SELECT r.room_id,
+       r.room_code,
+       r.status,
+       r.description,
+       rc.room_class_id,
+       rc.room_class_code,
+       rc.capacity,
+       rp.total_price,
+       rp.base_price,
+       rp.valid_from,
+       rp.valid_end,
+       pf.place_id                                                     AS floor_place_id,
+       pf.parent_id                                                    AS building_place_id,
+       pbg.parent_id                                                   AS branch_place_id,
 
-    r.room_id,
-    r.room_code,
-    concat(bl.code, '.', p.code, r.room_code) AS room_name,
+       json_agg(DISTINCT jsonb_build_object(
+               'id', eq.equipment_id,
+               'name', eq.name,
+               'equipmentCode', eq.equipment_code,
+               'description', eq.description,
+               'brand', eq.brand,
+               'quantity', erc.quantity,
+               'price', ep.current_price
+                         )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipments,
 
-    br.place_id AS branch_id,
-    br.code AS branch_code,
-    br.name AS branch_name,
+       json_agg(DISTINCT jsonb_build_object(
+               'id', sv.service_id,
+               'serviceCode', sv.service_code,
+               'note', sv.note,
+               'description', sv.description,
+               'name', sv.name,
+               'quantity', src.quantity,
+               'price', sp.current_price
+                         )) FILTER (WHERE sv.service_id IS NOT NULL)   AS services,
+       (SELECT array_agg(url ORDER BY image_order)
+        FROM image_url
+        WHERE entity_id = r.room_id)                                   AS image_urls
 
-    bl.place_id AS building_id,
-    bl.code AS building_code,
-    bl.name AS building_name,
+FROM room r
+         LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
+         LEFT JOIN place pbg ON pf.parent_id = pbg.place_id AND pbg.place_type = 'BUILDING'
+         LEFT JOIN room_class rc ON rc.room_class_id = r.room_class_id
 
-    p.place_id AS floor_id,
-    p.code AS floor_code,
-    p.name AS floor_name,
+         LEFT JOIN LATERAL (
+    SELECT *
+    FROM room_class_price_history rp
+    WHERE rp.room_class_id = rc.room_class_id
+      AND rp.valid_from <= NOW()
+      AND (rp.valid_end IS NULL OR rp.valid_end > NOW())
+    ORDER BY rp.valid_from DESC
+    LIMIT 1
+    ) rp ON TRUE
 
-    pr.room_id AS room_previous_id,
+         LEFT JOIN equipment_room_class erc ON erc.room_class_id = rc.room_class_id
+         LEFT JOIN equipment eq ON eq.equipment_id = erc.equipment_id
 
-    b.meeting_start,
-    b.meeting_end,
-    b.meeting_date,
-    b.count,
-    b.status,
-    b.created_at,
-    b.updated_at,
+         LEFT JOIN LATERAL (
+    SELECT eph.unit_price current_price
+    FROM equipment_price_history eph
+    WHERE eph.equipment_id = eq.equipment_id
+      AND eph.valid_from <= NOW()
+      AND (eph.valid_end IS NULL OR eph.valid_end > NOW())
+    ORDER BY eph.valid_from DESC
+    LIMIT 1
+    ) ep ON TRUE
 
-    bp.user_id
+         LEFT JOIN service_room_class src ON src.room_class_id = rc.room_class_id
+         LEFT JOIN service sv ON sv.service_id = src.service_id
+
+         LEFT JOIN LATERAL (
+    SELECT sph.unit_price AS current_price
+    FROM service_price_history sph
+    WHERE sph.service_id = sv.service_id
+      AND sph.valid_from <= NOW()
+      AND (sph.valid_end IS NULL OR sph.valid_end > NOW())
+    ORDER BY sph.valid_from DESC
+    LIMIT 1
+    ) sp ON TRUE
+
+WHERE (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+  AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
+  AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
+  AND (:capacity IS NULL OR rc.capacity >= :capacity)
+  AND (
+    (:startPrice IS NULL AND :endPrice IS NULL)
+        OR (rp.total_price BETWEEN COALESCE(:startPrice, 0) AND COALESCE(:endPrice, 1e12))
+    )
+  AND (:status IS NULL OR r.status = :status)
+  AND (
+    :keyword IS NULL OR (
+        (:searchBy IS NULL AND (
+            r.room_code ILIKE '%' || :keyword || '%' OR
+            r.description ILIKE '%' || :keyword || '%' OR
+            rc.room_class_code ILIKE '%' || :keyword || '%' OR
+            r.room_id = CAST(:keyword AS UUID)
+            )) OR
+        (:searchBy = 'roomCode' AND r.room_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'description' AND r.description ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'roomClassCode' AND rc.room_class_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'id' AND r.room_id = CAST(:keyword AS UUID))
+        )
+    )
+GROUP BY r.room_id, r.room_code, r.status, r.description,
+         rc.room_class_id, rc.room_class_code, rc.capacity,
+         rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+         pf.place_id, pf.parent_id,
+         pbg.parent_id
+ORDER BY r.room_code DESC
+
+
+SELECT b.booking_id                              AS id,
+       b.title,
+       b.description,
+       b.booking_code,
+
+       r.room_id,
+       r.room_code,
+       concat(bl.code, '.', p.code, r.room_code) AS room_name,
+
+       br.place_id                               AS branch_id,
+       br.code                                   AS branch_code,
+       br.name                                   AS branch_name,
+
+       bl.place_id                               AS building_id,
+       bl.code                                   AS building_code,
+       bl.name                                   AS building_name,
+
+       p.place_id                                AS floor_id,
+       p.code                                    AS floor_code,
+       p.name                                    AS floor_name,
+
+       pr.room_id                                AS room_previous_id,
+
+       b.meeting_start,
+       b.meeting_end,
+       b.meeting_date,
+       b.count,
+       b.status,
+       b.created_at,
+       b.updated_at,
+
+       bp.user_id
 FROM booking b
          JOIN
      booking_participant bp ON b.booking_id = bp.booking_id
@@ -1750,33 +1764,29 @@ WHERE b.meeting_date BETWEEN '2025-05-01' AND '2025-05-31'
 -- ea4e9c4c-a317-4064-8a5b-da2b339e4580
 
 
-
-SELECT
-    a.created_at,
-    a.updated_at,
-    a.status,
-    a.approver,
-    b.booking_request_id,
-    b.priority,
-    b.days_of_week,
-    b.start_time,
-    b.end_time,
-    b.end_date,
-    b.start_date,
-    b.recurrence_interval,
-    b.recurrence_type,
-    b.capacity,
-    b.requester,
-    b.branch_id,
-    b.room_id,
-    b.title,
-    b.description
-FROM (
-         SELECT DISTINCT ON (booking_request_id) *
-         FROM approval_form
-         WHERE updated_at BETWEEN :startDate AND :endDate
-         ORDER BY booking_request_id, updated_at DESC
-     ) a
+SELECT a.created_at,
+       a.updated_at,
+       a.status,
+       a.approver,
+       b.booking_request_id,
+       b.priority,
+       b.days_of_week,
+       b.start_time,
+       b.end_time,
+       b.end_date,
+       b.start_date,
+       b.recurrence_interval,
+       b.recurrence_type,
+       b.capacity,
+       b.requester,
+       b.branch_id,
+       b.room_id,
+       b.title,
+       b.description
+FROM (SELECT DISTINCT ON (booking_request_id) *
+      FROM approval_form
+      WHERE updated_at BETWEEN :startDate AND :endDate
+      ORDER BY booking_request_id, updated_at DESC) a
          JOIN booking_request b ON a.booking_request_id = b.booking_request_id
 WHERE (:listStatus IS NULL OR a.status IN :listStatus)
   AND (:requester IS NULL OR b.requester = CAST(:requester AS UUID))
@@ -1785,41 +1795,45 @@ ORDER BY b.created_at DESC
 --     3e4d3bc3-1c92-498e-9adc-108ed53a42e5
 
 
+SELECT r.room_id                                                       AS id,
+       r.room_code                                                     AS roomCode,
+       r.status,
+       r.description,
+       rc.room_class_id                                                AS roomClassId,
+       rc.room_class_code                                              AS roomClassCode,
+       rc.capacity,
+       rp.total_price                                                  AS totalPrice,
+       rp.base_price                                                   AS basePrice,
+       rp.valid_from                                                   AS validFrom,
+       rp.valid_end                                                    AS validEnd,
+       pf.place_id                                                     AS floorPlaceId,
+       pf.parent_id                                                    AS building_place_id,
+       pbg.parent_id                                                   AS branchPlaceId,
+
+       json_agg(DISTINCT jsonb_build_object(
+               'id', eq.equipment_id,
+               'equipmentCode', eq.equipment_code,
+               'name', eq.name,
+               'description', eq.description,
+               'brand', eq.brand,
+               'quantity', erc.quantity,
+               'price', ep.current_price
+                         )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipmentsJson,
+
+       json_agg(DISTINCT jsonb_build_object(
+               'id', sv.service_id,
+               'serviceCode', sv.service_code,
+               'name', sv.name,
+               'note', sv.note,
+               'description', sv.description,
+               'quantity', src.quantity,
+               'price', sp.current_price
+                         )) FILTER (WHERE sv.service_id IS NOT NULL)   AS servicesJson,
 
 
-SELECT
-    r.room_id AS id, r.room_code AS roomCode, r.status, r.description,
-    rc.room_class_id AS roomClassId, rc.room_class_code AS roomClassCode, rc.capacity,
-    rp.total_price AS totalPrice, rp.base_price AS basePrice, rp.valid_from AS validFrom, rp.valid_end AS validEnd,
-    pf.place_id AS floorPlaceId,
-    pf.parent_id AS building_place_id,
-    pbg.parent_id AS branchPlaceId,
-
-    json_agg(DISTINCT jsonb_build_object(
-            'id', eq.equipment_id,
-            'equipmentCode', eq.equipment_code,
-            'name', eq.name,
-            'description', eq.description,
-            'brand', eq.brand,
-            'quantity', erc.quantity,
-            'price', ep.current_price
-                      )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipmentsJson,
-
-    json_agg(DISTINCT jsonb_build_object(
-            'id', sv.service_id,
-            'serviceCode', sv.service_code,
-            'name', sv.name,
-            'note', sv.note,
-            'description', sv.description,
-            'quantity', src.quantity,
-            'price', sp.current_price
-                      )) FILTER (WHERE sv.service_id IS NOT NULL) AS servicesJson,
-
-
-    ( SELECT array_agg(url ORDER BY image_order)
-      FROM image_url
-      WHERE entity_id = r.room_id
-    ) AS image_urls
+       (SELECT array_agg(url ORDER BY image_order)
+        FROM image_url
+        WHERE entity_id = r.room_id)                                   AS image_urls
 
 FROM room r
          LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
@@ -1862,8 +1876,7 @@ FROM room r
     LIMIT 1
     ) sp ON TRUE
 
-WHERE
-    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+WHERE (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
   AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
   AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
   AND (:capacity IS NULL OR rc.capacity >= :capacity)
@@ -1886,48 +1899,53 @@ WHERE
         (:searchBy = 'id' AND r.room_id = CAST(:keyword AS UUID))
         )
     )
-GROUP BY
-    r.room_id, r.room_code, r.status, r.description,
-    rc.room_class_id, rc.room_class_code, rc.capacity,
-    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-    pf.place_id, pf.parent_id,
-    pbg.parent_id
+GROUP BY r.room_id, r.room_code, r.status, r.description,
+         rc.room_class_id, rc.room_class_code, rc.capacity,
+         rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+         pf.place_id, pf.parent_id,
+         pbg.parent_id
 ORDER BY r.room_code DESC
 
 
-SELECT
-    r.room_id AS id, r.room_code AS roomCode, r.status AS status, r.description AS decription,
-    rc.room_class_id AS roomClassId, rc.room_class_code AS roomClassCode, rc.capacity AS capacity,
-    rp.total_price AS totalPrice, rp.base_price AS basePrice, rp.valid_from AS validFrom, rp.valid_end AS validEnd,
-    pf.place_id AS floorPlaceId,
-    pf.parent_id AS buildingPlaceId,
-    pbg.parent_id AS branchPlaceId,
+SELECT r.room_id                                                       AS id,
+       r.room_code                                                     AS roomCode,
+       r.status                                                        AS status,
+       r.description                                                   AS decription,
+       rc.room_class_id                                                AS roomClassId,
+       rc.room_class_code                                              AS roomClassCode,
+       rc.capacity                                                     AS capacity,
+       rp.total_price                                                  AS totalPrice,
+       rp.base_price                                                   AS basePrice,
+       rp.valid_from                                                   AS validFrom,
+       rp.valid_end                                                    AS validEnd,
+       pf.place_id                                                     AS floorPlaceId,
+       pf.parent_id                                                    AS buildingPlaceId,
+       pbg.parent_id                                                   AS branchPlaceId,
 
-    json_agg(DISTINCT jsonb_build_object(
-            'id', eq.equipment_id,
-            'equipmentCode', eq.equipment_code,
-            'name', eq.name,
-            'description', eq.description,
-            'brand', eq.brand,
-            'quantity', erc.quantity,
-            'price', ep.current_price
-                      )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipmentsJson,
+       json_agg(DISTINCT jsonb_build_object(
+               'id', eq.equipment_id,
+               'equipmentCode', eq.equipment_code,
+               'name', eq.name,
+               'description', eq.description,
+               'brand', eq.brand,
+               'quantity', erc.quantity,
+               'price', ep.current_price
+                         )) FILTER (WHERE eq.equipment_id IS NOT NULL) AS equipmentsJson,
 
-    json_agg(DISTINCT jsonb_build_object(
-            'id', sv.service_id,
-            'serviceCode', sv.service_code,
-            'name', sv.name,
-            'note', sv.note,
-            'description', sv.description,
-            'quantity', src.quantity,
-            'price', sp.current_price
-                      )) FILTER (WHERE sv.service_id IS NOT NULL) AS servicesJson,
+       json_agg(DISTINCT jsonb_build_object(
+               'id', sv.service_id,
+               'serviceCode', sv.service_code,
+               'name', sv.name,
+               'note', sv.note,
+               'description', sv.description,
+               'quantity', src.quantity,
+               'price', sp.current_price
+                         )) FILTER (WHERE sv.service_id IS NOT NULL)   AS servicesJson,
 
 
-    ( SELECT array_agg(url ORDER BY image_order)
-      FROM image_url
-      WHERE entity_id = r.room_id
-    ) AS imageUrls
+       (SELECT array_agg(url ORDER BY image_order)
+        FROM image_url
+        WHERE entity_id = r.room_id)                                   AS imageUrls
 
 FROM room r
          LEFT JOIN place pf ON r.place_id = pf.place_id AND pf.place_type = 'FLOOR'
@@ -1970,8 +1988,7 @@ FROM room r
     LIMIT 1
     ) sp ON TRUE
 
-WHERE
-    (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
+WHERE (:branchId IS NULL OR pbg.parent_id = CAST(:branchId AS UUID))
   AND (:buildingId IS NULL OR pf.parent_id = CAST(:buildingId AS UUID))
   AND (:floorId IS NULL OR pf.place_id = CAST(:floorId AS UUID))
   AND (:capacity IS NULL OR rc.capacity >= :capacity)
@@ -1994,10 +2011,217 @@ WHERE
         (:searchBy = 'id' AND r.room_id = CAST(:keyword AS UUID))
         )
     )
-GROUP BY
-    r.room_id, r.room_code, r.status, r.description,
-    rc.room_class_id, rc.room_class_code, rc.capacity,
-    rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
-    pf.place_id, pf.parent_id,
-    pbg.parent_id
+GROUP BY r.room_id, r.room_code, r.status, r.description,
+         rc.room_class_id, rc.room_class_code, rc.capacity,
+         rp.total_price, rp.base_price, rp.valid_from, rp.valid_end,
+         pf.place_id, pf.parent_id,
+         pbg.parent_id
+
+
+--     findAllByMeetingDateBetweenAndStatus
+-- findAllByMeetingDateBetweenAndUserIdAndStatus
+
+SELECT *
+FROM "group";
+
+
+
+SELECT g.group_id    AS groupId,
+       g.name        AS name,
+       g.group_type  AS groupType,
+       g.branch_id   AS branchId,
+       g.user_id     AS createBy,
+       g.group_code  AS groupCode,
+       g.status      AS status,
+
+       uo.email      AS ownerEmail,
+       uo.first_name AS ownerFirstName,
+       uo.last_name  AS ownerLastName,
+
+       gm.user_id    AS memberId,
+       um.email      AS memberEmail
+
+
+FROM "group" g
+         LEFT JOIN group_member gm ON gm.group_id = g.group_id
+         LEFT JOIN "user" uo ON uo.user_id = g.user_id
+         JOIN "user" um ON um.user_id = gm.user_id
+WHERE group_type = 'DEPARTMENT'
+  AND gm.user_id = 'ea4e9c4c-a317-4064-8a5b-da2b339e4181'
+
+
+
+SELECT DISTINCT ON (g.group_id)
+    g.group_id    AS groupId,
+    g.name        AS name,
+    g.group_type  AS groupType,
+    g.user_id     AS createdBy,
+    g.group_code  AS groupCode,
+    g.status      AS status,
+
+    uo.email      AS ownerEmail,
+    uo.first_name AS ownerFirstName,
+    uo.last_name  AS ownerLastName,
+    uo.user_code  AS ownerUserCode,
+
+    p.name        AS branchName,
+    p.code        AS branchCode,
+    g.branch_id   AS branchId
+FROM "group" g
+         LEFT JOIN group_member gm ON gm.group_id = g.group_id
+         LEFT JOIN "user" uo ON uo.user_id = g.user_id
+         LEFT JOIN "user" um ON um.user_id = gm.user_id
+         LEFT JOIN place p ON g.branch_id = p.place_id
+
+WHERE
+    (:userId IS NULL OR gm.user_id = CAST(:userId AS UUID))
+  AND (:status IS NULL OR g.status = :status)
+  AND (:groupType IS NULL OR g.group_type = :groupType)
+  AND (:branchId IS NULL OR g.branch_id = CAST(:branchId AS UUID))
+  AND (
+    :keyword IS NULL OR (
+        (
+            :searchBy = 'name' AND g.name ILIKE '%' || :keyword || '%'
+            ) OR (
+            :searchBy = 'id' AND g.group_id = CAST(:keyword AS UUID)
+            ) OR (
+            :searchBy = 'groupCode' AND g.group_code ILIKE '%' || :keyword || '%'
+            ) OR (
+            :searchBy IS NULL AND (
+                g.name ILIKE '%' || :keyword || '%' OR
+                g.group_code ILIKE '%' || :keyword || '%' OR
+                uo.email ILIKE '%' || :keyword || '%' OR
+                uo.first_name ILIKE '%' || :keyword || '%' OR
+                uo.last_name ILIKE '%' || :keyword || '%' OR
+                p.name ILIKE '%' || :keyword || '%' OR
+                p.code ILIKE '%' || :keyword || '%'
+                )
+            )
+        )
+    )
+
+
+
+
+
+
+SELECT
+    g.group_id    AS groupId,
+    g.name        AS name,
+    g.group_type  AS groupType,
+    g.user_id     AS createdBy,
+    g.group_code  AS groupCode,
+    g.status      AS status,
+
+    uo.email      AS ownerEmail,
+    uo.first_name AS ownerFirstName,
+    uo.last_name  AS ownerLastName,
+    uo.user_code  AS ownerUserCode,
+
+    p.name        AS branchName,
+    p.code        AS branchCode,
+    g.branch_id   AS branchId,
+
+    COUNT(um.user_id) AS quantityMember
+FROM "group" g
+         LEFT JOIN group_member gm ON gm.group_id = g.group_id
+         LEFT JOIN "user" uo ON uo.user_id = g.user_id
+         JOIN "user" um ON um.user_id = gm.user_id
+         LEFT JOIN place p ON g.branch_id = p.place_id
+
+WHERE
+    (:userId IS NULL OR gm.user_id = CAST(:userId AS UUID))
+  AND (:status IS NULL OR g.status = :status)
+  AND (:groupType IS NULL OR g.group_type = :groupType)
+  AND (:branchId IS NULL OR g.branch_id = CAST(:branchId AS UUID))
+  AND (
+    :keyword IS NULL OR (
+        (
+            :searchBy = 'name' AND g.name ILIKE '%' || :keyword || '%'
+            ) OR (
+            :searchBy = 'id' AND g.group_id = CAST(:keyword AS UUID)
+            ) OR (
+            :searchBy = 'groupCode' AND g.group_code ILIKE '%' || :keyword || '%'
+            ) OR (
+            :searchBy IS NULL AND (
+                g.name ILIKE '%' || :keyword || '%' OR
+                g.group_code ILIKE '%' || :keyword || '%' OR
+                uo.email ILIKE '%' || :keyword || '%' OR
+                uo.first_name ILIKE '%' || :keyword || '%' OR
+                uo.last_name ILIKE '%' || :keyword || '%' OR
+                p.name ILIKE '%' || :keyword || '%' OR
+                p.code ILIKE '%' || :keyword || '%'
+                )
+            )
+        )
+    )
+GROUP BY g.group_id, g.name, g.group_type, g.user_id,
+         g.group_code, g.status, uo.email, uo.first_name,
+         uo.last_name, uo.user_code, p.name, p.code, g.branch_id
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT
+    g.group_id    AS id,
+    g.name        AS name,
+    g.group_type  AS groupType,
+    g.user_id     AS createdBy,
+    g.group_code  AS groupCode,
+    g.status      AS status,
+
+    uo.email      AS ownerEmail,
+    uo.first_name AS ownerFirstName,
+    uo.last_name  AS ownerLastName,
+    uo.user_code  AS ownerUserCode,
+
+    p.name        AS branchName,
+    p.code        AS branchCode,
+    g.branch_id   AS branchId,
+
+    COUNT(um.user_id) AS quantityMember
+FROM "group" g
+         LEFT JOIN group_member gm ON gm.group_id = g.group_id
+         LEFT JOIN "user" uo ON uo.user_id = g.user_id
+         JOIN "user" um ON um.user_id = gm.user_id
+         LEFT JOIN place p ON g.branch_id = p.place_id
+
+WHERE
+    (:userId IS NULL OR gm.user_id = CAST(:userId AS UUID))
+  AND (:status IS NULL OR g.status = :status)
+  AND (:groupType IS NULL OR g.group_type = :groupType)
+  AND (:branchId IS NULL OR g.branch_id = CAST(:branchId AS UUID))
+  AND (
+    :keyword IS NULL OR (
+        (
+            :searchBy = 'name' AND g.name ILIKE '%' || :keyword || '%'
+            ) OR (
+            :searchBy = 'id' AND ( :keyword ~* '^[0-9a-fA-F-]{36}$'  AND g.group_id = CAST(:keyword AS UUID))
+            ) OR (
+            :searchBy = 'groupCode' AND g.group_code ILIKE '%' || :keyword || '%'
+            ) OR (
+            :searchBy = 'email' AND uo.email ILIKE '%' || :keyword || '%'
+            ) OR (
+            :searchBy IS NULL AND (
+                g.name ILIKE '%' || :keyword || '%' OR
+                g.group_code ILIKE '%' || :keyword || '%' OR
+                uo.email ILIKE '%' || :keyword || '%' OR
+                p.name ILIKE '%' || :keyword || '%' OR
+                p.code ILIKE '%' || :keyword || '%'
+                )
+            )
+        )
+    )
+GROUP BY g.group_id, g.name, g.group_type, g.user_id,
+         g.group_code, g.status, uo.email, uo.first_name,
+         uo.last_name, uo.user_code, p.name, p.code, g.branch_id
+
 

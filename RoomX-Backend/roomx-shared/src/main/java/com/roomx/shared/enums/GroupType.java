@@ -12,7 +12,7 @@ public enum GroupType {
     private static final Map<String, GroupType> DISPLAY_NAME_MAP = Stream.of(values())
             .collect(Collectors.toMap(GroupType::getDisplayName, e -> e));
 
-    private final String displayName;
+    private final String displayName; 
 
     GroupType(String displayName) {
         this.displayName = displayName;

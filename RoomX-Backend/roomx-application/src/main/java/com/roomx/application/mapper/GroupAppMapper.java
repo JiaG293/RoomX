@@ -1,6 +1,10 @@
 package com.roomx.application.mapper;
 
+import com.roomx.infrastructure.persistence.model.projection.GroupProjection;
+import com.roomx.shared.dto.resource.response.GroupFilterResponse;
 import com.roomx.shared.dto.user.request.GroupCreateAdminRequest;
+import com.roomx.shared.dto.user.request.GroupCreateRequest;
+import com.roomx.shared.dto.user.request.GroupCreateUserRequest;
 import com.roomx.shared.dto.user.response.GroupResponse;
 import com.roomx.domain.model.aggrerate.Group;
 import org.mapstruct.Mapper;
@@ -24,4 +28,12 @@ public interface GroupAppMapper {
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "branchId", source = "branch.id")
     GroupResponse toResponse(Group domain);
+
+    GroupCreateRequest adminToGroupRequest(GroupCreateAdminRequest request);
+    GroupCreateRequest userToGroupRequest(GroupCreateUserRequest request);
+
+
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
+    GroupFilterResponse toResponseFilter(GroupProjection groupProjection);
 }

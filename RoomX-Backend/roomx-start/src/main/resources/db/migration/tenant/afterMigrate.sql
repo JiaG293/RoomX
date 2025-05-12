@@ -1585,3 +1585,30 @@ ON CONFLICT (booking_id, user_id) DO NOTHING;
 -- BOOKING
 
 -- BOOKING PARTICIPANT
+
+
+
+
+-- GROUP
+insert into "group" (group_id, name, group_type, branch_id, user_id, group_code, status)
+values  ('d17b756f-1d29-481b-99a8-0937a88d3756', 'Phòng kế toán', 'DEPARTMENT', '65f1d8a0-6885-4b51-a691-f843b279dd8b', '3393e980-0503-454a-94ef-e43258639994', 'GR_DE_1002', 'ACTIVE'),
+        ('b0b5b935-d658-4296-9842-8f13ee0e6a28', 'Phòng quản lý', 'DEPARTMENT', '65f1d8a0-6885-4b51-a691-f843b279dd8b', '3393e980-0503-454a-94ef-e43258639994', 'GR_DE_1000', 'ACTIVE'),
+        ('ef293f2b-a690-4789-a958-866c5ebb04b4', 'Phòng nhân sự', 'DEPARTMENT', '65f1d8a0-6885-4b51-a691-f843b279dd8b', '3393e980-0503-454a-94ef-e43258639994', 'GR_DE_1001', 'ACTIVE')
+ON CONFLICT (group_id) DO NOTHING;
+
+
+
+-- GROUP MEMBER
+insert into group_member (user_id, group_id)
+values  ('3393e980-0503-454a-94ef-e43258639994', 'b0b5b935-d658-4296-9842-8f13ee0e6a28'),
+        ('f4a6a4ba-ffb4-4ce5-8125-97be4fa7cd91', 'b0b5b935-d658-4296-9842-8f13ee0e6a28'),
+        ('ea4e9c4c-a317-4064-8a5b-da2b338e4180', 'ef293f2b-a690-4789-a958-866c5ebb04b4'),
+        ('ea4e9c4c-a317-4064-8a5b-da2b339e4380', 'ef293f2b-a690-4789-a958-866c5ebb04b4'),
+        ('ea4e9c4c-a317-4064-8a5b-da2b339e4580', 'ef293f2b-a690-4789-a958-866c5ebb04b4'),
+        ('ea4e9c4c-a317-4064-8a5b-da2b339e4182', 'd17b756f-1d29-481b-99a8-0937a88d3756'),
+        ('ea4e9c4c-a317-4064-8a5b-da2b339e4181', 'd17b756f-1d29-481b-99a8-0937a88d3756')
+ON CONFLICT (user_id, group_id) DO NOTHING;
+
+
+
+

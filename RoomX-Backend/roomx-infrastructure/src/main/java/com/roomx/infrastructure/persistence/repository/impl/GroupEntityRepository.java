@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.persistence.repository.impl;
 
 import com.roomx.domain.model.aggrerate.Group;
+import com.roomx.domain.model.aggrerate.Place;
 import com.roomx.domain.repository.GroupRepository;
 import com.roomx.infrastructure.persistence.mapper.GroupEntityMapper;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaGroupEntityRepository;
@@ -43,6 +44,7 @@ public class GroupEntityRepository implements GroupRepository {
     public boolean checkGroupExistWithStatusAndGroupCode(String groupCode, String defaultString) {
         return false;
     }
+
 
 
 }

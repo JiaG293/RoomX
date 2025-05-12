@@ -6,6 +6,7 @@ import com.roomx.shared.enums.PlaceType;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 public interface PlaceRepository {
@@ -40,6 +41,7 @@ public interface PlaceRepository {
     Optional<Place>findByIdAndStatusAndPlaceType(String placeId, String status, String placeType);
 
     List<Place> findAllByStatus(String status);
+
 
 
 //    boolean checkPlaceExistsBySlug(String slug);

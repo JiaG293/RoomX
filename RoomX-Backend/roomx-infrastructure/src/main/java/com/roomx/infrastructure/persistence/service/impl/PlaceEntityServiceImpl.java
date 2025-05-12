@@ -2,6 +2,7 @@ package com.roomx.infrastructure.persistence.service.impl;
 
 
 import com.roomx.domain.model.aggrerate.Place;
+import com.roomx.infrastructure.persistence.model.projection.PlaceBranchProjection;
 import com.roomx.infrastructure.persistence.repository.specification.PlaceSpecification;
 import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.PlaceType;
@@ -128,6 +129,16 @@ public class PlaceEntityServiceImpl implements PlaceEntityService {
                 .parentId(null)
                 .build();
         return placeRepository.save(placeDomain);
+    }
+
+    @Override
+    public Optional<Place> findBranchByMemberIdAndGrouPType(UUID userId, String groupType) {
+        return jpaPlaceEntityRepository
+                .findBranchByMemberIdAndGroupType(userId, groupType)
+                .map(data -> Place.builder()
+                        .id(data.getId())
+                        .build()
+                );
     }
 
 

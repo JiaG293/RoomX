@@ -1,9 +1,8 @@
 package com.roomx.infrastructure.persistence.repository.jpa;
 
-import com.roomx.domain.model.aggrerate.Place;
 import com.roomx.infrastructure.persistence.model.dto.PlaceDto;
 import com.roomx.infrastructure.persistence.model.entity.PlaceEntity;
-import io.micrometer.observation.ObservationFilter;
+import com.roomx.infrastructure.persistence.model.projection.PlaceBranchProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -61,4 +60,28 @@ public interface JpaPlaceEntityRepository extends JpaRepository<PlaceEntity, UUI
     Optional<PlaceEntity> findByIdAndStatusAndPlaceType(UUID placeId, String status, String placeType);
 
     Optional<PlaceEntity> findByIdAndPlaceTypeAndCode(UUID id, String placeType, String code);
+
+
+    @Query(
+            value =
+                    """
+                    SELECT
+                    g.group_id AS groupId,
+                    g.name AS name,
+                    g.group_type AS groupType,
+                    g.branch_id AS id,
+                    g.user_id AS createBy,
+                    g.group_code AS groupCode,
+                    g.status AS status,
+                    gm.user_id AS memberId 
+                    FROM \"group\" g
+                    LEFT JOIN group_member gm ON gm.group_id = g.group_id
+                    WHERE gm.user_id = :userId
+                    AND group_type = :groupType
+                    """,
+            nativeQuery = true
+    )
+    Optional<PlaceBranchProjection> findBranchByMemberIdAndGroupType(
+            @Param("userId") UUID userId,
+            @Param("groupType") String groupType);
 }

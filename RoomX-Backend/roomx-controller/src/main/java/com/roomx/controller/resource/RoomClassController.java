@@ -103,4 +103,17 @@ public class RoomClassController {
                 .build();
     }
 
+    @GetMapping("/filters")
+    public ResultResponse<?> filterSearchGroup(
+            @ModelAttribute RoomClassFilterRequest request,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "-1") Integer size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        var result = roomClassAppService.filterSearchRoomClass(request, page, size, sortBy, direction);
+        return ResultResponse.<Page<GroupFilterResponse>>builder()
+                .result(result)
+                .build();
+    }
+
 }

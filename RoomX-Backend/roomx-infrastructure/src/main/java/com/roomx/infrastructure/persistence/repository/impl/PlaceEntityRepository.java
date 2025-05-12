@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.persistence.repository.impl;
 
 import com.roomx.domain.model.aggrerate.Place;
+import com.roomx.infrastructure.persistence.model.projection.PlaceBranchProjection;
 import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.domain.repository.PlaceRepository;
 import com.roomx.infrastructure.persistence.mapper.PlaceEntityMapper;
@@ -170,6 +171,8 @@ public class PlaceEntityRepository implements PlaceRepository {
                 .map(placeEntityMapper::toDomain)
                 .toList();
     }
+
+
 
 
 }

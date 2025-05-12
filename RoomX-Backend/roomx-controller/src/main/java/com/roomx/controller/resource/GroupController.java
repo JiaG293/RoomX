@@ -1,6 +1,9 @@
 package com.roomx.controller.resource;
 
 import com.roomx.application.service.user.GroupAppService;
+import com.roomx.shared.dto.booking.request.BookingListRequest;
+import com.roomx.shared.dto.resource.request.GroupFilterRequest;
+import com.roomx.shared.dto.resource.response.GroupFilterResponse;
 import com.roomx.shared.dto.user.request.GroupCreateAdminRequest;
 import com.roomx.shared.dto.user.response.GroupResponse;
 import com.roomx.shared.exception.api.ResultResponse;
@@ -8,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,6 +79,19 @@ public class GroupController {
             @Validated @RequestBody List<String> members) {
         var result = groupAppService.deleteListMemberFromGroup(groupId, members);
         return ResultResponse.<Map<String, List<String>>>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/filters")
+    public ResultResponse<?> filterSearchGroup(
+            @ModelAttribute GroupFilterRequest request,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "-1") Integer size,
+            @RequestParam(defaultValue = "groupType") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        var result = groupAppService.filterSearchGroup(request, page, size, sortBy, direction);
+        return ResultResponse.<Page<GroupFilterResponse>>builder()
                 .result(result)
                 .build();
     }
