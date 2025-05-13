@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class GroupUpdateRequest {
-    private String id;
+    private String name;
 }

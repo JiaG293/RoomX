@@ -1,10 +1,10 @@
 package com.roomx.controller.resource;
 
 import com.roomx.application.service.user.GroupAppService;
-import com.roomx.shared.dto.booking.request.BookingListRequest;
 import com.roomx.shared.dto.resource.request.GroupFilterRequest;
 import com.roomx.shared.dto.resource.response.GroupFilterResponse;
 import com.roomx.shared.dto.user.request.GroupCreateAdminRequest;
+import com.roomx.shared.dto.user.request.GroupUpdateRequest;
 import com.roomx.shared.dto.user.response.GroupDetailResponse;
 import com.roomx.shared.dto.user.response.GroupResponse;
 import com.roomx.shared.exception.api.ResultResponse;
@@ -100,9 +100,22 @@ public class GroupController {
 
     @GetMapping("/{groupId}")
     public ResultResponse<?> getDeatailGroup(
-            @PathVariable String groupId) {
+            @PathVariable String groupId
+    ) {
         var result = groupAppService.getDetailGroup(groupId);
         return ResultResponse.<GroupDetailResponse>builder()
+                .result(result)
+                .build();
+    }
+
+
+    @PutMapping("/{groupId}")
+    public ResultResponse<?> updateGroup(
+            @PathVariable String groupId,
+            @Validated @RequestBody GroupUpdateRequest request
+    ) {
+        var result = groupAppService.updateGroupById(groupId, request);
+        return ResultResponse.<GroupResponse>builder()
                 .result(result)
                 .build();
     }

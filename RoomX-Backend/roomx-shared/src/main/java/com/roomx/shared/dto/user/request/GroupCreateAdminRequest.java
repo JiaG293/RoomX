@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 public class GroupCreateAdminRequest {
     private String name;
     @JsonSetter(nulls = Nulls.AS_EMPTY)

@@ -18,6 +18,7 @@ import com.roomx.shared.dto.resource.response.PlaceResponse;
 import com.roomx.shared.dto.user.request.GroupCreateAdminRequest;
 import com.roomx.shared.dto.user.request.GroupCreateRequest;
 import com.roomx.shared.dto.user.request.GroupCreateUserRequest;
+import com.roomx.shared.dto.user.request.GroupUpdateRequest;
 import com.roomx.shared.dto.user.response.GroupDetailResponse;
 import com.roomx.shared.dto.user.response.GroupMemberDetailResponse;
 import com.roomx.shared.dto.user.response.GroupResponse;
@@ -245,5 +246,20 @@ public class GroupAppService {
     public GroupDetailResponse getDetailGroup(String groupId) {
         return groupEntityService.getDetailGroup(groupId, DeleteStatusType.ACTIVE.toString())
                 .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
+    }
+
+
+    @Transactional
+    public GroupResponse updateGroupById(String groupId, GroupUpdateRequest request) {
+        var groupDomain = groupRepository.findById(groupId, DeleteStatusType.ACTIVE.toString())
+                .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
+
+        groupDomain.setName(request.getName());
+        groupRepository.save(groupDomain);
+
+        var groupMemberDomainList = groupMemberRepository.findAllByGroupId(groupId);
+        groupDomain.setGroupMembers(groupMemberDomainList);
+
+        return groupAppMapper.toResponse(groupDomain);
     }
 }
