@@ -14,10 +14,15 @@ import com.roomx.infrastructure.persistence.model.projection.GroupProjection;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaGroupEntityRepository;
 import com.roomx.infrastructure.persistence.service.GroupEntityService;
 import com.roomx.infrastructure.security.oauth.SecurityUtil;
+import com.roomx.shared.dto.resource.response.PlaceResponse;
 import com.roomx.shared.dto.user.request.GroupCreateAdminRequest;
 import com.roomx.shared.dto.user.request.GroupCreateRequest;
+import com.roomx.shared.dto.user.response.GroupDetailResponse;
+import com.roomx.shared.dto.user.response.GroupMemberDetailResponse;
+import com.roomx.shared.dto.user.response.UserResponse;
 import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.GroupType;
+import com.roomx.shared.enums.PlaceType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -125,5 +130,32 @@ public class GroupEntityServiceImpl implements GroupEntityService {
                         filter.getViewAsUser(),
                         pageable
                 );
+    }
+
+    @Override
+    public Optional<GroupDetailResponse> getDetailGroup(String groupId, String status) {
+        return jpaGroupEntityRepository.findByIdDetail(UUID.fromString(groupId), status)
+                .map(group -> GroupDetailResponse.builder()
+                        .id(group.getId())
+                        .name(group.getName())
+                        .groupType(group.getGroupType())
+                        .groupCode(group.getGroupCode())
+                        .branch(PlaceResponse.builder()
+                                .id(group.getBranchId().toString())
+                                .name(group.getBranchName())
+                                .code(group.getBranchCode())
+                                .placeType(PlaceType.BRANCH.toString())
+                                .build())
+                        .owner(UserResponse.builder()
+                                .id(group.getCreatedBy().toString())
+                                .userCode(group.getOwnerUserCode())
+                                .email(group.getOwnerEmail())
+                                .firstName(group.getOwnerFirstName())
+                                .lastName(group.getOwnerLastName())
+                                .build())
+                        .quantityMember(group.getQuantityMember())
+                        .members(group.getMembers())
+                        .status(group.getStatus())
+                        .build());
     }
 }

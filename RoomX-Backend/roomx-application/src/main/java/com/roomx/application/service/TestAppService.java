@@ -20,10 +20,7 @@ import com.roomx.infrastructure.persistence.dto.RoomClassFilter;
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
 import com.roomx.infrastructure.persistence.mapper.RoomEntityMapper;
 import com.roomx.infrastructure.persistence.model.entity.RoomEntity;
-import com.roomx.infrastructure.persistence.repository.jpa.JpaApprovalFormEntityRepository;
-import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomClassEntityRepository;
-import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomClassPriceHistoryEntityRepository;
-import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomEntityRepository;
+import com.roomx.infrastructure.persistence.repository.jpa.*;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
 import com.roomx.infrastructure.persistence.service.BookingEntityService;
 import com.roomx.infrastructure.persistence.service.RoomEntityService;
@@ -32,6 +29,8 @@ import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.base.MeetingMessage;
 import com.roomx.shared.enums.*;
 import com.roomx.shared.event.BookingInfoEmailEvent;
+import com.roomx.shared.exception.exception.AppException;
+import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -81,6 +80,7 @@ public class TestAppService {
     private final JpaRoomEntityRepository jpaRoomEntityRepository;
     private final RoomEntityMapper roomEntityMapper;
     private final JpaRoomClassEntityRepository jpaRoomClassEntityRepository;
+    private final JpaGroupEntityRepository jpaGroupEntityRepository;
 
 
     public Object testAppService() {
@@ -140,17 +140,11 @@ public class TestAppService {
 //        );
 
         RoomClassFilter roomFilter = new RoomClassFilter();
-        var result = jpaRoomClassEntityRepository.filterSearchRoomClass(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                pageable
-                );
+        var result = jpaGroupEntityRepository
+                .findByIdDetail(UUID.fromString("d17b756f-1d29-481b-99a8-0937a88d3756"),
+                        DeleteStatusType.ACTIVE.toString()).get().getMembers();
 
-        return result.getContent().getFirst().getServices();
+        return result;
     }
 
 

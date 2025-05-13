@@ -2323,4 +2323,55 @@ WHERE
 
 
 
+SELECT
+    g.group_id    AS id,
+    g.name        AS name,
+    g.group_type  AS groupType,
+    g.user_id     AS createdBy,
+    g.group_code  AS groupCode,
+    g.status      AS status,
+
+    uo.email      AS ownerEmail,
+    uo.first_name AS ownerFirstName,
+    uo.last_name  AS ownerLastName,
+    uo.user_code  AS ownerUserCode,
+
+    p.name        AS branchName,
+    p.code        AS branchCode,
+    g.branch_id   AS branchId,
+
+    COUNT(um.user_id) AS quantityMember,
+
+    JSON_AGG(
+            JSON_BUILD_OBJECT(
+                'id', um.user_id,
+                'email', um.email,
+                'firstName', um.first_name,
+                'lastName', um.last_name,
+                'userCode', um.user_code
+            )
+        ) FILTER (WHERE um.user_id IS NOT NULL) AS members
+FROM "group" g
+         LEFT JOIN group_member gm ON gm.group_id = g.group_id
+         LEFT JOIN "user" uo ON uo.user_id = g.user_id
+         JOIN "user" um ON um.user_id = gm.user_id
+         LEFT JOIN place p ON g.branch_id = p.place_id
+
+GROUP BY g.group_id, g.name, g.group_type, g.user_id,
+         g.group_code, g.status, uo.email, uo.first_name,
+         uo.last_name, uo.user_code, p.name, p.code, g.branch_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

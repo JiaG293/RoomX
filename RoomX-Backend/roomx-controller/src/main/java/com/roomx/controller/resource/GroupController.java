@@ -5,6 +5,7 @@ import com.roomx.shared.dto.booking.request.BookingListRequest;
 import com.roomx.shared.dto.resource.request.GroupFilterRequest;
 import com.roomx.shared.dto.resource.response.GroupFilterResponse;
 import com.roomx.shared.dto.user.request.GroupCreateAdminRequest;
+import com.roomx.shared.dto.user.response.GroupDetailResponse;
 import com.roomx.shared.dto.user.response.GroupResponse;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
@@ -92,6 +93,16 @@ public class GroupController {
             @RequestParam(defaultValue = "asc") String direction) {
         var result = groupAppService.filterSearchGroup(request, page, size, sortBy, direction);
         return ResultResponse.<Page<GroupFilterResponse>>builder()
+                .result(result)
+                .build();
+    }
+
+
+    @GetMapping("/{groupId}")
+    public ResultResponse<?> getDeatailGroup(
+            @PathVariable String groupId) {
+        var result = groupAppService.getDetailGroup(groupId);
+        return ResultResponse.<GroupDetailResponse>builder()
                 .result(result)
                 .build();
     }

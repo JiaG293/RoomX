@@ -18,6 +18,8 @@ import com.roomx.shared.dto.resource.response.PlaceResponse;
 import com.roomx.shared.dto.user.request.GroupCreateAdminRequest;
 import com.roomx.shared.dto.user.request.GroupCreateRequest;
 import com.roomx.shared.dto.user.request.GroupCreateUserRequest;
+import com.roomx.shared.dto.user.response.GroupDetailResponse;
+import com.roomx.shared.dto.user.response.GroupMemberDetailResponse;
 import com.roomx.shared.dto.user.response.GroupResponse;
 import com.roomx.shared.dto.user.response.UserResponse;
 import com.roomx.shared.enums.DeleteStatusType;
@@ -180,7 +182,7 @@ public class GroupAppService {
 
         GroupFilter groupFilter = null;
 
-        if(!roleEvaluator.hasAnyRoleType("approve")){
+        if (!roleEvaluator.hasAnyRoleType("approve")) {
             groupFilter = GroupFilter.builder()
                     .keyword(request.keyword())
                     .searchBy(request.searchBy())
@@ -190,7 +192,7 @@ public class GroupAppService {
                     .status(request.status())
                     .build();
         } else {
-            if(request.isAdmin() == null || request.isAdmin()){
+            if (request.isAdmin() == null || request.isAdmin()) {
                 groupFilter = GroupFilter.builder()
                         .keyword(request.keyword())
                         .searchBy(request.searchBy())
@@ -238,5 +240,10 @@ public class GroupAppService {
                         .quantityMember(group.getQuantityMember())
                         .status(group.getStatus())
                         .build());
+    }
+
+    public GroupDetailResponse getDetailGroup(String groupId) {
+        return groupEntityService.getDetailGroup(groupId, DeleteStatusType.ACTIVE.toString())
+                .orElseThrow(() -> new AppException(ErrorCode.GROUP_NOT_FOUND));
     }
 }
