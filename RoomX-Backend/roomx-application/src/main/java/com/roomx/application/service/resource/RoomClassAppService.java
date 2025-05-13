@@ -1,17 +1,17 @@
 package com.roomx.application.service.resource;
 
 import com.roomx.domain.model.aggrerate.Room;
+import com.roomx.domain.model.aggrerate.RoomClass;
 import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import com.roomx.domain.model.entity.RoomClassPriceHistory;
 import com.roomx.domain.repository.*;
+import com.roomx.infrastructure.persistence.dto.RoomClassFilter;
+import com.roomx.infrastructure.persistence.service.impl.RoomClassEntityServiceImpl;
+import com.roomx.shared.dto.resource.base.EquipmentPriceDto;
 import com.roomx.shared.dto.resource.base.RoomClassPriceCalculateDto;
-import com.roomx.shared.dto.resource.request.EquipmentPriceHistoryCreateRequest;
-import com.roomx.shared.dto.resource.request.RoomClassCreateRequest;
-import com.roomx.shared.dto.resource.request.RoomClassPriceHistoryCreateRequest;
-import com.roomx.shared.dto.resource.request.RoomClassUpdateRequest;
-import com.roomx.shared.dto.resource.response.EquipmentResponse;
-import com.roomx.shared.dto.resource.response.RoomClassDetailResponse;
-import com.roomx.shared.dto.resource.response.RoomClassResponse;
+import com.roomx.shared.dto.resource.base.ServicePriceDto;
+import com.roomx.shared.dto.resource.request.*;
+import com.roomx.shared.dto.resource.response.*;
 import com.roomx.application.mapper.EquipmentRoomClassAppMapper;
 import com.roomx.application.mapper.RoomClassAppMapper;
 import com.roomx.application.mapper.ServiceRoomClassAppMapper;
@@ -20,13 +20,20 @@ import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,6 +48,7 @@ public class RoomClassAppService {
     private final RoomClassPriceHistoryRepository roomClassPriceHistoryRepository;
     private final EquipmentPriceHistoryRepository equipmentPriceHistoryRepository;
     private final ServicePriceHistoryRepository servicePriceHistoryRepository;
+    private final RoomClassEntityServiceImpl roomClassEntityService;
 
     @Transactional
     public RoomClassResponse createRoomClass(RoomClassCreateRequest request) {
@@ -106,7 +114,7 @@ public class RoomClassAppService {
                     var equipmentPriceHistoryDomain = equipmentPriceHistoryRepository.findLatestValidFrom(equipmentRoomClass.getEquipment().getId().toString())
                             .orElse(null);
 
-                        equipmentRoomClass.setPrice(equipmentPriceHistoryDomain);
+                    equipmentRoomClass.setPrice(equipmentPriceHistoryDomain);
 
                     if (equipmentRoomClass.getTotalPrice() != null) {
                         equipmentsTotalPrice.updateAndGet(total -> total.add(equipmentRoomClass.getTotalPrice()));
@@ -181,7 +189,48 @@ public class RoomClassAppService {
         return roomClassAppMapper.toResponse(roomClassDomain);
     }
 
-    public RoomClassPriceCalculateDto calculatePriceRoomClass(String roomClassId){
+    public RoomClassPriceCalculateDto calculatePriceRoomClass(String roomClassId) {
         return roomClassPriceHistoryRepository.calculateTotalPrice(roomClassId);
+    }
+
+    public Page<RoomClassFilterResponse> filterSearchRoomClass(RoomClassFilterRequest request, Integer page, Integer size, String sortBy, String direction) {
+        if (size == -1) {
+            size = Integer.MAX_VALUE;
+        }
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        RoomClassFilter roomClassFilter = RoomClassFilter.builder()
+                .keyword(request.keyword())
+                .searchBy(request.searchBy())
+                .status(request.status())
+                .capacity(request.capacity())
+                .startPrice(request.startPrice())
+                .endPrice(request.endPrice())
+                .build();
+
+        log.info("roomClassFilter: {}", roomClassFilter);
+
+        Page<RoomClassFilterResponse> roomClassPage = roomClassEntityService
+                .filterSearchRoomClass(roomClassFilter, pageable)
+                .map(roomClass -> RoomClassFilterResponse.builder()
+                        .id(roomClass.getId().toString())
+                        .roomClassCode(roomClass.getRoomClassCode())
+                        .capacity(roomClass.getCapacity())
+                        .price(RoomClassPriceHistoryResponse.builder()
+                                .basePrice(roomClass.getBasePrice() == null ? BigDecimal.ZERO : roomClass.getBasePrice())
+                                .totalPrice(roomClass.getTotalPrice() == null ? BigDecimal.ZERO : roomClass.getTotalPrice())
+                                .validFrom(roomClass.getValidFrom())
+                                .validEnd(roomClass.getValidEnd())
+                                .build())
+                        .nameEquipment(Optional.ofNullable(roomClass.getEquipments())
+                                .orElse(Collections.emptyList())
+                                .stream().map(EquipmentPriceDto::getName).toList())
+                        .nameService(Optional.ofNullable(roomClass.getServices())
+                                .orElse(Collections.emptyList())
+                                .stream().map(ServicePriceDto::getName).toList())
+                        .status(roomClass.getStatus())
+                        .build());
+
+        return roomClassPage;
     }
 }

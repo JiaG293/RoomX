@@ -2,6 +2,7 @@ package com.roomx.domain.repository;
 
 import com.roomx.domain.model.aggrerate.RoomClass;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public interface RoomClassRepository {
@@ -13,4 +14,5 @@ public interface RoomClassRepository {
     Optional<RoomClass> findByRoomClassCode(String roomClassCode);
 
     Optional<RoomClass> findByIdAndStatus(String roomClassId, String status);
+
 }

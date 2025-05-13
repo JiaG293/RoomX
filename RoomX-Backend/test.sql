@@ -2051,30 +2051,28 @@ WHERE group_type = 'DEPARTMENT'
 
 
 
-SELECT DISTINCT ON (g.group_id)
-    g.group_id    AS groupId,
-    g.name        AS name,
-    g.group_type  AS groupType,
-    g.user_id     AS createdBy,
-    g.group_code  AS groupCode,
-    g.status      AS status,
+SELECT DISTINCT ON (g.group_id) g.group_id    AS groupId,
+                                g.name        AS name,
+                                g.group_type  AS groupType,
+                                g.user_id     AS createdBy,
+                                g.group_code  AS groupCode,
+                                g.status      AS status,
 
-    uo.email      AS ownerEmail,
-    uo.first_name AS ownerFirstName,
-    uo.last_name  AS ownerLastName,
-    uo.user_code  AS ownerUserCode,
+                                uo.email      AS ownerEmail,
+                                uo.first_name AS ownerFirstName,
+                                uo.last_name  AS ownerLastName,
+                                uo.user_code  AS ownerUserCode,
 
-    p.name        AS branchName,
-    p.code        AS branchCode,
-    g.branch_id   AS branchId
+                                p.name        AS branchName,
+                                p.code        AS branchCode,
+                                g.branch_id   AS branchId
 FROM "group" g
          LEFT JOIN group_member gm ON gm.group_id = g.group_id
          LEFT JOIN "user" uo ON uo.user_id = g.user_id
          LEFT JOIN "user" um ON um.user_id = gm.user_id
          LEFT JOIN place p ON g.branch_id = p.place_id
 
-WHERE
-    (:userId IS NULL OR gm.user_id = CAST(:userId AS UUID))
+WHERE (:userId IS NULL OR gm.user_id = CAST(:userId AS UUID))
   AND (:status IS NULL OR g.status = :status)
   AND (:groupType IS NULL OR g.group_type = :groupType)
   AND (:branchId IS NULL OR g.branch_id = CAST(:branchId AS UUID))
@@ -2102,35 +2100,30 @@ WHERE
 
 
 
+SELECT g.group_id        AS groupId,
+       g.name            AS name,
+       g.group_type      AS groupType,
+       g.user_id         AS createdBy,
+       g.group_code      AS groupCode,
+       g.status          AS status,
 
+       uo.email          AS ownerEmail,
+       uo.first_name     AS ownerFirstName,
+       uo.last_name      AS ownerLastName,
+       uo.user_code      AS ownerUserCode,
 
+       p.name            AS branchName,
+       p.code            AS branchCode,
+       g.branch_id       AS branchId,
 
-SELECT
-    g.group_id    AS groupId,
-    g.name        AS name,
-    g.group_type  AS groupType,
-    g.user_id     AS createdBy,
-    g.group_code  AS groupCode,
-    g.status      AS status,
-
-    uo.email      AS ownerEmail,
-    uo.first_name AS ownerFirstName,
-    uo.last_name  AS ownerLastName,
-    uo.user_code  AS ownerUserCode,
-
-    p.name        AS branchName,
-    p.code        AS branchCode,
-    g.branch_id   AS branchId,
-
-    COUNT(um.user_id) AS quantityMember
+       COUNT(um.user_id) AS quantityMember
 FROM "group" g
          LEFT JOIN group_member gm ON gm.group_id = g.group_id
          LEFT JOIN "user" uo ON uo.user_id = g.user_id
          JOIN "user" um ON um.user_id = gm.user_id
          LEFT JOIN place p ON g.branch_id = p.place_id
 
-WHERE
-    (:userId IS NULL OR gm.user_id = CAST(:userId AS UUID))
+WHERE (:userId IS NULL OR gm.user_id = CAST(:userId AS UUID))
   AND (:status IS NULL OR g.status = :status)
   AND (:groupType IS NULL OR g.group_type = :groupType)
   AND (:branchId IS NULL OR g.branch_id = CAST(:branchId AS UUID))
@@ -2161,41 +2154,30 @@ GROUP BY g.group_id, g.name, g.group_type, g.user_id,
 
 
 
+SELECT g.group_id        AS id,
+       g.name            AS name,
+       g.group_type      AS groupType,
+       g.user_id         AS createdBy,
+       g.group_code      AS groupCode,
+       g.status          AS status,
 
+       uo.email          AS ownerEmail,
+       uo.first_name     AS ownerFirstName,
+       uo.last_name      AS ownerLastName,
+       uo.user_code      AS ownerUserCode,
 
+       p.name            AS branchName,
+       p.code            AS branchCode,
+       g.branch_id       AS branchId,
 
-
-
-
-
-
-
-SELECT
-    g.group_id    AS id,
-    g.name        AS name,
-    g.group_type  AS groupType,
-    g.user_id     AS createdBy,
-    g.group_code  AS groupCode,
-    g.status      AS status,
-
-    uo.email      AS ownerEmail,
-    uo.first_name AS ownerFirstName,
-    uo.last_name  AS ownerLastName,
-    uo.user_code  AS ownerUserCode,
-
-    p.name        AS branchName,
-    p.code        AS branchCode,
-    g.branch_id   AS branchId,
-
-    COUNT(um.user_id) AS quantityMember
+       COUNT(um.user_id) AS quantityMember
 FROM "group" g
          LEFT JOIN group_member gm ON gm.group_id = g.group_id
          LEFT JOIN "user" uo ON uo.user_id = g.user_id
          JOIN "user" um ON um.user_id = gm.user_id
          LEFT JOIN place p ON g.branch_id = p.place_id
 
-WHERE
-    (:userId IS NULL OR gm.user_id = CAST(:userId AS UUID))
+WHERE (:userId IS NULL OR gm.user_id = CAST(:userId AS UUID))
   AND (:status IS NULL OR g.status = :status)
   AND (:groupType IS NULL OR g.group_type = :groupType)
   AND (:branchId IS NULL OR g.branch_id = CAST(:branchId AS UUID))
@@ -2204,7 +2186,7 @@ WHERE
         (
             :searchBy = 'name' AND g.name ILIKE '%' || :keyword || '%'
             ) OR (
-            :searchBy = 'id' AND ( :keyword ~* '^[0-9a-fA-F-]{36}$'  AND g.group_id = CAST(:keyword AS UUID))
+            :searchBy = 'id' AND (:keyword ~* '^[0-9a-fA-F-]{36}$' AND g.group_id = CAST(:keyword AS UUID))
             ) OR (
             :searchBy = 'groupCode' AND g.group_code ILIKE '%' || :keyword || '%'
             ) OR (
@@ -2223,5 +2205,122 @@ WHERE
 GROUP BY g.group_id, g.name, g.group_type, g.user_id,
          g.group_code, g.status, uo.email, uo.first_name,
          uo.last_name, uo.user_code, p.name, p.code, g.branch_id
+
+
+
+SELECT *
+FROM room_class rc
+         LEFT JOIN room_class_price_history rcph
+                   ON rc.room_class_id = rcph.room_class_id AND rcph.valid_from <= CURRENT_TIMESTAMP
+GROUP BY rc.room_class_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+WITH latest_price AS (
+    SELECT room_class_id, MAX(valid_from) AS valid_from
+    FROM room_class_price_history
+    WHERE valid_from <= CURRENT_TIMESTAMP
+    GROUP BY room_class_id
+),
+     price_with_latest AS (
+         SELECT rcph.*
+         FROM room_class_price_history rcph
+                  JOIN latest_price lp
+                       ON rcph.room_class_id = lp.room_class_id AND rcph.valid_from = lp.valid_from
+     ),
+     services AS (
+         SELECT room_class_id,
+                JSON_AGG(JSON_BUILD_OBJECT(
+                        'id', src.service_id,
+                        'quantity', src.quantity,
+                        'name', s.name
+                         )) AS services
+         FROM service_room_class src
+                  JOIN service s ON src.service_id = s.service_id
+         GROUP BY src.room_class_id
+     ),
+     equipment AS (
+         SELECT erc.room_class_id,
+                JSON_AGG(JSON_BUILD_OBJECT(
+                        'id', erc.equipment_id,
+                        'quantity', erc.quantity,
+                        'name', e.name
+                         )) AS equipments
+         FROM equipment_room_class erc
+                  JOIN equipment e ON erc.equipment_id = e.equipment_id
+         GROUP BY erc.room_class_id
+     )
+
+SELECT
+    rc.room_class_id AS id,
+    rc.room_class_code AS roomClassCode,
+    rc.status AS status,
+    rc.capacity AS capacity,
+    rcph.total_price AS totalPrice,
+    rcph.valid_from AS validFrom,
+    rcph.valid_end AS validEnd,
+    rcph.base_price AS basePrice,
+    s.services AS jsonServices,
+    e.equipments AS jsonEquipments
+FROM room_class rc
+         LEFT JOIN price_with_latest rcph ON rc.room_class_id = rcph.room_class_id
+         LEFT JOIN services s ON rc.room_class_id = s.room_class_id
+         LEFT JOIN equipment e ON rc.room_class_id = e.room_class_id
+WHERE
+    (:keyword IS NULL OR (
+        (
+            (:searchBy IS NULL OR :searchBy = 'id')
+                AND rc.room_class_id::text ILIKE '%' || :keyword || '%'
+            )
+            OR (
+            (:searchBy IS NULL OR :searchBy = 'code')
+                AND rc.room_class_code ILIKE '%' || :keyword || '%'
+            )
+            OR (
+            (:searchBy IS NULL OR :searchBy = 'serviceName')
+                AND EXISTS (
+                SELECT 1
+                FROM jsonb_array_elements(s.services::jsonb) AS service
+                WHERE service->>'name' ILIKE '%' || :keyword || '%'
+            )
+            )
+            OR (
+            (:searchBy IS NULL OR :searchBy = 'equipmentName')
+                AND EXISTS (
+                SELECT 1
+                FROM jsonb_array_elements(e.equipments::jsonb) AS equipment
+                WHERE equipment->>'name' ILIKE '%' || :keyword || '%'
+            )
+            )
+        ))
+  AND (:startPrice IS NULL OR rcph.total_price >= :startPrice)
+  AND (:endPrice IS NULL OR rcph.total_price <= :endPrice)
+  AND (:capacity IS NULL OR rc.capacity <= :capacity)
+  AND (:status IS NULL OR rc.status = :status)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

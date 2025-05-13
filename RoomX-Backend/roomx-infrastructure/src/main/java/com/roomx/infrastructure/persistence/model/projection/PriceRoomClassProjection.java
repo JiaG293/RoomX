@@ -5,8 +5,10 @@ import java.time.Instant;
 import java.util.UUID;
 
 public interface PriceRoomClassProjection {
-    UUID getId();
-    BigDecimal getPrice();
-    Instant getStartDate();
-    Instant getEndDate();
+    BigDecimal getTotalPrice();
+    BigDecimal getBasePrice();
+    Instant getValidFrom();
+    Instant getValidEnd();
+
+
 }

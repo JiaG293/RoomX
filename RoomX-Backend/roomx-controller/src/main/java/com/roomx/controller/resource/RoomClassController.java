@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -107,11 +108,11 @@ public class RoomClassController {
     public ResultResponse<?> filterSearchGroup(
             @ModelAttribute RoomClassFilterRequest request,
             @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "-1") Integer size,
-            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "capacity") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {
         var result = roomClassAppService.filterSearchRoomClass(request, page, size, sortBy, direction);
-        return ResultResponse.<Page<GroupFilterResponse>>builder()
+        return ResultResponse.<Page<RoomClassFilterResponse>>builder()
                 .result(result)
                 .build();
     }

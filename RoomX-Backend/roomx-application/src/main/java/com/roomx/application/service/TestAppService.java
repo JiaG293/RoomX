@@ -16,10 +16,12 @@ import com.roomx.infrastructure.firebase.FCMNotificationService;
 import com.roomx.infrastructure.minio.MinioService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.infrastructure.notification.EmailService;
+import com.roomx.infrastructure.persistence.dto.RoomClassFilter;
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
 import com.roomx.infrastructure.persistence.mapper.RoomEntityMapper;
 import com.roomx.infrastructure.persistence.model.entity.RoomEntity;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaApprovalFormEntityRepository;
+import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomClassEntityRepository;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomClassPriceHistoryEntityRepository;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomEntityRepository;
 import com.roomx.infrastructure.persistence.service.ApprovalFormEntityService;
@@ -78,6 +80,7 @@ public class TestAppService {
     private final JpaRoomClassPriceHistoryEntityRepository jpaRoomClassPriceHistoryEntityRepository;
     private final JpaRoomEntityRepository jpaRoomEntityRepository;
     private final RoomEntityMapper roomEntityMapper;
+    private final JpaRoomClassEntityRepository jpaRoomClassEntityRepository;
 
 
     public Object testAppService() {
@@ -136,11 +139,8 @@ public class TestAppService {
 //                pageable
 //        );
 
-        RoomFilter roomFilter = new RoomFilter();
-        var result = jpaRoomEntityRepository.findRoomsWithFilters(
-                null,
-                null,
-                null,
+        RoomClassFilter roomFilter = new RoomClassFilter();
+        var result = jpaRoomClassEntityRepository.filterSearchRoomClass(
                 null,
                 null,
                 null,
@@ -150,7 +150,7 @@ public class TestAppService {
                 pageable
                 );
 
-        return result;
+        return result.getContent().getFirst().getServices();
     }
 
 
