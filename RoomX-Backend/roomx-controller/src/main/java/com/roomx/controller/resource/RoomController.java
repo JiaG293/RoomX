@@ -1,14 +1,13 @@
 package com.roomx.controller.resource;
 
-import com.roomx.shared.dto.resource.request.RoomCreateRequest;
-import com.roomx.shared.dto.resource.request.RoomFilterRequest;
-import com.roomx.shared.dto.resource.request.RoomQueryRequest;
-import com.roomx.shared.dto.resource.request.RoomUpdateStatusRequest;
+import com.roomx.application.service.resource.response.RoomDetailAllResponse;
+import com.roomx.shared.dto.resource.request.*;
 import com.roomx.shared.dto.resource.response.RoomDetailResponse;
 import com.roomx.shared.dto.resource.response.RoomFilterResponse;
 import com.roomx.shared.dto.resource.response.RoomResponse;
-import com.roomx.application.service.resource.RoomAppService;
+import com.roomx.application.service.resource.response.RoomAppService;
 import com.roomx.shared.exception.api.ResultResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -46,6 +45,26 @@ public class RoomController {
         var result = roomAppService.updateStatusRoom(roomId, request);
 
         return ResultResponse.<RoomResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PatchMapping("/{roomId}")
+    public ResultResponse<?> updateRoom(@PathVariable String roomId, @RequestBody RoomUpdateRequest request) {
+        var result = roomAppService.updateRoom(roomId, request);
+
+        return ResultResponse.<RoomDetailResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/{roomId}")
+    public ResultResponse<?> getDetailRoom(
+            @PathVariable @NotNull String roomId
+    ) {
+        var result = roomAppService.getDetailRoom(roomId);
+
+        return ResultResponse.<RoomDetailAllResponse>builder()
                 .result(result)
                 .build();
     }

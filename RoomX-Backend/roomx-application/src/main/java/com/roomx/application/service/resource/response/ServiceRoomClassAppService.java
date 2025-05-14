@@ -1,4 +1,4 @@
-package com.roomx.application.service.resource;
+package com.roomx.application.service.resource.response;
 
 import com.roomx.domain.repository.ServicePriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.ServiceRoomClassCreateRequest;

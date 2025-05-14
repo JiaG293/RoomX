@@ -1,12 +1,13 @@
 package com.roomx.shared.enums;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum RoomStatusType {
     AVAILABLE("kha dung"),
-    RESERVED(""),
+    RESERVED("đang sử dụng"),
     BLOCKED("bao tri"),
     CLEANED("Ve sinh");
 
@@ -25,5 +26,11 @@ public enum RoomStatusType {
 
     public static RoomStatusType fromDisplayName(String displayName) {
         return DISPLAY_NAME_MAP.get(displayName);
+    }
+
+    public static List<String> getStatusList(){
+        return Stream.of(AVAILABLE, RESERVED, BLOCKED, CLEANED)
+                .map(RoomStatusType::toString)
+                .toList();
     }
 }

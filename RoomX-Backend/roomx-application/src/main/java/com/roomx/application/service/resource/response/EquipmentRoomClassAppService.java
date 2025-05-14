@@ -1,4 +1,4 @@
-package com.roomx.application.service.resource;
+package com.roomx.application.service.resource.response;
 
 import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import com.roomx.domain.repository.EquipmentPriceHistoryRepository;

@@ -90,7 +90,8 @@ public enum ErrorCode {
     ROLE_NOT_FOUND(1000, "error.role.not_found", HttpStatus.NOT_FOUND),
     BOOKING_REJECT_BAD_REQUEST(1000, "error.booking_reject.bad_request", HttpStatus.BAD_REQUEST),
     BOOKING_CANCEL_BAD_REQUEST(1000, "error.booking_cancel.bad_request", HttpStatus.BAD_REQUEST),
-    BOOKING_MODIFICATION_BAD_REQUEST(1000, "error.booking_modification.bad_request", HttpStatus.BAD_REQUEST);
+    BOOKING_MODIFICATION_BAD_REQUEST(1000, "error.booking_modification.bad_request", HttpStatus.BAD_REQUEST),
+    ROOM_STATUS_INVALID(1000,"valid.room.status_invalid", HttpStatus.BAD_REQUEST);
 
 
 

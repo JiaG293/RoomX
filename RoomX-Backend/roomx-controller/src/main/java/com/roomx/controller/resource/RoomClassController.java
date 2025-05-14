@@ -2,9 +2,9 @@ package com.roomx.controller.resource;
 
 import com.roomx.shared.dto.resource.base.RoomClassPriceCalculateDto;
 import com.roomx.shared.dto.resource.request.*;
-import com.roomx.application.service.resource.EquipmentRoomClassAppService;
-import com.roomx.application.service.resource.RoomClassAppService;
-import com.roomx.application.service.resource.ServiceRoomClassAppService;
+import com.roomx.application.service.resource.response.EquipmentRoomClassAppService;
+import com.roomx.application.service.resource.response.RoomClassAppService;
+import com.roomx.application.service.resource.response.ServiceRoomClassAppService;
 import com.roomx.shared.dto.resource.response.*;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;

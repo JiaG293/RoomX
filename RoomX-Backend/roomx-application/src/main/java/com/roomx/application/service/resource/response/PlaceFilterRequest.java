@@ -1,4 +1,4 @@
-package com.roomx.application.service.resource;
+package com.roomx.application.service.resource.response;
 
 public record PlaceFilterRequest(
         String keyword,

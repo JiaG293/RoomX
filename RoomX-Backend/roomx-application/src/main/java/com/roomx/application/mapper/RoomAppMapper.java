@@ -1,5 +1,6 @@
 package com.roomx.application.mapper;
 
+import com.roomx.application.service.resource.response.RoomDetailAllResponse;
 import com.roomx.infrastructure.persistence.model.projection.RoomProjection;
 import com.roomx.shared.dto.resource.request.RoomCreateRequest;
 import com.roomx.shared.dto.resource.response.RoomDetailResponse;
@@ -38,4 +39,6 @@ public interface RoomAppMapper {
 
     @Mapping(target = "buildingPlaceId", source = "buildingPlaceId")
     RoomFilterResponse toResponseFilter(RoomProjection roomProjection);
+
+    RoomDetailAllResponse toResponseDetailAll(Room roomDomain);
 }

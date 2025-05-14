@@ -1,13 +1,12 @@
 package com.roomx.controller.resource;
 
-import com.roomx.application.service.resource.PlaceFilterRequest;
+import com.roomx.application.service.resource.response.PlaceFilterRequest;
 import com.roomx.shared.dto.resource.request.PlaceCreateBuildingWithFloorRequest;
 import com.roomx.shared.dto.resource.request.PlaceCreateRequest;
-import com.roomx.shared.dto.resource.request.PlaceQueryRequest;
 import com.roomx.shared.dto.resource.request.PlaceUpdateRequest;
 import com.roomx.shared.dto.resource.response.PlaceHierarchyResponse;
 import com.roomx.shared.dto.resource.response.PlaceResponse;
-import com.roomx.application.service.resource.PlaceAppService;
+import com.roomx.application.service.resource.response.PlaceAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

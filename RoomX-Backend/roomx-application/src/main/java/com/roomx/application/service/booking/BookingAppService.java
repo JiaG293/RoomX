@@ -19,8 +19,7 @@ import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import com.roomx.shared.dto.booking.base.RoomScheduleResultDto;
 import com.roomx.shared.dto.booking.request.*;
 import com.roomx.shared.dto.booking.response.*;
-import com.roomx.application.service.resource.RoomAppService;
-import com.roomx.shared.dto.resource.response.RoomResponse;
+import com.roomx.application.service.resource.response.RoomAppService;
 import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.persistence.mapper.BookingRequestEntityMapper;
@@ -41,7 +40,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service

@@ -1,4 +1,4 @@
-package com.roomx.application.service.resource;
+package com.roomx.application.service.resource.response;
 
 import com.roomx.shared.dto.resource.request.*;
 import com.roomx.shared.dto.resource.response.PlaceHierarchyResponse;
@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

@@ -4,7 +4,7 @@ package com.roomx.controller.resource;
 import com.roomx.shared.dto.resource.request.*;
 import com.roomx.shared.dto.resource.response.EquipmentDetailResponse;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
-import com.roomx.application.service.resource.EquipmentAppService;
+import com.roomx.application.service.resource.response.EquipmentAppService;
 import com.roomx.shared.exception.api.ResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
