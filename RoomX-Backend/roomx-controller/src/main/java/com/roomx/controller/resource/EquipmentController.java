@@ -2,6 +2,7 @@ package com.roomx.controller.resource;
 
 
 import com.roomx.shared.dto.resource.request.*;
+import com.roomx.shared.dto.resource.response.EquipmentDetailResponse;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.application.service.resource.EquipmentAppService;
 import com.roomx.shared.exception.api.ResultResponse;
@@ -65,11 +66,13 @@ public class EquipmentController {
                 .build();
     }
 
-    /*@GetMapping("/{equipmentId}")
+    @GetMapping("/{equipmentId}")
     public ResultResponse<?> getDetailEquipment(@PathVariable String equipmentId) {
-
-        return ResultResponse.<Void>builder().build();
-    }*/
+        var result = equipmentAppService.getDetailEquipment(equipmentId);
+        return ResultResponse.<EquipmentDetailResponse>builder()
+                .result(result)
+                .build();
+    }
 
     @DeleteMapping("/{equipmentId}")
     public ResultResponse<?> deleteEquipment(@PathVariable String equipmentId) {

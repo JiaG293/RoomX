@@ -6,6 +6,7 @@ import com.roomx.domain.model.aggrerate.Equipment;
 import com.roomx.domain.model.entity.EquipmentPriceHistory;
 import com.roomx.domain.repository.EquipmentPriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.*;
+import com.roomx.shared.dto.resource.response.EquipmentDetailResponse;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
 import com.roomx.application.mapper.EquipmentAppMapper;
 import com.roomx.domain.repository.EquipmentRepository;
@@ -175,4 +176,15 @@ public class EquipmentAppService {
     }
 
 
+    public EquipmentDetailResponse getDetailEquipment(String equipmentId) {
+        var equipmentDomain = equipmentRepository.findByIdAndStatus(equipmentId, DeleteStatusType.ACTIVE.toString())
+                .orElseThrow(() -> new AppException(ErrorCode.EQUIPMENT_NOT_FOUND));
+
+        var equipmentPriceDomain = equipmentPriceHistoryRepository.findLatestValidFrom(equipmentId)
+                .orElseThrow(() -> new AppException(ErrorCode.EQUIPMENT_NOT_FOUND));
+
+        equipmentDomain.setPrice(equipmentPriceDomain);
+
+        return equipmentAppMapper.toResponseDetail(equipmentDomain);
+    }
 }

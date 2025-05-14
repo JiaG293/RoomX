@@ -22,6 +22,7 @@ public interface EquipmentAppMapper {
 
     EquipmentResponse toResponse(Equipment domain);
 
+    @Mapping(target = "unitPrice", source = "price.unitPrice")
     EquipmentDetailResponse toResponseDetail(Equipment domain);
 
     @Mapping(target = "id", ignore = true)
