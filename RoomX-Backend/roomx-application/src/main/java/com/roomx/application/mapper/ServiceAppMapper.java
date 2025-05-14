@@ -22,6 +22,7 @@ public interface ServiceAppMapper {
 //    @Mapping(target = "price", source = "price")
     ServiceResponse toResponse(Service domain);
 
+    @Mapping(target = "unitPrice", source = "price.unitPrice")
     ServiceDetailResponse toResponseDetail(Service domain);
 
     Service toDomain(ServiceCreateRequest request);

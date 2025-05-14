@@ -2,6 +2,7 @@ package com.roomx.controller.resource;
 
 import com.roomx.shared.dto.resource.request.*;
 import com.roomx.shared.dto.resource.response.EquipmentResponse;
+import com.roomx.shared.dto.resource.response.ServiceDetailResponse;
 import com.roomx.shared.dto.resource.response.ServiceResponse;
 import com.roomx.application.service.resource.ServiceAppService;
 import com.roomx.shared.exception.api.ResultResponse;
@@ -68,8 +69,10 @@ public class ServiceController {
 
     @GetMapping("/{serviceId}")
     public ResultResponse<?> getDetailService(@PathVariable String serviceId) {
-
-        return ResultResponse.<Void>builder().build();
+        var result = serviceAppService.getDetailService(serviceId);
+        return ResultResponse.<ServiceDetailResponse>builder()
+                .result(result)
+                .build();
     }
 
     @DeleteMapping("/{serviceId}")

@@ -6,6 +6,7 @@ import com.roomx.domain.model.aggrerate.Service;
 import com.roomx.domain.model.entity.ServicePriceHistory;
 import com.roomx.domain.repository.ServicePriceHistoryRepository;
 import com.roomx.shared.dto.resource.request.*;
+import com.roomx.shared.dto.resource.response.ServiceDetailResponse;
 import com.roomx.shared.dto.resource.response.ServiceResponse;
 import com.roomx.application.mapper.ServiceAppMapper;
 import com.roomx.domain.repository.ServiceRepository;
@@ -196,4 +197,14 @@ public class ServiceAppService {
     }
 
 
+
+    public ServiceDetailResponse getDetailService(String serviceId) {
+        var serviceDomain = serviceRepository.findByIdAndStatus(serviceId, DeleteStatusType.ACTIVE.toString())
+                .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND));
+        var servicePriceDomain = servicePriceHistoryRepository.findLatestValidFrom(serviceId)
+                .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND));
+
+        serviceDomain.setPrice(servicePriceDomain);
+        return serviceAppMapper.toResponseDetail(serviceDomain);
+    }
 }
