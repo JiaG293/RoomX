@@ -25,6 +25,20 @@ import { TimePicker } from "@/components/app/custom/time-picker";
 import { toast } from "sonner";
 import { ScheduleService } from "@/services/user/schedule.service";
 import CheckingTable from "@/pages/App/checking-table";
+import {
+  Calendar,
+  Coffee,
+  FileClock,
+  FileEdit,
+  Home,
+  Info,
+  MapPin,
+  MonitorSmartphone,
+  Repeat,
+  Settings,
+  UserPlus,
+  Users,
+} from "lucide-react";
 
 interface BookingModalProps {
   eventDate?: string;
@@ -64,7 +78,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     const m = end.getMinutes().toString().padStart(2, "0");
     return `${h}:${m}`;
   });
-  const [branch, setBranch] = useState("");
   const [repeatType, setRepeatType] = useState("one-time");
   const [selectedServices, setSelectedServices] = useState<SelectedItem[]>([]);
   const [selectedParticipants, setSelectedParticipants] = useState<
@@ -76,6 +89,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [scheduleResult, setScheduleResult] = useState([]);
 
   const isOpen = useMemo(() => !!eventDate, [eventDate]);
+
+  const branches = ["Nha Trang", "Đà Nẵng", "Hà Nội", "TP.HCM"];
+  const [branch, setBranch] = useState("");
+
+  const roomList = [
+    { id: "room1", name: "Phòng A" },
+    { id: "room2", name: "Phòng B" },
+    { id: "room3", name: "Phòng C" },
+  ];
+
+  const [room, setRoom] = useState("");
 
   // rerender lại lấy ngày đã chọn cho chính xác
   useEffect(() => {
@@ -296,7 +320,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setEndDate(null);
     setStartTime(getClosestTime());
     setEndTime(getClosestTime());
-    setBranch("Nha Trang");
+    setBranch("");
     setRepeatType("one-time");
     setSelectedServices([]); // Xóa tất cầu dịch vụ
     setSelectedDevices([]); // Xóa tất cầu thiết bị
@@ -312,135 +336,273 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-6xl max-h-[98vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-4xl max-h-[95vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>Đặt phòng họp</DialogTitle>
           <DialogDescription>
             Chọn ngày, giờ và thiết lập lịch hẹn phòng họp.
           </DialogDescription>
         </DialogHeader>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Thông tin lịch hẹn</CardTitle>
+        <div className="flex flex-col gap-6 overflow-y-auto max-h-[75vh] pr-2">
+          {/* Thông tin lịch hẹn */}
+          <Card className="w-full bg-background shadow-xl rounded-2xl border">
+            <CardHeader className="border-b px-4 py-3 bg-muted/40">
+              <CardTitle className="text-xl font-semibold text-primary flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-blue-500" /> Thông tin lịch
+                hẹn
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="">
-                  <Label htmlFor="title">Tiêu đề</Label>
+
+            <CardContent className="px-4 py-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Tiêu đề */}
+                <div>
+                  <Label
+                    htmlFor="title"
+                    className="mb-1 text-sm text-muted-foreground flex items-center gap-1"
+                  >
+                    <FileEdit className="w-4 h-4 text-pink-500" />
+                    Tiêu đề
+                  </Label>
                   <Input
                     id="title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Nhập tiêu đề buổi họp"
+                    className="h-9 text-sm"
                   />
                 </div>
 
-                <div className="">
-                  <Label htmlFor="description">Mô tả</Label>
+                {/* Mô tả */}
+                <div>
+                  <Label
+                    htmlFor="description"
+                    className="mb-1 text-sm text-muted-foreground flex items-center gap-1"
+                  >
+                    <Info className="w-4 h-4 text-yellow-500" />
+                    Mô tả
+                  </Label>
                   <Input
                     id="description"
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Nhập mô tả chi tiết"
+                    className="h-9 text-sm"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Loại lịch</Label>
-                  <Select value={repeatType} onValueChange={setRepeatType}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
+                {/* Chi nhánh */}
+                <div>
+                  <Label
+                    htmlFor="branch"
+                    className="mb-1 text-sm text-muted-foreground flex items-center gap-1"
+                  >
+                    <MapPin className="w-4 h-4 text-green-500" />
+                    Chi nhánh
+                  </Label>
+                  <Select value={branch} onValueChange={setBranch}>
+                    <SelectTrigger className="h-9 text-sm">
+                      <SelectValue placeholder="Chọn chi nhánh" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="daily">Ngày</SelectItem>
-                      <SelectItem value="weekly">Hằng tuần</SelectItem>
-                      <SelectItem value="monthly">Hằng tháng</SelectItem>
-                      <SelectItem value="yearly">Hằng năm</SelectItem>
-                      <SelectItem value="custom">Tuỳ chọn</SelectItem>
+                      {branches.map((b) => (
+                        <SelectItem key={b} value={b} className="text-sm">
+                          {b}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="capacity">Sức chứa</Label>
+                {/* Phòng họp */}
+                <div>
+                  <Label
+                    htmlFor="room"
+                    className="mb-1 text-sm text-muted-foreground flex items-center gap-1"
+                  >
+                    <Home className="w-4 h-4 text-indigo-500" />
+                    Phòng họp
+                  </Label>
+                  <Select value={room} onValueChange={setRoom}>
+                    <SelectTrigger className="h-9 text-sm">
+                      <SelectValue placeholder="Chọn phòng họp" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roomList.map((r) => (
+                        <SelectItem key={r.id} value={r.id} className="text-sm">
+                          {r.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Loại lịch */}
+                <div>
+                  <Label className="mb-1 text-sm text-muted-foreground flex items-center gap-1">
+                    <Repeat className="w-4 h-4 text-rose-500" />
+                    Loại lịch
+                  </Label>
+                  <Select value={repeatType} onValueChange={setRepeatType}>
+                    <SelectTrigger className="h-9 text-sm">
+                      <SelectValue placeholder="Chọn loại lịch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily" className="text-sm">
+                        Ngày
+                      </SelectItem>
+                      <SelectItem value="weekly" className="text-sm">
+                        Hằng tuần
+                      </SelectItem>
+                      <SelectItem value="monthly" className="text-sm">
+                        Hằng tháng
+                      </SelectItem>
+                      <SelectItem value="yearly" className="text-sm">
+                        Hằng năm
+                      </SelectItem>
+                      <SelectItem value="custom" className="text-sm">
+                        Tuỳ chọn
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Sức chứa */}
+                <div>
+                  <Label
+                    htmlFor="capacity"
+                    className="mb-1 text-sm text-muted-foreground flex items-center gap-1"
+                  >
+                    <Users className="w-4 h-4 text-cyan-500" />
+                    Sức chứa
+                  </Label>
                   <Input
                     id="capacity"
                     type="number"
                     value={capacity}
-                    onChange={(e) => setCapacity(Number(e.target.value))}
+                    onChange={(e) => {
+                      const value = e.target.value;
+
+                      // Chỉ chấp nhận số nguyên dương
+                      if (/^\d*$/.test(value)) {
+                        setCapacity(Number(value));
+                      }
+                    }}
                     placeholder="Nhập số lượng sức chứa"
+                    className="h-9 text-sm"
+                    min={0}
+                    step={1}
                   />
                 </div>
 
-                {/* Ngày */}
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1 space-y-2">
-                    <Label>Ngày bắt đầu</Label>
-                    <DatePicker
-                      selected={startDate}
-                      onChange={(date) => setStartDate(date)}
-                      dateFormat="dd-MM-yyyy"
-                      className="w-full border px-3 py-2 rounded-md bg-transparent"
-                    />
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <Label>Ngày kết thúc</Label>
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      dateFormat="dd-MM-yyyy"
-                      className="w-full border px-3 py-2 rounded-md bg-transparent"
-                    />
-                  </div>
+                {/* Ngày bắt đầu */}
+                <div className="flex items-center gap-3">
+                  <Label className="w-24 text-sm text-muted-foreground flex items-center gap-1">
+                    <Calendar className="w-4 h-4 text-purple-500" /> Bắt đầu
+                  </Label>
+                  <DatePicker
+                    selected={startDate}
+                    onChange={setStartDate}
+                    dateFormat="dd-MM-yyyy"
+                    className="w-full h-9 px-3 py-2 text-sm border rounded-md bg-background shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
+                  />
                 </div>
 
-                {/* Giờ */}
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1 space-y-2">
-                    <Label>Giờ bắt đầu</Label>
-                    <TimePicker value={startTime} onChange={setStartTime} />
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <Label>Giờ kết thúc</Label>
-                    <TimePicker value={endTime} onChange={setEndTime} />
-                  </div>
+                {/* Ngày kết thúc */}
+                <div className="flex items-center gap-3">
+                  <Label className=" w-24 text-sm text-muted-foreground flex items-center gap-1">
+                    <Calendar className="w-4 h-4 text-purple-500" /> Kết thúc
+                  </Label>
+                  <DatePicker
+                    className="w-full h-9 px-3 py-2 text-sm border rounded-md bg-background shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
+                    selected={endDate}
+                    onChange={setEndDate}
+                    dateFormat="dd-MM-yyyy"
+                  />
+                </div>
+
+                {/* Giờ bắt đầu */}
+                <div className="flex items-center gap-3">
+                  <Label className="w-30 text-sm text-muted-foreground flex items-center gap-1">
+                    <FileClock className="w-4 h-4 text-orange-500" /> Giờ bắt
+                    đầu
+                  </Label>
+                  <TimePicker value={startTime} onChange={setStartTime} />
+                </div>
+
+                {/* Giờ kết thúc */}
+                <div className="flex items-center gap-3">
+                  <Label className="w-30 text-sm text-muted-foreground flex items-center gap-1">
+                    <FileClock className="w-4 h-4 text-orange-500" /> Giờ kết
+                    thúc
+                  </Label>
+                  <TimePicker value={endTime} onChange={setEndTime} />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <div className="flex flex-col max-h-[90vh] overflow-y-auto">
-            <TagSelect
-              title="Người tham gia"
-              placeholder="Tìm người tham gia..."
-              data={participantsList}
-              variant="people"
-              onChange={setSelectedParticipants}
-            />
-            <TagSelect
-              title="Dịch vụ"
-              placeholder="Tìm dịch vụ..."
-              data={servicesList}
-              onChange={setSelectedServices}
-            />
-            <TagSelect
-              title="Thiết bị"
-              placeholder="Tìm thiết bị..."
-              data={devicesList}
-              onChange={setSelectedDevices}
-            />
-          </div>
+          {/* Thành phần liên quan */}
+          <Card className="w-full">
+            <CardHeader className="px-4 py-3 border-b bg-muted/40">
+              <CardTitle className="text-base font-semibold text-primary flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-500" /> Thành phần liên quan
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {/* Người tham gia */}
+                <TagSelect
+                  title={
+                    <span className="flex items-center gap-1 text-sm font-medium">
+                      <UserPlus className="w-4 h-4 text-green-500" />
+                      Người tham gia
+                    </span>
+                  }
+                  placeholder="Tìm người tham gia..."
+                  data={participantsList}
+                  variant="people"
+                  onChange={setSelectedParticipants}
+                />
+
+                {/* Dịch vụ */}
+                <TagSelect
+                  title={
+                    <span className="flex items-center gap-1 text-sm font-medium">
+                      <Coffee className="w-4 h-4 text-orange-500" />
+                      Dịch vụ
+                    </span>
+                  }
+                  placeholder="Tìm dịch vụ..."
+                  data={servicesList}
+                  onChange={setSelectedServices}
+                />
+
+                {/* Thiết bị */}
+                <TagSelect
+                  title={
+                    <span className="flex items-center gap-1 text-sm font-medium">
+                      <MonitorSmartphone className="w-4 h-4 text-purple-500" />
+                      Thiết bị
+                    </span>
+                  }
+                  placeholder="Tìm thiết bị..."
+                  data={devicesList}
+                  onChange={setSelectedDevices}
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="flex justify-end gap-2 mt-6">
+        {/* Buttons */}
+        <div className="flex justify-end gap-2 ">
           <Button variant="outline" onClick={onClose}>
             Hủy
           </Button>
-          <Button onClick={handleBook} className="bg-blue-600">
+          <Button onClick={handleBook} className="bg-blue-600 text-white">
             📅 Đặt lịch ngay
           </Button>
         </div>

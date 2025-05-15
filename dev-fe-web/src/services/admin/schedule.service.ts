@@ -15,6 +15,7 @@ export class ScheduleService {
     }
 
     try {
+      // endpoint cũ: /bookings/filters
       const response = await axios.get(`${API_BASE_URL}/bookings/filters`, {
         params: { month, year, size: -1 },
         headers: {

@@ -22,20 +22,22 @@ const Meeting: React.FC = () => {
     try {
       const scheduleService = new ScheduleService();
       const data = await scheduleService.getAllSchedules(month, year);
-  
+
       const formattedEvents = data
         .map((event: any) => {
           const eventDate = new Date(event.meetingDate);
           if (
-            eventDate.getMonth() + 1 !== month || 
+            eventDate.getMonth() + 1 !== month ||
             eventDate.getFullYear() !== year
           ) {
             return null; // Loại bỏ sự kiện không thuộc tháng đang xem
           }
-  
+
           const statusClass =
-            event.status === "COMPLETED" ? "event-completed" : "event-scheduled";
-  
+            event.status === "COMPLETED"
+              ? "event-completed"
+              : "event-scheduled";
+
           return {
             id: event.id,
             title: event.title || "Sự kiện",
@@ -45,13 +47,12 @@ const Meeting: React.FC = () => {
           };
         })
         .filter((event: any) => event !== null); // Loại bỏ null
-  
+
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error loading schedule:", error);
     }
   }, []);
-  
 
   useEffect(() => {
     loadEvents(currentMonth, currentYear);
@@ -116,18 +117,37 @@ const Meeting: React.FC = () => {
             info.view.calendar.changeView("timeGridDay", info.date);
           }}
         />
-      {/* Chú thích */}
-      <div style={{ display: "flex", marginTop: "10px", justifyContent: "flex-start", paddingLeft: "10px" }}>
-  <div style={{ display: "flex", alignItems: "center", marginRight: "10px" }}>
-    <div style={{ width: "12px", height: "12px", backgroundColor: "#9E9E9E", marginRight: "5px" }}></div>
-    <span style={{ fontSize: "12px" }}>Lên lịch</span>
-  </div>
-  <div style={{ display: "flex", alignItems: "center" }}>
-    <div style={{ width: "12px", height: "12px", backgroundColor: "#1E88E5", marginRight: "5px" }}></div>
-    <span style={{ fontSize: "12px" }}>Hoàn thành</span>
-  </div>
-</div>
-
+        {/* Chú thích */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "12px",
+            marginTop: "10px",
+            paddingLeft: "10px",
+          }}
+        >
+          {[
+            { color: "#d0f0c0", label: "Lên lịch" },
+            { color: "#e3f2fd", label: "Hoàn thành" },
+            { color: "#fff3cd", label: "Chờ duyệt" },
+          ].map((item, index) => (
+            <div
+              key={index}
+              style={{ display: "flex", alignItems: "center", gap: "6px" }}
+            >
+              <div
+                style={{
+                  width: "12px",
+                  height: "12px",
+                  backgroundColor: item.color,
+                  borderRadius: "2px",
+                }}
+              ></div>
+              <span style={{ fontSize: "12px" }}>{item.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Sử dụng EventModal */}

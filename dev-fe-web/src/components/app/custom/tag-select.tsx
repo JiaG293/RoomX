@@ -22,7 +22,7 @@ export type SelectedPerson = {
 }
 
 interface TagSelectProps {
-  title?: string
+  title?: React.ReactNode
   placeholder?: string
   data?: string[]
   variant?: "default" | "people"
