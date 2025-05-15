@@ -2,6 +2,8 @@ package com.roomx.controller.resource;
 
 import com.roomx.shared.dto.user.request.UserCreateRequest;
 import com.roomx.shared.dto.user.request.UserQueryFilterRequest;
+import com.roomx.shared.dto.user.request.UserUpdateInfoRequest;
+import com.roomx.shared.dto.user.request.UserUpdateRequest;
 import com.roomx.shared.dto.user.response.UserCreateResponse;
 import com.roomx.shared.dto.user.response.UserInfoReponse;
 import com.roomx.shared.dto.user.response.UserResponse;
@@ -9,6 +11,7 @@ import com.roomx.shared.dto.user.response.UserRoleResponse;
 import com.roomx.application.service.user.RoleAppService;
 import com.roomx.application.service.user.UserAppService;
 import com.roomx.shared.exception.api.ResultResponse;
+import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -96,6 +100,29 @@ public class UserController {
                 .build();
     }
 
+    @PatchMapping
+    public ResultResponse<?> updateInfoUser(@Validated @RequestBody UserUpdateInfoRequest request) {
+        var result = userAppService.updateInfoUser(request);
+        return ResultResponse.<UserResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PatchMapping("/{userId}")
+    public ResultResponse<?> updateUser(@PathVariable String userId, @Validated @RequestBody UserUpdateRequest request) {
+        var result = userAppService.updateUser(userId,request);
+        return ResultResponse.<UserResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/check-email/{email}")
+    public ResultResponse<?> checkEmail(@PathVariable @Validated @Email(message = "valid.email.invalid") String email) {
+        var result = userAppService.checkEmailExist(email);
+        return ResultResponse.<Boolean>builder()
+                .result(result)
+                .build();
+    }
 
 
     @DeleteMapping("/{userId}")

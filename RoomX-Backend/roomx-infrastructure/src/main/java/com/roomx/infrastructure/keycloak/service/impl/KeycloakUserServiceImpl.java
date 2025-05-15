@@ -2,6 +2,9 @@ package com.roomx.infrastructure.keycloak.service.impl;
 
 
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
@@ -138,6 +141,21 @@ public class KeycloakUserServiceImpl {
                 .update(user);
     }
 
+
+    public void updateUserEmail(String userId, String email) {
+        try {
+            var userResource = keycloak.realm(getRealm()).users().get(userId);
+            UserRepresentation user = userResource.toRepresentation();
+            user.setEmail(email);
+            user.setEmailVerified(true);
+
+            userResource.update(user);
+        } catch (NotFoundException e) {
+            throw new RuntimeException("User not found in Keycloak: " + userId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update email in Keycloak for userId: " + userId, e);
+        }
+    }
 }
 
 

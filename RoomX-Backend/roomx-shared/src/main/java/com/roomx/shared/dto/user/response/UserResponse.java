@@ -18,4 +18,6 @@ public class UserResponse {
     private String avatarImage;
     private String phoneNumber;
     private String userType;
+    private Boolean enable;
+
 }

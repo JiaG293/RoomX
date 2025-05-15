@@ -31,4 +31,6 @@ public interface UserRepository {
     Optional<UUID> findByEmailCustom(String email);
 
     void deleteUserRole(String userId);
+
+    boolean checkEmailExist(String email);
 }

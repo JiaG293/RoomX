@@ -6,6 +6,8 @@ import com.roomx.infrastructure.persistence.repository.impl.UserRoleEntityReposi
 import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.dto.user.request.UserCreateRequest;
 import com.roomx.shared.dto.user.request.UserQueryFilterRequest;
+import com.roomx.shared.dto.user.request.UserUpdateInfoRequest;
+import com.roomx.shared.dto.user.request.UserUpdateRequest;
 import com.roomx.shared.dto.user.response.UserCreateResponse;
 import com.roomx.shared.dto.user.response.UserInfoReponse;
 import com.roomx.shared.dto.user.response.UserResponse;
@@ -38,6 +40,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -218,8 +221,134 @@ public class UserAppService {
         }
     }
 
-    public UserResponse activeUser(String userId) {
+    public UserResponse updateStatusUser(String userId) {
+
         return null;
+    }
+
+    @Transactional
+    @PreAuthorize("@roleEvaluator.hasHigherRole(#userId) && @roleEvaluator.hasAnyRoleType('approve')")
+    public UserResponse updateUser(String userId, UserUpdateRequest request) {
+        var userDomain = userRepository.findById(UUID.fromString(userId), true)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED, null, userId));
+
+        String oldEmail = userDomain.getEmail();
+        String newEmail = request.getEmail();
+        Boolean oldEnabled = null;
+        boolean checkEmail = checkEmailExist(newEmail);
+        if(checkEmail){
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+
+        try {
+            if (newEmail != null && !newEmail.isBlank() && !newEmail.equalsIgnoreCase(oldEmail)) {
+                keycloakUserServiceImpl.updateUserEmail(userId, newEmail);
+                userDomain.setEmail(newEmail);
+            }
+
+            if (request.getFirstName() != null && !request.getFirstName().isEmpty()) {
+                userDomain.setFirstName(request.getFirstName());
+            }
+
+            if (request.getLastName() != null && !request.getLastName().isEmpty()) {
+                userDomain.setLastName(request.getLastName());
+            }
+
+            if (request.getPhoneNumber() != null && !request.getPhoneNumber().isEmpty()) {
+                userDomain.setPhoneNumber(request.getPhoneNumber());
+            }
+
+            if (request.getAvatarImage() != null && !request.getAvatarImage().isEmpty()) {
+                userDomain.setAvatarImage(request.getAvatarImage());
+            }
+
+            if (request.getGender() != null) {
+                userDomain.setGender(request.getGender());
+            }
+
+            if (request.getEnable() != null) {
+                oldEnabled = userDomain.isEnable();
+                userDomain.setEnable(request.getEnable());
+                keycloakUserServiceImpl.changeStatusUser(userId, request.getEnable());
+            }
+
+            userRepository.save(userDomain);
+            return userAppMapper.toResponse(userDomain);
+
+        } catch (Exception ex) {
+            try {
+                if (!oldEmail.equals(userDomain.getEmail())) {
+                    keycloakUserServiceImpl.updateUserEmail(userId, oldEmail);
+                }
+                if (oldEnabled != null && !oldEnabled.equals(userDomain.isEnable())) {
+                    keycloakUserServiceImpl.changeStatusUser(userId, oldEnabled);
+                }
+            } catch (Exception rollbackEx) {
+                log.error("Rollback email in Keycloak failed for userId: {}", userId, rollbackEx);
+            }
+            throw new AppException(ErrorCode.UPDATE_USER_FAILED);
+        }
+    }
+
+    public boolean checkEmailExist(String email) {
+        return userRepository.checkEmailExist(email);
+    }
+
+
+    @Transactional
+    public UserResponse updateInfoUser(UserUpdateInfoRequest request) {
+
+        var userId = securityUtil.getCurrentUserId();
+        var userDomain = userRepository.findById(UUID.fromString(userId), true)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED, null, userId));
+
+        String oldEmail = userDomain.getEmail();
+        String newEmail = request.getEmail();
+
+        boolean checkEmail = checkEmailExist(newEmail);
+        if(checkEmail){
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+
+        try {
+            if (newEmail != null && !newEmail.isBlank() && !newEmail.equalsIgnoreCase(oldEmail)) {
+                keycloakUserServiceImpl.updateUserEmail(userId, newEmail);
+                userDomain.setEmail(newEmail);
+            }
+
+            if (request.getFirstName() != null && !request.getFirstName().isEmpty()) {
+                userDomain.setFirstName(request.getFirstName());
+            }
+
+            if (request.getLastName() != null && !request.getLastName().isEmpty()) {
+                userDomain.setLastName(request.getLastName());
+            }
+
+            if (request.getPhoneNumber() != null && !request.getPhoneNumber().isEmpty()) {
+                userDomain.setPhoneNumber(request.getPhoneNumber());
+            }
+
+            if (request.getAvatarImage() != null && !request.getAvatarImage().isEmpty()) {
+                userDomain.setAvatarImage(request.getAvatarImage());
+            }
+
+            if (request.getGender() != null) {
+                userDomain.setGender(request.getGender());
+            }
+
+            userRepository.save(userDomain);
+            return userAppMapper.toResponse(userDomain);
+
+        } catch (Exception ex) {
+            try {
+                if (!oldEmail.equals(userDomain.getEmail())) {
+                    keycloakUserServiceImpl.updateUserEmail(userId, oldEmail);
+                }
+            } catch (Exception rollbackEx) {
+                log.error("Rollback email in Keycloak failed for userId: {}", userId, rollbackEx);
+            }
+            throw new AppException(ErrorCode.UPDATE_USER_FAILED);
+        }
     }
 
     public void softDeleteUser(String userId) {

@@ -10,13 +10,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserUpdateRequest {
-
+public class UserUpdateInfoRequest {
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String firstName;
 
@@ -36,10 +34,4 @@ public class UserUpdateRequest {
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private String avatarImage;
-
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private Boolean enable;
-
-
-
 }

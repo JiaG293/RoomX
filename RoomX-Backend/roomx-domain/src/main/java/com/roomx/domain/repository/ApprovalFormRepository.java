@@ -1,8 +1,6 @@
 package com.roomx.domain.repository;
 
-import com.google.api.gax.paging.Page;
 import com.roomx.domain.model.aggrerate.ApprovalForm;
-import com.roomx.domain.model.aggrerate.BookingRequest;
 
 import java.time.Instant;
 import java.util.List;

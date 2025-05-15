@@ -6,6 +6,7 @@ import com.roomx.infrastructure.persistence.mapper.UserEntityMapper;
 import com.roomx.infrastructure.persistence.model.entity.UserEntity;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaUserEntityRepository;
 import com.roomx.infrastructure.persistence.repository.specification.UserEntitySpecRepository;
+import com.roomx.shared.enums.DeleteStatusType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +27,12 @@ public class UserEntityRepository implements UserRepository, UserEntitySpecRepos
 
     @Override
     public Optional<User> findById(UUID id, boolean enabled) {
-        return jpaUserEntityRepository.findByIdAndEnable(id, true).map(userEntityMapper::toDomain);
+        return jpaUserEntityRepository
+                .findByIdAndStatus(id, enabled ? DeleteStatusType.ACTIVE.toString() :
+                        DeleteStatusType.INACTIVE.toString())
+                .map(userEntityMapper::toDomain);
     }
+
 
     @Override
     public Optional<User> findByIdAll(String id) {
@@ -88,7 +93,12 @@ public class UserEntityRepository implements UserRepository, UserEntitySpecRepos
 
     @Override
     public void deleteUserRole(String userId) {
-         jpaUserEntityRepository.deleleUserRole(UUID.fromString(userId));
+        jpaUserEntityRepository.deleleUserRole(UUID.fromString(userId));
+    }
+
+    @Override
+    public boolean checkEmailExist(String email) {
+        return jpaUserEntityRepository.existsByEmail(email);
     }
 
     @Override

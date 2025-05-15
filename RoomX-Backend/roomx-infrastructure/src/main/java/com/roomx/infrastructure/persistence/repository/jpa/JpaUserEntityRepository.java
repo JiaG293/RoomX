@@ -1,6 +1,7 @@
 package com.roomx.infrastructure.persistence.repository.jpa;
 
 
+import aj.org.objectweb.asm.commons.Remapper;
 import com.roomx.infrastructure.persistence.model.entity.UserEntity;
 
 import org.springframework.data.jpa.repository.*;
@@ -34,4 +35,8 @@ public interface JpaUserEntityRepository extends JpaRepository<UserEntity, UUID>
     @Modifying
     @Query(value = "DELETE FROM user_role WHERE user_id = :userId", nativeQuery = true)
     void deleleUserRole(@Param("userId") UUID userId);
+
+    boolean existsByEmail(String email);
+
+    Optional<UserEntity> findByIdAndStatus(UUID id, String status);
 }
