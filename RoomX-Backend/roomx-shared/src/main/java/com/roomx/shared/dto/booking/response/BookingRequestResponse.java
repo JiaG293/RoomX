@@ -35,5 +35,6 @@ public class BookingRequestResponse {
     private String approvalStatus;
     private Instant createdAt;
     private Instant updatedAt;
+    private boolean conflictForced;
 
 }

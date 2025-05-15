@@ -194,8 +194,8 @@ public class BookingAppService {
                 bookingRequestDomain.getParticipants(),
                 10
         );
-
         log.info("check result: {}", result.size());
+
 
         List<LocalDate> conflictedDates = result.stream()
                 .filter(RoomScheduleResultDto::isHasConflict)

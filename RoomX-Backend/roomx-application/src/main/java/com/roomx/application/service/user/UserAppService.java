@@ -2,14 +2,16 @@ package com.roomx.application.service.user;
 
 import com.roomx.domain.model.aggrerate.Role;
 import com.roomx.domain.repository.UserRoleRepository;
+import com.roomx.infrastructure.persistence.dto.GroupFilter;
+import com.roomx.infrastructure.persistence.model.projection.UserProjection;
 import com.roomx.infrastructure.persistence.repository.impl.UserRoleEntityRepository;
+import com.roomx.infrastructure.persistence.service.UserEntityService;
+import com.roomx.infrastructure.persistence.service.impl.UserEntityServiceImpl;
 import com.roomx.infrastructure.security.oauth.SecurityUtil;
-import com.roomx.shared.dto.user.request.UserCreateRequest;
-import com.roomx.shared.dto.user.request.UserQueryFilterRequest;
-import com.roomx.shared.dto.user.request.UserUpdateInfoRequest;
-import com.roomx.shared.dto.user.request.UserUpdateRequest;
+import com.roomx.shared.dto.user.request.*;
 import com.roomx.shared.dto.user.response.UserCreateResponse;
 import com.roomx.shared.dto.user.response.UserInfoReponse;
+import com.roomx.shared.dto.user.response.UserPageResponse;
 import com.roomx.shared.dto.user.response.UserResponse;
 import com.roomx.application.mapper.UserAppMapper;
 import com.roomx.domain.model.aggrerate.User;
@@ -23,7 +25,6 @@ import com.roomx.infrastructure.keycloak.service.impl.KeycloakUserServiceImpl;
 import com.roomx.infrastructure.persistence.dto.UserFilter;
 import com.roomx.infrastructure.persistence.model.entity.UserEntity;
 import com.roomx.infrastructure.persistence.repository.specification.UserEntitySpecRepository;
-import com.roomx.infrastructure.persistence.repository.specification.UserSpecification;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.KeycloakNotFoundException;
@@ -58,6 +59,7 @@ public class UserAppService {
     private final SecurityUtil securityUtil;
     private final UserRoleEntityRepository userRoleEntityRepository;
     private final UserRoleRepository userRoleRepository;
+    private final UserEntityService userEntityService;
 
 
     @PreAuthorize("@roleEvaluator.hasHigherRole(#userId)")
@@ -80,7 +82,7 @@ public class UserAppService {
         return userAppMapper.toResponseInfo(userDomain);
     }
 
-    @PreAuthorize("@roleEvaluator.hasAnyRoleType('approve')")
+   /* @PreAuthorize("@roleEvaluator.hasAnyRoleType('approve')")
     public Page<UserResponse> getListUserPages(UserQueryFilterRequest filterRequest, int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -96,7 +98,7 @@ public class UserAppService {
         var userEntities = userEntitySpecRepository.findAll(specification, pageable);
 
         return userEntities.map(userAppMapper::toUserResponse);
-    }
+    }*/
 
 
     public UserCreateResponse createUser(UserCreateRequest request) {
@@ -133,7 +135,7 @@ public class UserAppService {
                         .orElseGet(HashSet::new)
                 );
 
-        if(roles.isEmpty()){
+        if (roles.isEmpty()) {
             throw new AppException(ErrorCode.ROLE_NOT_FOUND, null, request.getRoles());
         }
 
@@ -236,7 +238,7 @@ public class UserAppService {
         String newEmail = request.getEmail();
         Boolean oldEnabled = null;
         boolean checkEmail = checkEmailExist(newEmail);
-        if(checkEmail){
+        if (checkEmail) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
@@ -306,7 +308,7 @@ public class UserAppService {
         String newEmail = request.getEmail();
 
         boolean checkEmail = checkEmailExist(newEmail);
-        if(checkEmail){
+        if (checkEmail) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
@@ -371,5 +373,55 @@ public class UserAppService {
         //Implement logic assign approver free
         Random random = new Random();
         return listUserRoleApproverDomain.get(random.nextInt(listUserRoleApproverDomain.size()));
+    }
+
+
+
+    public Page<UserPageResponse> getFilterSearchPage(
+            UserFilterRequest filter,
+            int page, int size,
+            String sortBy,
+            String direction
+    ) {
+        if (size == -1) {
+            size = Integer.MAX_VALUE;
+        }
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+
+
+        UserFilter userFilter = UserFilter.builder()
+                .keyword(filter.keyword())
+                .searchBy(filter.searchBy())
+                .branchId(filter.branchId())
+                .userType(filter.userType())
+                .groupId(filter.groupId())
+                .roles(filter.roles())
+                .enabled(filter.enabled())
+                .build();
+
+        Page<UserProjection> userProjectionPage = userEntityService.filterSearchGroup(userFilter, pageable);
+
+        return userProjectionPage
+                .map(user -> UserPageResponse.builder()
+                        .id(user.getId().toString())
+                        .userCode(user.getUserCode())
+                        .email(user.getEmail())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .phoneNumber(user.getPhoneNumber())
+                        .avatarImage(user.getAvatarImage())
+                        .roles(user.getArrayRoles())
+                        .branchId(user.getBranchId())
+                        .groupId(user.getGroupId())
+                        .userType(user.getUserType())
+                        .enable(user.getEnabled())
+                        .groupType(user.getGroupType())
+                        .groupName(user.getGroupName())
+                        .branchName(user.getBranchName())
+                        .groupId(user.getGroupId())
+                        .build());
+
     }
 }

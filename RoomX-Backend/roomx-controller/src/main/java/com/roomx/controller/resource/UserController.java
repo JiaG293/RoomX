@@ -1,13 +1,7 @@
 package com.roomx.controller.resource;
 
-import com.roomx.shared.dto.user.request.UserCreateRequest;
-import com.roomx.shared.dto.user.request.UserQueryFilterRequest;
-import com.roomx.shared.dto.user.request.UserUpdateInfoRequest;
-import com.roomx.shared.dto.user.request.UserUpdateRequest;
-import com.roomx.shared.dto.user.response.UserCreateResponse;
-import com.roomx.shared.dto.user.response.UserInfoReponse;
-import com.roomx.shared.dto.user.response.UserResponse;
-import com.roomx.shared.dto.user.response.UserRoleResponse;
+import com.roomx.shared.dto.user.request.*;
+import com.roomx.shared.dto.user.response.*;
 import com.roomx.application.service.user.RoleAppService;
 import com.roomx.application.service.user.UserAppService;
 import com.roomx.shared.exception.api.ResultResponse;
@@ -58,18 +52,34 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping
+   /* @GetMapping
     public ResultResponse<?> getListPageUser(
             @ModelAttribute UserQueryFilterRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "updatedAt") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
 
-        var result = userAppService.getListUserPages(filter, page, size, sortBy, direction);
+        var result = userAppService.getFilterSearchPage(filter, page, size, sortBy, direction);
 
         return ResultResponse.<Page<UserResponse>>builder()
+                .result(result)
+                .build();
+    }*/
+
+    @GetMapping("/filters")
+    public ResultResponse<?> getListPageUser(
+            @ModelAttribute UserFilterRequest filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "lastName") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+
+        var result = userAppService.getFilterSearchPage(filter, page, size, sortBy, direction);
+
+        return ResultResponse.<Page<UserPageResponse>>builder()
                 .result(result)
                 .build();
     }

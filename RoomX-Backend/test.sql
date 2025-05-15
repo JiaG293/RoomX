@@ -2216,95 +2216,69 @@ GROUP BY rc.room_class_id
 
 
 
+WITH latest_price AS (SELECT room_class_id, MAX(valid_from) AS valid_from
+                      FROM room_class_price_history
+                      WHERE valid_from <= CURRENT_TIMESTAMP
+                      GROUP BY room_class_id),
+     price_with_latest AS (SELECT rcph.*
+                           FROM room_class_price_history rcph
+                                    JOIN latest_price lp
+                                         ON rcph.room_class_id = lp.room_class_id AND rcph.valid_from = lp.valid_from),
+     services AS (SELECT room_class_id,
+                         JSON_AGG(JSON_BUILD_OBJECT(
+                                 'id', src.service_id,
+                                 'quantity', src.quantity,
+                                 'name', s.name
+                                  )) AS services
+                  FROM service_room_class src
+                           JOIN service s ON src.service_id = s.service_id
+                  GROUP BY src.room_class_id),
+     equipment AS (SELECT erc.room_class_id,
+                          JSON_AGG(JSON_BUILD_OBJECT(
+                                  'id', erc.equipment_id,
+                                  'quantity', erc.quantity,
+                                  'name', e.name
+                                   )) AS equipments
+                   FROM equipment_room_class erc
+                            JOIN equipment e ON erc.equipment_id = e.equipment_id
+                   GROUP BY erc.room_class_id)
 
-
-
-
-
-
-
-
-
-
-
-
-WITH latest_price AS (
-    SELECT room_class_id, MAX(valid_from) AS valid_from
-    FROM room_class_price_history
-    WHERE valid_from <= CURRENT_TIMESTAMP
-    GROUP BY room_class_id
-),
-     price_with_latest AS (
-         SELECT rcph.*
-         FROM room_class_price_history rcph
-                  JOIN latest_price lp
-                       ON rcph.room_class_id = lp.room_class_id AND rcph.valid_from = lp.valid_from
-     ),
-     services AS (
-         SELECT room_class_id,
-                JSON_AGG(JSON_BUILD_OBJECT(
-                        'id', src.service_id,
-                        'quantity', src.quantity,
-                        'name', s.name
-                         )) AS services
-         FROM service_room_class src
-                  JOIN service s ON src.service_id = s.service_id
-         GROUP BY src.room_class_id
-     ),
-     equipment AS (
-         SELECT erc.room_class_id,
-                JSON_AGG(JSON_BUILD_OBJECT(
-                        'id', erc.equipment_id,
-                        'quantity', erc.quantity,
-                        'name', e.name
-                         )) AS equipments
-         FROM equipment_room_class erc
-                  JOIN equipment e ON erc.equipment_id = e.equipment_id
-         GROUP BY erc.room_class_id
-     )
-
-SELECT
-    rc.room_class_id AS id,
-    rc.room_class_code AS roomClassCode,
-    rc.status AS status,
-    rc.capacity AS capacity,
-    rcph.total_price AS totalPrice,
-    rcph.valid_from AS validFrom,
-    rcph.valid_end AS validEnd,
-    rcph.base_price AS basePrice,
-    s.services AS jsonServices,
-    e.equipments AS jsonEquipments
+SELECT rc.room_class_id   AS id,
+       rc.room_class_code AS roomClassCode,
+       rc.status          AS status,
+       rc.capacity        AS capacity,
+       rcph.total_price   AS totalPrice,
+       rcph.valid_from    AS validFrom,
+       rcph.valid_end     AS validEnd,
+       rcph.base_price    AS basePrice,
+       s.services         AS jsonServices,
+       e.equipments       AS jsonEquipments
 FROM room_class rc
          LEFT JOIN price_with_latest rcph ON rc.room_class_id = rcph.room_class_id
          LEFT JOIN services s ON rc.room_class_id = s.room_class_id
          LEFT JOIN equipment e ON rc.room_class_id = e.room_class_id
-WHERE
-    (:keyword IS NULL OR (
-        (
-            (:searchBy IS NULL OR :searchBy = 'id')
-                AND rc.room_class_id::text ILIKE '%' || :keyword || '%'
-            )
-            OR (
-            (:searchBy IS NULL OR :searchBy = 'code')
-                AND rc.room_class_code ILIKE '%' || :keyword || '%'
-            )
-            OR (
-            (:searchBy IS NULL OR :searchBy = 'serviceName')
-                AND EXISTS (
-                SELECT 1
-                FROM jsonb_array_elements(s.services::jsonb) AS service
-                WHERE service->>'name' ILIKE '%' || :keyword || '%'
-            )
-            )
-            OR (
-            (:searchBy IS NULL OR :searchBy = 'equipmentName')
-                AND EXISTS (
-                SELECT 1
-                FROM jsonb_array_elements(e.equipments::jsonb) AS equipment
-                WHERE equipment->>'name' ILIKE '%' || :keyword || '%'
-            )
-            )
-        ))
+WHERE (:keyword IS NULL OR (
+    (
+        (:searchBy IS NULL OR :searchBy = 'id')
+            AND rc.room_class_id::text ILIKE '%' || :keyword || '%'
+        )
+        OR (
+        (:searchBy IS NULL OR :searchBy = 'code')
+            AND rc.room_class_code ILIKE '%' || :keyword || '%'
+        )
+        OR (
+        (:searchBy IS NULL OR :searchBy = 'serviceName')
+            AND EXISTS (SELECT 1
+                        FROM jsonb_array_elements(s.services::jsonb) AS service
+                        WHERE service ->> 'name' ILIKE '%' || :keyword || '%')
+        )
+        OR (
+        (:searchBy IS NULL OR :searchBy = 'equipmentName')
+            AND EXISTS (SELECT 1
+                        FROM jsonb_array_elements(e.equipments::jsonb) AS equipment
+                        WHERE equipment ->> 'name' ILIKE '%' || :keyword || '%')
+        )
+    ))
   AND (:startPrice IS NULL OR rcph.total_price >= :startPrice)
   AND (:endPrice IS NULL OR rcph.total_price <= :endPrice)
   AND (:capacity IS NULL OR rc.capacity <= :capacity)
@@ -2312,45 +2286,33 @@ WHERE
 
 
 
+SELECT g.group_id                                      AS id,
+       g.name                                          AS name,
+       g.group_type                                    AS groupType,
+       g.user_id                                       AS createdBy,
+       g.group_code                                    AS groupCode,
+       g.status                                        AS status,
 
+       uo.email                                        AS ownerEmail,
+       uo.first_name                                   AS ownerFirstName,
+       uo.last_name                                    AS ownerLastName,
+       uo.user_code                                    AS ownerUserCode,
 
+       p.name                                          AS branchName,
+       p.code                                          AS branchCode,
+       g.branch_id                                     AS branchId,
 
+       COUNT(um.user_id)                               AS quantityMember,
 
-
-
-
-
-
-
-
-SELECT
-    g.group_id    AS id,
-    g.name        AS name,
-    g.group_type  AS groupType,
-    g.user_id     AS createdBy,
-    g.group_code  AS groupCode,
-    g.status      AS status,
-
-    uo.email      AS ownerEmail,
-    uo.first_name AS ownerFirstName,
-    uo.last_name  AS ownerLastName,
-    uo.user_code  AS ownerUserCode,
-
-    p.name        AS branchName,
-    p.code        AS branchCode,
-    g.branch_id   AS branchId,
-
-    COUNT(um.user_id) AS quantityMember,
-
-    JSON_AGG(
-            JSON_BUILD_OBJECT(
-                'id', um.user_id,
-                'email', um.email,
-                'firstName', um.first_name,
-                'lastName', um.last_name,
-                'userCode', um.user_code
-            )
-        ) FILTER (WHERE um.user_id IS NOT NULL) AS members
+       JSON_AGG(
+       JSON_BUILD_OBJECT(
+               'id', um.user_id,
+               'email', um.email,
+               'firstName', um.first_name,
+               'lastName', um.last_name,
+               'userCode', um.user_code
+       )
+               ) FILTER (WHERE um.user_id IS NOT NULL) AS members
 FROM "group" g
          LEFT JOIN group_member gm ON gm.group_id = g.group_id
          LEFT JOIN "user" uo ON uo.user_id = g.user_id
@@ -2364,6 +2326,255 @@ GROUP BY g.group_id, g.name, g.group_type, g.user_id,
 
 
 
+
+
+
+
+
+
+
+
+
+WITH user_group AS (
+    SELECT DISTINCT ON (gm.user_id)
+        gm.user_id,
+        g.group_id,
+        g.name AS group_name,
+        g.group_type,
+        g.branch_id
+    FROM group_member gm
+             JOIN "group" g ON gm.group_id = g.group_id
+    WHERE g.group_type = 'DEPARTMENT'
+    ORDER BY gm.user_id, g.group_type  -- Ưu tiên DEPARTMENT
+)
+SELECT
+    u.user_id AS id,
+    u.last_name,
+    u.first_name,
+    u.email,
+    u.phone_number,
+    u.gender,
+    u.avatar_image,
+    u.user_type,
+    u.user_code,
+    u.status,
+    ug.group_id,
+    ug.group_name,
+    ug.group_type,
+    ug.branch_id,
+    ARRAY_AGG(DISTINCT ur.role_id) AS arrayRoles
+FROM "user" u
+         LEFT JOIN user_group ug ON u.user_id = ug.user_id
+         LEFT JOIN user_role ur ON u.user_id = ur.user_id
+WHERE ug.group_type = 'DEPARTMENT' OR ug.group_id IS NULL
+GROUP BY
+    u.user_id,
+    ug.group_id, ug.group_name, ug.group_type, ug.branch_id;
+WHERE
+    (g.group_type = 'DEPARTMENT' OR g.group_type IS NULL)
+  -- Filter keyword search by searchBy column (last_name, first_name, email, etc.)
+  AND (
+    :keyword IS NULL
+        OR (
+        CASE
+            WHEN :searchBy = 'last_name' THEN u.last_name ILIKE '%' || :keyword || '%'
+            WHEN :searchBy = 'first_name' THEN u.first_name ILIKE '%' || :keyword || '%'
+            WHEN :searchBy = 'email' THEN u.email ILIKE '%' || :keyword || '%'
+            WHEN :searchBy = 'user_code' THEN u.user_code ILIKE '%' || :keyword || '%'
+            ELSE
+                -- Search in multiple columns if searchBy is null or unknown
+                (u.last_name ILIKE '%' || :keyword || '%'
+                    OR u.first_name ILIKE '%' || :keyword || '%'
+                    OR u.email ILIKE '%' || :keyword || '%'
+                    OR u.user_code ILIKE '%' || :keyword || '%')
+            END
+        )
+    )
+  -- Filter userType if not null
+  AND (:userType IS NULL OR u.user_type = :userType)
+  -- Filter branchId if not null
+  AND (:branchId IS NULL OR g.branch_id = :branchId)
+  -- Filter groupId if not null
+  AND (:groupId IS NULL OR g.group_id = :groupId)
+  -- Filter enabled if not null (assuming u.status = true means enabled)
+  AND (:enabled IS NULL OR u.status = :enabled)
+  -- Filter roles if not null and roles list is not empty
+  AND (
+    :roles IS NULL
+        OR ARRAY_LENGTH(:roles, 1) = 0
+        OR EXISTS (
+        SELECT 1 FROM user_role ur
+        WHERE ur.user_id = u.user_id
+          AND ur.role_name = ANY(:roles)
+    )
+    )
+ORDER BY u.user_id, g.group_id;
+
+
+
+
+
+WITH user_group AS (
+    SELECT DISTINCT ON (gm.user_id)
+        gm.user_id,
+        g.group_id,
+        g.name AS group_name,
+        g.group_type,
+        g.branch_id
+    FROM group_member gm
+             JOIN "group" g ON gm.group_id = g.group_id
+    WHERE g.group_type = 'DEPARTMENT'
+    ORDER BY gm.user_id, g.group_type
+)
+SELECT
+    u.user_id AS id,
+    u.last_name AS lastName,
+    u.first_name AS firstName,
+    u.email AS email,
+    u.phone_number AS phoneNumber,
+    u.gender AS gender,
+    u.avatar_image AS avatarImage,
+    u.user_type AS userType,
+    u.user_code AS userCode,
+    u.status AS status,
+    ug.group_id AS groupId,
+    ug.group_name AS groupName,
+    ug.group_type AS groupType,
+    ug.branch_id AS branchId,
+    ug.group_name AS groupName,
+    ARRAY_AGG(DISTINCT ur.role_id) AS arrayRoles
+FROM "user" u
+         LEFT JOIN user_group ug ON u.user_id = ug.user_id
+         LEFT JOIN user_role ur ON u.user_id = ur.user_id
+WHERE (
+    :keyword IS NULL OR
+    (
+        (:searchBy = 'id' AND u.user_id::text ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'email' AND u.email ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'userCode' AND u.user_code ILIKE '%' || :keyword || '%') OR
+        (:searchBy = 'fullName' AND (
+            CONCAT(u.last_name, ' ', u.first_name) ILIKE '%' || :keyword || '%' OR
+            CONCAT(u.first_name, ' ', u.last_name) ILIKE '%' || :keyword || '%'
+            ))
+        )
+    )
+  AND (:userType IS NULL OR u.user_type = :userType)
+  AND (:branchId IS NULL OR ug.branch_id = :branchId)
+  AND (:groupId IS NULL OR ug.group_id = :groupId)
+
+  AND (:enabled IS NULL OR u.status = :enabled)
+
+  AND (
+    :roles IS NULL OR
+    EXISTS (
+        SELECT 1
+        FROM user_role ur2
+        WHERE ur2.user_id = u.user_id AND ur2.role_id = ANY(:roles)
+    )
+    )
+
+GROUP BY
+    u.user_id,
+    ug.group_id, ug.group_name, ug.group_type, ug.branch_id;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+WITH user_group AS (
+    SELECT DISTINCT ON (gm.user_id)
+        gm.user_id,
+        g.group_id,
+        g.name AS group_name,
+        g.group_type,
+        g.branch_id
+    FROM group_member gm
+             JOIN "group" g ON gm.group_id = g.group_id
+    WHERE g.group_type = 'DEPARTMENT'
+    ORDER BY gm.user_id, g.group_type
+)
+SELECT
+    u.user_id AS id,
+    u.last_name AS lastName,
+    u.first_name AS firstName,
+    u.email AS email,
+    u.enable AS enabled,
+    u.phone_number AS phoneNumber,
+    u.gender AS gender,
+    u.avatar_image AS avatarImage,
+    u.user_type AS userType,
+    u.user_code AS userCode,
+    u.status AS status,
+    ug.group_id AS groupId,
+    ug.group_name AS groupName,
+    ug.group_type AS groupType,
+    ug.branch_id AS branchId,
+    p.name AS branchName,
+    ARRAY_AGG(DISTINCT ur.role_id) AS arrayRoles
+FROM "user" u
+         LEFT JOIN user_group ug ON u.user_id = ug.user_id
+         LEFT JOIN user_role ur ON u.user_id = ur.user_id
+         LEFT JOIN place p ON ug.branch_id = p.place_id
+WHERE (
+    :keyword IS NULL OR
+    (
+        (
+            (:searchBy = 'id') AND u.user_id::text ILIKE '%' || :keyword || '%'
+            ) OR (
+            (:searchBy = 'email') AND u.email ILIKE '%' || :keyword || '%'
+            ) OR (
+            (:searchBy = 'userCode') AND u.user_code ILIKE '%' || :keyword || '%'
+            ) OR (
+            (:searchBy = 'fullName') AND (
+                CONCAT(u.last_name, ' ', u.first_name) ILIKE '%' || :keyword || '%' OR
+                CONCAT(u.first_name, ' ', u.last_name) ILIKE '%' || :keyword || '%'
+                )
+            ) OR (
+            (:searchBy IS NULL OR :searchBy = '') AND (
+                u.user_id::text ILIKE '%' || :keyword || '%' OR
+                u.email ILIKE '%' || :keyword || '%' OR
+                u.user_code ILIKE '%' || :keyword || '%' OR
+                CONCAT(u.last_name, ' ', u.first_name) ILIKE '%' || :keyword || '%' OR
+                CONCAT(u.first_name, ' ', u.last_name) ILIKE '%' || :keyword || '%'
+                )
+            )
+        )
+    )
+  AND (:userType IS NULL OR u.user_type = :userType)
+  AND (:branchId IS NULL OR ug.branch_id::text = :branchId)
+  AND (:groupId IS NULL OR ug.group_id::text = :groupId)
+  AND (:enabled IS NULL OR u.enable = :enabled)
+  AND (
+    :roles IS NULL OR
+    EXISTS (
+        SELECT 1
+        FROM user_role ur2
+        WHERE ur2.user_id = u.user_id AND ur2.role_id IN :roles
+    )
+    )
+GROUP BY
+    u.user_id,
+    ug.group_id, ug.group_name, ug.group_type, ug.branch_id, p.name;
 
 
 

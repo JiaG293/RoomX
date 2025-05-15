@@ -13,15 +13,18 @@ import com.roomx.domain.model.vo.BookingParticipantId;
 import com.roomx.domain.repository.*;
 import com.roomx.shared.enums.ApprovalStatusType;
 import com.roomx.shared.enums.BookingStatusType;
+import com.roomx.shared.enums.DeleteStatusType;
 import com.roomx.shared.enums.RoomStatusType;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
+import com.roomx.shared.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -1549,6 +1552,21 @@ public class RoomSchedulerAppService {
         }
 
         return free;
+    }
+
+
+    public List<RoomScheduleResultDto> checkScheduleAndFindOptimalRoomSameRoomIdWithBranchOptionalV4(
+            String branchId,
+            String roomId,
+            List<LocalDate> occurrences,
+            List<DateRequestException> dateRequestExceptions,
+            LocalTime timeStart,
+            LocalTime timeEnd,
+            Integer capacity,
+            List<String> participants,
+            Integer bufferTime
+    ) {
+        return null;
     }
 
 

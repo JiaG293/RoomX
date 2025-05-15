@@ -1,18 +1,20 @@
 package com.roomx.infrastructure.persistence.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.roomx.shared.base.BaseFilter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class UserFilter {
-    private String userId;
-    private String userCode;
-    private String email;
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+public class UserFilter extends BaseFilter {
     private String userType;
-    private String status;
+    private String branchId;
+    private String groupId;
+    private Boolean enabled;
+    private List<String> roles;
 }

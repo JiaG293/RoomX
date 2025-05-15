@@ -18,8 +18,6 @@ import java.time.LocalTime;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class GroupFilter extends BaseFilter {
-    private String keyword;
-    private String searchBy;
     private String groupType;
     private String status;
     private String branchId;

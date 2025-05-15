@@ -1,3 +1,4 @@
+/*
 package com.roomx.infrastructure.persistence.repository.specification;
 
 import com.roomx.shared.enums.UserType;
@@ -30,3 +31,4 @@ public class UserSpecification {
         };
     }
 }
+*/

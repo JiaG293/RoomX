@@ -116,6 +116,7 @@ public class GroupEntityServiceImpl implements GroupEntityService {
 
     }
 
+
     @Override
     public Page<GroupProjection> filterSearchGroup(GroupFilter filter, Pageable pageable) {
         return jpaGroupEntityRepository

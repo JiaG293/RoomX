@@ -16,4 +16,5 @@ public class RoomScheduleResultDto{
 //    private boolean hasConflictRequest;
     private String optimalRoomId;
     private SuggestedTimeSlotDto suggestedTimeSlots;
+
 }
