@@ -75,7 +75,10 @@ export const RootRouter = createBrowserRouter([
         path: "/admin/about",
         element: <About />,
       },
-      
+      // {
+      //   path: "/admin/profile",
+      //   element: <Profile />,
+      // }
     ],
   },
   {
@@ -90,12 +93,12 @@ export const RootRouter = createBrowserRouter([
     path: "*",
     element: <Notfound />,
   },
-  {
-    path: "/portal/home",
-    element: <Home />,
-  },
-  {
-    path: "/portal/booking",
-    element: <Booking />,
-  },
+  // {
+  //   path: "/portal/home",
+  //   element: <Home />,
+  // },
+  // {
+  //   path: "/portal/booking",
+  //   element: <Booking />,
+  // },
 ]);

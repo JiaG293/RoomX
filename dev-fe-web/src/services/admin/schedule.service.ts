@@ -162,7 +162,7 @@ export class ScheduleService {
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/bookings/${id}`,
+        `${API_BASE_URL}/bookings/${id}/approve`,
         {}, // Không cần gửi dữ liệu body nếu API không yêu cầu
         {
           headers: {

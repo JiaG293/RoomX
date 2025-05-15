@@ -7,9 +7,10 @@ import listPlugin from "@fullcalendar/list";
 import { ScheduleService } from "@/services/admin/schedule.service";
 import { BookingModal } from "@/pages/App/BookingForm";
 import EventModal from "@/components/app/meetings/event-modal";
+import timeGridPlugin from "@fullcalendar/timegrid";
 
 const Booking: React.FC = () => {
-  const [viewMode, setViewMode] = useState<"dayGridMonth" | "listWeek">(
+  const [viewMode, setViewMode] = useState<"dayGridMonth" | "listWeek | timeGridDay">(
     "dayGridMonth"
   );
   const [events, setEvents] = useState<any[]>([]);
@@ -32,7 +33,7 @@ const Booking: React.FC = () => {
         );
         return {
           id: event.id,
-          title: event.title || "Chưa có tiêu đề",
+          title: event.title || "Sự kiện",
           start: startDateTime.toISOString(),
           end: endDateTime.toISOString(),
           extendedProps: {
@@ -64,7 +65,7 @@ const Booking: React.FC = () => {
       <div style={{ flex: 1 }}>
         <FullCalendar
           locale="vi"
-          plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
+          plugins={[dayGridPlugin, listPlugin, interactionPlugin, timeGridPlugin]}
           initialView={viewMode}
           events={events}
           dateClick={(info) => {
@@ -88,7 +89,7 @@ const Booking: React.FC = () => {
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "dayGridMonth,dayGridWeek,dayGridDay",
+            right: "dayGridMonth,dayGridWeek,timeGridDay",
           }}
           datesSet={(info) => {
             setCurrentMonth(info.view.currentStart.getMonth() + 1);
@@ -108,7 +109,7 @@ const Booking: React.FC = () => {
               dayMaxEvents: 10,
               moreLinkText: "Xem thêm",
             },
-            dayGridDay: {
+            timeGridDay: {
               // Lịch ngày: không giới hạn số sự kiện
               eventLimit: false,
               moreLinkText: "Xem thêm",
@@ -116,7 +117,7 @@ const Booking: React.FC = () => {
           }}
           moreLinkClick={(info) => {
             // Khi nhấn "Xem thêm", chuyển sang chế độ xem ngày
-            info.view.calendar.changeView("dayGridDay", info.date);
+            info.view.calendar.changeView("timeGridDay", info.date);
           }}
         />
       </div>

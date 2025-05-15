@@ -8,7 +8,7 @@ const ForgotPasswordForm: React.FC = () => {
     e.preventDefault();
   
     if (!email.trim()) {
-      alert("Please enter your email.");
+      alert("Vui lòng nhập email.");
       return;
     }
   
@@ -51,20 +51,20 @@ const ForgotPasswordForm: React.FC = () => {
       ></div>
 
       <div className="w-full max-w-md p-6 rounded-lg shadow-lg bg-card text-card-foreground shadow-gray-700 dark:shadow-gray-900 z-20">
-        <h2 className="text-2xl font-bold text-center mb-4">Forgot Password</h2>
+        <h2 className="text-2xl font-bold text-center mb-4">Quên mật khẩu</h2>
         <p className="text-muted-foreground text-center text-sm mb-6">
-          Enter your email to receive a password reset link.
+          Nhập email của bạn để nhận liên kết đặt lại mật khẩu.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1 text-foreground">
-              Email Address
+              Địa chỉ email
             </label>
             <input
               type="email"
               className="w-full p-3 bg-input text-foreground rounded-lg border border-border focus:ring-2 focus:ring-primary focus:outline-none transition-all"
-              placeholder="Enter your email"
+              placeholder="Nhập email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -75,7 +75,7 @@ const ForgotPasswordForm: React.FC = () => {
             type="submit"
             className="w-full bg-primary hover:opacity-90 text-primary-foreground font-semibold py-2 rounded-lg transition duration-300"
           >
-            Send Reset Link
+            Gửi liên kết
           </button>
         </form>
       </div>

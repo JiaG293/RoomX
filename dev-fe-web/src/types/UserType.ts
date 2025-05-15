@@ -6,4 +6,5 @@ export type User = {
   lastName: string | null;
   phoneNumber: string | null;
   userType: string;
+  avatarImage: string | null;
 };

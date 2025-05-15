@@ -38,7 +38,7 @@ const Meeting: React.FC = () => {
   
           return {
             id: event.id,
-            title: event.title || "Chưa có tiêu đề",
+            title: event.title || "Sự kiện",
             start: `${event.meetingDate}T${event.meetingStart}`,
             end: `${event.meetingDate}T${event.meetingEnd}`,
             className: statusClass,

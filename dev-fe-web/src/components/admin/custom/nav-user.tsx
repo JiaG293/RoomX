@@ -31,6 +31,8 @@ import { useCallback } from "react";
 import { ThemeToggle } from "@/components/admin/custom/theme-toggle";
 import { LanguageSelect } from "@/components/admin/custom/select-language";
 import { getShortName } from "@/utils/string.util";
+import { useTranslation } from "react-i18next";
+import { Profile } from "@/pages/Admin/Profile";
 
 export function NavUser({
   user,
@@ -43,6 +45,7 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const { logout, getUserInfo } = useAuth();
+  const { t } = useTranslation();
 
   const handleLogout = useCallback(() => {
     console.log("Tự chạy logout");
@@ -95,14 +98,21 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="h-10">
+              {/* <DropdownMenuItem className="h-10">
                 <BadgeCheck />
-                Tài khoản
-              </DropdownMenuItem>
-              <DropdownMenuItem className="h-10">
-                <User />
-                Hồ sơ
-              </DropdownMenuItem>
+                {t("menu_nav_user_tai_khoan")}
+              </DropdownMenuItem> */}
+              <Profile
+                trigger={
+                  <div
+                    className="cursor-pointer relative flex select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+                    onClick={(e) => e.stopPropagation()} // Ngăn không cho click lan ra ngoài Dropdown
+                  >
+                    <User />
+                    {t("menu_nav_user_thong_tin_ca_nhan")}
+                  </div>
+                }
+              />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -131,7 +141,7 @@ export function NavUser({
               style={{ color: "hsl(0, 85%, 50%)", fontWeight: "500" }}
             >
               <LogOut />
-              <span>Đăng xuất</span>
+              <span>{t("menu_nav_user_dang_xuat")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

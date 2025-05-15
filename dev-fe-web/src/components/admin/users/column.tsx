@@ -19,10 +19,10 @@ export const columns: ColumnDef<User>[] = [
       return (
         <div className="flex items-center w-full">
           <Avatar className="w-8 h-8 border border-gray-300 rounded-full">
-            {/* <AvatarImage
+            <AvatarImage
               className="w-8 h-8 rounded-full cursor-pointer"
-              src="https://github.com/shadcn.png"
-            /> */}
+              src={row.original.avatarImage || ""}
+            />
             <AvatarFallback>
               {getShortName(row.original.lastName || "")}
             </AvatarFallback>

@@ -46,7 +46,7 @@ const MeetingApproval: React.FC = () => {
 
       const formattedEvents: EventType[] = data.map((event: any) => ({
         id: event.id,
-        title: event.title || "Chưa có tiêu đề",
+        title: event.title || "Sự kiện",
         start: `${event.startDate}T${event.startTime}`,
         end: `${event.endDate}T${event.endTime}`,
         extendedProps: {

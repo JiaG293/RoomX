@@ -1,118 +1,137 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid"; // Để hiển thị lịch theo dạng Grid
-import interactionPlugin from "@fullcalendar/interaction"; // Để có thể tương tác với sự kiện
-import PortalLayout from "@/layouts/portal-layout"; // Import layout của bạn
 import listPlugin from "@fullcalendar/list";
-import { ScheduleService } from "@/services/user/schedule.service";
-import EventModal from "@/components/app/meetings/event-modal";
+import interactionPlugin from "@fullcalendar/interaction";
+import { format } from "date-fns";
+import { CalendarDays, CheckCircle2, Clock, BarChart2, PieChart } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Pie, Bar } from "react-chartjs-2"; // Add Chart.js for the charts
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js"; // Ensure all required components are imported
+import PortalLayout from "@/layouts/portal-layout";
+
+// Register the necessary components
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 const Home: React.FC = () => {
-  const [viewMode, setViewMode] = useState<"dayGridMonth" | "listWeek">(
-    "dayGridMonth"
-  );
-  const [events, setEvents] = useState([]);
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const [modalEvent, setModalEvent] = useState<any>(null);
+  const [events, setEvents] = useState<any[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
-  const loadEvents = useCallback(async (month: number, year: number) => {
-    try {
-      const scheduleService = new ScheduleService();
-      const data = await scheduleService.getAllSchedules(month, year);
-      console.log(data.result.content);
-      const formattedEvents = data.result.content.map((event: any) => {
-        const startDateTime = new Date(`${event.meetingDate}T${event.meetingStart}`);
-        const endDateTime = new Date(`${event.meetingDate}T${event.meetingEnd}`);
-        return {
-          id: event.id,
-          title: event.title || "Không có tiêu đề",
-          start: startDateTime.toISOString(),
-          end: endDateTime.toISOString(),
-          extendedProps: {
-            room: event.room?.name || "Chưa có phòng",
-            floor: event.floor?.name || "Chưa có tầng",
-            note: event.description || "Chưa có ghi chú",
-            attendees: [], // Giữ nguyên mảng trống nếu chưa có
-            devices: [],
-            roomPrice: 0,
-            scheduleType: event.status || "Unknown",
-            email: event.email || "N/A",
-            branch: event.branch?.name || "Unknown",
-            host: event.name || "Chưa có chủ trì",
-          },
-        };
-      });
-      setEvents(formattedEvents);
-    } catch (error) {
-      console.error("Error loading schedule:", error);
-    }
-  }, []);
-  
-
+  // Fake data
   useEffect(() => {
-    loadEvents(currentMonth, currentYear);
-  }, [currentMonth, currentYear, loadEvents]);
+    const fakeData = [
+      { id: "1", title: "Họp nhóm dự án", start: new Date().toISOString(), end: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString(), description: "Thảo luận về tiến độ dự án web" },
+      { id: "2", title: "Phỏng vấn thực tập", start: new Date(new Date().getTime() + 86400000).toISOString(), end: new Date(new Date().getTime() + 86400000 + 3600000).toISOString(), description: "Phỏng vấn vị trí front-end intern" },
+      { id: "3", title: "Họp mentor", start: new Date(new Date().getTime() + 2 * 86400000).toISOString(), end: new Date(new Date().getTime() + 2 * 86400000 + 3600000).toISOString(), description: "Họp với mentor trao đổi học tập" },
+      { id: "4", title: "Làm bài kiểm tra giữa kỳ", start: new Date(new Date().getTime() - 3 * 86400000).toISOString(), end: new Date(new Date().getTime() - 3 * 86400000 + 2 * 3600000).toISOString(), description: "Môn Phát triển Web" },
+      { id: "5", title: "Tham gia hội thảo AI", start: new Date(new Date().getTime() + 5 * 86400000).toISOString(), end: new Date(new Date().getTime() + 5 * 86400000 + 2 * 3600000).toISOString(), description: "Thảo luận ứng dụng AI trong phát triển phần mềm" },
+    ];
+    setEvents(fakeData);
+  }, []);
+
+  const handleEventClick = (info: any) => {
+    setSelectedEvent(info.event.extendedProps);
+  };
+
+  const upcomingEvents = events.filter((e) => new Date(e.start) > new Date()).sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()).slice(0, 5);
+
+  const chartData = {
+    labels: ["Hoàn thành", "Sắp diễn ra", "Chưa hoàn thành"],
+    datasets: [
+      {
+        label: "Sự kiện",
+        data: [
+          events.filter((e) => new Date(e.end) < new Date()).length,
+          upcomingEvents.length,
+          events.length - upcomingEvents.length - events.filter((e) => new Date(e.end) < new Date()).length,
+        ],
+        backgroundColor: ["#4caf50", "#ff9800", "#f44336"],
+      },
+    ],
+  };
+
+  const barChartData = {
+    labels: ["Sự kiện này", "Sự kiện tiếp theo", "Lịch sử sự kiện"],
+    datasets: [
+      {
+        label: "Sự kiện đã hoàn thành",
+        data: [5, 10, 12], // Adjust data as needed
+        backgroundColor: "#4caf50",
+      },
+      {
+        label: "Sự kiện sắp diễn ra",
+        data: [2, 8, 5], // Adjust data as needed
+        backgroundColor: "#ff9800",
+      },
+    ],
+  };
 
   return (
     <PortalLayout>
-      <div style={{ flex: 0.9 }}>
-        <FullCalendar
-          locale="vi"
-          plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
-          initialView={viewMode}
-          events={events}
-          eventClick={(info) => {
-            const event = info.event;
-            setModalEvent(event);
-          }}
-          height="100%"
-          buttonText={{
-            today: "Hôm nay",
-            month: "Tháng",
-            week: "Tuần",
-            day: "Ngày",
-          }}
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,dayGridWeek,dayGridDay",
-          }}
-          datesSet={(info) => {
-            const newMonth = info.view.currentStart.getMonth() + 1;
-            const newYear = info.view.currentStart.getFullYear();
-            if (newMonth !== currentMonth || newYear !== currentYear) {
-              setCurrentMonth(newMonth);
-              setCurrentYear(newYear);
-            }
-          }}
-          views={{
-            dayGridMonth: {
-              // Lịch tháng: giới hạn tối đa 2 dòng sự kiện mỗi ngày
-              dayMaxEvents: 2,
-              moreLinkText: "Xem thêm",
+      <div className="min-h-screen flex flex-col p-4 space-y-6">
+        {/* Dashboard stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white dark:bg-gray-900 shadow-xl rounded-xl p-5 flex items-center gap-4 transition-transform transform hover:scale-105">
+            <CalendarDays className="text-blue-500" />
+            <div>
+              <p className="text-gray-500 text-sm">Tổng số sự kiện</p>
+              <p className="text-xl font-semibold">{events.length}</p>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-900 shadow-xl rounded-xl p-5 flex items-center gap-4 transition-transform transform hover:scale-105">
+            <Clock className="text-yellow-500" />
+            <div>
+              <p className="text-gray-500 text-sm">Sắp diễn ra</p>
+              <p className="text-xl font-semibold">{upcomingEvents.length}</p>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-gray-900 shadow-xl rounded-xl p-5 flex items-center gap-4 transition-transform transform hover:scale-105">
+            <CheckCircle2 className="text-green-500" />
+            <div>
+              <p className="text-gray-500 text-sm">Đã hoàn thành</p>
+              <p className="text-xl font-semibold">{events.filter((e) => new Date(e.end) < new Date()).length}</p>
+            </div>
+          </div>
+        </div>
 
-            },
-            dayGridWeek: {
-              // Lịch tuần: giới hạn tối đa 10 sự kiện mỗi ngày
-              dayMaxEvents: 10,
-              moreLinkText: "Xem thêm",
+        {/* Main content split into two vertical parts */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow overflow-y-auto">
+          {/* Upcoming events */}
+          <div className="bg-white dark:bg-gray-900 shadow-md rounded-xl p-5">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Sự kiện sắp diễn ra</h2>
+            {upcomingEvents.length > 0 ? (
+              <ul className="space-y-3">
+                {upcomingEvents.map((event) => (
+                  <li
+                    key={event.id}
+                    onClick={() => handleEventClick({ event })}
+                    className={cn("p-3 rounded-lg border cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition", "flex flex-col")}
+                  >
+                    <span className="font-medium text-blue-600">{event.title}</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{format(new Date(event.start), "dd/MM/yyyy HH:mm")} - {format(new Date(event.end), "HH:mm")}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400">Không có sự kiện sắp tới.</p>
+            )}
+          </div>
 
-            },
-            dayGridDay: {
-              // Lịch ngày: không giới hạn số sự kiện
-              eventLimit: false, 
-              moreLinkText: "Xem thêm",
-            }
-          }}
-          moreLinkClick={(info) => {
-            // Khi nhấn "Xem thêm", chuyển sang chế độ xem ngày
-            info.view.calendar.changeView('dayGridDay', info.date);
-          }}
-        />
+          {/* List View Calendar */}
+          <div className="bg-white dark:bg-gray-900 shadow-md rounded-xl p-5">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Lịch theo danh sách</h2>
+            <FullCalendar
+              plugins={[listPlugin, interactionPlugin]}
+              initialView="listWeek"
+              events={events}
+              eventClick={handleEventClick}
+              height="auto"
+              locale="vi"
+            />
+          </div>
+        </div>
+
+        
       </div>
-      <EventModal event={modalEvent} onClose={() => setModalEvent(null)} />
-
     </PortalLayout>
   );
 };

@@ -43,24 +43,13 @@ export const columns: ColumnDef<ServiceType>[] = [
         ? row.original.description.substring(0, 50) + "..."
         : row.original.description,
   },
-  // {
-  //   accessorKey: "unitPrice",
-  //   header: "Giá dịch vụ",
-  //   cell: ({ row }) => `${row.original.unitPrice.toLocaleString()} VND`,
-  // },
   {
     id: "actions",
     cell: ({ row }) => {
-      const isEven = row.index % 2 === 0;
       return (
         <Button
           asChild
-          variant={isEven ? "secondary" : "outline"}
-          className={`px-4 py-2 text-sm font-medium ${
-            isEven
-              ? "bg-gray-100 hover:bg-gray-200"
-              : "bg-blue-100 hover:bg-blue-200"
-          }`}
+          className="px-3 py-2 bg-transparent text-[var(--view-button-text)] hover:bg-[var(--view-button-bg-hover)] hover:shadow-lg transform transition-transform duration-200 ease-in-out rounded-[var(--view-button-border-radius)] shadow-[var(--view-button-box-shadow)]"
         >
           <Link to={`/admin/services/${row.original.id}`}>Xem chi tiết</Link>
         </Button>

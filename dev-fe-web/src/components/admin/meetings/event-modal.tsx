@@ -51,7 +51,7 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose }) => {
       <DialogTrigger />
       <DialogContent className="w-full max-w-[1000px] max-h-[80vh] p-6 overflow-auto bg-white dark:bg-gray-900 shadow-xl">
         <DialogTitle className="text-xl font-semibold text-blue-600 dark:text-blue-400">
-          Chi tiết sự kiện
+          {eventDetails?.title || "Chi tiết sự kiện"}
         </DialogTitle>
         <DialogDescription>
           {eventDetails ? (

@@ -22,7 +22,6 @@ import {
 import { NavUser } from "@/components/admin/custom/nav-user";
 import { useAuth } from "@/context/AuthProvider";
 import { useTranslation } from "react-i18next";
-import { title } from "process";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { getUserInfo } = useAuth();
@@ -43,7 +42,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ],
     navMain: [
       {
-        title: t("menu_tong_quan"),
+        title: t("menu_trang_chu"),
         url: "/admin/home",
         icon: Home,
         color: "text-blue-500",
@@ -58,14 +57,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: t("menu_danh_sach_nguoi_dung"),
             url: "/admin/users",
           },
-          {
-            title: t("menu_quan_ly_nhom"),
-            url: "/admin/users/groups",
-          },
+          // {
+          //   title: t("menu_quan_ly_nhom"),
+          //   url: "/admin/users/groups",
+          // },
         ],
       },
       {
-        title: "Cơ sở",
+        title: t("menu_quan_ly_co_so"),
         url: "#",
         icon: MapPin,
         color: "text-purple-500",
@@ -81,7 +80,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ],
       },
       {
-        title: "Tài nguyên",
+        title: t("menu_quan_ly_tai_nguyen"),
         url: "#",
         icon: Monitor,
         color: "text-pink-500",
@@ -97,7 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ],
       },
       {
-        title: t("menu_quan_ly_dat_phong"),
+        title: t("menu_quan_ly_cuoc_hop"),
         url: "#",
         icon: Calendar,
         color: "text-orange-500",
@@ -120,17 +119,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       //   color: "text-green-500",
       // }
       {
-        title: "Hướng dẫn",
+        title: t("menu_thong_tin"),
         url: "#",
         icon: BookOpenText,
         color: "text-green-500",
         items: [
           {
-            title: "Hướng dẫn sử dụng",
+            title: t("menu_huong_dan_su_dung"),
             url: "/admin/guides",
           },
           {
-            title: "Về chúng tôi",
+            title: t("menu_ve_chung_toi"),
             url: "/admin/about",
           },
         ],
@@ -142,7 +141,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher  />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

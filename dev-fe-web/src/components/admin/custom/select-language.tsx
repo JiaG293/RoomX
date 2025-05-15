@@ -13,9 +13,8 @@ interface LanguageSelectProps {
 }
 
 export const LanguageSelect: React.FC<LanguageSelectProps> = ({ position = "bottom" }) => {
-  const { i18n } = useTranslation();
+  const {t, i18n } = useTranslation();
   const [language, setLanguage] = useState<string>(i18n.language || "en");
-
   useEffect(() => {
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage && savedLanguage !== i18n.language) {
@@ -40,7 +39,7 @@ export const LanguageSelect: React.FC<LanguageSelectProps> = ({ position = "bott
           <Languages className="w-5 h-5 cursor-pointer" />
         ) : (
           <span className="text-sm font-normal -ml-2">
-            Ngôn ngữ
+            {t("menu_nav_user_ngon_ngu")} {"(beta)"}
           </span>
         )}
       </SelectTrigger>

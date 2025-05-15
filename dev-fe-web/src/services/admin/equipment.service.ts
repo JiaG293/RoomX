@@ -43,11 +43,45 @@ export class EquipmentService {
     }
   }
 
+  // Lấy chi tiết thiết bị
+  async getDetailEquipment(id: string) {
+    const token = Cookies.get("token");
+    if (!token) {
+      throw new Error("Không có token");
+    }
+    try {
+      const response = await axios.get(`${API_BASE_URL}/equipments/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+        },
+      });
+      return response.data.result;
+    }
+    catch (error: any) {
+      const responseData = error?.response?.data;
+  
+      if (
+        error?.response?.status === 401 &&
+        responseData?.code === 1007
+      ) {
+        console.log("gọi hàm refreshtoken")
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi lấy dữ liệu!");
+      throw error;
+    }
+  }
+
   // Thêm thiết bị
   async createEquipment(equipmentData: any) {
     const token = Cookies.get("token");
     if (!token) {
-      throw new Error("No authentication token found in cookies");
+      throw new Error("Không có token");
     }
     try {
       const response = await axios.post(

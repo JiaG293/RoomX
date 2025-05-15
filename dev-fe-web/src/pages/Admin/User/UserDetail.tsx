@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { UserService } from "@/services/admin/user.service";
 import { Button } from "@/components/ui/button";
 import {
-  Hash,
   Mail,
   Pencil,
   Phone,
@@ -134,17 +133,17 @@ export default function UserDetail() {
                               </span>
                             );
                           default:
-                            return (
+                            return null /* (
                               <span
                                 key={role}
                                 className="px-3 py-1 text-sm text-white bg-gray-500 rounded-full dark:bg-gray-700"
                               >
                                 Không xác định
                               </span>
-                            );
+                            ); */
                         }
                       })
-                    : "Không có"}
+                    : "Không xác định"}
                 </div>
               </div>
 

@@ -47,40 +47,17 @@ export const columns: ColumnDef<EquipmentType>[] = [
         ? row.original.description.substring(0, 50) + "..."
         : row.original.description,
   },
-  // {
-  //   accessorKey: "unitPrice",
-  //   header: "Giá thiết bị",
-  //   cell: ({ row }) => `${row?.original?.unitPrice?.toLocaleString()} VND`,
-  // },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => {
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant="ghost" className="h-8 w-8 p-0 bg-transparent">
-  //             <MoreHorizontal className="h-4 w-4" />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align="end">
-  //           <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-  //           <DropdownMenuItem>
-  //             <Link to={`/admin/equipments/${row.original.id}`}>
-  //               Xem chi tiết
-  //             </Link>
-  //           </DropdownMenuItem>
-  //           <DropdownMenuItem
-  //             onClick={(e) => {
-  //               e.stopPropagation();
-  //               e.preventDefault();
-  //               alert(`Chỉnh sửa thiết bị: ${row.original.name}`);
-  //             }}
-  //           >
-  //             Cập nhật
-  //           </DropdownMenuItem>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     );
-  //   },
-  // },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return (
+        <Button
+          asChild
+          className="px-3 py-2 bg-transparent text-[var(--view-button-text)] hover:bg-[var(--view-button-bg-hover)] hover:shadow-lg transform transition-transform duration-200 ease-in-out rounded-[var(--view-button-border-radius)] shadow-[var(--view-button-box-shadow)]"
+        >
+          <Link to={`/admin/equipments/${row.original.id}`}>Xem chi tiết</Link>
+        </Button>
+      );
+    },
+  },
 ];

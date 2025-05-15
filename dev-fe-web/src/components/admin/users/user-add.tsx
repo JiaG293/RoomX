@@ -10,7 +10,18 @@ import {
 import { UserService } from "@/services/admin/user.service";
 import { UserValidator } from "@/validators/user.validators";
 import { toast } from "sonner";
-import { Hash, Mail, Phone, User, UserPlus, Users } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Hash,
+  Mail,
+  Phone,
+  User,
+  UserPlus,
+  Users,
+  Lock,
+} from "lucide-react";
+// import { useTranslation } from "react-i18next";
 
 export interface User {
   userCode: string;
@@ -24,7 +35,6 @@ export interface User {
   roles: ("USER" | "APPROVER" | "ADMIN")[];
 }
 
-
 interface UserAddModalProps {
   onAddSuccess: () => void;
 }
@@ -36,21 +46,23 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [userRole, setUserRole] = useState("USER");
+  const [password, setPassword] = useState("password123");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const userService = new UserService();
+  // const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Kiểm tra validation
     if (!UserValidator.isNotEmpty(employeeId)) {
       toast.error("Mã nhân viên không được để trống!");
       return;
     }
     if (!UserValidator.isValidUserCode(employeeId)) {
-      toast.error("Mã nhân viên chỉ được chứa chữ, số và lớn hơn 6 ký tự!");
+      toast.error("Mã nhân viên chỉ được chứa chữ, số và lớn hơn 6 ký tự!");
       return;
     }
     if (!UserValidator.isValidEmail(email)) {
@@ -69,16 +81,19 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
       toast.error("Số điện thoại không hợp lệ!");
       return;
     }
+    if (!UserValidator.isValidPassword(password)) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự!");
+      return;
+    }
 
-    // Tạo đối tượng user
     const newUser: User = {
       userCode: employeeId,
-      firstName: firstName,
-      lastName: lastName,
-      phoneNumber: phoneNumber,
-      password: "password123",
+      firstName,
+      lastName,
+      phoneNumber,
+      password,
       gender: "true",
-      email: email,
+      email,
       type: "EMPLOYEE",
       roles: userRole === "USER" ? ["USER"] : ["USER", "APPROVER"],
     };
@@ -110,6 +125,8 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
     setLastName("");
     setPhoneNumber("");
     setUserRole("USER");
+    setPassword("");
+    setShowPassword(false);
   };
 
   return (
@@ -121,7 +138,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
       }}
     >
       <DialogTrigger asChild>
-        <button className="py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2">
+        <button className="py-2 px-4 bg-green-500 text-white rounded-xl hover:bg-green-600 transition duration-200 shadow flex items-center gap-2">
           <UserPlus size={18} /> Thêm người dùng
         </button>
       </DialogTrigger>
@@ -135,6 +152,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
         </DialogDescription>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+          {/* Mã nhân viên */}
           <div className="col-span-1 relative">
             <label className="block text-sm font-medium text-card-foreground mb-1">
               Mã nhân viên
@@ -154,6 +172,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
             </div>
           </div>
 
+          {/* Email */}
           <div className="col-span-1 relative">
             <label className="block text-sm font-medium text-card-foreground mb-1">
               Email
@@ -165,6 +184,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-2 bg-transparent border border-gray-300 rounded-md pl-10"
                 placeholder="Nhập email"
+                autoComplete="off"
               />
               <Mail
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -173,6 +193,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
             </div>
           </div>
 
+          {/* Họ */}
           <div className="col-span-1 relative">
             <label className="block text-sm font-medium text-card-foreground mb-1">
               Họ
@@ -192,6 +213,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
             </div>
           </div>
 
+          {/* Tên */}
           <div className="col-span-1 relative">
             <label className="block text-sm font-medium text-card-foreground mb-1">
               Tên
@@ -211,6 +233,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
             </div>
           </div>
 
+          {/* Số điện thoại */}
           <div className="col-span-1 relative">
             <label className="block text-sm font-medium text-card-foreground mb-1">
               Số điện thoại
@@ -230,6 +253,7 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
             </div>
           </div>
 
+          {/* Loại người dùng */}
           <div className="col-span-1 relative">
             <label className="block text-sm font-medium text-card-foreground mb-1">
               Loại người dùng
@@ -250,21 +274,49 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
             </div>
           </div>
 
-          <div className="col-span-2 flex justify-between items-center mt-4">
+          {/* Mật khẩu */}
+          <div className="col-span-2 relative">
+            <label className="block text-sm font-medium text-card-foreground mb-1">
+              Mật khẩu
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-2 bg-transparent border border-gray-300 rounded-md pl-10 pr-10"
+                placeholder="Nhập mật khẩu"
+                autoComplete="new-password"
+              />
+              <Lock
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="bg-transparent border-none absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 outline-none focus:outline-none ring-0 focus:ring-0"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="col-span-2 flex justify-end gap-4 mt-6">
             <DialogClose asChild>
               <button
                 type="button"
-                className="py-2 px-4 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition-colors"
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition"
               >
-                Huỷ
+                Hủy
               </button>
             </DialogClose>
-
             <button
               type="submit"
-              className="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 transition"
             >
-              <UserPlus size={18} /> Thêm người dùng
+              Tạo mới
             </button>
           </div>
         </form>

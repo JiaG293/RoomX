@@ -16,18 +16,19 @@ import { UserService } from "@/services/admin/user.service";
 import { columns } from "@/components/admin/users/column";
 import { DataTable } from "@/components/admin/custom/data-table";
 import { User } from "@/types/UserType";
+import { useTranslation } from "react-i18next";
 
 const UserList: React.FC = () => {
+  const {t} = useTranslation()
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
-
   // Thêm state để quản lý phân trang
   const [pageIndex, setPageIndex] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-console.log(loading)
+  console.log(loading);
   // Hàm fetch dữ liệu người dùng
   const fetchUsers = async () => {
     setLoading(true);
@@ -77,7 +78,7 @@ console.log(loading)
       {/* Thanh tìm kiếm, bộ lọc và nút Thêm */}
       <div className="mb-4 flex flex-col md:flex-row gap-4 items-center">
         <Input
-          placeholder="Tìm kiếm theo tên, email, mã nhân viên..."
+          placeholder={t("admin.users.search")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full md:w-1/3"
@@ -91,8 +92,8 @@ console.log(loading)
             <SelectValue placeholder="Filter by role" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="active">Hoạt động</SelectItem>
-            <SelectItem value="inactive">Vô hiệu hoá</SelectItem>
+            <SelectItem value="active">{t("admin.users.active")}</SelectItem>
+            <SelectItem value="inactive">{t("admin.users.inactive")}</SelectItem>
           </SelectContent>
         </Select>
         <ToggleGroup
@@ -102,8 +103,8 @@ console.log(loading)
             value && setViewMode(value as "table" | "card")
           }
         >
-          <ToggleGroupItem value="table">Bảng</ToggleGroupItem>
-          <ToggleGroupItem value="card">Thẻ</ToggleGroupItem>
+          <ToggleGroupItem value="table">{t("admin.view.table")}</ToggleGroupItem>
+          <ToggleGroupItem value="card">{t("admin.view.card")}</ToggleGroupItem>
         </ToggleGroup>
 
         {/* Nút Thêm User */}
@@ -128,7 +129,7 @@ console.log(loading)
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
           {users.map((user) => (
-            <UserItem key={user.userId} user={user} />
+            <UserItem key={user.id} user={user} />
           ))}
         </div>
       )}

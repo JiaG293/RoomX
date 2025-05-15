@@ -95,8 +95,21 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     "Bánh mì",
   ];
   const participantsList = [
-    "user004.roomx@gmail.com",
+    "user006.roomx@gmail.com",
     "user005.roomx@gmail.com",
+    "user004.roomx@gmail.com",
+    "user002.roomx@gmail.com",
+    "user001.roomx@gmail.com",
+    "sang@gmail.com",
+    "puss@gmail.com",
+    "nvga2k2111@gmail.com",
+    "nvg2k2@gmail.com",
+    "nvg2k21@gmail.com",
+    "hoangvanthu@gmail.com",
+    "giau1@gmail.com",
+    "asgy2002@gmail.com",
+    "admin1@example.com",
+    "821377326.jiag@gmail.com",
   ];
   const devicesList = [
     "Máy chiếu",
@@ -233,47 +246,46 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         toast.warning("Một số ngày bị trùng lịch. Vui lòng kiểm tra lại! 🕒");
       } else {
         toast.success("Lịch hợp lệ! ✅");
-      }    } catch (error) {
+      }
+    } catch (error) {
       console.error(error);
       toast.error("Có lỗi xảy ra khi kiểm tra lịch.");
     }
   };
 
   // Đặt lịch
-const handleBook = async () => {
-  const isValid = await checkValid();
-  if (!isValid) return;
+  const handleBook = async () => {
+    const isValid = await checkValid();
+    if (!isValid) return;
 
-  const formatDateOnly = (date: Date) => date.toISOString().split("T")[0];
-  const storedExceptions = localStorage.getItem("dateRequestExceptions");
-  const parsedExceptions = storedExceptions
-    ? JSON.parse(storedExceptions)
-    : [];
+    const formatDateOnly = (date: Date) => date.toISOString().split("T")[0];
+    const storedExceptions = localStorage.getItem("dateRequestExceptions");
+    const parsedExceptions = storedExceptions
+      ? JSON.parse(storedExceptions)
+      : [];
 
-  const scheduleData = {
-    title,
-    description,
-    recurrenceType: "DAILY",
-    capacity,
-    startDate: formatDateOnly(new Date(startDate!)),
-    endDate: formatDateOnly(new Date(endDate!)),
-    startTime: startTime,
-    endTime: endTime,
-    daysOfWeek: ["MO", "TU", "WE", "TH", "FR", "SA", "SU"].join(","),
-    participants: ["user004.roomx@gmail.com", "user005.roomx@gmail.com"],
-    dateRequestExceptions: parsedExceptions,
+    const scheduleData = {
+      title,
+      description,
+      recurrenceType: "DAILY",
+      capacity,
+      startDate: formatDateOnly(new Date(startDate!)),
+      endDate: formatDateOnly(new Date(endDate!)),
+      startTime: startTime,
+      endTime: endTime,
+      daysOfWeek: ["MO", "TU", "WE", "TH", "FR", "SA", "SU"].join(","),
+      participants: ["user004.roomx@gmail.com", "user005.roomx@gmail.com"],
+      dateRequestExceptions: parsedExceptions,
+    };
+
+    const scheduleService = new ScheduleService();
+    try {
+      const response = await scheduleService.createSchedule(scheduleData);
+    } catch (error) {
+      console.error(error);
+      toast.error("Có lỗi xảy ra khi đặt lịch.");
+    }
   };
-
-  const scheduleService = new ScheduleService();
-  try {
-    const response = await scheduleService.createSchedule(scheduleData);
-    
-   } catch (error) {
-    console.error(error);
-    toast.error("Có lỗi xảy ra khi đặt lịch.");
-  }
-};
-
 
   // reset clear dữ liệu
   const resetForm = () => {
@@ -300,7 +312,7 @@ const handleBook = async () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-6xl max-h-[98vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Đặt phòng họp</DialogTitle>
           <DialogDescription>
@@ -308,14 +320,14 @@ const handleBook = async () => {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
           <Card className="w-full">
             <CardHeader>
               <CardTitle>Thông tin lịch hẹn</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
+              <div className="space-y-2">
+                <div className="">
                   <Label htmlFor="title">Tiêu đề</Label>
                   <Input
                     id="title"
@@ -326,7 +338,7 @@ const handleBook = async () => {
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="">
                   <Label htmlFor="description">Mô tả</Label>
                   <Input
                     id="description"
@@ -384,12 +396,11 @@ const handleBook = async () => {
                       className="w-full border px-3 py-2 rounded-md bg-transparent"
                     />
                   </div>
-                  
                 </div>
 
                 {/* Giờ */}
                 <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1 space-y-2">
+                  <div className="flex-1 space-y-2">
                     <Label>Giờ bắt đầu</Label>
                     <TimePicker value={startTime} onChange={setStartTime} />
                   </div>
@@ -402,7 +413,7 @@ const handleBook = async () => {
             </CardContent>
           </Card>
 
-          <div className="flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+          <div className="flex flex-col max-h-[90vh] overflow-y-auto">
             <TagSelect
               title="Người tham gia"
               placeholder="Tìm người tham gia..."
@@ -424,24 +435,14 @@ const handleBook = async () => {
             />
           </div>
         </div>
-        {scheduleResult && scheduleResult.length > 0 && (
-          <>
-            <CheckingTable data={scheduleResult} />
-
-            <div className="mt-6 flex justify-end">
-              <button 
-                onClick={handleBook} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-xl shadow-md transition-all duration-300">
-                📅 Đặt lịch ngay
-              </button>
-            </div>
-          </>
-        )}
 
         <div className="flex justify-end gap-2 mt-6">
           <Button variant="outline" onClick={onClose}>
             Hủy
           </Button>
-          <Button onClick={checkSchedule} className="bg-blue-600">Kiểm tra</Button>
+          <Button onClick={handleBook} className="bg-blue-600">
+            📅 Đặt lịch ngay
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
