@@ -19,7 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import TagSelect from "@/components/app/custom/tag-select";
+import TagSelect, {
+  OptionItem,
+  SelectedItem,
+} from "@/components/app/custom/tag-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TimePicker } from "@/components/app/custom/time-picker";
 import { toast } from "sonner";
@@ -39,15 +42,16 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
+import { BranchService } from "@/services/admin/branch.service";
+import { RoomService } from "@/services/admin/room.service";
+import { UserService } from "@/services/admin/user.service";
+import { ServiceService } from "@/services/admin/service.service";
+import { EquipmentService } from "@/services/admin/equipment.service";
 
 interface BookingModalProps {
   eventDate?: string;
   onClose: () => void;
 }
-export type SelectedItem = {
-  name: string;
-  quantity: number;
-};
 
 export type SelectedPerson = {
   name: string;
@@ -63,7 +67,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [startDate, setStartDate] = useState<Date | null>(
     eventDate ? new Date(eventDate) : new Date()
   );
-
   const [endDate, setEndDate] = useState<Date | null>(
     eventDate ? new Date(eventDate) : new Date()
   );
@@ -72,34 +75,40 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     const [hour, minute] = getClosestTime().split(":").map(Number);
     const end = new Date();
     end.setHours(hour);
-    end.setMinutes(minute + 30); // Tăng 30 phút so với giờ bắt đầu
-
+    end.setMinutes(minute + 30);
     const h = end.getHours().toString().padStart(2, "0");
     const m = end.getMinutes().toString().padStart(2, "0");
     return `${h}:${m}`;
   });
-  const [repeatType, setRepeatType] = useState("one-time");
+  const [repeatType, setRepeatType] = useState("");
   const [selectedServices, setSelectedServices] = useState<SelectedItem[]>([]);
   const [selectedParticipants, setSelectedParticipants] = useState<
     SelectedPerson[]
   >([]);
-  const [selectedDevices, setSelectedDevices] = useState<SelectedItem[]>([]);
-
-  //lưu mảng sau khi kiểm tra lịch
-  const [scheduleResult, setScheduleResult] = useState([]);
-
+  const [selectedEquipments, setSelectedEquipments] = useState<SelectedItem[]>(
+    []
+  );
+  const [scheduleResult, setScheduleResult] = useState([]); //lưu mảng sau khi kiểm tra lịch
+  const [branch, setBranch] = useState<string>("");
+  const [room, setRoom] = useState("");
   const isOpen = useMemo(() => !!eventDate, [eventDate]);
 
-  const branches = ["Nha Trang", "Đà Nẵng", "Hà Nội", "TP.HCM"];
-  const [branch, setBranch] = useState("");
+  //danh sách chi nhánh
+  const [branches, setBranches] = useState<
+    { branchId: string; branchCode: string; name: string }[]
+  >([]);
+  //danh sách phòng
+  const [rooms, setRooms] = useState<
+    { roomId: string; roomCode: string; roomName: string }[]
+  >([]);
+  //danh sách người tham gia
+  const [participants, setParticipants] = useState<OptionItem[]>([]);
 
-  const roomList = [
-    { id: "room1", name: "Phòng A" },
-    { id: "room2", name: "Phòng B" },
-    { id: "room3", name: "Phòng C" },
-  ];
+  //danh sách dịch vụ
+  const [services, setServices] = useState<OptionItem[]>([]);
 
-  const [room, setRoom] = useState("");
+  //danh sách thiết bị
+  const [equipments, setEquipments] = useState<OptionItem[]>([]);
 
   // rerender lại lấy ngày đã chọn cho chính xác
   useEffect(() => {
@@ -110,38 +119,76 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     }
   }, [eventDate]);
 
-  const servicesList = [
-    "Nước khoáng",
-    "Bánh ngọt",
-    "Trái cây",
-    "Cà phê",
-    "Trà",
-    "Bánh mì",
-  ];
-  const participantsList = [
-    "user006.roomx@gmail.com",
-    "user005.roomx@gmail.com",
-    "user004.roomx@gmail.com",
-    "user002.roomx@gmail.com",
-    "user001.roomx@gmail.com",
-    "sang@gmail.com",
-    "puss@gmail.com",
-    "nvga2k2111@gmail.com",
-    "nvg2k2@gmail.com",
-    "nvg2k21@gmail.com",
-    "hoangvanthu@gmail.com",
-    "giau1@gmail.com",
-    "asgy2002@gmail.com",
-    "admin1@example.com",
-    "821377326.jiag@gmail.com",
-  ];
-  const devicesList = [
-    "Máy chiếu",
-    "Micro",
-    "Bảng trắng",
-    "Điều hòa",
-    "Laptop",
-  ];
+  // Lấy chi nhánh
+  const fetchBranches = async () => {
+    try {
+      const branchService = new BranchService();
+      const branchList = await branchService.getAllBranches();
+      const dataBranch = branchList.map((branch: any) => ({
+        branchId: branch.id,
+        branchCode: branch.code,
+        name: branch.name,
+      }));
+      setBranches(dataBranch);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách chi nhánh:", error);
+      toast.error("Không thể tải danh sách chi nhánh.");
+    }
+  };
+
+  // lấy danh sách người tham gia
+  const fetchParticipants = async (keyword: string): Promise<OptionItem[]> => {
+    const userService = new UserService();
+    const data = await userService.getListUsers(0, 100, keyword);
+    return data.content.map((user: any) => ({
+      id: user.id, // hoặc user.email, tùy bạn muốn dùng gì làm id
+      name: user.email,
+    }));
+  };
+
+  // lấy danh sách dịch vụ
+  const fetchServices = async (keyword: string): Promise<OptionItem[]> => {
+    const serviceService = new ServiceService();
+    const data = await serviceService.getListServices(0, 100, keyword);
+    return data.content.map((service: any) => ({
+      id: service.id,
+      name: service.name,
+    }));
+  };
+
+  // lấy danh sách thiết bị
+  const fetchEquipments = async (keyword: string): Promise<OptionItem[]> => {
+    const equipmentService = new EquipmentService();
+    const data = await equipmentService.getListEquipments(0, 100, keyword);
+    return data.content.map((equipment: any) => ({
+      id: equipment.id,
+      name: equipment.name,
+    }));
+  };
+
+  useEffect(() => {
+    fetchBranches();
+  }, []);
+
+  // lấy danh sách phòng
+  const fetchRooms = async () => {
+    try {
+      const roomService = new RoomService();
+      const data = await roomService.getListRoomsByBranchId(branch);
+      console.log(data);
+      const dataRoom = data.content.map((room: any) => ({
+        roomId: room.id,
+        roomCode: room.roomCode,
+      }));
+      setRooms(dataRoom);
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, [branch]);
 
   function getClosestTime(): string {
     const now = new Date();
@@ -189,8 +236,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       return false;
     }
 
-    if (selectedParticipants.length === 1) {
-      toast.error("Vui lòng chọn ít nhất 2 người tham gia.");
+    if (!branch) {
+      toast.error("Vui lòng chọn chi nhánh.");
+      return false;
+    }
+
+    // Bắt buộc chọn 1 trong 2: phòng hoặc số lượng
+    if (!room && capacity <= 5) {
+      toast.error("Nếu không chọn phòng, vui lòng nhập số lượng lớn hơn 5.");
+      return false;
+    }
+
+    if (!repeatType) {
+      toast.error("Vui lòng chọn loại lịch.");
       return false;
     }
 
@@ -217,6 +275,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       return false;
     }
 
+    if (selectedParticipants.length < 2) {
+      toast.error("Vui lòng chọn ít nhất 2 người tham gia.");
+      return false;
+    }
+
     // ✅ In ra dữ liệu khi hợp lệ
     console.log("===== Booking Information =====");
     console.log("Tiêu đề:", title);
@@ -229,7 +292,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     console.log("Loại lịch:", repeatType);
     console.log("Người tham gia:", selectedParticipants);
     console.log("Dịch vụ:", selectedServices);
-    console.log("Thiết bị:", selectedDevices);
+    console.log("Thiết bị:", selectedEquipments);
 
     return true;
   };
@@ -291,23 +354,45 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     const scheduleData = {
       title,
       description,
-      recurrenceType: "DAILY",
+      recurrenceType: repeatType,
+      branchId: branch,
+      roomId: room,
       capacity,
       startDate: formatDateOnly(new Date(startDate!)),
       endDate: formatDateOnly(new Date(endDate!)),
       startTime: startTime,
       endTime: endTime,
       daysOfWeek: ["MO", "TU", "WE", "TH", "FR", "SA", "SU"].join(","),
-      participants: ["user004.roomx@gmail.com", "user005.roomx@gmail.com"],
+      participants: selectedParticipants.map((p) => p.name),
+      services: selectedServices.map((s) => ({
+        serviceId: s.id,
+        quantity: s.quantity,
+      })),
+      equipments: selectedEquipments.map((e) => ({
+        equipmentId: e.id,
+        quantity: e.quantity,
+      })),
       dateRequestExceptions: parsedExceptions,
     };
 
+    console.log(scheduleData);
+
     const scheduleService = new ScheduleService();
     try {
-      const response = await scheduleService.createSchedule(scheduleData);
-    } catch (error) {
+      await scheduleService.createSchedule(scheduleData);
+      // handleClose();
+    } catch (error: any) {
       console.error(error);
-      toast.error("Có lỗi xảy ra khi đặt lịch.");
+
+      if (error?.response?.data?.code === 1000) {
+        toast.warning("Có xung đột thời gian. Vui lòng chọn khung giờ khác.");
+        const conflictData = error.response.data.result;
+        console.log(conflictData);
+        setScheduleResult(conflictData);
+      } else {
+        toast.error("Có lỗi xảy ra khi đặt lịch.");
+        // handleClose();
+      }
     }
   };
 
@@ -321,11 +406,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setStartTime(getClosestTime());
     setEndTime(getClosestTime());
     setBranch("");
-    setRepeatType("one-time");
     setSelectedServices([]); // Xóa tất cầu dịch vụ
-    setSelectedDevices([]); // Xóa tất cầu thiết bị
+    setSelectedEquipments([]); // Xóa tất cầu thiết bị
     setSelectedParticipants([]); // Xóa tất cầu người tham gia
     setScheduleResult([]);
+    setRepeatType("");
+    setRoom("");
     localStorage.removeItem("dateRequestExceptions");
   };
 
@@ -408,8 +494,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     </SelectTrigger>
                     <SelectContent>
                       {branches.map((b) => (
-                        <SelectItem key={b} value={b} className="text-sm">
-                          {b}
+                        <SelectItem
+                          key={b.branchId}
+                          value={b.branchId}
+                          className="text-sm"
+                        >
+                          {b.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -430,9 +520,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       <SelectValue placeholder="Chọn phòng họp" />
                     </SelectTrigger>
                     <SelectContent>
-                      {roomList.map((r) => (
-                        <SelectItem key={r.id} value={r.id} className="text-sm">
-                          {r.name}
+                      {rooms.map((r) => (
+                        <SelectItem
+                          key={r.roomId}
+                          value={r.roomId}
+                          className="text-sm"
+                        >
+                          {r.roomCode}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -450,21 +544,21 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       <SelectValue placeholder="Chọn loại lịch" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="daily" className="text-sm">
+                      <SelectItem value="DAILY" className="text-sm">
                         Ngày
                       </SelectItem>
-                      <SelectItem value="weekly" className="text-sm">
+                      <SelectItem value="WEEKLY" className="text-sm">
                         Hằng tuần
                       </SelectItem>
-                      <SelectItem value="monthly" className="text-sm">
+                      <SelectItem value="MONTHLY" className="text-sm">
                         Hằng tháng
                       </SelectItem>
-                      <SelectItem value="yearly" className="text-sm">
+                      {/* <SelectItem value="YEARLY" className="text-sm">
                         Hằng năm
-                      </SelectItem>
-                      <SelectItem value="custom" className="text-sm">
+                      </SelectItem> */}
+                      {/* <SelectItem value="CUSTOM" className="text-sm">
                         Tuỳ chọn
-                      </SelectItem>
+                      </SelectItem> */}
                     </SelectContent>
                   </Select>
                 </div>
@@ -562,9 +656,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     </span>
                   }
                   placeholder="Tìm người tham gia..."
-                  data={participantsList}
+                  data={participants}
                   variant="people"
                   onChange={setSelectedParticipants}
+                  onSearch={fetchParticipants}
                 />
 
                 {/* Dịch vụ */}
@@ -576,10 +671,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     </span>
                   }
                   placeholder="Tìm dịch vụ..."
-                  data={servicesList}
+                  data={services}
                   onChange={setSelectedServices}
+                  onSearch={fetchServices}
                 />
-
                 {/* Thiết bị */}
                 <TagSelect
                   title={
@@ -589,10 +684,31 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     </span>
                   }
                   placeholder="Tìm thiết bị..."
-                  data={devicesList}
-                  onChange={setSelectedDevices}
+                  data={equipments}
+                  onChange={setSelectedEquipments}
+                  onSearch={fetchEquipments}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-2xl shadow-sm border bg-white">
+            <CardHeader className="px-6 py-4 border-b bg-muted/50 rounded-t-2xl">
+              <CardTitle className="text-base font-semibold text-primary flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-600" />
+                Cập nhật xung đột
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent className="p-6 space-y-4">
+              {/* Nếu có dữ liệu mới hiển thị bảng */}
+              {scheduleResult.length > 0 ? (
+                <CheckingTable data={scheduleResult} />
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Không có xung đột nào được ghi nhận.
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>

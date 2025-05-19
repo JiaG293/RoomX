@@ -1,33 +1,32 @@
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import {
-  Command,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "cmdk"
-import { Minus, Plus, X } from "lucide-react"
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Command, CommandInput, CommandItem, CommandList } from "cmdk";
+import { Minus, Plus, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-type SelectedItem = {
-  name: string
-  quantity: number
-}
+// Kiểu dữ liệu cho các item tìm kiếm ra lựa chọn
+export type OptionItem = {
+  id: string;
+  name: string;
+};
 
-export type SelectedPerson = {
-  name: string
-}
+// Kiểu dữ liệu cho các item đã được chọn
+export type SelectedItem = {
+  id: string;
+  name: string;
+  quantity: number;
+};
 
 interface TagSelectProps {
-  title?: React.ReactNode
-  placeholder?: string
-  data?: string[]
-  variant?: "default" | "people"
-  onChange?: (items: SelectedItem[]) => void
-
+  title?: React.ReactNode;
+  placeholder?: string;
+  data?: OptionItem[];
+  variant?: "default" | "people";
+  onChange?: (items: SelectedItem[]) => void;
+  onSearch?: (query: string) => Promise<OptionItem[]>;
 }
 
 const TagSelect: React.FC<TagSelectProps> = ({
@@ -35,48 +34,72 @@ const TagSelect: React.FC<TagSelectProps> = ({
   placeholder = "Search items...",
   data = [],
   variant = "default",
-  onChange
+  onChange,
+  onSearch,
 }) => {
-  const [query, setQuery] = useState("")
-  const [options, setOptions] = useState<string[]>([])
-  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([])
+  const [query, setQuery] = useState("");
+  const [options, setOptions] = useState<OptionItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      const filtered = data.filter((item) =>
-        item.toLowerCase().includes(query.toLowerCase())
-      )
-      setOptions(filtered.slice(0, 5))
-    }, 300)
-    return () => clearTimeout(timeout)
-  }, [query, data])
-
-  useEffect(() => {
-    onChange?.(selectedItems)
-  }, [selectedItems, onChange])
-  
-
-  const handleSelect = (item: string) => {
-    const exists = selectedItems.find((i) => i.name === item)
-    if (!exists) {
-      setSelectedItems([...selectedItems, { name: item, quantity: 1 }])
+    if (!onSearch) {
+      // Nếu không có onSearch, fallback filter data cũ
+      setOptions(
+        data
+          .filter((item) =>
+            item.name.toLowerCase().includes(query.toLowerCase())
+          )
+          .slice(0, 10)
+      );
+      return;
     }
-    setQuery("")
-  }
 
-  const handleRemove = (item: string) => {
-    setSelectedItems(selectedItems.filter((i) => i.name !== item))
-  }
+    // Nếu có onSearch thì gọi API
+    const timeout = setTimeout(() => {
+      if (query.trim().length === 0) {
+        setOptions([]);
+        return;
+      }
+      onSearch(query)
+        .then((results) => {
+          setOptions(results.slice(0, 5));
+        })
+        .catch(() => {
+          setOptions([]);
+        });
+    }, 300);
 
-  const updateQuantity = (name: string, delta: number) => {
+    return () => clearTimeout(timeout);
+  }, [query, onSearch, data]);
+
+  useEffect(() => {
+    onChange?.(selectedItems);
+  }, [selectedItems, onChange]);
+
+  // Khi chọn 1 option, thêm vào selectedItems nếu chưa có
+  const handleSelect = (item: OptionItem) => {
+    const exists = selectedItems.find((i) => i.id === item.id);
+    if (!exists) {
+      setSelectedItems([
+        ...selectedItems,
+        { id: item.id, name: item.name, quantity: 1 },
+      ]);
+    }
+    setQuery("");
+    setOptions([]);
+  };
+
+  const handleRemove = (id: string) => {
+    setSelectedItems(selectedItems.filter((i) => i.id !== id));
+  };
+
+  const updateQuantity = (id: string, delta: number) => {
     setSelectedItems((prev) =>
       prev.map((i) =>
-        i.name === name
-          ? { ...i, quantity: Math.max(1, i.quantity + delta) }
-          : i
+        i.id === id ? { ...i, quantity: Math.max(1, i.quantity + delta) } : i
       )
-    )
-  }
+    );
+  };
 
   return (
     <Card className="w-full max-w-md mx-auto shadow-md rounded-lg mt-4">
@@ -97,18 +120,18 @@ const TagSelect: React.FC<TagSelectProps> = ({
             <ScrollArea className="max-h-40 border rounded-md mt-2 bg-white shadow-lg z-10">
               <CommandList>
                 {options.length > 0 ? (
-                  options.map((item, index) => (
+                  options.map((item) => (
                     <CommandItem
-                      key={index}
+                      key={item.id}
                       onSelect={() => handleSelect(item)}
                       className="cursor-pointer hover:bg-blue-500 hover:text-white p-2 transition-all"
                     >
-                      {item}
+                      {item.name}
                     </CommandItem>
                   ))
                 ) : (
                   <div className="p-2 text-sm text-muted-foreground">
-                    No results found
+                    Không tìm thấy.
                   </div>
                 )}
               </CommandList>
@@ -120,9 +143,9 @@ const TagSelect: React.FC<TagSelectProps> = ({
           <>
             <Separator />
             <div className="flex flex-wrap gap-2">
-              {selectedItems.map((item, idx) => (
+              {selectedItems.map((item) => (
                 <Badge
-                  key={idx}
+                  key={item.id}
                   variant="outline"
                   className="flex items-center gap-2 px-2 py-1"
                 >
@@ -134,7 +157,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
                         variant="ghost"
                         size="icon"
                         className="w-4 h-4 p-0 bg-transparent"
-                        onClick={() => updateQuantity(item.name, -1)}
+                        onClick={() => updateQuantity(item.id, -1)}
                       >
                         <Minus className="w-3 h-3" />
                       </Button>
@@ -142,7 +165,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
                         variant="ghost"
                         size="icon"
                         className="w-4 h-4 p-0 bg-transparent"
-                        onClick={() => updateQuantity(item.name, 1)}
+                        onClick={() => updateQuantity(item.id, 1)}
                       >
                         <Plus className="w-3 h-3" />
                       </Button>
@@ -152,7 +175,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
                     variant="ghost"
                     size="icon"
                     className="w-4 h-4 p-0 ml-1 bg-transparent"
-                    onClick={() => handleRemove(item.name)}
+                    onClick={() => handleRemove(item.id)}
                   >
                     <X className="w-3 h-3" />
                   </Button>
@@ -163,7 +186,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
         )}
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default TagSelect
+export default TagSelect;

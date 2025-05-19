@@ -32,20 +32,29 @@ const ServiceList: React.FC = () => {
   // State phân trang
   const [pageIndex, setPageIndex] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-console.log(loading)
+  console.log(loading);
   // Fetch danh sách dịch vụ
-  const fetchServices = async () => {
+  const fetchServices = async (keyword: string = "") => {
     setLoading(true);
     try {
       const serviceService = new ServiceService();
-      const data = await serviceService.getListServices(pageIndex, 10);
+      const data = await serviceService.getListServices(pageIndex, 10, keyword);
       setServices(data.content || []);
       setTotalPages(data.totalPages);
     } catch (error) {
-      console.error("Error fetching services:", error);
+      console.error("Lỗi lấy dữ liệu dịch vụ.", error);
     }
     setLoading(false);
   };
+
+  // Debounce tìm kiếm
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchServices(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, pageIndex]);
 
   // Khi thêm dịch vụ thành công
   const onAddSuccess = async () => {
@@ -56,14 +65,14 @@ console.log(loading)
     }
   };
 
-  // Khi chỉnh sửa dịch vụ thành công
-  // const onEditSuccess = async () => {
-  //   await fetchServices();
-  // };
-
   useEffect(() => {
     fetchServices();
   }, [pageIndex]);
+
+  // Reset pageIndex khi tìm kiếm
+  useEffect(() => {
+    setPageIndex(0);
+  }, [searchTerm]);
 
   // Lọc dịch vụ theo từ khóa tìm kiếm
   const filteredServices = services.filter((service) =>

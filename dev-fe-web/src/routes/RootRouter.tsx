@@ -86,7 +86,7 @@ export const RootRouter = createBrowserRouter([
       {
         path: "/portal/booking",
         element: <Booking />,
-      },
+      }
     ],
   },
   {

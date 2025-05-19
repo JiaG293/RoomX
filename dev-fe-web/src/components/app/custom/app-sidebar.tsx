@@ -17,12 +17,12 @@ import { Sidebar, SidebarContent, SidebarMenuButton } from "@/components/ui/side
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const data = {
     navMain: [
-      { title: "Lịch của tôi", url: "/portal/home", icon: CalendarCheck },
-      { title: "Đặt lịch", url: "/portal/booking", icon: Clock },
+      { title: "Trang chủ", url: "/portal/home", icon: CalendarCheck },
+      { title: "Lịch của tôi", url: "/portal/booking", icon: Clock },
       { title: "Lịch chờ duyệt", url: "/portal/pending", icon: Hourglass },
-      { title: "Nhóm", url: "/portal/groups", icon: Users },
+      // { title: "Nhóm", url: "/portal/groups", icon: Users },
       { title: "Hồ sơ", url: "/portal/profile", icon: User },
-      { title: "Cài đặt", url: "/portal/settings", icon: Settings },
+      // { title: "Cài đặt", url: "/portal/settings", icon: Settings },
     ],
   };
 

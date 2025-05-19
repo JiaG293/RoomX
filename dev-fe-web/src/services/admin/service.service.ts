@@ -7,14 +7,14 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_HOST;
 
 export class ServiceService {
   // Lấy danh sách dịch vụ
-  async getListServices(page: number, size: number) {
+  async getListServices(page: number, size: number, keyword: string) {
     const token = Cookies.get("token");
     if (!token) {
       throw new Error("No authentication token found in cookies");
     }
     try {
       const response = await axios.get(`${API_BASE_URL}/services/filters`, {
-        params: { page, size },
+        params: { page, size, keyword },
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

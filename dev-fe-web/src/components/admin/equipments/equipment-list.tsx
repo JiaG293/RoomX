@@ -32,11 +32,15 @@ const EquipmentList: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   // Fetch danh sách thiết bị
-  const fetchEquipments = async () => {
+  const fetchEquipments = async (keyword: string = "") => {
     setLoading(true);
     try {
       const equipmentService = new EquipmentService();
-      const data = await equipmentService.getListEquipments(pageIndex, 10);
+      const data = await equipmentService.getListEquipments(
+        pageIndex,
+        10,
+        keyword
+      );
       setEquipments(data.content || []);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -44,6 +48,15 @@ const EquipmentList: React.FC = () => {
     }
     setLoading(false);
   };
+
+  // Debounce tìm kiếm
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchEquipments(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, pageIndex]);
 
   // Khi thêm thiết bị thành công
   const onAddSuccess = async () => {
@@ -54,16 +67,16 @@ const EquipmentList: React.FC = () => {
     }
   };
 
-  console.log(loading)
-
-  // // Khi chỉnh sửa thiết bị thành công
-  // const onEditSuccess = async () => {
-  //   await fetchEquipments();
-  // };
+  console.log(loading);
 
   useEffect(() => {
     fetchEquipments();
   }, [pageIndex]);
+
+  // Reset pageIndex khi tìm kiếm
+    useEffect(() => {
+      setPageIndex(0);
+    }, [searchTerm]);
 
   // Lọc thiết bị theo từ khóa tìm kiếm
   const filteredEquipments = equipments.filter((equipment) =>

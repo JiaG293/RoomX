@@ -6,7 +6,7 @@ import { toast } from "sonner";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_HOST;
 
 export class UserService {
-  async getListUsers(page: number, size: number) {
+  async getListUsers(page: number, size: number, keyword: string) {
     const token = Cookies.get("token");
 
     if (!token) {
@@ -14,8 +14,8 @@ export class UserService {
     }
 
     try {
-      const response = await axios.get(`${API_BASE_URL}/users`, {
-        params: { page, size },
+      const response = await axios.get(`${API_BASE_URL}/users/filters`, {
+        params: { page, size, keyword },
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

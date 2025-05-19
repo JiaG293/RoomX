@@ -19,30 +19,37 @@ import { User } from "@/types/UserType";
 import { useTranslation } from "react-i18next";
 
 const UserList: React.FC = () => {
-  const {t} = useTranslation()
+  const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
-  // Thêm state để quản lý phân trang
   const [pageIndex, setPageIndex] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   console.log(loading);
   // Hàm fetch dữ liệu người dùng
-  const fetchUsers = async () => {
+  const fetchUsers = async (keyword: string = "") => {
     setLoading(true);
     try {
       const userService = new UserService();
-      const data = await userService.getListUsers(pageIndex, 10);
-      console.log(data);
+      const data = await userService.getListUsers(pageIndex, 10, keyword);
       setUsers(data.content || []);
       setTotalPages(data.totalPages);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Lỗi lấy dữ liệu người dùng.", error);
     }
     setLoading(false);
   };
+
+  // Debounce tìm kiếm
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchUsers(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, pageIndex]);
 
   // Hàm gọi khi thêm người dùng thành công
   const onAddSuccess = async () => {
@@ -54,24 +61,15 @@ const UserList: React.FC = () => {
     }
   };
 
-  // // Hàm gọi khi chỉnh sửa người dùng thành công
-  // const onEditSuccess = async () => {
-  //   await fetchUsers();
-  // };
-
+  // rerender khi fetch dữ liệu người dùng
   useEffect(() => {
     fetchUsers();
   }, [pageIndex]);
 
-  // const filteredUsers = users.filter((user) => {
-  //   const matchesSearch =
-  //     user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     user.userCode.toLowerCase().includes(searchTerm.toLowerCase());
-  //   const matchesFilter = filterType === "all" || user.userType === filterType;
-  //   return matchesSearch && matchesFilter;
-  // });
+  // Reset pageIndex khi tìm kiếm
+  useEffect(() => {
+    setPageIndex(0);
+  }, [searchTerm]);
 
   return (
     <div className="flex-1">
@@ -93,7 +91,9 @@ const UserList: React.FC = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="active">{t("admin.users.active")}</SelectItem>
-            <SelectItem value="inactive">{t("admin.users.inactive")}</SelectItem>
+            <SelectItem value="inactive">
+              {t("admin.users.inactive")}
+            </SelectItem>
           </SelectContent>
         </Select>
         <ToggleGroup
@@ -103,7 +103,9 @@ const UserList: React.FC = () => {
             value && setViewMode(value as "table" | "card")
           }
         >
-          <ToggleGroupItem value="table">{t("admin.view.table")}</ToggleGroupItem>
+          <ToggleGroupItem value="table">
+            {t("admin.view.table")}
+          </ToggleGroupItem>
           <ToggleGroupItem value="card">{t("admin.view.card")}</ToggleGroupItem>
         </ToggleGroup>
 
