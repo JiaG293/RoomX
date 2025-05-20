@@ -6,8 +6,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { EquipmentDetail } from "@/pages/Admin/Equipment/EquipmentDetail";
+import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export interface EquipmentType {
@@ -50,13 +53,16 @@ export const columns: ColumnDef<EquipmentType>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const [open, setOpen] = useState(false);
       return (
-        <Button
-          asChild
-          className="px-3 py-2 bg-transparent text-[var(--view-button-text)] hover:bg-[var(--view-button-bg-hover)] hover:shadow-lg transform transition-transform duration-200 ease-in-out rounded-[var(--view-button-border-radius)] shadow-[var(--view-button-box-shadow)]"
-        >
-          <Link to={`/admin/equipments/${row.original.id}`}>Xem chi tiết</Link>
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <div >
+              <EquipmentDetail  id={row.original.id} />{" "}
+            </div>
+          </DialogTrigger>
+          <DialogContent className="max-w-md p-0 overflow-hidden rounded-lg shadow-lg"></DialogContent>
+        </Dialog>
       );
     },
   },

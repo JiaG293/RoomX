@@ -55,7 +55,7 @@ export class AuthService {
 
     try {
       const response = await axios.get(
-        `https://apiroomx.jiag.id.vn/api/v1/users/info`,
+        `${import.meta.env.VITE_BACKEND_HOST}/users/info`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

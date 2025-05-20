@@ -195,39 +195,39 @@ export default function UserDetail() {
                 </div>
 
                 {/* Group Deactivate */}
-                <div className="flex gap-2">
-                  {user?.enable ? (
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      className="bg-red-600 hover:bg-red-700 text-white"
-                      onClick={() => {
-                        const userService = new UserService();
-                        // Gọi API vô hiệu hóa
-                        userService.deactivateUser(user.id).then(() => {
-                          setUser({ ...user, enable: false });
-                        });
-                      }}
-                    >
-                      <UserX className="w-4 h-4 mr-1" /> Vô hiệu
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="default"
-                      className="bg-green-600 hover:bg-green-700 text-white"
-                      onClick={() => {
-                        // Gọi API kích hoạt
-                        const userService = new UserService();
-                        userService.activateUser(user.id).then(() => {
-                          setUser({ ...user, enable: true });
-                        });
-                      }}
-                    >
-                      <CheckCircle className="w-4 h-4 mr-1" /> Kích hoạt
-                    </Button>
-                  )}
-                </div>
+                {!user?.roles?.includes("ADMIN") && (
+                  <div className="flex gap-2">
+                    {user?.enable ? (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                        onClick={() => {
+                          const userService = new UserService();
+                          userService.deactivateUser(user.id).then(() => {
+                            setUser({ ...user, enable: false });
+                          });
+                        }}
+                      >
+                        <UserX className="w-4 h-4 mr-1" /> Vô hiệu
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="default"
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                        onClick={() => {
+                          const userService = new UserService();
+                          userService.activateUser(user.id).then(() => {
+                            setUser({ ...user, enable: true });
+                          });
+                        }}
+                      >
+                        <CheckCircle className="w-4 h-4 mr-1" /> Kích hoạt
+                      </Button>
+                    )}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

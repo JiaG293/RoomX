@@ -1,3 +1,4 @@
+import { ImagePreviewModal } from "@/components/admin/rooms/ImagePreviewModal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -38,6 +39,7 @@ export const columns: ColumnDef<RoomType>[] = [
     accessorKey: "roomCode",
     header: "Mã phòng",
   },
+
   // {
   //   accessorKey: "roomClassCode",
   //   header: "Loại phòng",
@@ -52,25 +54,46 @@ export const columns: ColumnDef<RoomType>[] = [
     header: "Giá hiện tại",
     cell: ({ row }) => `${row.original.totalPrice.toLocaleString()} VNĐ`,
   },
+  {
+    accessorKey: "imageUrls",
+    header: "Hình ảnh",
+    cell: ({ row }) => {
+      const imageUrl = row.original.imageUrls?.[0];
+      if (!imageUrl) return <span>Không có ảnh</span>;
+
+      return (
+        <ImagePreviewModal
+          imageUrl={imageUrl}
+          trigger={
+            <img
+              src={imageUrl}
+              alt="Room thumbnail"
+              className="w-16 h-16 object-cover rounded cursor-pointer border hover:scale-105 transition"
+            />
+          }
+        />
+      );
+    },
+  },
 
   // {
   //   accessorKey: "status",
   //   header: "Trạng thái",
   // },
-  {
-    id: "actions",
-    header: "Thao tác",
-    cell: ({ row }) => {
-      return (
-        <Button
-          asChild
-          className="px-3 py-2 bg-transparent text-[var(--view-button-text)] hover:bg-[var(--view-button-bg-hover)] hover:shadow-lg transform transition-transform duration-200 ease-in-out rounded-[var(--view-button-border-radius)] shadow-[var(--view-button-box-shadow)]"
-        >
-          <Link to={`/admin/rooms/${row.original.id}`}
-          
-          >Xem chi tiết</Link>
-        </Button>
-      );
-    },
-  },
+  // {
+  //   id: "actions",
+  //   header: "Thao tác",
+  //   cell: ({ row }) => {
+  //     return (
+  //       <Button
+  //         asChild
+  //         className="px-3 py-2 bg-transparent text-[var(--view-button-text)] hover:bg-[var(--view-button-bg-hover)] hover:shadow-lg transform transition-transform duration-200 ease-in-out rounded-[var(--view-button-border-radius)] shadow-[var(--view-button-box-shadow)]"
+  //       >
+  //         <Link to={`/admin/rooms/${row.original.id}`}
+
+  //         >Xem chi tiết</Link>
+  //       </Button>
+  //     );
+  //   },
+  // },
 ];

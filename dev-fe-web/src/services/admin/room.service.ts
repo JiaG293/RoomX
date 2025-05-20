@@ -24,24 +24,52 @@ export class RoomService {
       return response.data.result;
     } catch (error: any) {
       const responseData = error?.response?.data;
-  
-      if (
-        error?.response?.status === 401 &&
-        responseData?.code === 1007
-      ) {
-        console.log("gọi hàm refreshtoken")
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
         const authService = new AuthService();
         await authService.refreshToken();
         window.location.reload();
       }
-  
+
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
     }
   }
 
-    // Lấy danh sách phòng theo chi nháh
+  // chi tiết
+  async getDetailRoom(id: string) {
+    const token = Cookies.get("token");
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    }
+    try {
+      const response = await axios.get(`${API_BASE_URL}/rooms/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+        },
+      });
+      return response.data.result;
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi lấy dữ liệu!");
+      throw error;
+    }
+  }
+
+  // Lấy danh sách phòng theo chi nháh
   async getListRoomsByBranchId(branchId: string) {
     const token = Cookies.get("token");
     if (!token) {
@@ -59,23 +87,20 @@ export class RoomService {
       return response.data.result;
     } catch (error: any) {
       const responseData = error?.response?.data;
-  
-      if (
-        error?.response?.status === 401 &&
-        responseData?.code === 1007
-      ) {
-        console.log("gọi hàm refreshtoken")
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
         const authService = new AuthService();
         await authService.refreshToken();
         window.location.reload();
       }
-  
+
       // console.error("Error fetching users:", error);
       // toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
     }
   }
-  
+
   // Thêm phòng
   async createRoom(roomData: any) {
     const token = Cookies.get("token");
@@ -93,17 +118,14 @@ export class RoomService {
       return response.data.result;
     } catch (error: any) {
       const responseData = error?.response?.data;
-  
-      if (
-        error?.response?.status === 401 &&
-        responseData?.code === 1007
-      ) {
-        console.log("gọi hàm refreshtoken")
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
         const authService = new AuthService();
         await authService.refreshToken();
         window.location.reload();
       }
-  
+
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi thêm phòng!");
       throw error;

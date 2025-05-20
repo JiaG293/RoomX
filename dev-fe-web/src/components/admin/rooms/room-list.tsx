@@ -43,7 +43,7 @@ const RoomList: React.FC = () => {
     setLoading(true);
     try {
       const roomService = new RoomService();
-      const data = await roomService.getListRooms(pageIndex, 10);
+      const data = await roomService.getListRooms(pageIndex, 10,);
       console.log(data);
       setRooms(data.content || []);
       setTotalPages(data.totalPages);

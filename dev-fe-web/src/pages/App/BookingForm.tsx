@@ -392,7 +392,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         setScheduleResult(conflictData);
       } else {
         toast.error("Có lỗi xảy ra khi đặt lịch.");
-        handleClose();
       }
     }
   };

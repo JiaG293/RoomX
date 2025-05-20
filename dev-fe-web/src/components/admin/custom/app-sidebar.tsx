@@ -124,10 +124,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: BookOpenText,
         color: "text-green-500",
         items: [
-          {
-            title: t("menu_huong_dan_su_dung"),
-            url: "/admin/guides",
-          },
+          // {
+          //   title: t("menu_huong_dan_su_dung"),
+          //   url: "/admin/guides",
+          // },
           {
             title: t("menu_ve_chung_toi"),
             url: "/admin/about",

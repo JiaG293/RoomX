@@ -68,6 +68,7 @@ export const RootRouter = createBrowserRouter([
         path: "/admin/equipments",
         element: <Equipment />,
       },
+      
       {
         path: "/admin/rooms",
         element: <Room />,
