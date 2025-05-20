@@ -25,17 +25,14 @@ export class UserService {
       return response.data.result;
     } catch (error: any) {
       const responseData = error?.response?.data;
-  
-      if (
-        error?.response?.status === 401 &&
-        responseData?.code === 1007
-      ) {
-        console.log("gọi hàm refreshtoken")
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
         const authService = new AuthService();
         await authService.refreshToken();
         window.location.reload();
       }
-  
+
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
@@ -60,17 +57,14 @@ export class UserService {
       return response.data;
     } catch (error: any) {
       const responseData = error?.response?.data;
-  
-      if (
-        error?.response?.status === 401 &&
-        responseData?.code === 1007
-      ) {
-        console.log("gọi hàm refreshtoken")
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
         const authService = new AuthService();
         await authService.refreshToken();
         window.location.reload();
       }
-  
+
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
@@ -107,17 +101,90 @@ export class UserService {
       return response.data.result;
     } catch (error: any) {
       const responseData = error?.response?.data;
-  
-      if (
-        error?.response?.status === 401 &&
-        responseData?.code === 1007
-      ) {
-        console.log("gọi hàm refreshtoken")
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
         const authService = new AuthService();
         await authService.refreshToken();
         window.location.reload();
       }
-  
+
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi lấy dữ liệu!");
+      throw error;
+    }
+  }
+
+  //vô hiệu hoá người dùng
+  async deactivateUser(userId: string) {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    }
+
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/${userId}`,
+        { enable: false }, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi lấy dữ liệu!");
+      throw error;
+    }
+  }
+
+  //kích hoạt người dùng
+  async activateUser(userId: string) {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    }
+
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/${userId}`,
+        { enable: true }, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
