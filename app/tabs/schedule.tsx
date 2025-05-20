@@ -1,99 +1,118 @@
-import { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Calendar } from "react-native-big-calendar";
 import { Ionicons } from "@expo/vector-icons";
-
-const events = [
-  {
-    title: "Họp dự án",
-    room: "Phòng họp A",
-    start: new Date(2025, 4, 10, 10, 0),
-    end: new Date(2025, 4, 10, 11, 30),
-    color: "#ff4d4f",
-  },
-  {
-    title: "Họp với khách hàng",
-    room: "Phòng họp B",
-    start: new Date(2025, 4, 4, 10, 30),
-    end: new Date(2025, 4, 4, 12, 0),
-    color: "#40a9ff",
-  },
-  {
-    title: "Nghỉ trưa",
-    room: "Khu vực căng tin",
-    start: new Date(2025, 2, 28, 12, 30),
-    end: new Date(2025, 2, 28, 13, 30),
-    color: "#ffa940",
-  },
-  {
-    title: "Thảo luận kế hoạch",
-    room: "Phòng họp B",
-    start: new Date(2025, 3, 4, 14, 0),
-    end: new Date(2025, 3, 4, 15, 30),
-    color: "#40a9ff",
-  },
-  {
-    title: "Đào tạo nội bộ",
-    room: "Phòng họp C",
-    start: new Date(2025, 3, 7, 9, 0),
-    end: new Date(2025, 3, 7, 11, 0),
-    color: "#73d13d",
-  },
-  {
-    title: "Báo cáo tiến độ",
-    room: "Phòng họp A",
-    start: new Date(2025, 3, 10, 15, 0),
-    end: new Date(2025, 3, 10, 16, 0),
-    color: "#ff85c0",
-  },
-  {
-    title: "Kiểm tra hệ thống",
-    room: "Phòng server",
-    start: new Date(2025, 3, 12, 10, 0),
-    end: new Date(2025, 3, 12, 12, 0),
-    color: "#ff4d4f",
-  },
-  {
-    title: "Gặp mặt nhóm phát triển",
-    room: "Phòng họp B",
-    start: new Date(2025, 3, 15, 14, 0),
-    end: new Date(2025, 3, 15, 16, 0),
-    color: "#40a9ff",
-  },
-  {
-    title: "Họp chiến lược quý 2",
-    room: "Phòng họp A",
-    start: new Date(2025, 3, 18, 9, 0),
-    end: new Date(2025, 3, 18, 12, 0),
-    color: "#faad14",
-  },
-  {
-    title: "Thảo luận dự án mới",
-    room: "Phòng họp C",
-    start: new Date(2025, 3, 22, 10, 30),
-    end: new Date(2025, 3, 22, 12, 0),
-    color: "#9254de",
-  },
-  {
-    title: "Demo sản phẩm",
-    room: "Phòng họp A",
-    start: new Date(2025, 3, 25, 14, 0),
-    end: new Date(2025, 3, 25, 16, 0),
-    color: "#ff7875",
-  },
-  {
-    title: "Tổng kết tháng 4",
-    room: "Phòng họp B",
-    start: new Date(2025, 3, 30, 15, 0),
-    end: new Date(2025, 3, 30, 17, 0),
-    color: "#ffc53d",
-  }
-];
-
+import { ScheduleService } from "@/services/schedule.service";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen() {
-  const [mode, setMode] = useState<"day" | "week" | "month">("week");
+  const [mode, setMode] = useState<"day" | "week" | "month">("month");
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  const [events, setEvents] = useState([]);
+  const scheduleService = new ScheduleService();
+
+  const translateStatus = (status: string) => {
+    switch (status) {
+      case "COMPLETED":
+        return "✅ Đã hoàn thành";
+      case "SCHEDULED":
+        return "📅 Đã lên lịch";
+      case "PENDING":
+        return "⏳ Đang chờ"; // icon đồng hồ cát
+      case "CONFLICT":
+        return "⚠️ Xung đột lịch";
+      default:
+        return status;
+    }
+  };
+
+  const handlePressEvent = (event: any) => {
+    const { data } = event;
+
+    const message = `
+📌 Mã đặt phòng: ${data.bookingCode}
+🏢 Chi nhánh: ${data.branch?.name}
+🚪 Phòng: ${data.room?.name}
+📅 Ngày: ${data.meetingDate}
+⏰ Thời gian: ${data.meetingStart} - ${data.meetingEnd}
+✅ Trạng thái: ${translateStatus(data.status)}
+`;
+
+    Alert.alert("Thông tin sự kiện", message.trim());
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchEvents = async () => {
+        try {
+          const token = await AsyncStorage.getItem("token");
+          if (!token) throw new Error("No authentication token found");
+
+          const month = currentDate.getMonth() + 1;
+          const year = currentDate.getFullYear();
+
+          const response = await axios.get(
+            "https://apiroomx.jiag.id.vn/api/v1/bookings/list",
+            {
+              params: { month, year, size: -1, isAdmin: false },
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+                "X-tenantId": "sang",
+              },
+              timeout: 10000,
+              validateStatus: (status) => true, // không throw error status code
+            }
+          );
+
+          console.log("Response status:", response.status);
+          console.log("Response data:", response.data);
+
+          if (response.status >= 200 && response.status < 300) {
+            const schedules = response.data.result.content;
+
+            console.log(schedules);
+            const mappedEvents = schedules.map((item: any) => {
+              const startDateTime = new Date(
+                `${item.meetingDate}T${item.meetingStart}`
+              );
+              const endDateTime = new Date(
+                `${item.meetingDate}T${item.meetingEnd}`
+              );
+
+              return {
+                title: item.title || "Sự kiện",
+                start: startDateTime,
+                end: endDateTime,
+                data: item,
+              };
+            });
+
+            console.log("Mapped events:::::::::::::::::;");
+            console.log(mappedEvents);
+
+            setEvents(mappedEvents);
+          } else {
+            console.error("API error:", response.status, response.data);
+          }
+        } catch (err: any) {
+          console.error("Axios error:", err.message);
+          if (err.request) {
+            console.error("Request made but no response:", err.request);
+          }
+          if (err.response) {
+            console.error("Response error:", err.response);
+          }
+        }
+      };
+
+      fetchEvents();
+    }, [currentDate])
+  );
 
   // Chuyển đổi chế độ xem
   const handleChangeMode = (newMode: "day" | "week" | "month") => {
@@ -108,15 +127,15 @@ export default function HomeScreen() {
     } else if (mode === "week") {
       newDate.setDate(currentDate.getDate() + (direction === "next" ? 7 : -7));
     } else {
-      newDate.setMonth(currentDate.getMonth() + (direction === "next" ? 1 : -1));
+      newDate.setMonth(
+        currentDate.getMonth() + (direction === "next" ? 1 : -1)
+      );
     }
     setCurrentDate(newDate);
   };
 
   return (
     <View style={styles.container}>
-
-      {/* Điều hướng Next / Prev */}
       <View style={styles.navContainer}>
         <TouchableOpacity onPress={() => handleDateChange("prev")}>
           <Ionicons name="chevron-back" size={24} color="#1890ff" />
@@ -126,7 +145,9 @@ export default function HomeScreen() {
             ? currentDate.toLocaleDateString("vi-VN")
             : mode === "week"
             ? `Tuần ${currentDate.toLocaleDateString("vi-VN")}`
-            : `Tháng ${currentDate.getMonth() + 1}, ${currentDate.getFullYear()}`}
+            : `Tháng ${
+                currentDate.getMonth() + 1
+              }, ${currentDate.getFullYear()}`}
         </Text>
         <TouchableOpacity onPress={() => handleDateChange("next")}>
           <Ionicons name="chevron-forward" size={24} color="#1890ff" />
@@ -156,14 +177,12 @@ export default function HomeScreen() {
       {/* Lịch */}
       <View style={styles.calendarWrapper}>
         <Calendar
-          events={events.map((event) => ({
-            ...event,
-            title: `${event.title} - ${event.room}`,
-          }))}
+          events={events}
           height={500}
           mode={mode}
           swipeEnabled={false}
           date={currentDate} // Cập nhật theo ngày hiện tại
+          onPressEvent={handlePressEvent} // thêm callback ở đây
         />
       </View>
     </View>

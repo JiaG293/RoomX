@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
   FlatList,
+  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import {
@@ -15,8 +16,13 @@ import {
   Text,
   useTheme,
 } from "react-native-paper";
-import DatePicker from "react-native-date-picker";
 import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import {
+  bookSchedule,
+  getAllBranches,
+  getListRoomsByBranchId,
+} from "@/services/place.service";
 
 type TagSelectorProps = {
   label: string;
@@ -124,9 +130,9 @@ const TagSelector: React.FC<TagSelectorProps> = ({
 export default function BookingScreen() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [room, setRoom] = useState("");
+  const [room, setRoom] = useState<string>("");
   const [branch, setBranch] = useState("");
-  const [scheduleType, setScheduleType] = useState("day");
+  const [scheduleType, setScheduleType] = useState("");
   const [capacity, setCapacity] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [startTime, setStartTime] = useState(new Date());
@@ -138,31 +144,58 @@ export default function BookingScreen() {
 
   const theme = useTheme();
 
-  const branches = ["Chi nhánh A", "Chi nhánh B", "Chi nhánh C"];
-  const rooms = ["Phòng 101", "Phòng 102", "Phòng 201", "Phòng 202"];
-  const services = [
-    "Dịch vụ 1",
-    "Dịch vụ 2",
-    "Dịch vụ 3",
-    "Dịch vụ 4",
-    "Dịch vụ 5",
-    "Dịch vụ 6",
-  ];
-  const devices = [
-    "Thiết bị 1",
-    "Thiết bị 2",
-    "Thiết bị 3",
-    "Thiết bị 4",
-    "Thiết bị 5",
-    "Thiết bị 6",
-  ];
+  const [branches, setBranches] = useState<{ id: string; name: string }[]>([]);
+  const [rooms, setRooms] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const data = await getAllBranches();
+        setBranches(data);
+      } catch (error) {}
+    };
+
+    fetchBranches();
+  }, []);
+
+  const handleBranchChange = async (branchId: string) => {
+    setBranch(branchId);
+    setRoom(""); // Reset phòng khi đổi chi nhánh
+
+    if (branchId) {
+      try {
+        const roomsData = await getListRoomsByBranchId(branchId);
+        console.log(roomsData.content); // Mảng phòng thật sự
+        setRooms(
+          roomsData.content.map((r: any) => ({ id: r.id, name: r.roomCode }))
+        );
+      } catch (error) {
+        console.error("Lỗi lấy phòng:", error);
+      }
+    } else {
+      setRooms([]); // Nếu chưa chọn chi nhánh
+    }
+  };
+
   const participantsList = [
-    "Người tham gia 1",
-    "Người tham gia 2",
-    "Người tham gia 3",
-    "Người tham gia 4",
-    "Người tham gia 5",
-    "Người tham gia 6",
+    "user006.roomx@gmail.com",
+    "user005.roomx@gmail.com",
+    "user004.roomx@gmail.com",
+    "user002.roomx@gmail.com",
+    "user001.roomx@gmail.com",
+    "sang@gmail.com",
+    "sang2002@gmail.com",
+    "puss@gmail.com",
+    "nvga2k2111@gmail.com",
+    "nvg2k2@gmail.com",
+    "nvg2k21@gmail.com",
+    "nvg2k21111111@gmail.com",
+    "hoangvanthu@gmail.com",
+    "giau1@gmail.com",
+    "asgy2002@gmail.com",
+    "admin1@example.com",
+    "abcxyz@gmail.com",
+    "821377326.jiag@gmail.com",
   ];
 
   // Tag selectors (giữ nguyên)
@@ -196,8 +229,14 @@ export default function BookingScreen() {
     }
   };
 
-  const handleSubmit = () => {
-    // Gộp ngày + giờ lại cho start/end datetime chuẩn
+  // Hàm kiểm tra hợp lệ dữ liệu đặt lịch, trả về lỗi nếu có
+  const validateBooking = () => {
+    if (!title.trim()) return "Tiêu đề không được để trống.";
+    if (!branch) return "Bạn chưa chọn chi nhánh.";
+    if (!room) return "Bạn chưa chọn phòng.";
+    if (!scheduleType) return "Bạn chưa chọn loại lịch.";
+    // Kết hợp ngày giờ
+
     const combinedStart = new Date(
       startDate.getFullYear(),
       startDate.getMonth(),
@@ -213,31 +252,85 @@ export default function BookingScreen() {
       endTime.getMinutes()
     );
 
+    if (combinedStart >= combinedEnd)
+      return "Thời gian bắt đầu phải trước thời gian kết thúc.";
+    const diffMs = combinedEnd.getTime() - combinedStart.getTime();
+    const diffMinutes = diffMs / (1000 * 60);
+    if (diffMinutes < 30) return "Cuộc họp phải kéo dài ít nhất 30 phút.";
+    return null;
+  };
+
+  const formatDate = (date: Date) => {
+    // YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatTime = (date: Date) => {
+    // HH:mm
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  const resetBookingForm = () => {
+    setTitle("");
+    setDescription("");
+    setBranch("");
+    setRoom("");
+    setScheduleType("");
+    setStartDate(new Date());
+    setEndDate(new Date());
+    setStartTime(new Date());
+    setEndTime(new Date());
+    setParticipants([]);
+  };
+
+  const handleBooking = async () => {
+    const errorMsg = validateBooking();
+    if (errorMsg) {
+      Alert.alert("Lỗi đặt lịch", errorMsg);
+      return;
+    }
+    const daysOfWeek = "MO,TU,WE,TH,FR,SA,SU";
+
     const bookingDetails = {
       title,
+      priority: 0,
       description,
-      branch,
-      room,
-      scheduleType,
-      capacity,
-      startDate: combinedStart,
-      endDate: combinedEnd,
-      // Các trường khác nếu có
+      roomId: room,
+      branchId: branch,
+      recurrenceType: scheduleType,
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate),
+      startTime: formatTime(startTime),
+      endTime: formatTime(endTime),
+      daysOfWeek,
+      participants,
     };
-    console.log(bookingDetails);
+
+    try {
+      const result = await bookSchedule(bookingDetails);
+      console.log("Đặt lịch thành công với thông tin:", result);
+      Alert.alert("Đặt lịch", "Đặt lịch thành công!");
+      resetBookingForm();
+    } catch (error) {
+      console.error("Lỗi khi đặt lịch:", error);
+      Alert.alert("Lỗi", "Có lỗi xảy ra khi đặt lịch, vui lòng thử lại.");
+    }
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Đặt Lịch</Text>
-
       <PaperInput
         label="Tiêu đề"
         mode="outlined"
         value={title}
         onChangeText={setTitle}
         style={styles.input}
-        left={<PaperInput.Icon icon="text" />}
+        left={<PaperInput.Icon icon="text" color="#FF5722" />} // cam nóng
       />
       <PaperInput
         label="Mô tả"
@@ -247,7 +340,7 @@ export default function BookingScreen() {
         style={styles.input}
         multiline
         numberOfLines={3}
-        left={<PaperInput.Icon icon="file-document-outline" />}
+        left={<PaperInput.Icon icon="file-document-outline" color="#6200ee" />} // tím chủ đạo
       />
 
       {/* Chi nhánh */}
@@ -267,18 +360,18 @@ export default function BookingScreen() {
         <Ionicons
           name="business"
           size={24}
-          color={theme.colors.primary}
+          color="#1E88E5" // xanh dương đậm hơn
           style={{ marginRight: 8 }}
         />
         <Picker
           selectedValue={branch}
-          onValueChange={setBranch}
+          onValueChange={handleBranchChange}
           style={{ flex: 1, height: 50 }}
           itemStyle={{ fontSize: 16, height: 50, color: "#000" }}
         >
           <Picker.Item label="Chọn chi nhánh" value="" />
           {branches.map((b) => (
-            <Picker.Item key={b} label={b} value={b} />
+            <Picker.Item key={b.id} label={b.name} value={b.id} />
           ))}
         </Picker>
       </View>
@@ -300,18 +393,21 @@ export default function BookingScreen() {
         <Ionicons
           name="home"
           size={24}
-          color={theme.colors.primary}
+          color="#43A047" // xanh lá tươi
           style={{ marginRight: 8 }}
         />
         <Picker
           selectedValue={room}
-          onValueChange={setRoom}
-          style={{ flex: 1, height: 60 }}
+          onValueChange={(value) => {
+            console.log("Phòng được chọn:", value);
+            setRoom(value);
+          }}
+          style={{ flex: 1, height: 50 }}
           itemStyle={{ fontSize: 16, height: 50, color: "#000" }}
         >
           <Picker.Item label="Chọn phòng" value="" />
           {rooms.map((r) => (
-            <Picker.Item key={r} label={r} value={r} />
+            <Picker.Item key={r.id} label={r.name} value={r.id} />
           ))}
         </Picker>
       </View>
@@ -331,9 +427,9 @@ export default function BookingScreen() {
         }}
       >
         <Ionicons
-          name="calendar"
+          name="refresh" // icon giống nút refresh
           size={24}
-          color={theme.colors.primary}
+          color="#F4511E" // màu cam đỏ nổi bật
           style={{ marginRight: 8 }}
         />
         <Picker
@@ -342,105 +438,90 @@ export default function BookingScreen() {
           style={{ flex: 1, height: 60 }}
           itemStyle={{ fontSize: 16, height: 50, color: "#000" }}
         >
-          <Picker.Item label="Ngày" value="day" />
-          <Picker.Item label="Tuần" value="week" />
-          <Picker.Item label="Tháng" value="month" />
-          <Picker.Item label="Năm" value="year" />
-          <Picker.Item label="Tùy chỉnh" value="custom" />
+          <Picker.Item label="Chọn loại lịch" value="" />
+          <Picker.Item label="Ngày" value="DAILY" />
+          <Picker.Item label="Tuần" value="WEEKLY" />
+          <Picker.Item label="Tháng" value="MONTHLY" />
         </Picker>
       </View>
 
-      {/* Ngày và giờ bắt đầu */}
-      <Text style={styles.sectionTitle}>Thời gian bắt đầu</Text>
+      {/* Nhóm NGÀY bắt đầu và kết thúc */}
+      <Text style={styles.sectionTitle}>Ngày bắt đầu - kết thúc</Text>
       <View style={styles.datetimeRow}>
-        <TouchableOpacity
+        <Button
+          mode="outlined"
+          icon="calendar" // icon calendar như nút refresh kia
           onPress={() => setPickerMode("startDate")}
           style={styles.datetimeButton}
+          textColor="#F4511E" // đồng màu icon
         >
-          <Text>Bắt đầu ngày</Text>
-          <Text style={styles.datetimeValue}>
-            {startDate.toLocaleDateString()}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setPickerMode("startTime")}
-          style={styles.datetimeButton}
-        >
-          <Text>Bắt đầu giờ</Text>
-          <Text style={styles.datetimeValue}>
-            {startTime.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Ngày và giờ kết thúc */}
-      <Text style={styles.sectionTitle}>Thời gian kết thúc</Text>
-      <View style={styles.datetimeRow}>
-        <TouchableOpacity
+          {startDate.toLocaleDateString()}
+        </Button>
+        <Button
+          mode="outlined"
+          icon="calendar"
           onPress={() => setPickerMode("endDate")}
           style={styles.datetimeButton}
+          textColor="#F4511E"
         >
-          <Text>Kết thúc ngày</Text>
-          <Text style={styles.datetimeValue}>
-            {endDate.toLocaleDateString()}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setPickerMode("endTime")}
-          style={styles.datetimeButton}
-        >
-          <Text>Kết thúc giờ</Text>
-          <Text style={styles.datetimeValue}>
-            {endTime.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </Text>
-        </TouchableOpacity>
+          {endDate.toLocaleDateString()}
+        </Button>
       </View>
 
-      {/* DatePicker modal */}
-      <DatePicker
-        modal
-        open={pickerMode !== null}
-        date={
-          pickerMode === "startDate"
-            ? startDate
-            : pickerMode === "endDate"
-            ? endDate
-            : pickerMode === "startTime"
-            ? startTime
-            : endTime
-        }
-        mode={pickerMode?.includes("Date") ? "date" : "time"}
-        onConfirm={(date) => {
-          if (pickerMode === "startDate") setStartDate(date);
-          else if (pickerMode === "endDate") setEndDate(date);
-          else if (pickerMode === "startTime") setStartTime(date);
-          else if (pickerMode === "endTime") setEndTime(date);
-          setPickerMode(null);
-        }}
-        onCancel={() => setPickerMode(null)}
-      />
+      {/* Nhóm GIỜ bắt đầu và kết thúc */}
+      <Text style={styles.sectionTitle}>Giờ bắt đầu - kết thúc</Text>
+      <View style={styles.datetimeRow}>
+        <Button
+          mode="outlined"
+          icon="clock"
+          onPress={() => setPickerMode("startTime")}
+          style={styles.datetimeButton}
+          textColor="#43A047" // đồng màu với icon home (phòng)
+        >
+          {startTime.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </Button>
+        <Button
+          mode="outlined"
+          icon="clock"
+          onPress={() => setPickerMode("endTime")}
+          style={styles.datetimeButton}
+          textColor="#43A047"
+        >
+          {endTime.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </Button>
+      </View>
 
-      {/* Các tag selectors */}
-      <TagSelector
-        label="Dịch vụ"
-        options={services}
-        selectedValues={service}
-        onAdd={(val) => handleAddTag(val, "service")}
-        onRemove={(val) => handleRemoveTag(val, "service")}
-      />
-      <TagSelector
-        label="Thiết bị"
-        options={devices}
-        selectedValues={device}
-        onAdd={(val) => handleAddTag(val, "device")}
-        onRemove={(val) => handleRemoveTag(val, "device")}
-      />
+      {pickerMode && (
+        <DateTimePicker
+          value={
+            pickerMode === "startDate"
+              ? startDate
+              : pickerMode === "startTime"
+              ? startTime
+              : pickerMode === "endDate"
+              ? endDate
+              : endTime
+          }
+          mode={pickerMode.includes("Time") ? "time" : "date"}
+          is24Hour={true}
+          display="default"
+          onChange={(event, selectedDate) => {
+            if (selectedDate) {
+              if (pickerMode === "startDate") setStartDate(selectedDate);
+              if (pickerMode === "startTime") setStartTime(selectedDate);
+              if (pickerMode === "endDate") setEndDate(selectedDate);
+              if (pickerMode === "endTime") setEndTime(selectedDate);
+            }
+            setPickerMode(null);
+          }}
+        />
+      )}
       <TagSelector
         label="Người tham gia"
         options={participantsList}
@@ -451,10 +532,26 @@ export default function BookingScreen() {
 
       <Button
         mode="contained"
-        onPress={handleSubmit}
-        style={{ marginVertical: 24 }}
+        onPress={handleBooking}
+        icon="calendar" // icon lịch
+        style={{
+          marginVertical: 5,
+          borderRadius: 10,
+          paddingVertical: 5,
+          backgroundColor: "#007bff", // xanh dương chuẩn
+          elevation: 4,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+        }}
+        labelStyle={{
+          color: "white",
+          fontWeight: "700",
+          fontSize: 16,
+        }}
       >
-        Xác nhận
+        Đặt lịch
       </Button>
     </ScrollView>
   );
@@ -501,25 +598,18 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontWeight: "700", // đậm hơn
-    fontSize: 18, // lớn hơn
-    marginTop: 24, // cách trên rộng hơn
-    marginBottom: 12, // cách dưới rộng hơn
-    color: "#444",
+    fontSize: 16, // lớn hơn
+    marginBottom: 10, // cách dưới rộng hơn
+    color: "#333",
   },
   datetimeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: 12,
   },
   datetimeButton: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: "#aaa", // màu viền đậm hơn để rõ ràng
-    borderRadius: 8,
-    paddingVertical: 14, // tăng padding dọc
-    marginHorizontal: 6, // tăng margin ngang cho button rộng rãi hơn
-    alignItems: "center",
-    backgroundColor: "#f0f0f0", // nền nhẹ cho nút chọn ngày giờ
+    marginHorizontal: 4,
   },
   datetimeValue: {
     marginTop: 6,

@@ -44,7 +44,12 @@
       },
       "eas": {
         "projectId": "a9c2a117-b37f-4906-8629-23d4a545265d"
-      }
+      },
+      "KEYCLOAK_URL": "https://keycloak.jiag.id.vn",
+      "KEYCLOAK_REALM": "sang",
+      "KEYCLOAK_CLIENT_ID": "roomx-fe",
+      "KEYCLOAK_CLIENT_SECRET": "0HCpQ2lpcu9kOsXTvT0jz0NoD5VlCnuW",
+      "API_BASE_URL": "https://api.jiag.id.vn/api/v1"
     }
   }
 }

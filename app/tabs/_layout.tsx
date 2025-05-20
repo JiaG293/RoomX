@@ -41,9 +41,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="group"
         options={{
-          tabBarLabel: "Nhóm",
+          tabBarLabel: "Yêu cầu",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people-outline" size={size} color={color} />
+            <Ionicons name="hourglass-outline" size={size} color={color} />
           ),
         }}
       />

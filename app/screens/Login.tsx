@@ -9,28 +9,27 @@ import {
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import { AuthService } from "@/services/auth.service"; // Đảm bảo import đúng AuthService
+import { showMessage } from 'react-native-flash-message';
 
 const Login: React.FC = () => {
   const router = useRouter(); // Hook điều hướng
 
-  const [email, setEmail] = useState("puss@gmail.com");
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("20060120");
+  const [password, setPassword] = useState("123456789");
   const [emailFocus, setEmailFocus] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
 
   const handleLogin = async () => {
     const authService = new AuthService();
-    router.push("/tabs/home");
 
-    // const result = await authService.login(email, password);
+    const result = await authService.login(email, password);
 
-    // if (result.success) {
-    //   // Nếu đăng nhập thành công, chuyển hướng đến trang home
-    //   router.push("/tabs/home");
-    // } else {
-    //   // Nếu đăng nhập thất bại, hiển thị thông báo lỗi
-    //   // Alert.alert("Lỗi", result.message || "Đã có lỗi xảy ra");
-    // }
+    if (result.success) {
+      // Nếu đăng nhập thành công, chuyển hướng đến trang home
+      router.push("/tabs/home");
+    } else {
+      
+    }
   };
 
   return (
