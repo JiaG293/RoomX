@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -21,6 +22,8 @@ import {
 } from "recharts";
 import CMSLayout from "@/layouts/cms-layout";
 import { useTranslation } from "react-i18next";
+import { ScheduleService } from "@/services/admin/schedule.service";
+import { toast } from "sonner";
 
 const stats = [
   {
@@ -28,7 +31,6 @@ const stats = [
     value: 12,
     icon: <Calendar className="w-6 h-6" />,
   },
-
   {
     title: "trang_chu_so_nguoi",
     value: 16,
@@ -43,30 +45,6 @@ const stats = [
     title: "trang_chu_chi_phi",
     value: "12,500,000 VNĐ",
     icon: <DollarSign className="w-6 h-6" />,
-  },
-];
-
-const bookings = [
-  {
-    id: 1,
-    room: "Phòng hội nghị A",
-    user: "John Doe",
-    time: "10:00 - 11:00",
-    status: "trang_thai_da_duyet",
-  },
-  {
-    id: 2,
-    room: "Phòng họp B",
-    user: "Jane Smith",
-    time: "14:00 - 15:00",
-    status: "trang_thai_cho_duyet",
-  },
-  {
-    id: 3,
-    room: "Phòng họp C",
-    user: "Mike Johnson",
-    time: "16:00 - 17:00",
-    status: "trang_thai_huy",
   },
 ];
 
@@ -90,6 +68,25 @@ const revenueChartData = [
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
+  const [pendingBookings, setPendingBookings] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const bookingService = new ScheduleService();
+        const today = new Date();
+        const month = today.getMonth() + 1;
+        const year = today.getFullYear();
+        const result = await bookingService.getPendingSchedules(month, year);
+        setPendingBookings(result);
+      } catch (error) {
+        toast.error("Không thể tải dữ liệu lịch cần duyệt");
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <CMSLayout title={t("menu_trang_chu")}>
       <div className="p-4 space-y-4 h-full flex flex-col">
@@ -127,67 +124,79 @@ const Dashboard: React.FC = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="text-sm text-card-foreground">
-                      {t("trang_chu_dat_phong_cot_id")}
+                      ID
                     </TableHead>
                     <TableHead className="text-sm text-card-foreground">
-                      {t("trang_chu_dat_phong_cot_phong_hop")}
+                      Trạng thái
                     </TableHead>
                     <TableHead className="text-sm text-card-foreground">
-                      {t("trang_chu_dat_phong_cot_nguoi_dung")}
+                      Ngày đặt
                     </TableHead>
                     <TableHead className="text-sm text-card-foreground">
-                      {t("trang_chu_dat_phong_cot_thoi_gian")}
-                    </TableHead>
-                    <TableHead className="text-sm text-card-foreground">
-                      {t("trang_chu_dat_phong_cot_trang_thai")}
-                    </TableHead>
-                    <TableHead className="text-sm text-card-foreground">
-                      {t("trang_chu_dat_phong_cot_hanh_dong")}
+                      Tiêu đề
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {bookings.map((booking) => (
-                    <TableRow key={booking.id}>
-                      <TableCell className="text-sm text-card-foreground">
-                        {booking.id}
-                      </TableCell>
-                      <TableCell className="text-sm text-card-foreground">
-                        {booking.room}
-                      </TableCell>
-                      <TableCell className="text-sm text-card-foreground">
-                        {booking.user}
-                      </TableCell>
-                      <TableCell className="text-sm text-card-foreground">
-                        {booking.time}
-                      </TableCell>
-                      <TableCell className="text-sm w-32">
-                        <span
-                          className="px-2 py-1 rounded-full text-white text-xs"
-                          style={{
-                            backgroundColor: `hsl(var(--${
-                              booking.status === "trang_thai_da_duyet"
-                                ? "status-confirmed"
-                                : booking.status === "trang_thai_huy"
-                                ? "status-cancelled"
-                                : "status-pending"
-                            }))`,
-                          }}
-                        >
-                          {t(booking.status)}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-card-foreground hover:bg-card-foreground/10"
-                        >
-                          {t("trang_chu_dat_phong_hanh_dong_xem")}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {pendingBookings.slice(0, 5).map((booking, index) => {
+                    const statusMap: {
+                      [key: string]: { label: string; color: string };
+                    } = {
+                      PENDING: {
+                        label: "Chờ duyệt",
+                        color:
+                          "bg-yellow-200 text-yellow-800 dark:bg-yellow-300 dark:text-yellow-900",
+                      },
+                      APPROVED: {
+                        label: "Đã duyệt",
+                        color:
+                          "bg-emerald-200 text-emerald-800 dark:bg-emerald-300 dark:text-emerald-900",
+                      },
+                      CANCELLED: {
+                        label: "Đã hủy",
+                        color:
+                          "bg-rose-200 text-rose-800 dark:bg-rose-300 dark:text-rose-900",
+                      },
+                    };
+
+                    const status = statusMap[booking.approvalStatus] || {
+                      label: booking.approvalStatus,
+                      color:
+                        "bg-gray-200 text-gray-800 dark:bg-gray-300 dark:text-gray-900",
+                    };
+
+                    return (
+                      <TableRow key={booking.id}>
+                        <TableCell className="text-sm text-card-foreground">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell className="text-sm text-card-foreground">
+                          <span
+                            className={`px-2 py-1 rounded-md text-sm font-medium ${status.color}`}
+                          >
+                            {status.label}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-sm text-card-foreground">
+                          {booking?.updatedAt
+                            ? new Date(booking.updatedAt).toLocaleString(
+                                "vi-VN",
+                                {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )
+                            : ""}
+                        </TableCell>
+                        <TableCell className="text-sm text-card-foreground">
+                          {booking.title}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </CardContent>
@@ -204,7 +213,7 @@ const Dashboard: React.FC = () => {
               <CardContent className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={bookingChartData}>
-                    <XAxis dataKey="name" tickFormatter={(value) => t(`chart_labels.${value}`)} />
+                    <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
                     <Bar dataKey="bookings" fill="#3b82f6" />
@@ -222,10 +231,7 @@ const Dashboard: React.FC = () => {
               <CardContent className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={revenueChartData}>
-                    <XAxis
-                      dataKey="name"
-                      tickFormatter={(value) => t(`chart_labels.${value}`)}
-                    />
+                    <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
                     <Line
