@@ -513,11 +513,11 @@ public class BookingAppService {
         log.info("Date range: {} -> {} | Instant range: {} -> {}", startDate, endDate, startDate, endDate);
 
         Page<BookingMiniumResponse> bookingDomain;
-
-        if (!roleEvaluator.hasAnyRoleType("approve") && (!request.isAdmin())) {
-            bookingDomain = bookingEntityService.findBookingsByTimeRangeAndUserIdAndStatus(startDate, endDate, currentUserId, status, pageable);
-        } else {
+        log.info("check role: {} {}", roleEvaluator.hasAnyRoleType("approve"), request.getIsAdmin());
+        if (roleEvaluator.hasAnyRoleType("approve") && request.getIsAdmin()) {
             bookingDomain = bookingEntityService.findBookingsByTimeRangeAndStatus(startDate, endDate, status, pageable);
+        } else {
+            bookingDomain = bookingEntityService.findBookingsByTimeRangeAndUserIdAndStatus(startDate, endDate, currentUserId, status, pageable);
         }
 
 
