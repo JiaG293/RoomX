@@ -5,10 +5,10 @@ import ProtectedRoute from "@/routes/ProtectedRouter";
 import Dashboard from "@/pages/Admin/Dashboard";
 import Login from "@/pages/Auth/Login";
 import User from "@/pages/Admin/User/User";
-import Meeting from "@/pages/Admin/Meeting";
+import Meeting from "@/pages/Admin/Schedule/Meeting";
 import Branch from "@/pages/Admin/Branch/Branch";
 import GroupUser from "@/pages/Admin/User/GroupUser";
-import MeetingApproval from "@/pages/Admin/MeetingApproval";
+import MeetingApproval from "@/pages/Admin/Schedule/MeetingApproval";
 import Statistics from "@/pages/Admin/Statistics";
 import Home from "@/pages/App/Home";
 import UserDetail from "@/pages/Admin/User/UserDetail";
@@ -18,6 +18,7 @@ import Equipment from "@/pages/Admin/Equipment/Equipment";
 import Room from "@/pages/Admin/Room/Room";
 import Booking from "@/pages/App/Booking";
 import About from "@/pages/Admin/Guide/About";
+import Pending from "@/pages/App/Pending";
 
 export const RootRouter = createBrowserRouter([
   {
@@ -86,7 +87,11 @@ export const RootRouter = createBrowserRouter([
       {
         path: "/portal/booking",
         element: <Booking />,
-      }
+      },
+      {
+        path: "/portal/pending",
+        element: <Pending />,
+      },
     ],
   },
   {

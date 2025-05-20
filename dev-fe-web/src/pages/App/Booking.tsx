@@ -22,7 +22,7 @@ const Booking: React.FC = () => {
   const loadEvents = useCallback(async (month: number, year: number) => {
     try {
       const scheduleService = new ScheduleService();
-      const data = await scheduleService.getAllSchedules(month, year);
+      const data = await scheduleService.getAllSchedulesUser(month, year);
       console.log(data);
       const formattedEvents = data.map((event: any) => {
         const startDateTime = new Date(

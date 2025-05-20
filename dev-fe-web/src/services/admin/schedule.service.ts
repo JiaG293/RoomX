@@ -6,7 +6,7 @@ import { toast } from "sonner";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_HOST;
 
 export class ScheduleService {
-  // Lấy danh sách lịch
+  // Lấy danh sách lịch đã duyệt
   async getAllSchedules(month: number, year: number) {
     const token = Cookies.get("token");
 
@@ -17,7 +17,7 @@ export class ScheduleService {
     try {
       // endpoint cũ: /bookings/filters
       const response = await axios.get(`${API_BASE_URL}/bookings/filters`, {
-        params: { month, year, size: -1 },
+        params: { month, year, size: -1, isAdmin: true },
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -27,17 +27,49 @@ export class ScheduleService {
       return response.data.result.content;
     } catch (error: any) {
       const responseData = error?.response?.data;
-  
-      if (
-        error?.response?.status === 401 &&
-        responseData?.code === 1007
-      ) {
-        console.log("gọi hàm refreshtoken")
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
         const authService = new AuthService();
         await authService.refreshToken();
         window.location.reload();
       }
-  
+
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi lấy dữ liệu!");
+      throw error;
+    }
+  }
+
+  // Lấy danh sách lịch đã duyệt của người dùng
+  async getAllSchedulesUser(month: number, year: number) {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    }
+
+    try {
+      // endpoint cũ: /bookings/filters
+      const response = await axios.get(`${API_BASE_URL}/bookings/filters`, {
+        params: { month, year, size: -1, isAdmin: false },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+        },
+      });
+      return response.data.result.content;
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
@@ -56,7 +88,7 @@ export class ScheduleService {
       const response = await axios.get(
         `${API_BASE_URL}/bookings/request/list`,
         {
-          params: { month, year },
+          params: { month, year, size: -1, isAdmin: true, status: "PENDING, CONFLICT" },
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -67,17 +99,87 @@ export class ScheduleService {
       return response.data.result.content;
     } catch (error: any) {
       const responseData = error?.response?.data;
-  
-      if (
-        error?.response?.status === 401 &&
-        responseData?.code === 1007
-      ) {
-        console.log("gọi hàm refreshtoken")
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
         const authService = new AuthService();
         await authService.refreshToken();
         window.location.reload();
       }
-  
+
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi lấy dữ liệu!");
+      throw error;
+    }
+  }
+
+  //Lấy các lịch cần duyệt của người dùng
+  async getPendingSchedulesUser(month: number, year: number) {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    }
+
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/bookings/request/list`,
+        {
+          params: { month, year, size: -1, isAdmin: false, status: "PENDING, CONFLICT" },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+          },
+        }
+      );
+      return response.data.result.content;
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi lấy dữ liệu!");
+      throw error;
+    }
+  }
+
+  // Chi tiết lịch cần duyệt
+  async getDetailPendingSchedule(id: string) {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    }
+
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/bookings/request/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+          },
+        }
+      );
+      return response.data.result;
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
@@ -103,17 +205,14 @@ export class ScheduleService {
       return response.data.result;
     } catch (error: any) {
       const responseData = error?.response?.data;
-  
-      if (
-        error?.response?.status === 401 &&
-        responseData?.code === 1007
-      ) {
-        console.log("gọi hàm refreshtoken")
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
         const authService = new AuthService();
         await authService.refreshToken();
         window.location.reload();
       }
-  
+
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
@@ -136,17 +235,14 @@ export class ScheduleService {
       return response.data; // Trả về dữ liệu lịch đã được đặt
     } catch (error: any) {
       const responseData = error?.response?.data;
-  
-      if (
-        error?.response?.status === 401 &&
-        responseData?.code === 1007
-      ) {
-        console.log("gọi hàm refreshtoken")
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
         const authService = new AuthService();
         await authService.refreshToken();
         window.location.reload();
       }
-  
+
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
@@ -174,6 +270,44 @@ export class ScheduleService {
         }
       );
       toast.success("Duyệt lịch thành công!");
+      return response.data;
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi duyệt lịch!");
+      throw error;
+    }
+  }
+
+  // từ chối lịch
+  async rejectSchedules(id: string) {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    }
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/bookings/${id}/reject`,
+        {}, // Không cần gửi dữ liệu body nếu API không yêu cầu
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+          },
+        }
+      );
+      toast.success("Từ chối lịch thành công!");
       return response.data;
     } catch (error: any) {
       const responseData = error?.response?.data;

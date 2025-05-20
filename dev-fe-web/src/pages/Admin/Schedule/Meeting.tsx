@@ -131,6 +131,7 @@ const Meeting: React.FC = () => {
             { color: "#d0f0c0", label: "Lên lịch" },
             { color: "#e3f2fd", label: "Hoàn thành" },
             { color: "#fff3cd", label: "Chờ duyệt" },
+            { color: "#ffc4c4", label: "Xung đột" },
           ].map((item, index) => (
             <div
               key={index}

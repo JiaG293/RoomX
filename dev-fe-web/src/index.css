@@ -133,7 +133,7 @@ button:focus-visible {
     --color-purple: #6a0572;
     --color-ocean: #118ab2;
     --color-today-border: #3959eb;
-    
+
     --color-completed-bg: #e3f2fd; /* nền xanh dương nhạt */
     --color-completed-text: #1e88e5; /* chữ xanh dương */
 
@@ -142,6 +142,9 @@ button:focus-visible {
 
     --color-pending-bg: #fff3cd; /* nền vàng nhạt */
     --color-pending-text: #f9a825; /* chữ vàng đậm */
+
+    --color-conflict-bg: #ffc4c4; /* đỏ nhạt, dịu mắt hơn */
+    --color-conflict-text: #7f1d1d; /* chữ đỏ đậm, dễ đọc */
 
     --color-primary: #3b82f6; /* blue-500 */
     --calendar-bg: #f9fafb; /* Rất nhạt, trắng hơi xám */
@@ -227,6 +230,10 @@ button:focus-visible {
     --color-completed-text: #bbdefb; /* chữ xanh dương nhạt */
     --color-scheduled-bg: #2e7d32; /* nền xanh lá đậm */
     --color-scheduled-text: #a5d6a7;
+    --color-pending-bg: #5c430d; /* nền vàng nâu trầm, đồng bộ với nền đậm của các trạng thái khác */
+    --color-pending-text: #ffe082; /* chữ vàng nhạt, dịu mắt nhưng vẫn nổi bật trên nền tối */
+    --color-conflict-bg-dark: #7f1d1d; /* đỏ đậm hơn, phù hợp nền tối */
+    --color-conflict-text-dark: #ffadad; /* đỏ nhạt sáng hơn, nổi bật trên nền tối */
     /* Nút xem chi tiết */
     --view-button-bg: rgba(34, 39, 45, 0.7); /* Màu nền tối gần trong suốt */
     --view-button-bg-hover: rgba(

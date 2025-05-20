@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { ScheduleService } from "@/services/user/schedule.service";
 import CheckingTable from "@/pages/App/checking-table";
 import {
+  AlertTriangle,
   Calendar,
   Coffee,
   FileClock,
@@ -63,7 +64,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [capacity, setCapacity] = useState(10);
+  const [capacity, setCapacity] = useState(20);
   const [startDate, setStartDate] = useState<Date | null>(
     eventDate ? new Date(eventDate) : new Date()
   );
@@ -380,7 +381,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     const scheduleService = new ScheduleService();
     try {
       await scheduleService.createSchedule(scheduleData);
-      // handleClose();
+      handleClose();
     } catch (error: any) {
       console.error(error);
 
@@ -391,7 +392,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         setScheduleResult(conflictData);
       } else {
         toast.error("Có lỗi xảy ra khi đặt lịch.");
-        // handleClose();
+        handleClose();
       }
     }
   };
@@ -400,7 +401,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const resetForm = () => {
     setTitle("");
     setDescription("");
-    setCapacity(10);
+    setCapacity(20);
     setStartDate(null);
     setEndDate(null);
     setStartTime(getClosestTime());
@@ -694,8 +695,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
           <Card className="rounded-2xl shadow-sm border bg-white">
             <CardHeader className="px-6 py-4 border-b bg-muted/50 rounded-t-2xl">
-              <CardTitle className="text-base font-semibold text-primary flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-600" />
+              <CardTitle className="text-base font-semibold text-yellow-600 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
                 Cập nhật xung đột
               </CardTitle>
             </CardHeader>

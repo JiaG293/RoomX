@@ -10,6 +10,8 @@ import { ScheduleService } from "@/services/admin/schedule.service";
 import { toast } from "sonner";
 import { dA } from "node_modules/@fullcalendar/core/internal-common";
 import EventModalApproval from "@/components/admin/meetings/event-modal-approval";
+import PortalLayout from "@/layouts/portal-layout";
+import timeGridPlugin from "@fullcalendar/timegrid";
 
 interface EventType {
   id: string;
@@ -32,7 +34,7 @@ interface EventType {
   };
 }
 
-const MeetingApproval: React.FC = () => {
+const Pending: React.FC = () => {
   const [events, setEvents] = useState<EventType[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -41,7 +43,7 @@ const MeetingApproval: React.FC = () => {
   const loadEvents = useCallback(async (month: number, year: number) => {
     try {
       const scheduleService = new ScheduleService();
-      const data = await scheduleService.getPendingSchedules(month, year);
+      const data = await scheduleService.getPendingSchedulesUser(month, year);
       console.log(data);
 
       const formattedEvents: EventType[] = data.map((event: any) => ({
@@ -51,26 +53,12 @@ const MeetingApproval: React.FC = () => {
         end: `${event.endDate}T${event.endTime}`,
         extendedProps: {
           status: event.approvalStatus || "Chưa duyệt",
-          approvalStatus: event.approvalStatus || "PENDING",
-          capacity: event.capacity || 0,
-          startDate: event.startDate,
-          endDate: event.endDate,
-          startTime: event.startTime,
-          endTime: event.endTime,
-          recurrenceType: event.recurrenceType || "Không xác định",
-          recurrenceInterval: event.recurrenceInterval || 0,
-          daysOfWeek: event.daysOfWeek || "Không có lịch",
-          createdAt: event.createdAt || "",
-          updatedAt: event.updatedAt || "",
-          description: event.description || "Không có mô tả",
-          services: event.services || [],
-          equipments: event.equipments || [],
-          priority: event.priority ?? 0,
-          branchId: event.branchId || null,
-          roomId: event.roomId || null,
         },
+        className:
+          event.approvalStatus === "PENDING"
+            ? "event-pending"
+            : "event-conflict",
       }));
-      
 
       setEvents(formattedEvents);
     } catch (error) {
@@ -83,12 +71,12 @@ const MeetingApproval: React.FC = () => {
   }, [currentMonth, currentYear, loadEvents]);
 
   return (
-    <CMSLayout title="Phê duyệt lịch họp">
+    <PortalLayout >
       <div style={{ flex: 0.9 }}>
         <FullCalendar
           locale="vi"
-          plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
-          initialView={"listWeek"}
+          plugins={[dayGridPlugin, listPlugin, interactionPlugin, timeGridPlugin]}
+          initialView={"listMonth"}
           events={events}
           eventClick={(info) => {
             setModalEvent(info.event);
@@ -114,7 +102,7 @@ const MeetingApproval: React.FC = () => {
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "listMonth,listWeek,listDay",
+            right: "listMonth,listWeek,timeGridDay",
           }}
           datesSet={(info) => {
             const newMonth = info.view.currentStart.getMonth() + 1;
@@ -124,12 +112,67 @@ const MeetingApproval: React.FC = () => {
               setCurrentYear(newYear);
             }
           }}
+          views={{
+            dayGridMonth: {
+              // Lịch tháng: giới hạn tối đa 2 dòng sự kiện mỗi ngày
+              dayMaxEvents: 2,
+              moreLinkText: "Xem thêm",
+            },
+            dayGridWeek: {
+              // Lịch tuần: giới hạn tối đa 10 sự kiện mỗi ngày
+              dayMaxEvents: 10,
+              moreLinkText: "Xem thêm",
+            },
+            timeGridDay: {
+              // Lịch ngày: không giới hạn số sự kiện
+              eventLimit: false,
+              moreLinkText: "Xem thêm",
+            },
+          }}
+          moreLinkClick={(info) => {
+            // Khi nhấn "Xem thêm", chuyển sang chế độ xem ngày
+            info.view.calendar.changeView("listDay", info.date);
+          }}
         />
+        {/* Chú thích */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "12px",
+            marginTop: "10px",
+            paddingLeft: "10px",
+          }}
+        >
+          {[
+            { color: "#d0f0c0", label: "Lên lịch" },
+            { color: "#e3f2fd", label: "Hoàn thành" },
+            { color: "#fff3cd", label: "Chờ duyệt" },
+            { color: "#ffc4c4", label: "Xung đột" },
+          ].map((item, index) => (
+            <div
+              key={index}
+              style={{ display: "flex", alignItems: "center", gap: "6px" }}
+            >
+              <div
+                style={{
+                  width: "12px",
+                  height: "12px",
+                  backgroundColor: item.color,
+                  borderRadius: "2px",
+                }}
+              ></div>
+              <span style={{ fontSize: "12px" }}>{item.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
-      <EventModalApproval event={modalEvent} onClose={() => setModalEvent(null)} />
-
-    </CMSLayout>
+      {/* <EventModalApproval
+        event={modalEvent}
+        onClose={() => setModalEvent(null)}
+      /> */}
+    </PortalLayout>
   );
 };
 
-export default MeetingApproval;
+export default Pending;

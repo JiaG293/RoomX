@@ -32,7 +32,7 @@ import { ThemeToggle } from "@/components/admin/custom/theme-toggle";
 import { LanguageSelect } from "@/components/admin/custom/select-language";
 import { getShortName } from "@/utils/string.util";
 import { useTranslation } from "react-i18next";
-import { Profile } from "@/pages/Admin/Profile";
+import { Profile } from "@/components/admin/custom/profile-modal";
 
 export function NavUser({
   user,
