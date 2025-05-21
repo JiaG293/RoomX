@@ -459,12 +459,35 @@ public class BookingAppService {
                 .status(ApprovalStatusType.APPROVED.toString())
                 .build());
 
-        var approveBookingEvent = ApproveBookingEvent.builder()
-                .id(UUID.randomUUID().toString())
-                .bookingRequestId(approvalFormDomain.getBookingRequest().getId().toString())
-                .ownerId(approvalFormDomain.getBookingRequest().getRequester().toString())
-                .participants(approvalFormDomain.getBookingRequest().getParticipants())
-                .build();
+
+        var branchName = placeRepository.findById(branchId).orElse(null);
+        List<BookingInfoEmailEvent> listEvent = new ArrayList<>();
+        bookingDomainList.forEach(booking -> {
+            booking.getBookingRequest().getParticipants().forEach(participant -> {
+                var approveBookingEvent = BookingInfoEmailEvent.builder()
+                        .id(UUID.randomUUID().toString())
+                        .bookingRequestId(approvalFormDomain.getBookingRequest().getId().toString())
+                        .bookingId(booking.getId().toString())
+                        .toEmail(participant)
+                        .participantName(participant.split("@")[0])
+                        .fromEmail("asgy2002@gmail")
+                        .roomName(booking.getPlaceDetail())
+                        .branchName(branchName != null ? branchName.getName() : null)
+                        .meetingLocation(booking.getPlaceDetail())
+                        .meetingDate(booking.getMeetingDate())
+                        .meetingStart(booking.getMeetingStart())
+                        .meetingEnd(booking.getMeetingEnd())
+                        .meetingTitle(booking.getTitle())
+                        .meetingDescription(booking.getDescription())
+                        .emailType(EmailTemplateType.CONFIRM_MEETING)
+                        .build();
+                listEvent.add(approveBookingEvent);
+            });
+        });
+
+        listEvent.forEach(event -> {
+            kafkaTemplate.send("approve-booking-event-topic", event);
+        });
 
 
         return bookingDomainList.stream()

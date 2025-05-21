@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -99,12 +100,8 @@ public class NotificationAppService {
         );
     }
 
-   /* @KafkaListener(topics = "approve-booking-event-topic", groupId = "notification-service")
+    @KafkaListener(topics = "approve-booking-event-topic", groupId = "notification-service")
     public void handleApproveBookingEvent(BookingInfoEmailEvent event) {
-
-
-
-
         var listToken = redisFcmTokenService.getObjectSet("fcm_token:user:" + event.getUserId(), String.class);
         if (listToken == null || listToken.isEmpty()) {
             for (String token : listToken) {
@@ -174,5 +171,7 @@ public class NotificationAppService {
                         Map.entry("contactEmail", event.getFromEmail())
                 )
         );
-    }*/
+
+        log.info("send email success: {}", event);
+    }
 }
