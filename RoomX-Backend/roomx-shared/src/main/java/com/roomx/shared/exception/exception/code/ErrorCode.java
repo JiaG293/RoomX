@@ -93,7 +93,8 @@ public enum ErrorCode {
     BOOKING_MODIFICATION_BAD_REQUEST(1000, "error.booking_modification.bad_request", HttpStatus.BAD_REQUEST),
     ROOM_STATUS_INVALID(1000,"valid.room.status_invalid", HttpStatus.BAD_REQUEST),
     ROOM_CAPACITY_NOT_ENOUGH(1000, "error.room.capacity.not_enough", HttpStatus.BAD_REQUEST),
-    UPDATE_USER_FAILED(1000, "error.user.update_failed", HttpStatus.BAD_REQUEST);
+    UPDATE_USER_FAILED(1000, "error.user.update_failed", HttpStatus.BAD_REQUEST),
+    ROOM_CAPACITY_NOT_VALID(1000, "valid.room.capacity_invalid", HttpStatus.BAD_REQUEST);
 
 
 

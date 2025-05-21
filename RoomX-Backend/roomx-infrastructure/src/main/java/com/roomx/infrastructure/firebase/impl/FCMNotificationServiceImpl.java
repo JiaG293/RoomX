@@ -74,4 +74,9 @@ public class FCMNotificationServiceImpl implements FCMNotificationService {
             return false;
         }
     }
+
+    @Override
+    public boolean sendApproveNotificationData(String targetToken, String title, String body, Object data) {
+        return false;
+    }
 }

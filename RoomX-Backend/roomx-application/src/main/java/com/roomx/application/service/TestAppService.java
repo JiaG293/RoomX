@@ -15,6 +15,7 @@ import com.roomx.infrastructure.distributed.kafka.config.KafkaTenantService;
 import com.roomx.infrastructure.firebase.FCMNotificationService;
 import com.roomx.infrastructure.minio.MinioService;
 import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
+import com.roomx.infrastructure.multitenancy.hibernate.TenantIdentifierResolver;
 import com.roomx.infrastructure.notification.EmailService;
 import com.roomx.infrastructure.persistence.dto.RoomClassFilter;
 import com.roomx.infrastructure.persistence.dto.RoomFilter;
@@ -28,6 +29,7 @@ import com.roomx.infrastructure.security.oauth.RoleEvaluator;
 import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.base.MeetingMessage;
 import com.roomx.shared.enums.*;
+import com.roomx.shared.event.ApproveBookingEvent;
 import com.roomx.shared.event.BookingInfoEmailEvent;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
@@ -81,6 +83,8 @@ public class TestAppService {
     private final RoomEntityMapper roomEntityMapper;
     private final JpaRoomClassEntityRepository jpaRoomClassEntityRepository;
     private final JpaGroupEntityRepository jpaGroupEntityRepository;
+    private final TenantIdentifierResolver tenantIdentifierResolver;
+    private final UserRepository userRepository;
 
 
     public Object testAppService() {
@@ -148,7 +152,6 @@ public class TestAppService {
     }
 
 
-
     public Object testMinio(List<MultipartFile> request, boolean makePrivate, String path) {
         var result = new ArrayList<String>();
 
@@ -168,7 +171,7 @@ public class TestAppService {
                         .setHeader("tenant-id", TenantContextHolder.getTenantIdentifier())
                         .build()
         );*/
-        kafkaTemplate.send(
+        /*kafkaTemplate.send(
                 MessageBuilder.withPayload(
                                 RoomFilter.builder()
                                         .id(data)
@@ -177,8 +180,22 @@ public class TestAppService {
                         ).setHeader(KafkaHeaders.TOPIC, "topic-a")
                         .setHeader("tenant-id", TenantContextHolder.getRequiredTenantIdentifier())
                         .build()
-        );
-        return data;
+        );*/
+
+        var approveBookingEvent = ApproveBookingEvent.builder()
+                .id(UUID.randomUUID().toString())
+                .bookingRequestId("1d267859-f9fa-4159-b6cc-a23c5beff10e")
+                .ownerId("3393e980-0503-454a-94ef-e43258639994")
+                .participants(List.of(
+                        "nam@jiag.id.vn",
+                        "hiep@jiag.id.vn",
+                        "sang@jiag.id.vn"
+                )).tenantId(tenantIdentifierResolver.resolveCurrentTenantIdentifier())
+                .build();
+
+
+        kafkaTemplate.send("approve-booking-event-topic", approveBookingEvent);
+        return "1";
     }
 
     @KafkaListener(topics = "topic-a", groupId = "group-test")
@@ -188,6 +205,59 @@ public class TestAppService {
     ) {
 
         System.out.println(String.format("\n\n\n Message: %s \nTenant ID: %s \n\n\n", message, tenantId));
+        return "";
+    }
+
+    @KafkaListener(topics = "approve-booking-event-topic", groupId = "notification-service")
+    public Object testKafka(
+           ApproveBookingEvent event
+    ) {
+
+        System.out.println(String.format("\n\n\n Message: %s \nTenant ID: %s \n\n\n", event, event.getTenantId()));
+        var bookingRequestDomain = bookingRequestRepository.findById(event.getBookingRequestId())
+                .orElseThrow(() -> {
+                    log.error("Không tìm thấy booking request {}", event.getId());
+                    return new AppException(ErrorCode.BOOKING_REQUEST_NOT_FOUND);
+                });
+        var userDomain = userRepository.findById(UUID.fromString(event.getOwnerId()), true).orElse(null);
+
+
+        var listToken = redisFcmTokenService.getObjectSet("fcm_token:user:" + event.getId(), String.class);
+        if (listToken == null || listToken.isEmpty() || bookingRequestDomain == null) {
+            for (String token : listToken) {
+                boolean success = fcmNotificationService.sendApproveNotificationData(
+                        token,
+                        bookingRequestDomain.getTitle(),
+                        "Cuộc họp đã được phê duyệt.",
+                        bookingRequestDomain
+                );
+                if (!success) {
+                    redisFcmTokenService.removeObjectFromSet("fcm_token:user:" + event.getId(), token);
+                }
+            }
+
+           /* emailService.sendHtmlEmail(
+                    userDomain.getEmail(),
+                    "Lịch đặt đã được xác nhận",
+                    EmailTemplateType.CONFIRM_MEETING,
+                    Map.ofEntries(
+                            Map.entry("time", "30 phút"),
+                            Map.entry("participantName", userDomain.getFirstName() + " " + userDomain.getLastName()),
+                            Map.entry("meetingDate", bookingRequestDomain.getStartDate()),
+                            Map.entry("meetingStart", bookingRequestDomain.getStartDate()),
+                            Map.entry("meetingEnd", bookingRequestDomain.getEndDate()),
+                            Map.entry("branchName", bookingRequestDomain.getBranchName()),
+                            Map.entry("roomName", bookingRequestDomain.getRoomName()),
+                            Map.entry("meetingDuration", bookingRequestDomain.getDuration()),
+                            Map.entry("meetingLocation", bookingRequestDomain.getMeetingLocation()),
+                            Map.entry("meetingPurpose", bookingRequestDomain.getMeetingTitle()),
+                            Map.entry("meetingDescription", bookingRequestDomain.getMeetingDescription()),
+                            Map.entry("contactEmail", "asgy2002@gmail.com")
+                    )
+            );*/
+        }
+
+
         return "";
     }
 

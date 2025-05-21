@@ -1,6 +1,8 @@
 package com.roomx.domain.repository;
 
 import com.roomx.domain.model.aggrerate.Room;
+import com.roomx.shared.dto.booking.base.RoomCapacityProjection;
+import com.roomx.shared.dto.resource.response.RoomMaxMinResponse;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -27,4 +29,6 @@ public interface RoomRepository {
 
 
     List<Room> findAllByBranchIdAndStatusMinimum(String branchId, String status);
+
+    RoomMaxMinResponse findMinMaxCapacity();
 }

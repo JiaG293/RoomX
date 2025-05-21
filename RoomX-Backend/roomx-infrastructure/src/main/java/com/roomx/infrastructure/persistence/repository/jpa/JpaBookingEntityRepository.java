@@ -347,4 +347,25 @@ public interface JpaBookingEntityRepository extends JpaRepository<BookingEntity,
             @Param("endDate") LocalDate endDate,
             @Param("statusList") List<String> statusList,
             Pageable pageable);
+
+
+
+    @Query(value = """
+            SELECT
+                b.booking_id AS id,
+                b.title AS title,
+                b.description AS description,
+                b.booking_code,
+                b.meeting_start,
+                b.meeting_end,
+                b.meeting_date,
+                b.count,
+                b.status,
+                b.created_at,
+                b.updated_at
+            FROM booking b
+            WHERE b.booking_id = :bookingId
+            """,
+            nativeQuery = true)
+    List<BookingProjection> findAllByBookingId(String bookingId);
 }

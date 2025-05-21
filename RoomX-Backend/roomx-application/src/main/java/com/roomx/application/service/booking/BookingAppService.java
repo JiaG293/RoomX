@@ -9,7 +9,9 @@ import com.roomx.domain.model.vo.ServiceRequestId;
 import com.roomx.domain.service.BookingDomainService;
 import com.roomx.domain.service.ConflictBookingResolutionDomainService;
 import com.roomx.infrastructure.cache.redis.service.RoomCheckingCacheService;
+import com.roomx.infrastructure.multitenancy.context.TenantContextHolder;
 import com.roomx.infrastructure.persistence.dto.BookingFilter;
+import com.roomx.infrastructure.persistence.dto.RoomFilter;
 import com.roomx.infrastructure.persistence.mapper.EquipmentRequestEntityMapper;
 import com.roomx.infrastructure.persistence.mapper.ServiceRequestEntityMapper;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaBookingEntityRepository;
@@ -25,11 +27,18 @@ import com.roomx.domain.repository.*;
 import com.roomx.infrastructure.persistence.mapper.BookingRequestEntityMapper;
 import com.roomx.infrastructure.security.oauth.SecurityUtil;
 import com.roomx.shared.enums.BookingStatusType;
+import com.roomx.shared.enums.EmailTemplateType;
+import com.roomx.shared.enums.RoomStatusType;
+import com.roomx.shared.event.ApproveBookingEvent;
+import com.roomx.shared.event.BookingInfoEmailEvent;
 import com.roomx.shared.exception.exception.AppException;
 import com.roomx.shared.exception.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,6 +103,7 @@ public class BookingAppService {
     private final PlaceRepository placeRepository;
     private final RoomAppMapper roomAppMapper;
     private final ApprovalFormAppMapper approvalFormAppMapper;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
 
 
@@ -175,6 +185,16 @@ public class BookingAppService {
         log.info("check user id: {}", securityUtil.getCurrentUserId());
 
         bookingRequestDomain.setRequester(UUID.fromString(securityUtil.getCurrentUserId()));
+
+
+        var capacityCheck = roomRepository
+                .findMinMaxCapacity();
+
+        if (capacityCheck.getMax() < request.getCapacity()) {
+            throw new AppException(ErrorCode.ROOM_CAPACITY_NOT_VALID, request.getCapacity());
+        }
+
+        log.info("checkcapacity: {}", capacityCheck);
 
         bookingRequestDomain.setEndDateApproval(Instant.now().plus(3, ChronoUnit.DAYS));
         bookingRequestDomain.setCreatedAt(Instant.now());
@@ -332,6 +352,18 @@ public class BookingAppService {
             throw new AppException(ErrorCode.BOOKING_APPROVE_CONFLICT, bookingRequestId);
         }
 
+        var capacityCheck = roomRepository
+                .findMinMaxCapacity();
+
+        if (
+                capacityCheck.getMax() < approvalFormDomain.getBookingRequest().getCapacity()
+        ) {
+            throw new AppException(ErrorCode.ROOM_CAPACITY_NOT_VALID,
+                    approvalFormDomain.getBookingRequest().getCapacity());
+        }
+
+        log.info("checkcapacity: {}", capacityCheck);
+
         String branchId = (approvalFormDomain.getBookingRequest().getBranchId() != null)
                 ? approvalFormDomain.getBookingRequest().getBranchId().toString()
                 : null;
@@ -361,7 +393,6 @@ public class BookingAppService {
         var bookingDomainList = new ArrayList<Booking>();
         if (dateConflictList.isEmpty()) {
 
-            // Map để tra nhanh thời gian ghi đè
             var exceptionMap = dateRequestExceptions.stream()
                     .collect(Collectors.toMap(DateRequestException::getDate, e -> e));
 
@@ -375,11 +406,9 @@ public class BookingAppService {
                         .orElse(BigDecimal.ZERO);
                 var bookingDomainId = UUID.randomUUID();
 
-                // Mặc định lấy thời gian từ booking request
                 LocalTime meetingStart = bookingRequestDomain.getStartTime();
                 LocalTime meetingEnd = bookingRequestDomain.getEndTime();
 
-                // Ghi đè thời gian nếu có exception
                 if (exceptionMap.containsKey(occurrence.getDate())) {
                     var exception = exceptionMap.get(occurrence.getDate());
                     if (exception.getStartTime() != null && exception.getEndTime() != null) {
@@ -429,6 +458,14 @@ public class BookingAppService {
                 .note("")
                 .status(ApprovalStatusType.APPROVED.toString())
                 .build());
+
+        var approveBookingEvent = ApproveBookingEvent.builder()
+                .id(UUID.randomUUID().toString())
+                .bookingRequestId(approvalFormDomain.getBookingRequest().getId().toString())
+                .ownerId(approvalFormDomain.getBookingRequest().getRequester().toString())
+                .participants(approvalFormDomain.getBookingRequest().getParticipants())
+                .build();
+
 
         return bookingDomainList.stream()
                 .map(booking -> Map.of(

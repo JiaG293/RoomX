@@ -4,6 +4,7 @@ import com.roomx.application.service.resource.response.RoomDetailAllResponse;
 import com.roomx.shared.dto.resource.request.*;
 import com.roomx.shared.dto.resource.response.RoomDetailResponse;
 import com.roomx.shared.dto.resource.response.RoomFilterResponse;
+import com.roomx.shared.dto.resource.response.RoomMaxMinResponse;
 import com.roomx.shared.dto.resource.response.RoomResponse;
 import com.roomx.application.service.resource.response.RoomAppService;
 import com.roomx.shared.exception.api.ResultResponse;
@@ -65,6 +66,15 @@ public class RoomController {
         var result = roomAppService.getDetailRoom(roomId);
 
         return ResultResponse.<RoomDetailAllResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/capacity-range")
+    public ResultResponse<?> getCapacityRange() {
+        var result = roomAppService.getMaxMinRoomCapacity();
+
+        return ResultResponse.<RoomMaxMinResponse>builder()
                 .result(result)
                 .build();
     }

@@ -2586,3 +2586,76 @@ GROUP BY
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT
+    a.created_at AS createdAt,
+    a.updated_at AS updatedAt,
+    a.status AS status,
+    a.approver AS approver,
+    b.booking_request_id AS bookingRequestId,
+    b.priority as priority,
+    b.days_of_week AS daysOfWeek,
+    b.start_time  AS startTime,
+    b.end_time AS endTime,
+    b.end_date AS endDate,
+    b.start_date AS startDate,
+    b.recurrence_interval AS recurrenceInterval,
+    b.recurrence_type  AS recurrenceType,
+    b.capacity AS capacity,
+    b.requester AS requester,
+    b.branch_id AS branchId,
+    p.name AS branchName,
+    p.code AS branchCode,
+    b.room_id AS roomId,
+    b.title AS title,
+    b.description AS description
+FROM (
+         SELECT DISTINCT ON (booking_request_id) *
+         FROM approval_form
+         WHERE updated_at BETWEEN :startDate AND :endDate
+         ORDER BY booking_request_id, updated_at DESC
+     ) a
+         JOIN booking_request b ON a.booking_request_id = b.booking_request_id
+    LEFT JOIN place p ON b.branch_id = p.place_id
+WHERE (:listStatus IS NULL OR a.status IN :listStatus)
+  AND (:requester IS NULL OR b.requester = CAST(:requester AS UUID))
+
+
+SELECT place_id, name
+FROM place
+WHERE place_id IN (
+    SELECT branch_id
+    FROM booking_request
+    WHERE branch_id IS NOT NULL
+)
+ORDER BY name;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

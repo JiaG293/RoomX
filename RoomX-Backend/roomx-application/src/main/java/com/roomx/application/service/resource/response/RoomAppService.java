@@ -7,10 +7,7 @@ import com.roomx.infrastructure.persistence.repository.impl.EquipmentRoomClassEn
 import com.roomx.infrastructure.persistence.repository.impl.ServicePriceHistoryEntityRepository;
 import com.roomx.infrastructure.persistence.repository.impl.ServiceRoomClassEntityRepository;
 import com.roomx.shared.dto.resource.request.*;
-import com.roomx.shared.dto.resource.response.RoomClassDetailResponse;
-import com.roomx.shared.dto.resource.response.RoomDetailResponse;
-import com.roomx.shared.dto.resource.response.RoomFilterResponse;
-import com.roomx.shared.dto.resource.response.RoomResponse;
+import com.roomx.shared.dto.resource.response.*;
 import com.roomx.domain.model.aggrerate.Room;
 import com.roomx.shared.enums.RoomStatusType;
 import com.roomx.domain.repository.PlaceRepository;
@@ -238,5 +235,10 @@ public class RoomAppService {
                 .servicesTotalPrice(servicesTotalPrice.get())
                 .totalPrice(totalPrice)
                 .build();
+    }
+
+
+    public RoomMaxMinResponse getMaxMinRoomCapacity(){
+        return roomRepository.findMinMaxCapacity();
     }
 }

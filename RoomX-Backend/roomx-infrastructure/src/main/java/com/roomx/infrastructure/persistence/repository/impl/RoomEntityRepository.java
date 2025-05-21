@@ -5,6 +5,7 @@ import com.roomx.domain.repository.RoomRepository;
 import com.roomx.infrastructure.persistence.mapper.PlaceEntityMapper;
 import com.roomx.infrastructure.persistence.mapper.RoomEntityMapper;
 import com.roomx.infrastructure.persistence.repository.jpa.JpaRoomEntityRepository;
+import com.roomx.shared.dto.resource.response.RoomMaxMinResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -82,6 +83,17 @@ public class RoomEntityRepository implements RoomRepository {
                                 .build()
                         ).toList();
     }
+
+    @Override
+    public RoomMaxMinResponse findMinMaxCapacity() {
+        var result = jpaRoomEntityRepository.findMaxCapacity();
+        return RoomMaxMinResponse.builder()
+                .max(result.getMax())
+                .min(result.getMin())
+                .build();
+    }
+
+
 
     @Override
     public List<Room> findAllByPlaceIdAndStatus(String placeId, String status) {

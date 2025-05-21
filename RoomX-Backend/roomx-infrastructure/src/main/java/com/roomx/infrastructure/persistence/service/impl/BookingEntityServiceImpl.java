@@ -50,8 +50,6 @@ public class BookingEntityServiceImpl implements BookingEntityService {
     private final JpaBookingParticipantEntityRepository jpaBookingParticipantEntityRepository;
     private final BookingParticipantEntityMapper bookingParticipantEntityMapper;
 
-    @PersistenceContext()
-    private EntityManager entityManager;
 
     @Override
     public Page<Booking> filterSearchPageBooking(BookingFilter filter, Pageable pageable) {
@@ -215,6 +213,11 @@ public class BookingEntityServiceImpl implements BookingEntityService {
                 .toList();
 
         return new PageImpl<>(content, pageable, result.getTotalElements());
+    }
+
+    @Override
+    public List<BookingProjection> findAllById(String bookingId) {
+        return jpaBookingEntityRepository.findAllByBookingId(bookingId);
     }
 
 
