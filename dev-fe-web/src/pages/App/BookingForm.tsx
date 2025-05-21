@@ -64,7 +64,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [capacity, setCapacity] = useState(20);
+  const [capacity, setCapacity] = useState(0);
   const [startDate, setStartDate] = useState<Date | null>(
     eventDate ? new Date(eventDate) : new Date()
   );
@@ -242,11 +242,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       return false;
     }
 
-    // Bắt buộc chọn 1 trong 2: phòng hoặc số lượng
-    if (!room && capacity <= 5) {
-      toast.error("Nếu không chọn phòng, vui lòng nhập số lượng lớn hơn 5.");
-      return false;
-    }
+    // // Bắt buộc chọn 1 trong 2: phòng hoặc số lượng
+    // if (!room && capacity <= 5) {
+    //   toast.error("Nếu không chọn phòng, vui lòng nhập số lượng lớn hơn 5.");
+    //   return false;
+    // }
 
     if (!repeatType) {
       toast.error("Vui lòng chọn loại lịch.");
@@ -357,7 +357,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       description,
       recurrenceType: repeatType,
       branchId: branch,
-      roomId: room,
+      // roomId: room,
       capacity,
       startDate: formatDateOnly(new Date(startDate!)),
       endDate: formatDateOnly(new Date(endDate!)),
@@ -422,7 +422,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-4xl max-h-[95vh] overflow-hidden">
+      <DialogContent className="sm:max-w-7xl max-h-[95vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>Đặt phòng họp</DialogTitle>
           <DialogDescription>
@@ -507,6 +507,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
 
                 {/* Phòng họp */}
+                {/* 
+                
                 <div>
                   <Label
                     htmlFor="room"
@@ -532,6 +534,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     </SelectContent>
                   </Select>
                 </div>
+                
+                */}
 
                 {/* Loại lịch */}
                 <div>
@@ -570,7 +574,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     className="mb-1 text-sm text-muted-foreground flex items-center gap-1"
                   >
                     <Users className="w-4 h-4 text-cyan-500" />
-                    Sức chứa
+                    Sức chứa {`(tuỳ chọn)`}
                   </Label>
                   <Input
                     id="capacity"

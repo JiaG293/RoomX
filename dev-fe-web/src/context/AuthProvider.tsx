@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
-import { t } from "i18next";
+import { requestNotificationPermission } from "@/services/notification.service";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -85,6 +85,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         secure: true,
         sameSite: "Strict",
       });
+      // lấy fcm token của fireb
+      await requestNotificationPermission();
       const decodedToken: any = jwtDecode(data.access_token);
       const roles = decodedToken.roles || [];
       console.log(roles)
