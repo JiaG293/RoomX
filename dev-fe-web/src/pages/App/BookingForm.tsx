@@ -41,24 +41,19 @@ import {
   Coffee,
   FileClock,
   FileEdit,
-  Home,
+  Hourglass,
   Info,
   MapPin,
   MonitorSmartphone,
   Repeat,
-  Settings,
-  Trash,
-  Trash2,
-  UserPlus,
   Users,
 } from "lucide-react";
 import { BranchService } from "@/services/admin/branch.service";
-import { UserService } from "@/services/admin/user.service";
 import { ServiceService } from "@/services/admin/service.service";
 import { EquipmentService } from "@/services/admin/equipment.service";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MemberSelectionPanel } from "@/pages/App/MemberSelectionPanel";
-import { set } from "date-fns";
+import { calculateEndTime, isBookingTimeValid } from "@/utils/date.util";
 
 interface BookingModalProps {
   eventDate?: string;
@@ -83,20 +78,26 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     eventDate ? new Date(eventDate) : new Date()
   );
   const [startTime, setStartTime] = useState(() => getClosestTime());
-  const [endTime, setEndTime] = useState(() => {
-    const [hour, minute] = getClosestTime().split(":").map(Number);
-    const end = new Date();
-    end.setHours(hour);
-    end.setMinutes(minute + 30);
-    const h = end.getHours().toString().padStart(2, "0");
-    const m = end.getMinutes().toString().padStart(2, "0");
-    return `${h}:${m}`;
-  });
+  const [duration, setDuration] = useState(30);
+  const durationOptions = [
+    30,
+    45, // Ngắn
+    60,
+    75,
+    90, // Vừa
+    105,
+    120, // Dài
+    135,
+    150,
+    165,
+    180,
+  ];
+
   const [repeatType, setRepeatType] = useState("");
   const [selectedServices, setSelectedServices] = useState<SelectedItem[]>([]);
-  const [selectedParticipants, setSelectedParticipants] = useState<
-    string[]
-  >([]);
+  const [selectedParticipants, setSelectedParticipants] = useState<string[]>(
+    []
+  );
   const [selectedEquipments, setSelectedEquipments] = useState<SelectedItem[]>(
     []
   );
@@ -117,8 +118,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [branches, setBranches] = useState<
     { branchId: string; branchCode: string; name: string }[]
   >([]);
-  //danh sách người tham gia
-  const [participants, setParticipants] = useState<OptionItem[]>([]);
 
   //danh sách dịch vụ
   const [services, setServices] = useState<OptionItem[]>([]);
@@ -151,7 +150,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       toast.error("Không thể tải danh sách chi nhánh.");
     }
   };
-
 
   // lấy danh sách dịch vụ
   const fetchServices = async (keyword: string): Promise<OptionItem[]> => {
@@ -199,6 +197,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   // Kiểm tra input hợp lệ
   const checkValid = async () => {
+    const endTime = calculateEndTime(startTime, duration);
+
     if (!startDate || !endDate || !startTime || !endTime) {
       alert("Vui lòng chọn đầy đủ ngày và giờ.");
       return false;
@@ -223,11 +223,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       return false;
     }
 
-    // // Bắt buộc chọn 1 trong 2: phòng hoặc số lượng
-    // if (!room && capacity <= 5) {
-    //   toast.error("Nếu không chọn phòng, vui lòng nhập số lượng lớn hơn 5.");
-    //   return false;
-    // }
+    if (selectedParticipants.length < 3 && capacity < 3) {
+      toast.error("Cuộc họp cần tối thiểu 3 thành viên.");
+      return false;
+    }
 
     if (!repeatType) {
       toast.error("Vui lòng chọn loại lịch.");
@@ -257,25 +256,18 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       return false;
     }
 
-    if (selectedParticipants.length < 2) {
-      toast.error("Vui lòng chọn ít nhất 2 người tham gia.");
+    // ----- Thêm kiểm tra giờ hành chính (ví dụ 7:00 - 23:00) -----
+    const officeStartTime = "07:00";
+    const officeEndTime = "21:00";
+
+    if (
+      !isBookingTimeValid(startTime, endTime, officeStartTime, officeEndTime)
+    ) {
+      toast.error(
+        `Chỉ cho phép đặt phòng từ ${officeStartTime} đến ${officeEndTime}.`
+      );
       return false;
     }
-
-    // ✅ In ra dữ liệu khi hợp lệ
-    console.log("===== Booking Information =====");
-    console.log("Tiêu đề:", title);
-    console.log("Mô tả:", description);
-    console.log("Ngày bắt đầu:", startDate.toLocaleDateString());
-    console.log("Giờ bắt đầu:", startTime);
-    console.log("Ngày kết thúc:", endDate.toLocaleDateString());
-    console.log("Giờ kết thúc:", endTime);
-    console.log("Chi nhánh:", branch);
-    console.log("Loại lịch:", repeatType);
-    console.log("Người tham gia:", selectedParticipants);
-    console.log("Ngày trong tuần:", selectedDays.join(","));
-    console.log("Dịch vụ:", selectedServices);
-    console.log("Thiết bị:", selectedEquipments);
 
     return true;
   };
@@ -291,6 +283,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       ? JSON.parse(storedExceptions)
       : [];
 
+    const endTime = calculateEndTime(startTime, duration);
+
+    console.log(endTime);
     const scheduleData = {
       title,
       description,
@@ -301,7 +296,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       endDate: formatDateOnly(new Date(endDate!)),
       startTime: startTime,
       endTime: endTime,
-      daysOfWeek: repeatType === "DAILY" ? "MO,TU,WE,TH,FR,SA,SU" : daysOfWeek.join(","),
+      daysOfWeek:
+        repeatType === "DAILY" ? "MO,TU,WE,TH,FR,SA,SU" : daysOfWeek.join(","),
       participants: selectedParticipants,
       services: selectedServices.map((s) => ({
         serviceId: s.id,
@@ -329,7 +325,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         console.log(conflictData);
         setScheduleResult(conflictData);
       } else {
-        toast.error("Có lỗi xảy ra khi đặt lịch.");
+        toast.error("Không còn phòng khả dụng, vui lòng chọn khung giờ khác.");
       }
     }
   };
@@ -342,7 +338,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setStartDate(null);
     setEndDate(null);
     setStartTime(getClosestTime());
-    setEndTime(getClosestTime());
+    setDuration(30);
     setBranch("");
     setSelectedServices([]); // Xóa tất cầu dịch vụ
     setSelectedEquipments([]); // Xóa tất cầu thiết bị
@@ -546,13 +542,27 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     <TimePicker value={startTime} onChange={setStartTime} />
                   </div>
 
-                  {/* Giờ kết thúc */}
+                  {/* Thời lượng */}
                   <div className="flex items-center gap-3">
                     <Label className="w-30 text-sm text-muted-foreground flex items-center gap-1">
-                      <FileClock className="w-4 h-4 text-orange-500" /> Giờ kết
-                      thúc
+                      <Hourglass className="w-4 h-4 text-blue-500" /> Thời lượng
                     </Label>
-                    <TimePicker value={endTime} onChange={setEndTime} />
+                    <select
+                      value={duration}
+                      onChange={(e) => setDuration(parseInt(e.target.value))}
+                      className="bg-transparent border rounded px-2 py-1 max-h-32 overflow-y-auto"
+                      size={1} // giữ dạng dropdown
+                    >
+                      {durationOptions.map((d) => (
+                        <option key={d} value={d}>
+                          {d >= 60
+                            ? `${Math.floor(d / 60)} giờ${
+                                d % 60 !== 0 ? " " + (d % 60) + " phút" : ""
+                              }`
+                            : `${d} phút`}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 {/* Mô tả nằm riêng, chiếm full chiều ngang */}
@@ -577,7 +587,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
             {/* Thành viên tham dự */}
             <MemberSelectionPanel
-              onSelectedEmailsChange={(emails) => setSelectedParticipants(emails)}
+              onSelectedEmailsChange={(emails) =>
+                setSelectedParticipants(emails)
+              }
             />
           </div>
 

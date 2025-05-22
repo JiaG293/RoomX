@@ -341,3 +341,8 @@ input[type="checkbox"]:checked::after {
   left: 50%;
   transform: translate(-50%, -58%);
 }
+
+/* tắt cuộn nhanh */
+.SelectContent {
+  scroll-behavior: smooth; /* mượt hơn */
+}
