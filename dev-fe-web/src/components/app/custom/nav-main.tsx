@@ -1,8 +1,13 @@
 "use client";
 
 import { type LucideIcon } from "lucide-react";
-import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { Link } from "react-router-dom";
+import {
+  SidebarGroup,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { Link, useLocation } from "react-router-dom";
 
 export function NavMain({
   items,
@@ -11,32 +16,51 @@ export function NavMain({
     title: string;
     url: string;
     icon?: LucideIcon;
-    isActive?: boolean;
   }[];
 }) {
+  const location = useLocation();
+
+  const iconColors = [
+    "text-blue-500",
+    "text-purple-500",
+    "text-green-500",
+    "text-yellow-500",
+    "text-pink-500",
+    "text-orange-500",
+  ];
+
   return (
     <SidebarGroup>
-      <SidebarMenu>
+      <SidebarMenu className="space-y-3">
         {items.map((item, index) => {
-          // Danh sách màu sắc đa dạng
-          const colors = ["text-blue-500", "text-purple-500", "text-green-500", "text-orange-500", "text-red-500"];
-          const bgColors = ["bg-blue-100", "bg-purple-100", "bg-green-100", "bg-orange-100", "bg-red-100"];
-          const borderColors = ["border-blue-400", "border-purple-400", "border-green-400", "border-orange-400", "border-red-400"];
-          const colorClass = colors[index % colors.length];
-          const bgColorClass = bgColors[index % bgColors.length];
-          const borderColorClass = borderColors[index % borderColors.length];
+          const isActive = location.pathname === item.url;
+          const iconColor = iconColors[index % iconColors.length];
 
           return (
             <SidebarMenuItem
               key={item.title}
-              className={`rounded-lg ${bgColorClass} ${borderColorClass} border-2 hover:bg-opacity-80 hover:scale-105 hover:shadow-lg hover:border-2 transition-all duration-300 p-2`} // Added border class and hover effects
+              className={`relative rounded-md ${
+                isActive ? "bg-blue-200" : "text-gray-700"
+              } hover:bg-gray-100 transition`}
             >
+              {isActive && (
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-1.5 bg-blue-500 rounded-l-sm" />
+              )}
+
               <SidebarMenuButton asChild>
-                <Link to={item.url} className="flex items-center space-x-3">
-                  {item.icon && <item.icon className={`w-6 h-6 ${colorClass} transition-all duration-300`} />}
-                  <span className="text-sm font-semibold text-gray-900 hover:text-gray-800 transition-colors duration-300">
-                    {item.title}
-                  </span>
+                <Link
+                  to={item.url}
+                  className="flex items-center space-x-5 px-6 py-4 text-gray-800 font-sans"
+                  style={{ fontFamily: '"Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif' }}
+                >
+                  {item.icon && (
+                    <item.icon
+                      className={`w-7 h-7 ${
+                        isActive ? "text-blue-600" : iconColor
+                      }`}
+                    />
+                  )}
+                  <span className="text-base font-medium tracking-wide">{item.title}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

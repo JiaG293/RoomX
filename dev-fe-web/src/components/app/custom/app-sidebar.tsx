@@ -12,7 +12,11 @@ import {
   LogOut,
 } from "lucide-react";
 import { NavMain } from "@/components/app/custom/nav-main";
-import { Sidebar, SidebarContent, SidebarMenuButton } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const data = {
@@ -28,17 +32,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarContent className="mt-16 bg-gradient-to-b from-blue-100 via-purple-100 to-pink-200 text-white shadow-lg h-[calc(100vh-4rem)] font-poppins flex flex-col">
+      <SidebarContent className="mt-16 bg-blue-50 border-r border-gray-200 h-[calc(100vh-4rem)] text-gray-700 font-sans flex flex-col">
         {/* Các mục menu */}
         <NavMain items={data.navMain} />
-        
-        {/* Phần Đăng xuất được tách biệt và đẩy xuống cuối cùng */}
+
+        {/* Phần Đăng xuất */}
         <div className="mt-auto">
           <SidebarMenuButton asChild>
-            <a href="/logout" className=" flex items-center space-x-3 p-6 text-red-500 hover:bg-opacity-80 transition rounded-lg bg-red-100">
-              <LogOut className="w-6 h-6" />
-              <span className="text-sm font-semibold">Đăng xuất</span>
-            </a>
+            <p
+              className="cursor-pointer flex items-center space-x-3 p-4 text-gray-700 hover:bg-gray-200 rounded-md transition"
+            >
+              <LogOut className="w-5 h-5 text-red-500" />
+              <span className="text-sm font-medium">Đăng xuất</span>
+            </p>
           </SidebarMenuButton>
         </div>
       </SidebarContent>
