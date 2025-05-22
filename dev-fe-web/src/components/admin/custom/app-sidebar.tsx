@@ -9,6 +9,9 @@ import {
   Calendar,
   Monitor,
   BookOpenText,
+  BarChart,
+  BellDot,
+  Bell,
 } from "lucide-react";
 
 import { NavMain } from "@/components/admin/custom/nav-main";
@@ -22,6 +25,7 @@ import {
 import { NavUser } from "@/components/admin/custom/nav-user";
 import { useAuth } from "@/context/AuthProvider";
 import { useTranslation } from "react-i18next";
+import { title } from "process";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { getUserInfo } = useAuth();
@@ -45,13 +49,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("menu_trang_chu"),
         url: "/admin/home",
         icon: Home,
-        color: "text-blue-500",
+        color: "text-blue-600",
       },
       {
         title: t("menu_quan_ly_nguoi_dung"),
         url: "#",
         icon: Users,
-        color: "text-red-500",
+        color: "text-indigo-500",
         items: [
           {
             title: t("menu_danh_sach_nguoi_dung"),
@@ -67,7 +71,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("menu_quan_ly_co_so"),
         url: "#",
         icon: MapPin,
-        color: "text-purple-500",
+        color: "text-green-500",
         items: [
           {
             title: t("menu_danh_sach_chi_nhanh"),
@@ -83,7 +87,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("menu_quan_ly_tai_nguyen"),
         url: "#",
         icon: Monitor,
-        color: "text-pink-500",
+        color: "text-cyan-500",
         items: [
           {
             title: t("menu_danh_sach_thiet_bi"),
@@ -112,17 +116,41 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ],
       },
       
-      // {
-      //   title: t("menu_thong_ke"),
-      //   url: "/admin/statistics",
-      //   icon: BarChart,
-      //   color: "text-green-500",
-      // }
+      {
+        title: t("menu_thong_ke"),
+        url: "/admin/statistics",
+        icon: BarChart,
+        color: "text-amber-500",
+        items: [
+          {
+            title: "Theo thời gian",
+            url: "#",
+          },
+          {
+            title: "Theo phòng họp",
+            url: "#",
+          },
+          {
+            title: "Theo người dùng",
+            url: "#",
+          },
+          {
+            title: "Chi phí",
+            url: "#",
+          },
+        ],
+      },
+      {
+        title: "Thông báo",
+        url: "/admin/notifications",
+        icon: Bell,
+        color: "text-rose-500",
+      },
       {
         title: t("menu_thong_tin"),
         url: "#",
         icon: BookOpenText,
-        color: "text-green-500",
+        color: "text-slate-500",
         items: [
           // {
           //   title: t("menu_huong_dan_su_dung"),

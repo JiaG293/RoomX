@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Users, UserPlus, Trash2 } from "lucide-react";
+import { Users, Trash2 } from "lucide-react";
 import { UserService } from "@/services/admin/user.service";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -26,35 +25,77 @@ export function MemberSelectionPanel({
   const [searchKeyword, setSearchKeyword] = useState("");
   const [filter, setFilter] = useState("group");
 
-  // Hàm fetch data dựa vào từ khóa search
-  const fetchParticipants = async (keyword: string): Promise<Member[]> => {
-    const userService = new UserService();
-    const data = await userService.getListUsers(0, 1000, keyword);
+  // phân trang
+  const size = 5;
+  const hasMoreRef = useRef(true);
+  const pageRef = useRef(0);
 
+  // Hàm fetch data dựa vào từ khóa search
+  const fetchParticipants = async (
+    keyword: string,
+    page: number,
+    size: number
+  ): Promise<Member[]> => {
+    const userService = new UserService();
+    const data = await userService.getListUsers(page, size, keyword);
     return data.content.map((user: any) => ({
       id: user.id,
-      name: user.firstName + " " + user.lastName, // Ví dụ lấy phần trước @ làm tên
+      name: user.firstName + " " + user.lastName,
       email: user.email,
       avatarImage: user.avatarImage,
-      code: `${user.userCode}`, // ví dụ tạo mã NV
+      code: `${user.userCode}`,
     }));
+  };
+
+  const leftListRef = useRef<HTMLDivElement>(null);
+  // hàm xử lý scroll
+  const handleScroll = () => {
+    const el = leftListRef.current;
+    if (!el || !hasMoreRef.current) return;
+
+    const scrollBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    if (scrollBottom < 5) {
+      const nextPage = pageRef.current + 1;
+      console.log("Đã chạm đáy, đang fetch page", nextPage);
+      fetchParticipants(searchKeyword.trim(), nextPage, size).then(
+        (newData) => {
+          if (newData.length === 0) {
+            hasMoreRef.current = false;
+            return;
+          }
+          setMembers((prev) => [...prev, ...newData]);
+          pageRef.current = nextPage;
+        }
+      );
+    }
   };
 
   // 1. useEffect chạy 1 lần khi mount để load list mặc định
   useEffect(() => {
-    fetchParticipants("").then(setMembers);
+    fetchParticipants("", 0, size).then((data) => {
+      setMembers(data);
+    });
   }, []);
 
   // 2. useEffect để fetch khi searchKeyword hoặc filter thay đổi
   useEffect(() => {
-    if (searchKeyword.trim() === "") {
-      // Nếu searchKeyword rỗng, fetch lại danh sách mặc định
-      fetchParticipants("").then(setMembers);
-    } else {
-      // Nếu có keyword thì fetch theo keyword
-      fetchParticipants(searchKeyword.trim()).then(setMembers);
-    }
+    pageRef.current = 0;
+    hasMoreRef.current = true;
+
+    fetchParticipants(searchKeyword.trim(), 0, size).then((data) => {
+      setMembers(data);
+      if (data.length < size) {
+        hasMoreRef.current = false;
+      }
+    });
   }, [searchKeyword, filter]);
+
+  // xử lý scroll
+  useEffect(() => {
+    const el = leftListRef.current;
+    el?.addEventListener("scroll", handleScroll);
+    return () => el?.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Khi checkbox click (chọn hoặc bỏ chọn member)
   const handleCheckboxChange = (member: Member, checked: boolean) => {
@@ -118,7 +159,10 @@ export function MemberSelectionPanel({
             </CardTitle>
 
             {/* Danh sách phân trang */}
-            <div className="flex-1 overflow-y-auto rounded-md space-y-1">
+            <div
+              ref={leftListRef}
+              className="flex-1 overflow-y-auto rounded-md space-y-1"
+            >
               {members.map((member) => {
                 const isChecked = selectedMembers.some(
                   (m) => m.id === member.id

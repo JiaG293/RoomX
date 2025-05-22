@@ -51,7 +51,7 @@ export function NavMain({
                     className="bg-transparent border-none focus:outline-none hover:bg-blue-200"
                   >
                     {item.icon && <item.icon className={`${item.color} hover:text-white`} />}
-                    <span>{item.title}</span>
+                    <span className="text-foreground">{item.title}</span>
                     {/* ✅ Chỉ hiện mũi tên nếu có mục con */}
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
@@ -75,7 +75,7 @@ export function NavMain({
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton 
                 tooltip={item.title} 
-                className="bg-transparent border-none focus:outline-none hover:bg-blue-200"
+                className="text-foreground bg-transparent border-none focus:outline-none hover:bg-blue-200"
                 asChild
               >
                 <Link to={item.url} className="flex items-center gap-2">
