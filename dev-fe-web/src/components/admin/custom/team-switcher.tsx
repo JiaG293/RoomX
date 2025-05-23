@@ -63,7 +63,7 @@ export function TeamSwitcher() {
               </DropdownMenuItem>
             </Link>
 
-            <Link to="http://localhost:5173/portal/home" target="_blank">
+            <Link to="/portal/home" target="_blank">
               <DropdownMenuItem className="gap-2 p-2 cursor-pointer">
                 <div className="flex size-6 items-center justify-center rounded-sm border">
                   <Users className="size-4 shrink-0" />
