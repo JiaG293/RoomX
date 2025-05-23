@@ -47,8 +47,6 @@ import {
   Users,
 } from "lucide-react";
 import { BranchService } from "@/services/admin/branch.service";
-import { ServiceService } from "@/services/admin/service.service";
-import { EquipmentService } from "@/services/admin/equipment.service";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MemberSelectionPanel } from "@/pages/App/MemberSelectionPanel";
 import { calculateEndTime, isBookingTimeValid } from "@/utils/date.util";
@@ -116,12 +114,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     { branchId: string; branchCode: string; name: string }[]
   >([]);
 
-  //danh sách dịch vụ
-  const [services, setServices] = useState<OptionItem[]>([]);
-
-  //danh sách thiết bị
-  const [equipments, setEquipments] = useState<[]>([]);
-
   // rerender lại lấy ngày đã chọn cho chính xác
   useEffect(() => {
     if (eventDate) {
@@ -146,26 +138,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       console.error("Lỗi khi lấy danh sách chi nhánh:", error);
       toast.error("Không thể tải danh sách chi nhánh.");
     }
-  };
-
-  // lấy danh sách dịch vụ
-  const fetchServices = async (keyword: string): Promise<OptionItem[]> => {
-    const serviceService = new ServiceService();
-    const data = await serviceService.getListServices(0, 100, keyword);
-    return data.content.map((service: any) => ({
-      id: service.id,
-      name: service.name,
-    }));
-  };
-
-  // lấy danh sách thiết bị
-  const fetchEquipments = async (keyword: string): Promise<OptionItem[]> => {
-    const equipmentService = new EquipmentService();
-    const data = await equipmentService.getListEquipments(0, 100, keyword);
-    return data.content.map((equipment: any) => ({
-      id: equipment.id,
-      name: equipment.name,
-    }));
   };
 
   useEffect(() => {

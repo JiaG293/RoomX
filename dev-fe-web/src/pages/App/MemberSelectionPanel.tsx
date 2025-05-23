@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Trash2 } from "lucide-react";
 import { UserService } from "@/services/admin/user.service";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/context/AuthProvider";
 import { AuthService } from "@/services/auth.service";
 
 interface Member {
