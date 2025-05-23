@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  BadgeCheck,
   ChevronsUpDown,
   LogOut,
   Moon,
@@ -87,9 +86,17 @@ export function NavUser({
                 <Avatar className="h-8 w-8 rounded-lg">
                   {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
                   <AvatarFallback className="rounded-lg">
-                    {getShortName(user.name) || "AD"}
+                    {user.name
+                      ? user.name
+                          .split(" ")
+                          .map((word) => word[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase()
+                      : "NA"}
                   </AvatarFallback>
                 </Avatar>
+
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>
                   <span className="truncate text-xs">{user.email}</span>
@@ -98,18 +105,14 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {/* <DropdownMenuItem className="h-10">
-                <BadgeCheck />
-                {t("menu_nav_user_tai_khoan")}
-              </DropdownMenuItem> */}
               <Profile
                 trigger={
                   <div
                     className="cursor-pointer relative flex select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
-                    onClick={(e) => e.stopPropagation()} // Ngăn không cho click lan ra ngoài Dropdown
+                    onClick={(e) => e.stopPropagation()} 
                   >
                     <User />
-                    {t("menu_nav_user_thong_tin_ca_nhan")}
+                    {t("admin.menu.bottom.profile")}
                   </div>
                 }
               />
@@ -141,7 +144,7 @@ export function NavUser({
               style={{ color: "hsl(0, 85%, 50%)", fontWeight: "500" }}
             >
               <LogOut />
-              <span>{t("menu_nav_user_dang_xuat")}</span>
+              <span>{t("admin.menu.bottom.logout")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

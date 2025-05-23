@@ -88,7 +88,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <CMSLayout title={t("menu_trang_chu")}>
+    <CMSLayout title={t("admin.menu.main.home")} >
       <div className="p-4 space-y-4 h-full flex flex-col">
         {/* Tổng quan nhanh */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

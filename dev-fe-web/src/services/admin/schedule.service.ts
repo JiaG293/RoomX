@@ -16,8 +16,8 @@ export class ScheduleService {
 
     try {
       // endpoint cũ: /bookings/filters
-      const response = await axios.get(`${API_BASE_URL}/bookings/filters`, {
-        params: { month, year, size: -1, isAdmin: true },
+      const response = await axios.get(`${API_BASE_URL}/bookings/meetings`, {
+        params: { month, year, size: -1, isAdmin: true, status: "COMPLETED,PENDING,SCHEDULED", sortBy: "status" },
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

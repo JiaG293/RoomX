@@ -10,6 +10,7 @@ import {
   Settings,
   Hourglass,
   LogOut,
+  PieChart,
 } from "lucide-react";
 import { NavMain } from "@/components/app/custom/nav-main";
 import {
@@ -24,9 +25,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       { title: "Trang chủ", url: "/portal/home", icon: CalendarCheck },
       { title: "Đặt lịch", url: "/portal/booking", icon: Clock },
       { title: "Yêu cầu", url: "/portal/pending", icon: Hourglass },
-      // { title: "Nhóm", url: "/portal/groups", icon: Users },
-      { title: "Hồ sơ", url: "/portal/profile", icon: User },
-      // { title: "Cài đặt", url: "/portal/settings", icon: Settings },
+      { title: "Nhóm", url: "/portal/groups", icon: Users },
+      { title: "Thống kê", url: "/portal/settings", icon: PieChart },
+      { title: "Thông báo", url: "/portal/notifications", icon: Bell },
+      { title: "Cài đặt", url: "/portal/settings", icon: Settings },
     ],
   };
 
@@ -39,9 +41,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* Phần Đăng xuất */}
         <div className="mt-auto">
           <SidebarMenuButton asChild>
-            <p
-              className="cursor-pointer flex items-center space-x-3 p-4 text-gray-700 hover:bg-gray-200 rounded-md transition"
-            >
+            <p className="cursor-pointer flex items-center space-x-3 p-4 text-gray-700 hover:bg-gray-200 rounded-md transition">
               <LogOut className="w-5 h-5 text-red-500" />
               <span className="text-sm font-medium">Đăng xuất</span>
             </p>

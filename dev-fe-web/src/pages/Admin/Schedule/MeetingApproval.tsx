@@ -10,6 +10,7 @@ import { ScheduleService } from "@/services/admin/schedule.service";
 import { toast } from "sonner";
 import { dA } from "node_modules/@fullcalendar/core/internal-common";
 import EventModalApproval from "@/components/admin/meetings/event-modal-approval";
+import { useTranslation } from "react-i18next";
 
 interface EventType {
   id: string;
@@ -68,8 +69,13 @@ const MeetingApproval: React.FC = () => {
     loadEvents(currentMonth, currentYear);
   }, [currentMonth, currentYear, loadEvents]);
 
+  const { t } = useTranslation();
+
   return (
-    <CMSLayout title="Phê duyệt lịch họp">
+  <CMSLayout
+      title={t("admin.menu.main.schedule.title")}
+      subtitle={t("admin.menu.main.schedule.sub.pending")}
+    >
       <div style={{ flex: 0.9 }}>
         <FullCalendar
           locale="vi"

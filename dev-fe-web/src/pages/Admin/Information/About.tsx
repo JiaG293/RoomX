@@ -1,11 +1,13 @@
 import CMSLayout from "@/layouts/cms-layout";
 import React from "react";
-import { Mail, Phone, Github, Globe } from "lucide-react";
-import demoAppImage from "@/assets/img/demo-app.png";
+import { Mail, Github, Globe } from "lucide-react";
+import demoAppImage from "../../../../public/logo.ico";
+import { useTranslation } from "react-i18next";
 
 const About: React.FC = () => {
+  const {t} = useTranslation();
   return (
-    <CMSLayout title="Về chúng tôi">
+    <CMSLayout title={t("admin.menu.main.info.title")} subtitle={t("admin.menu.main.info.sub.about")}>
       <section className="max-w-4xl mx-auto px-4 py-8 text-gray-700 dark:text-gray-200 space-y-8">
         {/* Giới thiệu sản phẩm */}
         <div>
@@ -24,7 +26,7 @@ const About: React.FC = () => {
           <img
             src={demoAppImage}
             alt="Teamwork illustration"
-            className="w-2/3 md:w-1/2 mx-auto mt-8"
+            className="w-1/3 md:w-1/4 mx-auto mt-6"
           />
 
           <div className="mt-6 bg-muted/30 p-4 rounded-xl border dark:border-muted">

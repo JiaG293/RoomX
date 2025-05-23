@@ -21,12 +21,13 @@ export function NavMain({
   const location = useLocation();
 
   const iconColors = [
-    "text-blue-500",
-    "text-purple-500",
-    "text-green-500",
-    "text-yellow-500",
-    "text-pink-500",
-    "text-orange-500",
+    "text-blue-500", // Trang chủ - CalendarCheck (màu xanh dương: ổn cho home)
+    "text-yellow-500", // Đặt lịch - Clock (vàng: thời gian)
+    "text-purple-500", // Yêu cầu - Hourglass (tím: chờ đợi)
+    "text-green-500", // Nhóm - Users (xanh lá: nhóm, cộng đồng)
+    "text-orange-500", // Thống kê - PieChart (cam: biểu đồ, thống kê)
+    "text-pink-500", // Thông báo - Bell (hồng: cảnh báo, thông báo)
+    "text-gray-500", // Cài đặt - Settings (xám: cài đặt, trung tính)
   ];
 
   return (
@@ -51,7 +52,10 @@ export function NavMain({
                 <Link
                   to={item.url}
                   className="flex items-center space-x-5 px-6 py-4 text-gray-800 font-sans"
-                  style={{ fontFamily: '"Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif' }}
+                  style={{
+                    fontFamily:
+                      '"Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
+                  }}
                 >
                   {item.icon && (
                     <item.icon
@@ -60,7 +64,9 @@ export function NavMain({
                       }`}
                     />
                   )}
-                  <span className="text-base font-medium tracking-wide">{item.title}</span>
+                  <span className="text-base font-medium tracking-wide">
+                    {item.title}
+                  </span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

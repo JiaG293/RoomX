@@ -18,9 +18,8 @@
 /* ================================
    🗓 HEADER DAYS COLOR
    ================================ */
-.fc-col-header{
+.fc-col-header {
   background-color: var(--calendar-today) !important;
-
 }
 
 .fc-col-header-cell-cushion {
@@ -30,13 +29,27 @@
   text-transform: uppercase;
 }
 
-.fc-col-header-cell:nth-child(1) .fc-col-header-cell-cushion { color: var(--color-red) !important; }    /* Sunday */
-.fc-col-header-cell:nth-child(2) .fc-col-header-cell-cushion { color: var(--color-blue) !important; }   /* Monday */
-.fc-col-header-cell:nth-child(3) .fc-col-header-cell-cushion { color: var(--color-teal) !important; }   /* Tuesday */
-.fc-col-header-cell:nth-child(4) .fc-col-header-cell-cushion { color: var(--color-orange) !important; } /* Wednesday */
-.fc-col-header-cell:nth-child(5) .fc-col-header-cell-cushion { color: var(--color-earth) !important; }  /* Thursday */
-.fc-col-header-cell:nth-child(6) .fc-col-header-cell-cushion { color: var(--color-purple) !important; } /* Friday */
-.fc-col-header-cell:nth-child(7) .fc-col-header-cell-cushion { color: var(--color-ocean) !important; }  /* Saturday */
+.fc-col-header-cell:nth-child(1) .fc-col-header-cell-cushion {
+  color: var(--color-red) !important;
+} /* Sunday */
+.fc-col-header-cell:nth-child(2) .fc-col-header-cell-cushion {
+  color: var(--color-blue) !important;
+} /* Monday */
+.fc-col-header-cell:nth-child(3) .fc-col-header-cell-cushion {
+  color: var(--color-teal) !important;
+} /* Tuesday */
+.fc-col-header-cell:nth-child(4) .fc-col-header-cell-cushion {
+  color: var(--color-orange) !important;
+} /* Wednesday */
+.fc-col-header-cell:nth-child(5) .fc-col-header-cell-cushion {
+  color: var(--color-earth) !important;
+} /* Thursday */
+.fc-col-header-cell:nth-child(6) .fc-col-header-cell-cushion {
+  color: var(--color-purple) !important;
+} /* Friday */
+.fc-col-header-cell:nth-child(7) .fc-col-header-cell-cushion {
+  color: var(--color-ocean) !important;
+} /* Saturday */
 
 /* ================================
    📍 TODAY CELL HIGHLIGHT
@@ -74,9 +87,6 @@
   transform: scale(1.008);
 }
 
-
-
-
 /* Ẩn dấu chấm sự kiện */
 .fc-daygrid-event-dot {
   display: none !important;
@@ -112,16 +122,18 @@
   font-weight: bold !important;
   border-radius: 6px !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease-in-out, transform 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .fc-today-button:hover {
-  background-color: var(--color-primary-hover, #2563eb) !important; /* fallback nếu biến chưa định nghĩa */
+  background-color: var(
+    --color-primary-hover,
+    #2563eb
+  ) !important; /* fallback nếu biến chưa định nghĩa */
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-
-
 
 /* ================================
    ⚙️ LAYOUT ADJUSTMENTS
@@ -129,8 +141,6 @@
 .fc-daygrid-body {
   padding-right: 16px !important;
 }
-
-
 
 .fc-toolbar-title {
   text-transform: capitalize;
@@ -156,9 +166,6 @@
 .fc-timegrid-all-day {
   display: none !important;
 }
-
-
-
 
 /* ---------------------------------------------------- */
 /* === LIGHT MODE === */
@@ -294,7 +301,6 @@
   cursor: default;
 }
 
-
 /* Hover effect for entire event in LIGHT mode */
 .fc .fc-list-event:hover {
   background-color: #e5e7eb !important; /* bg-gray-200 */
@@ -318,82 +324,105 @@
   font-weight: 600 !important;
 }
 
-.fc-list-event-graphic{
+.fc-list-event-graphic {
   display: none !important;
 }
 
-
-
 /* Áp dụng cho lịch tháng và tuần, khi KHÔNG có trạng thái */
-.fc-dayGridMonth-view .fc-event:not(.event-completed):not(.event-scheduled):not(.event-pending):not(.event-conflict),
-.fc-dayGridWeek-view .fc-event:not(.event-completed):not(.event-scheduled):not(.event-pending):not(.event-conflict) {
+.fc-dayGridMonth-view
+  .fc-event:not(.event-completed):not(.event-scheduled):not(.event-pending):not(
+    .event-conflict
+  ),
+.fc-dayGridWeek-view
+  .fc-event:not(.event-completed):not(.event-scheduled):not(.event-pending):not(
+    .event-conflict
+  ) {
   line-height: 1.3 !important;
-  color: inherit !important;
+  color: #e6f0fa !important;
   letter-spacing: 0.02em;
   user-select: none;
-  text-shadow: none !important;
-  background: linear-gradient(135deg, #bbdefb 0%, #90caf9 100%);
-  border: 1.5px solid rgba(0, 0, 0, 0.25);
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.12) !important;
+  background: linear-gradient(135deg, #547dbf 0%, #3a5ca8 100%);
+  border: 1.5px solid rgba(58, 92, 168, 0.7);
   border-radius: 5px;
-  padding: 2px 6px;
+  padding: 6px 12px;
   box-sizing: border-box;
-  box-shadow: 0 2px 5px rgba(33, 150, 243, 0.2);
+  box-shadow: 0 1px 4px rgba(58, 92, 168, 0.25);
   transition: box-shadow 0.3s ease, background 0.3s ease;
   cursor: pointer;
 }
 
-.fc-dayGridMonth-view .fc-event:not(.event-completed):not(.event-scheduled):not(.event-pending):not(.event-conflict):hover,
-.fc-dayGridWeek-view .fc-event:not(.event-completed):not(.event-scheduled):not(.event-pending):not(.event-conflict):hover {
-  background: linear-gradient(135deg, #90caf9 0%, #42a5f5 100%);
-  box-shadow: 0 0 8px 4px rgba(66, 165, 245, 0.6);
+.fc-dayGridMonth-view
+  .fc-event:not(.event-completed):not(.event-scheduled):not(.event-pending):not(
+    .event-conflict
+  ):hover,
+.fc-dayGridWeek-view
+  .fc-event:not(.event-completed):not(.event-scheduled):not(.event-pending):not(
+    .event-conflict
+  ):hover {
+  background: linear-gradient(135deg, #3a5ca8 0%, #2e4a85 100%);
+  box-shadow: 0 0 6px 2px rgba(46, 74, 133, 0.45);
 }
 
 /* Các class trạng thái giữ nguyên style cũ */
-.fc-event.event-completed {
-  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+/* 1. Trong chế độ KHÔNG phải list view, event trạng thái có background màu */
+.fc-event.event-completed:not(.fc-list-event),
+.fc-event.event-scheduled:not(.fc-list-event),
+.fc-event.event-pending:not(.fc-list-event),
+.fc-event.event-conflict:not(.fc-list-event) {
+  background-color: unset; /* reset nếu có */
+}
+
+/* Gán lại màu nền theo trạng thái cho các view ngoài list */
+.fc-event.event-completed:not(.fc-list-event) {
   background-color: var(--color-completed-bg) !important;
+  color: var(--color-completed-text) !important;
   border: none;
-  color: var(--color-completed-text) !important;
 }
-.fc-event.event-completed .fc-event-time,
-.fc-event.event-completed .fc-event-title {
-  color: var(--color-completed-text) !important;
-}
-
-.fc-event.event-scheduled {
-    font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-
+.fc-event.event-scheduled:not(.fc-list-event) {
   background-color: var(--color-scheduled-bg) !important;
+  color: var(--color-scheduled-text) !important;
   border: none;
-  color: var(--color-scheduled-text) !important;
 }
-.fc-event.event-scheduled .fc-event-time,
-.fc-event.event-scheduled .fc-event-title {
-  color: var(--color-scheduled-text) !important;
-}
-
-.fc-event.event-pending {
+.fc-event.event-pending:not(.fc-list-event) {
   background-color: var(--color-pending-bg) !important;
+  color: var(--color-pending-text) !important;
   border: none;
-  color: var(--color-pending-text) !important;
 }
-.fc-event.event-pending .fc-event-time,
-.fc-event.event-pending .fc-event-title {
-  color: var(--color-pending-text) !important;
-}
-
-.fc-event.event-conflict {
-  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+.fc-event.event-conflict:not(.fc-list-event) {
   background-color: var(--color-conflict-bg) !important;
+  color: var(--color-conflict-text) !important;
   border: none;
-  color: var(--color-conflict-text) !important;
-}
-.fc-event.event-conflict .fc-event-time,
-.fc-event.event-conflict .fc-event-title {
-  color: var(--color-conflict-text) !important;
 }
 
+/* 2. Ở chế độ list view (.fc-list-event), giữ background mặc định, chỉ đổi màu chữ */
+.fc-list-event.event-completed,
+.fc-list-event.event-completed .fc-event-time,
+.fc-list-event.event-completed .fc-event-title {
+  background-color: transparent !important;
+  color: var(--color-completed-text) !important;
+}
 
+.fc-list-event.event-scheduled,
+.fc-list-event.event-scheduled .fc-event-time,
+.fc-list-event.event-scheduled .fc-event-title {
+  background-color: transparent !important;
+  color: var(--color-scheduled-text) !important;
+}
+
+.fc-list-event.event-pending,
+.fc-list-event.event-pending .fc-event-time,
+.fc-list-event.event-pending .fc-event-title {
+  background-color: transparent !important;
+  color: var(--color-pending-text) !important;
+}
+
+.fc-list-event.event-conflict,
+.fc-list-event.event-conflict .fc-event-time,
+.fc-list-event.event-conflict .fc-event-title {
+  background-color: transparent !important;
+  color: var(--color-conflict-text) !important;
+}
 
 
 /* Căn chỉnh chữ và khoảng cách trong sự kiện (áp dụng cho tất cả) */
@@ -402,16 +431,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 6px;
-  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  font-family: "Roboto", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
   font-weight: 600 !important;
   font-size: 13px !important;
 }
-
-
-
-
-
-
 
 /* Đảm bảo chữ màu đen và dễ đọc trong các block events (kéo dài nhiều ngày) */
 .fc-daygrid-block-event,
@@ -420,5 +443,6 @@
 .fc-daygrid-block-event .fc-event-time,
 .fc-daygrid-block-event span {
   color: #333 !important;
-  font-weight: 1000 !important;  
+  font-weight: 1000 !important;
 }
+

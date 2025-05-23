@@ -47,7 +47,7 @@ const LoginForm = () => {
           >
             Room X
           </h1>
-          <h4 className="text-lg mt-4">{t("label_slogan")}</h4>
+          <h4 className="text-lg mt-4">{t("auth.login.slogan")}</h4>
         </div>
       </div>
 
@@ -57,7 +57,7 @@ const LoginForm = () => {
         className="w-full md:w-1/2 flex flex-col justify-center items-center px-6 py-8 md:px-12 "
       >
         <h2 className="text-2xl font-bold text-[-var(--foreground)] mb-6">
-          {t("button_dang_nhap")}
+          {t("auth.login.login")}
         </h2>
         <form className="w-full" onSubmit={handleLogin}>
           <div className="mb-6">
@@ -65,19 +65,19 @@ const LoginForm = () => {
               htmlFor="account"
               className="block text-[var(--foreground)] font-medium mb-2"
             >
-              {t("label_tai_khoan")}
+              {t("auth.login.label_username")}
             </label>
             <input
               type="text"
               id="account"
               className="w-full border-b-2 border-gray-300 p-3 focus:outline-none focus:border-blue-500 transition duration-300 bg-transparent rounded-md"
-              placeholder={t("placeholder_tai_khoan")}
+              placeholder={t("auth.login.placeholder_username")}
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               onInvalid={(e) =>
                 (e.target as HTMLInputElement).setCustomValidity(
-                  t("warning_nhap_tai_khoan")
+                  t("auth.login.error_username_required")
                 )
               }
               onInput={(e) =>
@@ -90,20 +90,20 @@ const LoginForm = () => {
               htmlFor="password"
               className="block text-[var(--foreground)] font-medium mb-2"
             >
-              {t("label_mat_khau")}
+              {t("auth.login.label_password")}
             </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
                 className="w-full border-b-2 border-gray-300 p-3 pr-10 focus:outline-none focus:border-blue-500 transition duration-300 bg-transparent rounded-md"
-                placeholder={t("placeholder_mat_khau")}
+                placeholder={t("auth.login.placeholder_password")}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onInvalid={(e) =>
                   (e.target as HTMLInputElement).setCustomValidity(
-                    t("warning_nhap_mat_khau")
+                    t("auth.login.error_password_required")
                   )
                 }
                 onInput={(e) =>
@@ -123,7 +123,7 @@ const LoginForm = () => {
             type="submit"
             className="w-full bg-primary text-primary-foreground font-bold py-3 rounded-lg"
           >
-            {t("button_dang_nhap")}
+            {t("auth.login.login")}
           </button>
         </form>
         <p className="mt-6 text-gray-600">
@@ -131,7 +131,7 @@ const LoginForm = () => {
             to="/forgot-password"
             className="text-blue-500 font-medium hover:no-underline"
           >
-            {t("link_quen_mat_khau")}
+            {t("auth.login.forgot_password")}
           </Link>
         </p>
       </div>

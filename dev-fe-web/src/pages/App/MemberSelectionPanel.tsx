@@ -131,8 +131,6 @@ export function MemberSelectionPanel({
         });
       };
 
-
-
       // đoạn này không thêm bản thân vào danh sách người tham gia
       // const updateSelectedMembers = (
       //   newSelected: Member[] | ((prevSelected: Member[]) => Member[])
@@ -186,7 +184,7 @@ export function MemberSelectionPanel({
   };
 
   return (
-    <Card className="flex flex-col flex-[4] w-full border border-gray-400 dark:border-gray-600">
+    <Card className="flex flex-col flex-[4.5] w-full border border-gray-400 dark:border-gray-600">
       <CardHeader className="px-4 py-3 border-b bg-muted/40">
         <CardTitle className="text-xl font-semibold text-primary flex items-center gap-2">
           <Users className="w-5 h-5 text-blue-500" />
@@ -195,45 +193,42 @@ export function MemberSelectionPanel({
       </CardHeader>
 
       <CardContent className="p-2 flex flex-col flex-1">
-        <div className="relative mb-4">
-          <input
-            type="text"
-            placeholder="Tìm kiếm thành viên..."
-            className="bg-transparent w-full h-10 pl-4 pr-32 rounded-md border border-gray-300 dark:border-gray-600 text-sm"
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-          />
-          <select
-            className="absolute top-1/2 right-2 transform -translate-y-1/2 h-8 px-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option value="group">Nhóm</option>
-            <option value="participant">Người tham gia</option>
-          </select>
-        </div>
+        <div className="flex flex-row gap-2 text-white p-0">
+          <Card className="relative flex flex-col w-full border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
+            {/* Input tìm kiếm thành viên */}
+            <input
+              type="text"
+              placeholder="Tìm kiếm thành viên..."
+              className="bg-transparent p-2 border-b border-gray-300 dark:border-gray-600 outline-none"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+            />
+            <select
+              className="absolute top-1 right-2 h-8 px-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="group">Nhóm</option>
+              <option value="participant">Thành viên</option>
+            </select>
 
-        <div className="flex flex-row gap-2 rounded-md text-white p-0">
-          <Card className="max-h-[400px] flex flex-col rounded-md bg-white dark:bg-gray-900 p-3 gap-3 w-full">
-            <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
-              Danh sách thành viên
-            </CardTitle>
+            {/* Danh sách thành viên */}
             <div
               ref={leftListRef}
-              className="flex-1 overflow-y-auto rounded-md space-y-1"
+              className="flex-1 overflow-y-auto bg-white dark:bg-gray-800"
+              style={{ maxHeight: "400px" }}
             >
               {members.map((member) => {
                 const isChecked = selectedMembers.some(
                   (m) => m.id === member.id
                 );
                 return (
-                  <div
+                  <label
                     key={member.id}
-                    className="flex items-center gap-3 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                    className="flex items-center gap-3 cursor-pointer border-b border-gray-200 dark:border-gray-700 p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     <input
                       type="checkbox"
-                      id={`checkbox-${member.id}`}
                       checked={isChecked}
                       onChange={(e) =>
                         handleCheckboxChange(member, e.target.checked)
@@ -245,26 +240,31 @@ export function MemberSelectionPanel({
                         {getInitials(member.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-sm truncate">
                         {member.name}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
                         Email: {member.email}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
                         Mã NV: {member.code}
-                      </p>
+                      </span>
                     </div>
-                  </div>
+                  </label>
                 );
               })}
+              {members.length === 0 && (
+                <p className="p-3 text-center text-gray-500 dark:text-gray-400">
+                  Không có thành viên phù hợp
+                </p>
+              )}
             </div>
           </Card>
 
           <Card className="max-h-[400px] flex flex-col rounded-md bg-white dark:bg-gray-900 p-3 gap-3 w-full">
             <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
-              Thành viên tham gia ({selectedMembers.length})
+              Tham gia ({selectedMembers.length})
             </CardTitle>
 
             <div className="flex-1 overflow-y-auto rounded-md space-y-1">

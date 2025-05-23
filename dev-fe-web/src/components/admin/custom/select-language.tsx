@@ -39,7 +39,7 @@ export const LanguageSelect: React.FC<LanguageSelectProps> = ({ position = "bott
           <Languages className="w-5 h-5 cursor-pointer" />
         ) : (
           <span className="text-sm font-normal -ml-2">
-            {t("menu_nav_user_ngon_ngu")} {"(beta)"}
+            {t("admin.menu.bottom.language")}
           </span>
         )}
       </SelectTrigger>

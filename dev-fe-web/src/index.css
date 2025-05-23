@@ -134,17 +134,17 @@ button:focus-visible {
     --color-ocean: #118ab2;
     --color-today-border: #3959eb;
 
-    --color-completed-bg: #e3f2fd; /* nền xanh dương nhạt */
-    --color-completed-text: #1e88e5; /* chữ xanh dương */
+    --color-completed-bg: #e3f2fd; /* xanh dương nhạt */
+    --color-completed-text: #1e88e5; /* xanh dương đậm */
 
-    --color-scheduled-bg: #d0f0c0; /* nền xanh lá nhạt */
-    --color-scheduled-text: #388e3c; /* chữ xanh lá đậm */
+    --color-scheduled-bg: #d0f0c0; /* xanh lá nhạt */
+    --color-scheduled-text: #388e3c; /* xanh lá đậm */
 
-    --color-pending-bg: #fff3cd; /* nền vàng nhạt */
-    --color-pending-text: #f9a825; /* chữ vàng đậm */
+    --color-pending-bg: #fff3cd; /* vàng nhạt */
+    --color-pending-text: #f9a825; /* vàng đậm */
 
-    --color-conflict-bg: #ffc4c4; /* đỏ nhạt, dịu mắt hơn */
-    --color-conflict-text: #7f1d1d; /* chữ đỏ đậm, dễ đọc */
+    --color-conflict-bg: #ffc4c4; /* đỏ nhạt dịu mắt */
+    --color-conflict-text: #7f1d1d; /* đỏ đậm */
 
     --color-primary: #3b82f6; /* blue-500 */
     --calendar-bg: #f9fafb; /* Rất nhạt, trắng hơi xám */
@@ -226,14 +226,17 @@ button:focus-visible {
     --calendar-bg: #1e293b; /* xám đậm hiện đại, không quá đen */
     --calendar-today: #60a5fa33; /* xanh dương nhạt hơn, nhẹ và dịu */
     --calendar-today-btn: #3b82f6; /* xanh sáng hơn một chút để dễ nhìn trong nền tối */
-    --color-completed-bg: #1565c0; /* nền xanh dương đậm */
-    --color-completed-text: #bbdefb; /* chữ xanh dương nhạt */
-    --color-scheduled-bg: #2e7d32; /* nền xanh lá đậm */
-    --color-scheduled-text: #a5d6a7;
-    --color-pending-bg: #5c430d; /* nền vàng nâu trầm, đồng bộ với nền đậm của các trạng thái khác */
-    --color-pending-text: #ffe082; /* chữ vàng nhạt, dịu mắt nhưng vẫn nổi bật trên nền tối */
-    --color-conflict-bg-dark: #7f1d1d; /* đỏ đậm hơn, phù hợp nền tối */
-    --color-conflict-text-dark: #ffadad; /* đỏ nhạt sáng hơn, nổi bật trên nền tối */
+    --color-completed-bg: #1565c0; /* xanh dương đậm */
+    --color-completed-text: #bbdefb; /* xanh dương nhạt */
+
+    --color-scheduled-bg: #2e7d32; /* xanh lá đậm */
+    --color-scheduled-text: #a5d6a7; /* xanh lá nhạt */
+
+    --color-pending-bg: #5c430d; /* vàng nâu trầm */
+    --color-pending-text: #ffe082; /* vàng nhạt dịu mắt */
+
+    --color-conflict-bg: #7f1d1d; /* đỏ đậm */
+    --color-conflict-text: #ffadad; /* đỏ nhạt sáng */
     /* Nút xem chi tiết */
     --view-button-bg: rgba(34, 39, 45, 0.7); /* Màu nền tối gần trong suốt */
     --view-button-bg-hover: rgba(
@@ -346,3 +349,18 @@ input[type="checkbox"]:checked::after {
 .SelectContent {
   scroll-behavior: smooth; /* mượt hơn */
 }
+
+
+/* Tự động điền của trình duyệt ko có màu */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 9999s ease-in-out 0s !important;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #1f2937 !important; /* text-gray-800 */
+  font-family: inherit !important; /* giữ font của bạn */
+  font-size: inherit !important;
+}
+

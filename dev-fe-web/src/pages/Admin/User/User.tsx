@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 const User: React.FC = () => {
   const { t } = useTranslation()
   return (
-    <CMSLayout title={t('menu_danh_sach_nguoi_dung')}>
+    <CMSLayout title={t("admin.menu.main.users.title")} subtitle={t("admin.menu.main.users.sub.accounts")}>
         <UserList ></UserList>
     </CMSLayout>
   )

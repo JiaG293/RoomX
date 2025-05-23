@@ -1,81 +1,125 @@
 {
-    "label_footer": "© 2025 RoomX - Hệ thống quản lý phòng họp. Dự án mã nguồn mở.",
-    "label_slogan": "Phòng họp tối ưu, công việc hoàn hảo.",
-    "label_tai_khoan": "Tài khoản",
-    "label_mat_khau": "Mật khẩu",
-    "label_404": "Oops! Trang này có vẻ như không tồn tại.",
-    "menu_trang_chu": "Trang chủ",
-    "menu_thong_ke": "Thống kê",
-    "menu_doanh_thu": "Doanh thu",
-    "menu_bao_cao": "Báo cáo",
-    "menu_quan_ly_nguoi_dung": "Người dùng",
-    "menu_danh_sach_nguoi_dung": "Danh sách người dùng",
-    "menu_quan_ly_nhom": "Danh sách nhóm",
-    "menu_quan_ly_co_so": "Cơ sở",
-    "menu_danh_sach_chi_nhanh": "Danh sách chi nhánh",
-    "menu_quan_ly_tai_nguyen": "Tài nguyên",
-    "menu_danh_sach_phong_hop": "Danh sách phòng họp",
-    "menu_danh_sach_thiet_bi": "Danh sách thiết bị",
-    "menu_cau_hinh_dich_vu": "Danh sách dịch vụ",
-    "menu_quan_ly_cuoc_hop": "Cuộc họp",
-    "menu_phe_duyet_cuoc_hop": "Yêu cầu chờ duyệt",
-    "menu_quan_ly_dat_phong": "Quản lý đặt phòng",
-    "menu_thong_tin": "Thông tin",
-    "menu_huong_dan_su_dung": "Hướng dẫn sử dụng",
-    "menu_ve_chung_toi": "Về chúng tôi",
-    "button_dang_nhap": "Đăng nhập",
-    "link_quen_mat_khau": "Quên mật khẩu",
-    "placeholder_tai_khoan": "Nhập tài khoản",
-    "placeholder_mat_khau": "Nhập mật khẩu",
-    "warning_nhap_tai_khoan": "Vui lòng nhập tài khoản",
-    "warning_nhap_mat_khau": "Vui lòng nhập mật khẩu",
-    "menu_nav_user_tai_khoan": "Tài khoản",
-    "menu_nav_user_thong_tin_ca_nhan": "Hồ sơ",
-    "menu_nav_user_ngon_ngu": "Ngôn ngữ",
-    "menu_nav_user_dark_mode": "Chế độ tối",
-    "menu_nav_user_dang_xuat": "Đăng xuất",
-    "trang_chu_so_phong": "Phòng họp",
-    "trang_chu_so_nguoi": "Người dùng",
-    "trang_chu_luot_dat_phong": "Lượt đặt hôm nay",
-    "trang_chu_chi_phi": "Chi phí tháng này",
-    "trang_chu_dat_phong": "Đặt phòng gần đây",
-    "trang_chu_dat_phong_cot_id": "STT",
-    "trang_chu_dat_phong_cot_nguoi_dung": "Người đặt",
-    "trang_chu_dat_phong_cot_phong_hop": "Phòng",
-    "trang_chu_dat_phong_cot_thoi_gian": "Thời gian",
-    "trang_chu_dat_phong_cot_trang_thai": "Trạng thái",
-    "trang_chu_dat_phong_cot_hanh_dong": "Thao tác",
-    "trang_chu_dat_phong_hanh_dong_xem": "Xem",
-    "trang_chu_thong_ke_dat_phong": "Thống kê đặt phòng",
-    "trang_chu_thong_ke_chi_phi": "Thống kê chi phí",
-    "trang_thai_da_duyet": "Đã xác nhận",
-    "trang_thai_cho_duyet": "Chờ xử lý",
-    "trang_thai_huy": "Huỷ",
-    "chart_labels": {
-        "Tháng 1": "Tháng 1",
-        "Tháng 2": "Tháng 2",
-        "Tháng 3": "Tháng 3",
-        "Tháng 4": "Tháng 4",
-        "Tháng 5": "Tháng 5",
-        "Tháng 6": "Tháng 6",
-        "Tháng 7": "Tháng 7",
-        "Tháng 8": "Tháng 8",
-        "Tháng 9": "Tháng 9",
-        "Tháng 10": "Tháng 10",
-        "Tháng 11": "Tháng 11",
-        "Tháng 12": "Tháng 12"
+    "auth": {
+        "login": {
+            "footer_note": "© 2025 RoomX - Hệ thống quản lý phòng họp. Dự án mã nguồn mở.",
+            "slogan": "Phòng họp tối ưu, công việc hoàn hảo.",
+            "label_username": "Mã nhân viên",
+            "label_password": "Mật khẩu",
+            "login": "Đăng nhập",
+            "forgot_password": "Quên mật khẩu",
+            "placeholder_username": "Nhập tài khoản",
+            "placeholder_password": "Nhập mật khẩu",
+            "error_username_required": "Vui lòng nhập tài khoản",
+            "error_password_required": "Vui lòng nhập mật khẩu"
+        },
+        "forgot_password": {
+            "title": "Quên mật khẩu",
+            "description": "Nhập email của bạn để nhận liên kết đặt lại mật khẩu.",
+            "label_email": "Địa chỉ email",
+            "placeholder_email": "Nhập email",
+            "button_send_link": "Gửi liên kết",
+            "warning_required_email": "Vui lòng nhập địa chỉ email.",
+            "warning_invalid_email": "Vui lòng nhập đúng định dạng email."
+        },
+        "reset_password": {}
     },
-    "admin.users.search": "Tìm kiếm theo tên, email, mã nhân viên...",
-    "admin.users.active": "Hoạt động",
-    "admin.users.inactive": "Vô hiệu hoá",
-    "admin.view.table": "Bảng",
-    "admin.view.card": "Thẻ",
-    "admin.user.error": {
-        "Mã nhân viên không được để trống!": "Mã nhân viên không được để trống!",
-        "Mã nhân viên chỉ được chứa chữ, số và lớn hơn 6 ký tự!": "Mã nhân viên chỉ được chứa chữ, số và lớn hơn 6 ký tự!",
-        "Email không hợp lệ!": "Email không hợp lệ!",
-        "Họ không hợp lệ!": "Họ không hợp lệ!",
-        "Tên không hợp lệ!": "Tên không hợp lệ!",
-        "Số điện thoại không hợp lệ!": "Số điện thoại không hợp lệ!"
+    "common": {
+        "not_found_message": "Oops! Trang này có vẻ như không tồn tại.",
+        "month_labels": {
+            "1": "Tháng 1",
+            "2": "Tháng 2",
+            "3": "Tháng 3",
+            "4": "Tháng 4",
+            "5": "Tháng 5",
+            "6": "Tháng 6",
+            "7": "Tháng 7",
+            "8": "Tháng 8",
+            "9": "Tháng 9",
+            "10": "Tháng 10",
+            "11": "Tháng 11",
+            "12": "Tháng 12"
+        }
+    },
+    "admin": {
+        "menu": {
+            "top": {
+                "admin": "Trang quản trị",
+                "portal": "Trang người dùng",
+                "switch": "Chuyển trang"
+            },
+            "main": {
+                "home": "Trang chủ",
+                "stats": {
+                    "title": "Thống kê",
+                    "sub": {
+                        "time": "Theo thời gian",
+                        "room": "Theo phòng họp",
+                        "user": "Theo người dùng",
+                        "cost": "Theo chi phí"
+                    }
+                },
+                "users": {
+                    "title": "Người dùng",
+                    "sub": {
+                        "accounts": "Tài khoản",
+                        "groups": "Nhóm"
+                    }
+                },
+                "locations": {
+                    "title": "Cơ sở",
+                    "sub": {
+                        "branches": "Chi nhánh",
+                        "rooms": "Phòng họp"
+                    }
+                },
+                "resources": {
+                    "title": "Tài nguyên",
+                    "sub": {
+                        "equipments": "Thiết bị",
+                        "services": "Dịch vụ"
+                    }
+                },
+                "schedule": {
+                    "title": "Lịch trình",
+                    "sub": {
+                        "overview": "Tổng quan",
+                        "pending": "Chờ duyệt"
+                    }
+                },
+                "info": {
+                    "title": "Thông tin",
+                    "sub": {
+                        "guide": "Hướng dẫn",
+                        "about": "Giới thiệu"
+                    }
+                },
+                "notify": "Thông báo"
+            },
+            "bottom": {
+                "profile": "Hồ sơ",
+                "language": "Ngôn ngữ",
+                "dark_mode": "Chế độ tối",
+                "logout": "Đăng xuất"
+            }
+        },
+        "dashboard": {
+            "total_rooms": "Phòng họp",
+            "total_users": "Người dùng",
+            "today_bookings": "Lượt đặt hôm nay",
+            "monthly_costs": "Chi phí tháng này",
+            "recent_bookings": "Đặt phòng gần đây",
+            "col_serial": "STT",
+            "col_user": "Người đặt",
+            "col_room": "Phòng",
+            "col_time": "Thời gian",
+            "col_status": "Trạng thái",
+            "col_actions": "Thao tác",
+            "action_view": "Xem",
+            "booking_statistics": "Thống kê đặt phòng",
+            "cost_statistics": "Thống kê chi phí",
+            "status_approved": "Đã xác nhận",
+            "status_pending": "Chờ xử lý",
+            "status_cancelled": "Huỷ"
+        }
     }
 }

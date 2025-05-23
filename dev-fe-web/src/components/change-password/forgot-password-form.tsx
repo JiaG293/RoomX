@@ -1,22 +1,18 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const ForgotPasswordForm: React.FC = () => {
   const [email, setEmail] = useState("");
   // const { resetPassword } = useAuth();
-
+  const { t } = useTranslation();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    if (!email.trim()) {
-      alert("Vui lòng nhập email.");
-      return;
-    }
-  
+
     try {
       const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL;
       const realm = import.meta.env.VITE_KEYCLOAK_REALM;
       const clientId = import.meta.env.VITE_KEYCLOAK_CLIENT_ID;
-  
+
       const response = await fetch(
         `${keycloakUrl}/realms/${realm}/login-actions/reset-credentials?client_id=${clientId}`,
         {
@@ -28,7 +24,7 @@ const ForgotPasswordForm: React.FC = () => {
           body: new URLSearchParams({ username: email }),
         }
       );
-  
+
       if (response.ok) {
         alert("Check your email for the reset password link!");
       } else {
@@ -41,7 +37,6 @@ const ForgotPasswordForm: React.FC = () => {
       alert("Network error. Please try again later.");
     }
   };
-  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[url('/src/assets/img/login_bg.jpg')] bg-cover bg-center dark:bg-[url('/src/assets/img/login_bg.jpg')] dark:bg-cover dark:bg-center] text-foreground">
@@ -51,23 +46,39 @@ const ForgotPasswordForm: React.FC = () => {
       ></div>
 
       <div className="w-full max-w-md p-6 rounded-lg shadow-lg bg-card text-card-foreground shadow-gray-700 dark:shadow-gray-900 z-20">
-        <h2 className="text-2xl font-bold text-center mb-4">Quên mật khẩu</h2>
+        <h2 className="text-2xl font-bold text-center mb-4">{t("auth.forgot_password.title")}</h2>
         <p className="text-muted-foreground text-center text-sm mb-6">
-          Nhập email của bạn để nhận liên kết đặt lại mật khẩu.
+          {t("auth.forgot_password.description")}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1 text-foreground">
-              Địa chỉ email
+              {t("auth.forgot_password.label_email")}
             </label>
             <input
               type="email"
               className="w-full p-3 bg-input text-foreground rounded-lg border border-border focus:ring-2 focus:ring-primary focus:outline-none transition-all"
-              placeholder="Nhập email"
+              placeholder={t("auth.forgot_password.placeholder_email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              onInvalid={(e) =>
+                (e.target as HTMLInputElement).setCustomValidity(
+                  t("auth.forgot_password.warning_required_email")
+                )
+              }
+              onInput={(e) => {
+                const input = e.target as HTMLInputElement;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(input.value)) {
+                  input.setCustomValidity(
+                    t("auth.forgot_password.warning_invalid_email")
+                  );
+                } else {
+                  input.setCustomValidity("");
+                }
+              }}
             />
           </div>
 
@@ -75,7 +86,7 @@ const ForgotPasswordForm: React.FC = () => {
             type="submit"
             className="w-full bg-primary hover:opacity-90 text-primary-foreground font-semibold py-2 rounded-lg transition duration-300"
           >
-            Gửi liên kết
+            {t("auth.forgot_password.button_send_link")}
           </button>
         </form>
       </div>

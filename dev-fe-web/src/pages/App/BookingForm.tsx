@@ -38,13 +38,11 @@ import {
   AlertTriangle,
   Calendar,
   CalendarHeart,
-  Coffee,
   FileClock,
   FileEdit,
   Hourglass,
   Info,
   MapPin,
-  MonitorSmartphone,
   Repeat,
   Users,
 } from "lucide-react";
@@ -54,6 +52,7 @@ import { EquipmentService } from "@/services/admin/equipment.service";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MemberSelectionPanel } from "@/pages/App/MemberSelectionPanel";
 import { calculateEndTime, isBookingTimeValid } from "@/utils/date.util";
+import { ResourceSelectionPanel } from "@/pages/App/ResourceSelectionPanel";
 
 interface BookingModalProps {
   eventDate?: string;
@@ -94,13 +93,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   ];
 
   const [repeatType, setRepeatType] = useState("");
-  const [selectedServices, setSelectedServices] = useState<SelectedItem[]>([]);
+  const [selectedServices, setSelectedServices] = useState<any[]>([]);
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>(
     []
   );
-  const [selectedEquipments, setSelectedEquipments] = useState<SelectedItem[]>(
-    []
-  );
+  const [selectedEquipments, setSelectedEquipments] = useState<any[]>([]);
   const [scheduleResult, setScheduleResult] = useState([]); //lưu mảng sau khi kiểm tra lịch
   const [branch, setBranch] = useState<string>("");
   const isOpen = useMemo(() => !!eventDate, [eventDate]);
@@ -123,7 +120,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [services, setServices] = useState<OptionItem[]>([]);
 
   //danh sách thiết bị
-  const [equipments, setEquipments] = useState<OptionItem[]>([]);
+  const [equipments, setEquipments] = useState<[]>([]);
 
   // rerender lại lấy ngày đã chọn cho chính xác
   useEffect(() => {
@@ -282,7 +279,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     const parsedExceptions = storedExceptions
       ? JSON.parse(storedExceptions)
       : [];
-
+    console.log(branch);
     const endTime = calculateEndTime(startTime, duration);
 
     console.log(endTime);
@@ -300,11 +297,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         repeatType === "DAILY" ? "MO,TU,WE,TH,FR,SA,SU" : daysOfWeek.join(","),
       participants: selectedParticipants,
       services: selectedServices.map((s) => ({
-        serviceId: s.id,
+        serviceId: s.serviceId,
         quantity: s.quantity,
       })),
       equipments: selectedEquipments.map((e) => ({
-        equipmentId: e.id,
+        equipmentId: e.equipmentId,
         quantity: e.quantity,
       })),
       dateRequestExceptions: parsedExceptions,
@@ -321,6 +318,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
       if (error?.response?.data?.code === 1000) {
         toast.warning("Có xung đột thời gian. Vui lòng chọn khung giờ khác.");
+        if (error.response.data.message === "BranchId:  không tồn tại") {
+          toast.error("Chi nhánh không có phòng khả dụng.");
+          return;
+        }
         const conflictData = error.response.data.result;
         console.log(conflictData);
         setScheduleResult(conflictData);
@@ -593,59 +594,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             />
           </div>
 
-          {/* Thành phần liên quan */}
-          <Card className="w-full border border-gray-400 dark:border-gray-600">
-            <CardHeader className="px-4 py-3 border-b bg-muted/40">
-              <CardTitle className="text-base font-semibold text-primary flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-500" /> Thành phần liên quan
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {/* Người tham gia */}
-                {/* <TagSelect
-                  title={
-                    <span className="flex items-center gap-1 text-sm font-medium">
-                      <UserPlus className="w-4 h-4 text-green-500" />
-                      Người tham gia
-                    </span>
-                  }
-                  placeholder="Tìm người tham gia..."
-                  data={participants}
-                  variant="people"
-                  onChange={setSelectedParticipants}
-                  onSearch={fetchParticipants}
-                /> */}
-
-                {/* Dịch vụ */}
-                <TagSelect
-                  title={
-                    <span className="flex items-center gap-1 text-sm font-medium">
-                      <Coffee className="w-4 h-4 text-orange-500" />
-                      Dịch vụ
-                    </span>
-                  }
-                  placeholder="Tìm dịch vụ..."
-                  data={services}
-                  onChange={setSelectedServices}
-                  onSearch={fetchServices}
-                />
-                {/* Thiết bị */}
-                <TagSelect
-                  title={
-                    <span className="flex items-center gap-1 text-sm font-medium">
-                      <MonitorSmartphone className="w-4 h-4 text-purple-500" />
-                      Thiết bị
-                    </span>
-                  }
-                  placeholder="Tìm thiết bị..."
-                  data={equipments}
-                  onChange={setSelectedEquipments}
-                  onSearch={fetchEquipments}
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <ResourceSelectionPanel
+            onSelectedDeviceIdsChange={(ids) => setSelectedEquipments(ids)}
+            onSelectedServiceIdsChange={(ids) => setSelectedServices(ids)}
+          />
 
           <Card className=" border-gray-400 dark:border-gray-600 bg-background rounded-md border">
             <CardHeader className="px-6 py-4 border-b bg-muted/50 rounded-t-2xl">

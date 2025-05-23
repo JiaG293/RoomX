@@ -1,82 +1,125 @@
 {
-    "label_footer": "© 2025 RoomX - Meeting room management system. Open source project.",
-    "label_slogan": "Optimized meeting rooms, perfect results.",
-    "label_tai_khoan": "Account",
-    "label_mat_khau": "Password",
-    "label_404": "Oops! The page you're looking for doesn't exist.",
-    "menu_trang_chu": "Home",
-    "menu_thong_ke": "Stats",
-    "menu_doanh_thu": "Revenue",
-    "menu_bao_cao": "Reports",
-    "menu_quan_ly_nguoi_dung": "Users",
-    "menu_danh_sach_nguoi_dung": "User list",
-    "menu_quan_ly_nhom": "Groups",
-    "menu_quan_ly_co_so": "Facilities",
-    "menu_danh_sach_chi_nhanh": "Branches",
-    "menu_quan_ly_tai_nguyen": "Resources",
-    "menu_danh_sach_phong_hop": "Meeting rooms",
-    "menu_danh_sach_thiet_bi": "Equipments",
-    "menu_cau_hinh_dich_vu": "Services",
-    "menu_quan_ly_cuoc_hop": "Meetings",
-    "menu_phe_duyet_cuoc_hop": "Pending meetings",
-    "menu_quan_ly_dat_phong": "Schedules management",
-    "menu_thong_tin": "Information",
-    "menu_huong_dan_su_dung": "User guide",
-    "menu_ve_chung_toi": "About us",
-    "button_dang_nhap": "Login",
-    "link_quen_mat_khau": "Forgot password",
-    "placeholder_tai_khoan": "Enter your account",
-    "placeholder_mat_khau": "Enter your password",
-    "warning_nhap_tai_khoan": "Please enter your account",
-    "warning_nhap_mat_khau": "Please enter your password",
-    "menu_nav_user_tai_khoan": "Account",
-    "menu_nav_user_thong_tin_ca_nhan": "Profile",
-    "menu_nav_user_ngon_ngu": "Language",
-    "menu_nav_user_dark_mode": "Dark mode",
-    "menu_nav_user_dang_xuat": "Logout",
-    "trang_chu_so_phong": "Meeting rooms",
-    "trang_chu_so_nguoi": "Users",
-    "trang_chu_luot_dat_phong": "Bookings today",
-    "trang_chu_chi_phi": "Current month cost",
-    "trang_chu_dat_phong": "Recent bookings",
-    "trang_chu_dat_phong_cot_id": "ID",
-    "trang_chu_dat_phong_cot_nguoi_dung": "Booker",
-    "trang_chu_dat_phong_cot_phong_hop": "Room",
-    "trang_chu_dat_phong_cot_thoi_gian": "Time",
-    "trang_chu_dat_phong_cot_trang_thai": "Status",
-    "trang_chu_dat_phong_cot_hanh_dong": "Action",
-    "trang_chu_dat_phong_hanh_dong_xem": "View",
-    "trang_chu_thong_ke_dat_phong": "Booking statistics",
-    "trang_chu_thong_ke_chi_phi": "Cost statistics",
-    "trang_thai_da_duyet": "Scheduled",
-    "trang_thai_cho_duyet": "Pending",
-    "trang_thai_huy": "Canceled",
-    "chart_labels": {
-        "Tháng 1": "January",
-        "Tháng 2": "February",
-        "Tháng 3": "March",
-        "Tháng 4": "April",
-        "Tháng 5": "May",
-        "Tháng 6": "June",
-        "Tháng 7": "July",
-        "Tháng 8": "August",
-        "Tháng 9": "September",
-        "Tháng 10": "October",
-        "Tháng 11": "November",
-        "Tháng 12": "December"
+    "auth": {
+        "login": {
+            "footer_note": "© 2025 RoomX - Meeting room management system. Open-source project.",
+            "slogan": "Optimized meeting rooms, perfect results.",
+            "label_username": "Employee ID",
+            "label_password": "Password",
+            "login": "Login",
+            "forgot_password": "Forgot password",
+            "placeholder_username": "Enter your username",
+            "placeholder_password": "Enter your password",
+            "error_username_required": "Please enter your username",
+            "error_password_required": "Please enter your password"
+        },
+        "forgot_password": {
+            "title": "Forgot Password",
+            "description": "Enter your email to receive the password reset link.",
+            "label_email": "Email address",
+            "placeholder_email": "Enter your email",
+            "button_send_link": "Send link",
+            "warning_required_email": "Please enter your email address.",
+            "warning_invalid_email": "Please enter a valid email address."
+        },
+        "reset_password": {}
     },
-    "admin.users.search": "Search by name, email, user ID...",
-    "admin.users.active": "Active",
-    "admin.users.inactive": "Inactive",
-    "admin.view.table": "Table",
-    "admin.view.card": "Card",
-    "admin.user.error": {
-        "Mã nhân viên không được để trống!": "User ID can't be empty!",
-        "Mã nhân viên chỉ được chứa chữ, số và lớn hơn 6 ký tự!": "User ID must be at least 6 characters!",
-        "Email không hợp lệ!": "Email is invalid!",
-        "Họ không hợp lệ!": "First name is invalid!",
-        "Tên không hợp lệ!": "Last name is invalid!",
-        "Số điện thoại không hợp lệ!": "Phone number is invalid!"
+    "common": {
+        "not_found_message": "Oops! This page seems to not exist.",
+        "month_labels": {
+            "1": "January",
+            "2": "February",
+            "3": "March",
+            "4": "April",
+            "5": "May",
+            "6": "June",
+            "7": "July",
+            "8": "August",
+            "9": "September",
+            "10": "October",
+            "11": "November",
+            "12": "December"
+        }
+    },
+    "admin": {
+        "menu": {
+            "top": {
+                "admin": "Admin Panel",
+                "portal": "User Portal",
+                "switch": "Switch View"
+            },
+            "main": {
+                "home": "Home",
+                "stats": {
+                    "title": "Statistics",
+                    "sub": {
+                        "time": "By Time",
+                        "room": "By Meeting Room",
+                        "user": "By User",
+                        "cost": "By Cost"
+                    }
+                },
+                "users": {
+                    "title": "Users",
+                    "sub": {
+                        "accounts": "Accounts",
+                        "groups": "Groups"
+                    }
+                },
+                "locations": {
+                    "title": "Locations",
+                    "sub": {
+                        "branches": "Branches",
+                        "rooms": "Meeting Rooms"
+                    }
+                },
+                "resources": {
+                    "title": "Resources",
+                    "sub": {
+                        "equipments": "Equipments",
+                        "services": "Services"
+                    }
+                },
+                "schedule": {
+                    "title": "Schedule",
+                    "sub": {
+                        "overview": "Overview",
+                        "pending": "Pending Approval"
+                    }
+                },
+                "info": {
+                    "title": "Information",
+                    "sub": {
+                        "guide": "User Guide",
+                        "about": "About Us"
+                    }
+                },
+                "notify": "Notifications"
+            },
+            "bottom": {
+                "profile": "Profile",
+                "language": "Language",
+                "dark_mode": "Dark Mode",
+                "logout": "Log Out"
+            }
+        },
+        "dashboard": {
+            "total_rooms": "Meeting Rooms",
+            "total_users": "Users",
+            "today_bookings": "Today's Bookings",
+            "monthly_costs": "Monthly Costs",
+            "recent_bookings": "Recent Bookings",
+            "col_serial": "No.",
+            "col_user": "Booked By",
+            "col_room": "Room",
+            "col_time": "Time",
+            "col_status": "Status",
+            "col_actions": "Actions",
+            "action_view": "View",
+            "booking_statistics": "Booking Statistics",
+            "cost_statistics": "Cost Statistics",
+            "status_approved": "Approved",
+            "status_pending": "Pending",
+            "status_cancelled": "Cancelled"
+        }
     }
-
 }

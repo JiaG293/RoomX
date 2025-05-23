@@ -8,6 +8,7 @@ import "@/styles/calendar-style.css";
 import { ScheduleService } from "@/services/admin/schedule.service";
 import EventModal from "@/components/admin/meetings/event-modal"; // Import component EventModal
 import timeGridPlugin from "@fullcalendar/timegrid";
+import { useTranslation } from "react-i18next";
 
 const Meeting: React.FC = () => {
   const [viewMode, setViewMode] = useState<
@@ -33,10 +34,20 @@ const Meeting: React.FC = () => {
             return null; // Loại bỏ sự kiện không thuộc tháng đang xem
           }
 
-          const statusClass =
-            event.status === "COMPLETED"
-              ? "event-completed"
-              : "event-scheduled";
+          const statusClass = (() => {
+            switch (event.status) {
+              case "COMPLETED":
+                return "event-completed";
+              case "SCHEDULED":
+                return "event-scheduled";
+              case "PENDING":
+                return "event-pending";
+              case "REJECT":
+                return "event-conflict";
+              default:
+                return "";
+            }
+          })();
 
           return {
             id: event.id,
@@ -58,8 +69,13 @@ const Meeting: React.FC = () => {
     loadEvents(currentMonth, currentYear);
   }, [currentMonth, currentYear, loadEvents]);
 
+  const { t } = useTranslation();
+
   return (
-    <CMSLayout title="Quản lý đặt phòng">
+  <CMSLayout
+      title={t("admin.menu.main.schedule.title")}
+      subtitle={t("admin.menu.main.schedule.sub.overview")}
+    >
       <div style={{ flex: 0.9 }}>
         <FullCalendar
           locale="vi"
