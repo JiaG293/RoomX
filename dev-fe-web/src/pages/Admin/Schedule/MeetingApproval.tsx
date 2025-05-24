@@ -4,11 +4,8 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
-import { Check, X } from "lucide-react"; // Sử dụng Lucid Icon
 import "@/styles/calendar-style.css";
 import { ScheduleService } from "@/services/admin/schedule.service";
-import { toast } from "sonner";
-import { dA } from "node_modules/@fullcalendar/core/internal-common";
 import EventModalApproval from "@/components/admin/meetings/event-modal-approval";
 import { useTranslation } from "react-i18next";
 
@@ -16,7 +13,6 @@ interface EventType {
   id: string;
   title: string;
   start: string;
-  end: string;
   extendedProps: {
     status: string;
     approvalStatus: string;
@@ -48,8 +44,8 @@ const MeetingApproval: React.FC = () => {
       const formattedEvents: EventType[] = data.map((event: any) => ({
         id: event.id,
         title: event.title || "Sự kiện",
-        start: `${event.startDate}T${event.startTime}`,
-        end: `${event.endDate}T${event.endTime}`,
+        start: `${event.updatedAt}`,
+       
         extendedProps: {
           status: event.approvalStatus || "Chưa duyệt",
         },

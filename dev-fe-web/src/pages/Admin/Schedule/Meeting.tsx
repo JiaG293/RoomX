@@ -1,5 +1,5 @@
 import CMSLayout from "@/layouts/cms-layout";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -9,31 +9,38 @@ import { ScheduleService } from "@/services/admin/schedule.service";
 import EventModal from "@/components/admin/meetings/event-modal"; // Import component EventModal
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useTranslation } from "react-i18next";
+import { useScheduleStore } from "@/store/useScheduleStore";
+import EventModalApproval from "@/components/admin/meetings/event-modal-approval";
 
 const Meeting: React.FC = () => {
   const [viewMode, setViewMode] = useState<
-    "dayGridMonth" | "listWeek" | "timeGridPlugin"
+    "dayGridMonth" | "listWeek" | "dayGridDay"
   >("dayGridMonth");
-  const [events, setEvents] = useState([]);
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const { events, setEvents } = useScheduleStore();
+  // const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  // const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [modalEvent, setModalEvent] = useState<any>(null);
+  const monthYearRef = useRef({
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear(),
+  });
+  const calendarRef = useRef<any>(null);
 
   const loadEvents = useCallback(async (month: number, year: number) => {
     try {
       const scheduleService = new ScheduleService();
       const data = await scheduleService.getAllSchedules(month, year);
-
       const formattedEvents = data
         .map((event: any) => {
           const eventDate = new Date(event.meetingDate);
+          // Loại bỏ sự kiện không thuộc tháng đang xem
           if (
             eventDate.getMonth() + 1 !== month ||
             eventDate.getFullYear() !== year
           ) {
-            return null; // Loại bỏ sự kiện không thuộc tháng đang xem
+            return null;
           }
-
+          // Xác định class theo trạng thái
           const statusClass = (() => {
             switch (event.status) {
               case "COMPLETED":
@@ -48,16 +55,31 @@ const Meeting: React.FC = () => {
                 return "";
             }
           })();
-
-          return {
-            id: event.id,
-            title: event.title || "Sự kiện",
-            start: `${event.meetingDate}T${event.meetingStart}`,
-            end: `${event.meetingDate}T${event.meetingEnd}`,
-            className: statusClass,
-          };
+          if (event.status === "REJECT" || event.status === "PENDING") {
+            console.log(event);
+            return {
+              id: event.bookingRequestId,
+              title:
+                event.title ||
+                (event.status === "PENDING"
+                  ? "Sự kiện chờ duyệt"
+                  : "Sự kiện xung đột"),
+              start: event.updatedAt,
+              end: event.updatedAt, // Không có thời gian kết thúc
+              className: statusClass,
+            };
+          } else {
+            // Bình thường: dùng meetingDate + giờ
+            return {
+              id: event.id,
+              title: event.title || "Sự kiện",
+              start: `${event.meetingDate}T${event.meetingStart}`,
+              end: `${event.meetingDate}T${event.meetingEnd}`,
+              className: statusClass,
+            };
+          }
         })
-        .filter((event: any) => event !== null); // Loại bỏ null
+        .filter((event: any) => event !== null);
 
       setEvents(formattedEvents);
     } catch (error) {
@@ -66,18 +88,28 @@ const Meeting: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    loadEvents(currentMonth, currentYear);
-  }, [currentMonth, currentYear, loadEvents]);
+    loadEvents(monthYearRef.current.month, monthYearRef.current.year);
+  }, [loadEvents]);
 
   const { t } = useTranslation();
 
+  //polling
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadEvents(monthYearRef.current.month, monthYearRef.current.year);
+    }, 15000); // 10 giây
+
+    return () => clearInterval(interval); // Cleanup khi component unmount
+  }, [loadEvents]);
+
   return (
-  <CMSLayout
+    <CMSLayout
       title={t("admin.menu.main.schedule.title")}
       subtitle={t("admin.menu.main.schedule.sub.overview")}
     >
       <div style={{ flex: 0.9 }}>
         <FullCalendar
+          ref={calendarRef} 
           locale="vi"
           plugins={[
             dayGridPlugin,
@@ -91,6 +123,10 @@ const Meeting: React.FC = () => {
             const event = info.event;
             setModalEvent(event);
           }}
+          dateClick={(info) => {
+            // Khi nhấn "Xem thêm", chuyển sang chế độ xem ngày
+            info.view.calendar.changeView("listDay", info.date);
+          }}
           height="100%"
           buttonText={{
             today: "Hôm nay",
@@ -101,14 +137,18 @@ const Meeting: React.FC = () => {
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "dayGridMonth,dayGridWeek,timeGridDay",
+            right: "dayGridMonth,dayGridWeek,listDay",
           }}
           datesSet={(info) => {
             const newMonth = info.view.currentStart.getMonth() + 1;
             const newYear = info.view.currentStart.getFullYear();
-            if (newMonth !== currentMonth || newYear !== currentYear) {
-              setCurrentMonth(newMonth);
-              setCurrentYear(newYear);
+            if (
+              newMonth !== monthYearRef.current.month ||
+              newYear !== monthYearRef.current.year
+            ) {
+              monthYearRef.current = { month: newMonth, year: newYear };
+              // Nếu bạn muốn load lại sự kiện mỗi khi tháng năm thay đổi:
+              loadEvents(newMonth, newYear);
             }
           }}
           views={{
@@ -122,7 +162,7 @@ const Meeting: React.FC = () => {
               dayMaxEvents: 10,
               moreLinkText: "Xem thêm",
             },
-            timeGridDay: {
+            listDay: {
               // Lịch ngày: không giới hạn số sự kiện
               eventLimit: false,
               moreLinkText: "Xem thêm",
@@ -130,7 +170,7 @@ const Meeting: React.FC = () => {
           }}
           moreLinkClick={(info) => {
             // Khi nhấn "Xem thêm", chuyển sang chế độ xem ngày
-            info.view.calendar.changeView("timeGridDay", info.date);
+            info.view.calendar.changeView("listDay", info.date);
           }}
         />
         {/* Chú thích */}
@@ -144,10 +184,10 @@ const Meeting: React.FC = () => {
           }}
         >
           {[
-            { color: "#d0f0c0", label: "Lên lịch" },
-            { color: "#e3f2fd", label: "Hoàn thành" },
-            { color: "#fff3cd", label: "Chờ duyệt" },
-            { color: "#ffc4c4", label: "Xung đột" },
+            { color: "#1565c0", label: "Lên lịch" },
+            { color: "#2e7d32", label: "Hoàn thành" },
+            { color: "#f9a825", label: "Chờ duyệt" },
+            { color: "#c62828", label: "Xung đột" },
           ].map((item, index) => (
             <div
               key={index}
@@ -168,7 +208,16 @@ const Meeting: React.FC = () => {
       </div>
 
       {/* Sử dụng EventModal */}
-      <EventModal event={modalEvent} onClose={() => setModalEvent(null)} />
+      {modalEvent &&
+        (modalEvent.classNames?.includes("event-pending", "event-conflict") ||
+        modalEvent.classNames?.includes("event-conflict") ? (
+          <EventModalApproval
+            event={modalEvent}
+            onClose={() => setModalEvent(null)}
+          />
+        ) : (
+          <EventModal event={modalEvent} onClose={() => setModalEvent(null)} />
+        ))}
     </CMSLayout>
   );
 };

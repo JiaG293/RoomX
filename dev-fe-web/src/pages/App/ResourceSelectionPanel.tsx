@@ -193,11 +193,7 @@ export function ResourceSelectionPanel({
           ...newSelected.map((d) => ({
             equipmentId: d.id,
             quantity: d.quantity,
-          })),
-          ...selectedServices.map((s) => ({
-            equipmentId: s.id,
-            quantity: s.quantity,
-          })),
+          }))
         ]);
       }
     } else {
@@ -207,11 +203,7 @@ export function ResourceSelectionPanel({
         ...newSelected.map((d) => ({
           equipmentId: d.id,
           quantity: d.quantity,
-        })),
-        ...selectedServices.map((s) => ({
-          equipmentId: s.id,
-          quantity: s.quantity,
-        })),
+        }))
       ]);
     }
   };
@@ -247,7 +239,7 @@ export function ResourceSelectionPanel({
     setSelectedDevices(newSelected);
     onSelectedDeviceIdsChange([
       ...newSelected.map((d) => ({ equipmentId: d.id, quantity: d.quantity })),
-      ...selectedServices.map((s) => ({
+      ...selectedDevices.map((s) => ({
         equipmentId: s.id,
         quantity: s.quantity,
       })),
@@ -274,7 +266,7 @@ export function ResourceSelectionPanel({
     setSelectedDevices(updated);
     onSelectedDeviceIdsChange([
       ...updated.map((d) => ({ equipmentId: d.id, quantity: d.quantity })),
-      ...selectedServices.map((s) => ({
+      ...selectedDevices.map((s) => ({
         equipmentId: s.id,
         quantity: s.quantity,
       })),

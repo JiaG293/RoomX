@@ -1,12 +1,11 @@
-"use client"
+"use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
-
+import { ChevronRight, type LucideIcon } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarMenu,
@@ -15,29 +14,29 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
-import { Link } from "react-router-dom"
+} from "@/components/ui/sidebar";
+import { Link } from "react-router-dom";
 
 export function NavMain({
   items,
 }: {
   items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
     items?: {
-      title: string
-      url: string
-    }[],
+      title: string;
+      url: string;
+    }[];
     color?: string;
-  }[]
+  }[];
 }) {
   return (
     <SidebarGroup>
-      <SidebarMenu>
+      <SidebarMenu className="space-y-3">
         {items.map((item) =>
-          item.items && item.items.length > 0 ? ( // ✅ Có mục con → Dùng Collapsible
+          item.items && item.items.length > 0 ? (
             <Collapsible
               key={item.title}
               asChild
@@ -46,13 +45,16 @@ export function NavMain({
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton 
-                    tooltip={item.title} 
-                    className="bg-transparent border-none focus:outline-none hover:bg-blue-200"
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    className="bg-transparent border-none focus:outline-none hover:bg-slate-700"
                   >
-                    {item.icon && <item.icon className={`${item.color} hover:text-white`} />}
-                    <span className="text-foreground">{item.title}</span>
-                    {/* ✅ Chỉ hiện mũi tên nếu có mục con */}
+                    {item.icon && (
+                      <item.icon className={item.color ?? ""} />
+                    )}
+                    <span className="text-slate-300 dark:text-slate-400">
+                      {item.title}
+                    </span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
@@ -60,8 +62,15 @@ export function NavMain({
                   <SidebarMenuSub>
                     {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton asChild onClick={(event) => event.stopPropagation()}>
-                          <Link onClick={(event) => event.stopPropagation()} to={subItem.url} className="hover:bg-blue-200">
+                        <SidebarMenuSubButton
+                          asChild
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          <Link
+                            to={subItem.url}
+                            onClick={(e) => e.stopPropagation()}
+                            className="hover:bg-slate-700 px-2 py-1 block rounded text-slate-300 dark:text-slate-400"
+                          >
                             <span>{subItem.title}</span>
                           </Link>
                         </SidebarMenuSubButton>
@@ -71,15 +80,20 @@ export function NavMain({
                 </CollapsibleContent>
               </SidebarMenuItem>
             </Collapsible>
-          ) : ( // ✅ Không có mục con → Chuyển thành link và ẩn mũi tên
+          ) : (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton 
-                tooltip={item.title} 
-                className="text-foreground bg-transparent border-none focus:outline-none hover:bg-blue-200"
+              <SidebarMenuButton
+                tooltip={item.title}
+                className="bg-transparent border-none focus:outline-none hover:bg-slate-700"
                 asChild
               >
-                <Link to={item.url} className="flex items-center gap-2">
-                  {item.icon && <item.icon className={`${item.color} hover:text-white`} />}
+                <Link
+                  to={item.url}
+                  className="flex items-center gap-2 text-slate-300 dark:text-slate-400"
+                >
+                  {item.icon && (
+                    <item.icon className={item.color ?? ""} />
+                  )}
                   <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>
@@ -88,5 +102,5 @@ export function NavMain({
         )}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

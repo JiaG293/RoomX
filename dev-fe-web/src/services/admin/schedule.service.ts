@@ -88,7 +88,7 @@ export class ScheduleService {
       const response = await axios.get(
         `${API_BASE_URL}/bookings/request/list`,
         {
-          params: { month, year, size: -1, isAdmin: true, status: "PENDING, CONFLICT" },
+          params: { month, year, size: -1, isAdmin: true, status: "PENDING,CONFLICT" },
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

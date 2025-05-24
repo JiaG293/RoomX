@@ -396,32 +396,65 @@
 }
 
 /* 2. Ở chế độ list view (.fc-list-event), giữ background mặc định, chỉ đổi màu chữ */
+/* Light mode (mặc định) */
 .fc-list-event.event-completed,
 .fc-list-event.event-completed .fc-event-time,
 .fc-list-event.event-completed .fc-event-title {
-  background-color: transparent !important;
-  color: var(--color-completed-text) !important;
+  background-color: #1e88e5 !important;
+  color: #e3f2fd !important;
+}
+@media (prefers-color-scheme: dark) {
+  .fc-list-event.event-completed,
+  .fc-list-event.event-completed .fc-event-time,
+  .fc-list-event.event-completed .fc-event-title {
+    background-color: #90caf9 !important;
+    color: #0d47a1 !important;
+  }
 }
 
 .fc-list-event.event-scheduled,
 .fc-list-event.event-scheduled .fc-event-time,
 .fc-list-event.event-scheduled .fc-event-title {
-  background-color: transparent !important;
-  color: var(--color-scheduled-text) !important;
+  background-color: #388e3c !important;
+  color: #d0f0c0 !important;
+}
+@media (prefers-color-scheme: dark) {
+  .fc-list-event.event-scheduled,
+  .fc-list-event.event-scheduled .fc-event-time,
+  .fc-list-event.event-scheduled .fc-event-title {
+    background-color: #a5d6a7 !important;
+    color: #1b5e20 !important;
+  }
 }
 
 .fc-list-event.event-pending,
 .fc-list-event.event-pending .fc-event-time,
 .fc-list-event.event-pending .fc-event-title {
-  background-color: transparent !important;
-  color: var(--color-pending-text) !important;
+  background-color: #f9a825 !important;
+  color: #fff3cd !important;
+}
+@media (prefers-color-scheme: dark) {
+  .fc-list-event.event-pending,
+  .fc-list-event.event-pending .fc-event-time,
+  .fc-list-event.event-pending .fc-event-title {
+    background-color: #fff59d !important;
+    color: #f57f17 !important;
+  }
 }
 
 .fc-list-event.event-conflict,
 .fc-list-event.event-conflict .fc-event-time,
 .fc-list-event.event-conflict .fc-event-title {
-  background-color: transparent !important;
-  color: var(--color-conflict-text) !important;
+  background-color: #7f1d1d !important;
+  color: #ffc4c4 !important;
+}
+@media (prefers-color-scheme: dark) {
+  .fc-list-event.event-conflict,
+  .fc-list-event.event-conflict .fc-event-time,
+  .fc-list-event.event-conflict .fc-event-title {
+    background-color: #ef9a9a !important;
+    color: #b71c1c !important;
+  }
 }
 
 
@@ -442,7 +475,7 @@
 .fc-daygrid-block-event .fc-event-title,
 .fc-daygrid-block-event .fc-event-time,
 .fc-daygrid-block-event span {
-  color: #333 !important;
-  font-weight: 1000 !important;
+  color: #fff !important;
+  font-weight: 700 !important;
 }
 

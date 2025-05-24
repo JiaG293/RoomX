@@ -31,7 +31,7 @@ function App() {
       <I18nextProvider i18n={i18next}>
         <ThemeProvider storageKey="vite-ui-theme">
           <RouterProvider router={RootRouter} />
-          <Toaster richColors position="bottom-right" />
+          <Toaster richColors position="top-right" duration={1500} />
         </ThemeProvider>
       </I18nextProvider>
     </AuthProvider>

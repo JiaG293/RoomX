@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ChevronsUpDown,
-  LogOut,
-  Moon,
-  Sun,
-  Globe,
-  User,
-} from "lucide-react";
+import { ChevronsUpDown, LogOut, Moon, Sun, Globe, User } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -60,19 +53,29 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="bg-[var(--navitem-bg)] hover:bg-[var(--navitem-bg-hover)] text-[var(--navitem-text)] shadow-md ring-0 border-none focus:outline-none hover:brightness-110"
+              className="
+    bg-white/10 backdrop-blur-sm
+    flex items-center gap-2 text-slate-800
+    hover:bg-white/20 hover:shadow-lg
+    ring-0 border-none focus:outline-none transition-colors
+
+    dark:hover:bg-slate-800/70 dark:hover:shadow-lg
+  "
             >
-              <Avatar className="h-8 w-8 rounded-lg bg-[var(--navitem-bg)]">
-                {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
-                <AvatarFallback className="rounded-lg ">
+              <Avatar className="h-8 w-8 rounded-lg bg-slate-300 text-slate-800 dark:bg-slate-700 dark:text-white">
+                <AvatarFallback className="rounded-lg">
                   {getShortName(user.name) || "AD"}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-semibold text-slate-200 dark:text-slate-100">
+                  {user.name}
+                </span>
+                <span className="truncate text-xs text-slate-400 dark:text-slate-400">
+                  {user.email}
+                </span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <ChevronsUpDown className="ml-auto size-4 text-slate-500 dark:text-slate-400" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -109,7 +112,7 @@ export function NavUser({
                 trigger={
                   <div
                     className="cursor-pointer relative flex select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
-                    onClick={(e) => e.stopPropagation()} 
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <User />
                     {t("admin.menu.bottom.profile")}

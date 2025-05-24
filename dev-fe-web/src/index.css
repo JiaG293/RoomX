@@ -134,17 +134,21 @@ button:focus-visible {
     --color-ocean: #118ab2;
     --color-today-border: #3959eb;
 
-    --color-completed-bg: #e3f2fd; /* xanh dương nhạt */
-    --color-completed-text: #1e88e5; /* xanh dương đậm */
+    /* COMPLETED – Xanh dương đậm */
+    --color-completed-bg: #1565c0;
+    --color-completed-text: #e3f2fd; /* xanh dương rất nhạt */
 
-    --color-scheduled-bg: #d0f0c0; /* xanh lá nhạt */
-    --color-scheduled-text: #388e3c; /* xanh lá đậm */
+    /* SCHEDULED – Xanh lá đậm */
+    --color-scheduled-bg: #2e7d32;
+    --color-scheduled-text: #e8f5e9; /* xanh lá rất nhạt */
 
-    --color-pending-bg: #fff3cd; /* vàng nhạt */
-    --color-pending-text: #f9a825; /* vàng đậm */
+    /* PENDING – Vàng đậm */
+    --color-pending-bg: #f9a825;
+    --color-pending-text: #fffde7; /* vàng kem nhạt */
 
-    --color-conflict-bg: #ffc4c4; /* đỏ nhạt dịu mắt */
-    --color-conflict-text: #7f1d1d; /* đỏ đậm */
+    /* CONFLICT – Đỏ đậm */
+    --color-conflict-bg: #c62828;
+    --color-conflict-text: #ffebee; /* hồng nhạt */
 
     --color-primary: #3b82f6; /* blue-500 */
     --calendar-bg: #f9fafb; /* Rất nhạt, trắng hơi xám */
@@ -350,7 +354,6 @@ input[type="checkbox"]:checked::after {
   scroll-behavior: smooth; /* mượt hơn */
 }
 
-
 /* Tự động điền của trình duyệt ko có màu */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -363,4 +366,3 @@ input:-webkit-autofill:active {
   font-family: inherit !important; /* giữ font của bạn */
   font-size: inherit !important;
 }
-

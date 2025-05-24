@@ -19,17 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import TagSelect, {
-  OptionItem,
-  SelectedItem,
-} from "@/components/app/custom/tag-select";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TimePicker } from "@/components/app/custom/time-picker";
 import { toast } from "sonner";
 import { ScheduleService } from "@/services/user/schedule.service";
@@ -113,6 +104,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [branches, setBranches] = useState<
     { branchId: string; branchCode: string; name: string }[]
   >([]);
+  const [loading, setLoading] = useState(false);
 
   // rerender lại lấy ngày đã chọn cho chính xác
   useEffect(() => {
@@ -243,8 +235,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   // Đặt lịch
   const handleBook = async () => {
+    // console.log(loading)
+    if (loading) return; // tránh gọi nhiều lần
+    setLoading(true);
+
     const isValid = await checkValid();
-    if (!isValid) return;
+    if (!isValid) {
+      setLoading(false);
+      return;
+    }
 
     const formatDateOnly = (date: Date) => date.toISOString().split("T")[0];
     const storedExceptions = localStorage.getItem("dateRequestExceptions");
@@ -284,7 +283,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     const scheduleService = new ScheduleService();
     try {
       await scheduleService.createSchedule(scheduleData);
-      handleClose();
+      handleClose(); // ✅ Thành công thì đóng modal
     } catch (error: any) {
       console.error(error);
 
@@ -292,14 +291,24 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         toast.warning("Có xung đột thời gian. Vui lòng chọn khung giờ khác.");
         if (error.response.data.message === "BranchId:  không tồn tại") {
           toast.error("Chi nhánh không có phòng khả dụng.");
+          setLoading(false); // 🔁 reset lại
           return;
         }
-        const conflictData = error.response.data.result;
+
+        const conflictData =
+          error &&
+          error.response &&
+          error.response.data &&
+          error.response.data.result
+            ? error.response.data.result
+            : [];
         console.log(conflictData);
         setScheduleResult(conflictData);
       } else {
         toast.error("Không còn phòng khả dụng, vui lòng chọn khung giờ khác.");
       }
+    } finally {
+      setLoading(false); // 🔁 đảm bảo luôn reset sau khi chạy xong
     }
   };
 
@@ -320,6 +329,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setRepeatType("");
     localStorage.removeItem("dateRequestExceptions");
     setSelectedDays([]);
+    setLoading(false);
   };
 
   const handleClose = () => {
@@ -597,8 +607,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <Button variant="outline" onClick={onClose}>
             Hủy
           </Button>
-          <Button onClick={handleBook} className="bg-blue-600 text-white">
-            📅 Đặt lịch ngay
+          <Button
+            onClick={handleBook}
+            disabled={loading}
+            className="bg-blue-600 text-white"
+          >
+            {loading ? "⏳ Đang xử lý..." : "📅 Đặt lịch ngay"}
           </Button>
         </div>
       </DialogContent>

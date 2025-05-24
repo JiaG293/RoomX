@@ -88,13 +88,13 @@ const EventModalApproval: React.FC<EventModalApprovalProps> = ({
   const [place, setPlace] = useState(null);
   const [building, setBuilding] = useState(null);
   const [floor, setFloor] = useState(null);
-
   useEffect(() => {
     if (event?.id) {
       const fetchDetail = async () => {
         try {
           const service = new ScheduleService();
           const res = await service.getDetailPendingSchedule(event.id);
+          console.log(res)
           setDetail(res);
         } catch (error) {
           console.error("Lỗi lấy chi tiết lịch:", error);
