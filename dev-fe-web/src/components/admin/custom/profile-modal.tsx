@@ -2,6 +2,17 @@ import React, { useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { UserService } from "@/services/admin/user.service";
 import { toast } from "sonner";
+import {
+  Camera,
+  Edit2,
+  Phone,
+  Save,
+  User,
+  UserCheck,
+  VenetianMask,
+  XCircle,
+} from "lucide-react";
+import { FaGenderless, FaMars, FaMask, FaVenus } from "react-icons/fa";
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -125,20 +136,14 @@ export default function ProfileEditModal({
         className="relative bg-white bg-opacity-90 backdrop-blur-sm rounded-lg shadow-lg p-8 w-full max-w-md border-2 border-gray-300"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Close button with Lucide icon */}
         <button
           type="button"
           onClick={handleClose}
           className="focus:outline-none border-none hover:scale-110 absolute top-4 right-4 text-gray-600 hover:text-gray-900 -mt-6 -mr-6 bg-transparent z-50"
+          aria-label="Close"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <XCircle size={24} color="currentColor" />
         </button>
 
         <div className="relative h-28 w-full rounded-t-lg">
@@ -148,32 +153,20 @@ export default function ProfileEditModal({
             className="object-cover w-full h-full"
           />
           <div className="absolute left-1/2 bottom-[-48px] transform -translate-x-1/2 border-4 border-white rounded-full overflow-visible w-24 h-24 bg-gray-200 flex items-center justify-center">
-            <Avatar className="w-24 h-24 rounded-full relative overflow-hidden">
-              <AvatarImage
+            <div className="w-24 h-24 rounded-full relative overflow-hidden">
+              <img
                 src={avatarImage || "https://via.placeholder.com/96"}
                 alt="Avatar"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-full"
               />
-              <AvatarFallback>
-                {(firstName[0] || "") + (lastName[0] || "UN")}
-              </AvatarFallback>
-            </Avatar>
+            </div>
             {isEditing && (
               <label
                 htmlFor="avatar-file-input"
                 className="absolute -bottom-2 -right-2 bg-slate-600 hover:bg-slate-700 text-white rounded-full p-2 shadow-lg border-2 border-white cursor-pointer flex items-center justify-center"
                 title="Chọn ảnh mới"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h4l3-3h4l3 3h4v11a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11v6m3-3H9" />
-                </svg>
+                <Camera size={16} color="white" />
                 <input
                   type="file"
                   accept="image/*"
@@ -188,17 +181,25 @@ export default function ProfileEditModal({
 
         <div className="h-14" />
         <h2 className="text-xl font-semibold mb-6 text-gray-800 text-center">
-          {isEditing ? "Chỉnh sửa hồ sơ" : "Chi tiết hồ sơ"}
+          {isEditing ? (
+            <>
+              <Edit2 size={20} className="inline mr-2 text-blue-600" />
+              Chỉnh sửa hồ sơ
+            </>
+          ) : (
+            "Chi tiết hồ sơ"
+          )}
         </h2>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label
                 htmlFor="firstName"
-                className="block text-gray-700 text-sm font-medium mb-1"
+                className="flex items-center text-gray-700 text-sm font-medium mb-1 space-x-1"
               >
-                Họ
+                <User size={16} className="text-blue-500" />
+                <span>Họ</span>
               </label>
               <input
                 id="firstName"
@@ -221,9 +222,10 @@ export default function ProfileEditModal({
             <div>
               <label
                 htmlFor="lastName"
-                className="block text-gray-700 text-sm font-medium mb-1"
+                className="flex items-center text-gray-700 text-sm font-medium mb-1 space-x-1"
               >
-                Tên
+                <UserCheck size={16} className="text-green-500" />
+                <span>Tên</span>
               </label>
               <input
                 id="lastName"
@@ -247,9 +249,10 @@ export default function ProfileEditModal({
           <div>
             <label
               htmlFor="phone"
-              className="block text-gray-700 text-sm font-medium mb-1"
+              className="flex items-center text-gray-700 text-sm font-medium mb-1 space-x-1"
             >
-              Số điện thoại
+              <Phone size={16} className="text-orange-500" />
+              <span>Số điện thoại</span>
             </label>
             <input
               id="phone"
@@ -272,9 +275,11 @@ export default function ProfileEditModal({
           <div>
             <label
               htmlFor="gender"
-              className="block text-gray-700 text-sm font-medium mb-1"
+              className="flex items-center text-gray-700 text-sm font-medium mb-1 space-x-1"
             >
-              Giới tính
+              {/* Show icon depending on selected gender */}
+              <VenetianMask size={16} className="text-purple-600" />
+              <span>Giới tính</span>
             </label>
             <select
               id="gender"
@@ -287,8 +292,15 @@ export default function ProfileEditModal({
                   : "border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
               }`}
             >
-              <option value="male">Nam</option>
-              <option value="female">Nữ</option>
+              <option value="male">
+                {" "}
+                <FaMars size={16} className="text-blue-600" />
+                Nam
+              </option>
+              <option value="female">
+                <FaVenus size={16} className="text-pink-600" />
+                Nữ
+              </option>
             </select>
           </div>
 
@@ -296,9 +308,19 @@ export default function ProfileEditModal({
             <button
               type="button"
               onClick={handleToggleEdit}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition"
+              className="flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition space-x-2"
             >
-              {isEditing ? "Lưu" : "Chỉnh sửa"}
+              {isEditing ? (
+                <>
+                  <Save size={18} />
+                  <span>Lưu</span>
+                </>
+              ) : (
+                <>
+                  <Edit2 size={18} />
+                  <span>Chỉnh sửa</span>
+                </>
+              )}
             </button>
           </div>
         </form>
