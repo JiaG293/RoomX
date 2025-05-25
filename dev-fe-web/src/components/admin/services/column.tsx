@@ -1,3 +1,4 @@
+import { ImagePreviewModal } from "@/components/admin/rooms/ImagePreviewModal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -23,6 +24,7 @@ export interface ServiceType {
   unitPrice: number;
   createdAt: string;
   updatedAt: string;
+  imageUrls: string[];
 }
 
 export const columns: ColumnDef<ServiceType>[] = [
@@ -32,12 +34,34 @@ export const columns: ColumnDef<ServiceType>[] = [
     cell: ({ row }) => row.index + 1,
   },
   {
-    accessorKey: "serviceCode",
-    header: "Mã dịch vụ",
-  },
+      accessorKey: "imageUrls",
+      header: "Hình ảnh",
+      cell: ({ row }) => {
+        const imageUrl = row.original.imageUrls?.[0];
+        console.log(imageUrl);
+        if (!imageUrl) return "";
+  
+        return (
+          <ImagePreviewModal
+            imageUrl={imageUrl}
+            trigger={
+              <img
+                src={imageUrl}
+                alt="ảnh"
+                className="bg-transparent w-16 h-16 object-cover rounded cursor-pointer hover:scale-105 transition"
+              />
+            }
+          />
+        );
+      },
+    },
   {
     accessorKey: "name",
     header: "Tên dịch vụ",
+  },
+  {
+    accessorKey: "serviceCode",
+    header: "Mã dịch vụ",
   },
   {
     accessorKey: "description",
@@ -48,20 +72,20 @@ export const columns: ColumnDef<ServiceType>[] = [
         : row.original.description,
   },
   {
-  id: "actions",
-  cell: ({ row }) => {
-    const [open, setOpen] = useState(false);
-    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <div>
-            <ServiceDetail id={row.original.id} />
-          </div>
-        </DialogTrigger>
-        <DialogContent className="max-w-md p-0 overflow-hidden rounded-lg shadow-lg"></DialogContent>
-      </Dialog>
-    );
+    id: "actions",
+    cell: ({ row }) => {
+      const [open, setOpen] = useState(false);
+      return (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <ServiceDetail id={row.original.id}></ServiceDetail>
+          </DialogTrigger>
+          <DialogContent className="max-w-3xl">
+            <EquipmentDetail id={row.original.id} />
+          </DialogContent>
+        </Dialog>
+      );
+    },
   },
-}
 
 ];

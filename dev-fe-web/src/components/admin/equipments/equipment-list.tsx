@@ -16,7 +16,8 @@ export interface EquipmentType {
   name: string;
   brand: string;
   description: string;
-  unitPrice: number;
+  imageUrls: string[];
+  price: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -41,7 +42,14 @@ const EquipmentList: React.FC = () => {
         10,
         keyword
       );
-      setEquipments(data.content || []);
+
+      const formattedData = data.content.map((item: any) => ({
+        ...item,
+        price: item.price.unitPrice, // lấy giá trị unitPrice thay vì object price
+      }));
+
+      setEquipments(formattedData || []); // lấy chính mảng formattedData
+      console.log(formattedData);
       setTotalPages(data.totalPages);
     } catch (error) {
       console.error("Error fetching equipments:", error);
@@ -74,9 +82,9 @@ const EquipmentList: React.FC = () => {
   }, [pageIndex]);
 
   // Reset pageIndex khi tìm kiếm
-    useEffect(() => {
-      setPageIndex(0);
-    }, [searchTerm]);
+  useEffect(() => {
+    setPageIndex(0);
+  }, [searchTerm]);
 
   // Lọc thiết bị theo từ khóa tìm kiếm
   const filteredEquipments = equipments.filter((equipment) =>

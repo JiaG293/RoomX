@@ -107,7 +107,7 @@ export function ResourceSelectionPanel({
     if (!el || !deviceHasMoreRef.current) return;
 
     const scrollBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    if (scrollBottom < 5) {
+    if (scrollBottom < 10) {
       const nextPage = devicePageRef.current + 1;
       fetchDevices(deviceSearchKeyword.trim(), nextPage, size).then(
         (newData) => {

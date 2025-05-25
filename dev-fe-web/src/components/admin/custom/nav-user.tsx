@@ -25,7 +25,6 @@ import { useTranslation } from "react-i18next";
 import ProfileEditModal from "@/components/admin/custom/profile-modal";
 import { toast } from "sonner";
 import { AuthService } from "@/services/auth.service";
-import { set } from "date-fns";
 
 export function NavUser({
   user,
@@ -90,6 +89,7 @@ export function NavUser({
   "
               >
                 <Avatar className="h-8 w-8 rounded-lg bg-slate-300 text-slate-800 dark:bg-slate-700 dark:text-white">
+                  <AvatarImage src={user.avatar} alt="avatar"></AvatarImage>
                   <AvatarFallback className="rounded-lg">
                     {getShortName(user.name) || "AD"}
                   </AvatarFallback>
@@ -136,7 +136,7 @@ export function NavUser({
                   className="flex items-center h-10 cursor-pointer"
                   onClick={() => setIsModalOpen(true)}
                 >
-                  <User className="mr-2 h-4 w-4" />
+                  <User className=" h-4 w-4" />
                   <span>{t("admin.menu.bottom.profile")}</span>
                 </DropdownMenuItem>
               </DropdownMenuGroup>

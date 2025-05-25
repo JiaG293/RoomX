@@ -11,6 +11,7 @@ import {
   BookOpenText,
   BarChart,
   Bell,
+  Package,
 } from "lucide-react";
 
 import { NavMain } from "@/components/admin/custom/nav-main";
@@ -24,10 +25,38 @@ import {
 import { NavUser } from "@/components/admin/custom/nav-user";
 import { useAuth } from "@/context/AuthProvider";
 import { useTranslation } from "react-i18next";
+import { AuthService } from "@/services/auth.service";
+import { toast } from "sonner";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { getUserInfo } = useAuth();
   const { t } = useTranslation();
+
+  // Thêm state lưu userProfile
+  const [userProfile, setUserProfile] = React.useState<{
+    id?: string;
+    avatarImage?: string;
+    email?: string;
+    userCode?: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    gender?: string;
+  }>({});
+
+  React.useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const authService = new AuthService();
+        const data = await authService.getProfile();
+        setUserProfile(data);
+        console.log(data);
+      } catch (error) {
+        toast.error("Không thể tải dữ liệu người dùng");
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const data = {
     teams: [
@@ -84,7 +113,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: t("admin.menu.main.resources.title"),
         url: "#",
-        icon: Monitor,
+        icon: Package,
         color: "text-cyan-500",
         items: [
           {
@@ -177,9 +206,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter className="bg-[#1e293b] dark:bg-[#0f172a] border-r border-[#1e3a8a] dark:border-[#1e293b]">
         <NavUser
           user={{
-            name: getUserInfo()?.username + "",
-            email: getUserInfo()?.email + "",
-            avatar: "",
+            name: userProfile?.userCode || getUserInfo()?.username || "",
+            email: userProfile?.email || getUserInfo()?.email || "",
+            avatar: userProfile?.avatarImage || "",
           }}
         />
       </SidebarFooter>

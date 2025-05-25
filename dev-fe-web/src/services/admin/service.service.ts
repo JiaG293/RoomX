@@ -1,3 +1,4 @@
+import { UploadResponse } from "@/services/admin/user.service";
 import { AuthService } from "@/services/auth.service";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -103,4 +104,94 @@ export class ServiceService {
       throw error;
     }
   }
+
+
+
+  // Cập nhat dịch vụ
+  async updateService(
+    id: string,
+    file: File | undefined,
+    serviceData: any,
+    price: number | undefined
+  ) {
+    const token = Cookies.get("token");
+    if (!token) {
+      throw new Error("Không có token");
+    }
+
+    let imageUrls: string | undefined = undefined;
+
+    // Nếu có file thì upload ảnh trước
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadRes = await axios.post<UploadResponse>(
+        `${API_BASE_URL}/s3/users/avatar`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+            "X-tenantId": import.meta.env.VITE_KEYCLOAK_REALM,
+          },
+        }
+      );
+
+      if (uploadRes.data.code !== 1000) {
+        throw new Error(`Upload avatar failed, code: ${uploadRes.data.code}`);
+      }
+
+      imageUrls = uploadRes.data.result;
+    }
+
+    // Merge thêm ảnh vào data nếu có
+    const data = imageUrls
+      ? { ...serviceData, imageUrls: [`${imageUrls}`] }
+      : serviceData;
+
+    try {
+      // cập nhật thông tin dịch vụ
+      await axios.patch(`${API_BASE_URL}/services/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+        },
+      });
+
+      // cập nhật giá nếu có
+      if (price !== undefined) {
+        await axios.post(
+          `${API_BASE_URL}/services/${id}/prices`,
+          { unitPrice: price },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+              "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+            },
+          }
+        );
+      }
+
+      toast.success("Cập nhật dịch vụ thành công!");
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
+      console.error("Lỗi khi cập nhật:", error);
+      toast.error("Lỗi khi cập nhật dịch vụ!");
+      throw error;
+    }
+  }
+
+
+
+
 }

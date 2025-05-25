@@ -1,17 +1,8 @@
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ImagePreviewModal } from "@/components/admin/rooms/ImagePreviewModal";
 import { EquipmentDetail } from "@/pages/Admin/Equipment/EquipmentDetail";
 import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
 export interface EquipmentType {
   id: string;
@@ -19,7 +10,8 @@ export interface EquipmentType {
   name: string;
   brand: string;
   description: string;
-  unitPrice: number;
+  imageUrls: string[];
+  price: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -30,9 +22,28 @@ export const columns: ColumnDef<EquipmentType>[] = [
     header: "STT",
     cell: ({ row }) => row.index + 1,
   },
+
   {
-    accessorKey: "equipmentCode",
-    header: "Mã thiết bị",
+    accessorKey: "imageUrls",
+    header: "Hình ảnh",
+    cell: ({ row }) => {
+      const imageUrl = row.original.imageUrls?.[0];
+      console.log(imageUrl);
+      if (!imageUrl) return "";
+
+      return (
+        <ImagePreviewModal
+          imageUrl={imageUrl}
+          trigger={
+            <img
+              src={imageUrl}
+              alt="ảnh"
+              className="bg-transparent w-16 h-16 object-cover rounded cursor-pointer hover:scale-105 transition"
+            />
+          }
+        />
+      );
+    },
   },
   {
     accessorKey: "name",
@@ -43,12 +54,17 @@ export const columns: ColumnDef<EquipmentType>[] = [
     header: "Thương hiệu",
   },
   {
+    accessorKey: "equipmentCode",
+    header: "Mã thiết bị",
+  },
+  {
     accessorKey: "description",
     header: "Mô tả",
-    cell: ({ row }) =>
-      row.original.description.length > 50
-        ? row.original.description.substring(0, 50) + "..."
-        : row.original.description,
+    cell: ({ row }) => (
+      <div className="max-w-[200px] truncate text-ellipsis whitespace-nowrap">
+        {row.original.description}
+      </div>
+    ),
   },
   {
     id: "actions",
@@ -57,11 +73,11 @@ export const columns: ColumnDef<EquipmentType>[] = [
       return (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <div >
-              <EquipmentDetail  id={row.original.id} />{" "}
-            </div>
+            <EquipmentDetail id={row.original.id}></EquipmentDetail>
           </DialogTrigger>
-          <DialogContent className="max-w-md p-0 overflow-hidden rounded-lg shadow-lg"></DialogContent>
+          <DialogContent className="max-w-3xl">
+            <EquipmentDetail id={row.original.id} />
+          </DialogContent>
         </Dialog>
       );
     },

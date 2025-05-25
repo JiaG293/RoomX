@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_HOST;
 
-interface UploadResponse {
+export interface UploadResponse {
   code: number;
   result: string; // URL avatar mới
 }

@@ -37,7 +37,7 @@ export function MemberSelectionPanel({
   const [searchKeyword, setSearchKeyword] = useState("");
   const [filter, setFilter] = useState("group");
 
-  const size = 5;
+  const size = 10;
   const hasMoreRef = useRef(true);
   const pageRef = useRef(0);
   const leftListRef = useRef<HTMLDivElement>(null);
@@ -77,7 +77,7 @@ export function MemberSelectionPanel({
     if (!el || !hasMoreRef.current) return;
 
     const scrollBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    if (scrollBottom < 5) {
+    if (scrollBottom < 10) {
       const nextPage = pageRef.current + 1;
       fetchParticipants(searchKeyword.trim(), nextPage, size).then(
         (newData) => {
