@@ -5,6 +5,19 @@ import { toast } from "sonner";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_HOST;
 
+interface UploadResponse {
+  code: number;
+  result: string; // URL avatar mới
+}
+
+interface UpdateUserPayload {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  gender?: string;
+  avatarUrl?: string;
+}
+
 export class UserService {
   async getListUsers(page: number, size: number, keyword: string) {
     const token = Cookies.get("token");
@@ -126,7 +139,7 @@ export class UserService {
     try {
       const response = await axios.patch(
         `${API_BASE_URL}/users/${userId}`,
-        { enable: false }, 
+        { enable: false },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -164,7 +177,7 @@ export class UserService {
     try {
       const response = await axios.patch(
         `${API_BASE_URL}/users/${userId}`,
-        { enable: true }, 
+        { enable: true },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -187,6 +200,74 @@ export class UserService {
 
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi lấy dữ liệu!");
+      throw error;
+    }
+  }
+
+  async updateProfileUser(
+    file: File | null,
+    firstName: string,
+    lastName: string,
+    phoneNumber: string,
+    gender: boolean
+  ) {
+    const token = Cookies.get("token");
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    }
+
+    let avatarUrl: string | undefined = undefined;
+
+    // Nếu có file thì upload ảnh mới
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadRes = await axios.post<UploadResponse>(
+        `${API_BASE_URL}/s3/users/avatar`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+            "X-tenantId": import.meta.env.VITE_KEYCLOAK_REALM,
+          },
+        }
+      );
+
+      if (uploadRes.data.code !== 1000) {
+        throw new Error(`Upload avatar failed, code: ${uploadRes.data.code}`);
+      }
+
+      avatarUrl = uploadRes.data.result;
+    }
+    console.log(1, avatarUrl);
+    // Chuẩn bị data gửi patch
+    const updateData: any = { firstName, lastName, phoneNumber, gender };
+    if (avatarUrl) updateData.avatarImage = avatarUrl;
+    console.log(2, updateData);
+    try {
+      const response = await axios.patch(`${API_BASE_URL}/users`, updateData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-tenantId": import.meta.env.VITE_KEYCLOAK_REALM,
+        },
+      });
+
+      console.log(3, response);
+
+      return response.data;
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        // Refresh token logic
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
       throw error;
     }
   }

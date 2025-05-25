@@ -74,7 +74,7 @@ export function Profile({ trigger }: { trigger?: React.ReactNode }) {
       <DialogContent className="max-w-md p-0 overflow-hidden rounded-lg shadow-lg">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Thông tin tài khoản
+            Thông tin tài khoản aaa
           </DialogTitle>
         </div>
 
@@ -169,6 +169,14 @@ export function Profile({ trigger }: { trigger?: React.ReactNode }) {
         <div className="px-6 pb-6 text-center">
           {isEditing ? (
             <div className="flex justify-center gap-4">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+              >
+                <X className="w-4 h-4" />
+                Hủy
+              </button>
               <DialogClose asChild>
                 <button
                   type="button"
@@ -179,14 +187,6 @@ export function Profile({ trigger }: { trigger?: React.ReactNode }) {
                   Lưu
                 </button>
               </DialogClose>
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
-              >
-                <X className="w-4 h-4" />
-                Hủy
-              </button>
             </div>
           ) : (
             <button

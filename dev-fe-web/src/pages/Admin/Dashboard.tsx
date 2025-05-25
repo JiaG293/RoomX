@@ -24,6 +24,7 @@ import CMSLayout from "@/layouts/cms-layout";
 import { useTranslation } from "react-i18next";
 import { ScheduleService } from "@/services/admin/schedule.service";
 import { toast } from "sonner";
+import { AuthService } from "@/services/auth.service";
 
 const stats = [
   {
@@ -71,6 +72,9 @@ const Dashboard: React.FC = () => {
   const [pendingBookings, setPendingBookings] = useState<any[]>([]);
 
   useEffect(() => {
+
+    
+
     const fetchData = async () => {
       try {
         const bookingService = new ScheduleService();

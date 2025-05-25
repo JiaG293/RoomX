@@ -1,205 +1,308 @@
-import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Camera, Pencil, Save, X } from "lucide-react";
-import { AuthService } from "@/services/auth.service";
-import { getShortName } from "@/utils/string.util";
+import React, { useState } from "react";
+import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
+import { UserService } from "@/services/admin/user.service";
+import { toast } from "sonner";
 
-interface User {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  gender: boolean;
-  avatarImage: string;
-  userCode: string;
+interface ProfileEditModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  user: {
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    gender?: string;
+    avatarImage?: string;
+  };
 }
 
-export function Profile({ trigger }: { trigger?: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [editedUser, setEditedUser] = useState<User | null>(null);
+export default function ProfileEditModal({
+  isOpen,
+  onClose,
+  user,
+}: ProfileEditModalProps) {
   const [isEditing, setIsEditing] = useState(false);
 
-  const fullName = user ? `${user.firstName} ${user.lastName}` : "";
+  const [firstName, setFirstName] = useState(user.firstName || "");
+  const [lastName, setLastName] = useState(user.lastName || "");
+  const [phone, setPhone] = useState(user.phoneNumber || "");
+  const [gender, setGender] = useState(user.gender || "");
+  const [avatarImage, setAvatarImage] = useState(user.avatarImage || "");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const authService = new AuthService();
-        const userData = await authService.getProfile();
-        setUser(userData);
-        setEditedUser(userData);
-      } catch (error) {
-        console.error("Không thể lấy thông tin người dùng:", error);
-      }
+  const [errors, setErrors] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+  });
+
+  if (!isOpen) return null;
+
+  const validateInputs = () => {
+    const phoneRegex = /^0\d{9}$/;
+
+    const newErrors = {
+      firstName: firstName.trim() ? "" : "Vui lòng nhập họ",
+      lastName: lastName.trim() ? "" : "Vui lòng nhập tên",
+      phone: phoneRegex.test(phone.trim())
+        ? ""
+        : "Số điện thoại phải bắt đầu bằng 0 và gồm 10 chữ số",
     };
-    fetchUser();
-  }, []);
 
-  const handleChange = (field: keyof User, value: string | boolean) => {
-    if (editedUser) {
-      setEditedUser({ ...editedUser, [field]: value });
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((e) => e);
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!validateInputs()) return;
+
+    try {
+      const userService = new UserService();
+
+      // Nếu cần upload avatarFile thì xử lý riêng (ví dụ api khác hoặc kèm trong formData)
+      // Hiện tại bạn chưa có logic upload avatarFile, chỉ update profile thôi.
+
+      await userService.updateProfileUser(
+        avatarFile,
+        firstName,
+        lastName,
+        phone,
+        gender === "male" ? true : false
+      );
+
+      setIsEditing(false);
+      toast.success("Cập nhật thành công!");
+    } catch (error) {
+      toast.error("Lỗi khi cập nhật thông tin");
     }
   };
 
-  const handleSave = () => {
-    setUser(editedUser);
-    setIsEditing(false);
-    // TODO: Gọi API lưu nếu có
+  const handleChangeAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Chỉ chấp nhận ảnh định dạng jpg, jpeg, png, gif");
+      return;
+    }
+
+    const maxSizeMB = 2;
+    if (file.size > maxSizeMB * 1024 * 1024) {
+      toast.error("Kích thước ảnh không được vượt quá 2MB");
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    setAvatarImage(url);
+    setAvatarFile(file);
   };
 
-  const handleCancel = () => {
-    setEditedUser(user);
-    setIsEditing(false);
+  const handleToggleEdit = () => {
+    if (isEditing) {
+      handleUpdateProfile();
+    } else {
+      setIsEditing(true);
+    }
   };
 
-  const defaultTrigger = (
-    <button className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700">
-      Hồ sơ cá nhân
-    </button>
-  );
-
-  if (!user || !editedUser) return null;
+  const handleClose = () => {
+    setIsEditing(false);
+    setErrors({
+      firstName: "",
+      lastName: "",
+      phone: "",
+    });
+    setAvatarImage(user.avatarImage || "");
+    onClose();
+  };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{trigger ?? defaultTrigger}</DialogTrigger>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50"
+      onClick={handleClose}
+    >
+      <div
+        className="relative bg-white bg-opacity-90 backdrop-blur-sm rounded-lg shadow-lg p-8 w-full max-w-md border-2 border-gray-300"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={handleClose}
+          className="focus:outline-none border-none hover:scale-110 absolute top-4 right-4 text-gray-600 hover:text-gray-900 -mt-6 -mr-6 bg-transparent z-50"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
 
-      <DialogContent className="max-w-md p-0 overflow-hidden rounded-lg shadow-lg">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Thông tin tài khoản
-          </DialogTitle>
+        <div className="relative h-28 w-full rounded-t-lg">
+          <img
+            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+            alt="Cover"
+            className="object-cover w-full h-full"
+          />
+          <div className="absolute left-1/2 bottom-[-48px] transform -translate-x-1/2 border-4 border-white rounded-full overflow-visible w-24 h-24 bg-gray-200 flex items-center justify-center">
+            <Avatar className="w-24 h-24 rounded-full relative overflow-hidden">
+              <AvatarImage
+                src={avatarImage || "https://via.placeholder.com/96"}
+                alt="Avatar"
+                className="w-full h-full object-cover"
+              />
+              <AvatarFallback>
+                {(firstName[0] || "") + (lastName[0] || "UN")}
+              </AvatarFallback>
+            </Avatar>
+            {isEditing && (
+              <label
+                htmlFor="avatar-file-input"
+                className="absolute -bottom-2 -right-2 bg-slate-600 hover:bg-slate-700 text-white rounded-full p-2 shadow-lg border-2 border-white cursor-pointer flex items-center justify-center"
+                title="Chọn ảnh mới"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h4l3-3h4l3 3h4v11a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11v6m3-3H9" />
+                </svg>
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="avatar-file-input"
+                  className="hidden"
+                  onChange={handleChangeAvatarFile}
+                />
+              </label>
+            )}
+          </div>
         </div>
 
-        <div
-          className="h-28 w-full bg-center bg-cover"
-          style={{
-            backgroundImage:
-              "url(https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=60)",
-          }}
-        ></div>
+        <div className="h-14" />
+        <h2 className="text-xl font-semibold mb-6 text-gray-800 text-center">
+          {isEditing ? "Chỉnh sửa hồ sơ" : "Chi tiết hồ sơ"}
+        </h2>
 
-        <div className="relative -mt-12 px-6 flex items-center gap-4">
-          <div className="relative">
-            <Avatar className="w-20 h-20 ring-4 ring-white dark:ring-gray-900 rounded-full bg-gray-300">
-              {user.avatarImage ? (
-                <AvatarImage src={user.avatarImage} alt={fullName} />
-              ) : (
-                <AvatarFallback>{getShortName(user.firstName)}</AvatarFallback>
+        <form className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                htmlFor="firstName"
+                className="block text-gray-700 text-sm font-medium mb-1"
+              >
+                Họ
+              </label>
+              <input
+                id="firstName"
+                type="text"
+                value={firstName}
+                disabled={!isEditing}
+                onChange={(e) => setFirstName(e.target.value)}
+                className={`w-full bg-transparent border rounded-md px-3 py-2 transition ${
+                  !isEditing
+                    ? "opacity-60 cursor-not-allowed"
+                    : "border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+                }`}
+                placeholder="Nhập họ"
+              />
+              {errors.firstName && (
+                <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
               )}
-            </Avatar>
-            <button
-              type="button"
-              aria-label="Chỉnh sửa ảnh đại diện"
-              className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 transition"
-            >
-              <Camera className="w-5 h-5 text-gray-700" />
-            </button>
+            </div>
+
+            <div>
+              <label
+                htmlFor="lastName"
+                className="block text-gray-700 text-sm font-medium mb-1"
+              >
+                Tên
+              </label>
+              <input
+                id="lastName"
+                type="text"
+                value={lastName}
+                disabled={!isEditing}
+                onChange={(e) => setLastName(e.target.value)}
+                className={`w-full bg-transparent border rounded-md px-3 py-2 transition ${
+                  !isEditing
+                    ? "opacity-60 cursor-not-allowed"
+                    : "border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+                }`}
+                placeholder="Nhập tên"
+              />
+              {errors.lastName && (
+                <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
+              )}
+            </div>
           </div>
 
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {fullName}
-            </h2>
+            <label
+              htmlFor="phone"
+              className="block text-gray-700 text-sm font-medium mb-1"
+            >
+              Số điện thoại
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              value={phone}
+              disabled={!isEditing}
+              onChange={(e) => setPhone(e.target.value)}
+              className={`w-full bg-transparent border rounded-md px-3 py-2 transition ${
+                !isEditing
+                  ? "opacity-60 cursor-not-allowed"
+                  : "border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+              }`}
+              placeholder="Nhập số điện thoại"
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+            )}
           </div>
-        </div>
 
-        <div className="px-6 pt-4 pb-6 text-gray-800 dark:text-gray-300">
-          <dl className="space-y-3">
-            {[
-              { label: "Họ", field: "firstName", type: "text" },
-              { label: "Tên", field: "lastName", type: "text" },
-              { label: "Mã nhân viên", field: "userCode", type: "text" },
-              { label: "Email", field: "email", type: "text" },
-              { label: "Điện thoại", field: "phoneNumber", type: "text" },
-            ].map(({ label, field, type }) => (
-              <div
-                key={field}
-                className="flex justify-between items-center gap-4"
-              >
-                <dt className="font-medium">{label}</dt>
-                <dd className="text-right flex-1">
-                  {isEditing ? (
-                    <input
-                      type={type}
-                      className="w-full bg-transparent border-b border-gray-400 focus:outline-none px-2 py-1 text-right"
-                      value={(editedUser as any)[field]}
-                      onChange={(e) =>
-                        handleChange(field as keyof User, e.target.value)
-                      }
-                    />
-                  ) : (
-                    (user as any)[field]
-                  )}
-                </dd>
-              </div>
-            ))}
+          <div>
+            <label
+              htmlFor="gender"
+              className="block text-gray-700 text-sm font-medium mb-1"
+            >
+              Giới tính
+            </label>
+            <select
+              id="gender"
+              value={gender}
+              disabled={!isEditing}
+              onChange={(e) => setGender(e.target.value)}
+              className={`w-full bg-transparent border rounded-md px-3 py-2 transition ${
+                !isEditing
+                  ? "opacity-60 cursor-not-allowed"
+                  : "border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+              }`}
+            >
+              <option value="male">Nam</option>
+              <option value="female">Nữ</option>
+            </select>
+          </div>
 
-            <div className="flex justify-between items-center gap-4">
-              <dt className="font-medium">Giới tính</dt>
-              <dd className="text-right flex-1">
-                {isEditing ? (
-                  <select
-                    className="bg-transparent w-full border px-2 py-1 rounded"
-                    value={editedUser.gender ? "male" : "female"}
-                    onChange={(e) =>
-                      handleChange("gender", e.target.value === "male")
-                    }
-                  >
-                    <option value="male">Nam</option>
-                    <option value="female">Nữ</option>
-                  </select>
-                ) : editedUser.gender ? (
-                  "Nam"
-                ) : (
-                  "Nữ"
-                )}
-              </dd>
-            </div>
-          </dl>
-        </div>
-
-        <div className="px-6 pb-6 text-center">
-          {isEditing ? (
-            <div className="flex justify-center gap-4">
-              <DialogClose asChild>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                >
-                  <Save className="w-4 h-4" />
-                  Lưu
-                </button>
-              </DialogClose>
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
-              >
-                <X className="w-4 h-4" />
-                Hủy
-              </button>
-            </div>
-          ) : (
+          <div className="flex justify-center mt-6">
             <button
               type="button"
-              onClick={() => setIsEditing(true)}
-              className="bg-transparent inline-flex items-center gap-2 text-indigo-600 font-semibold hover:text-indigo-800 focus:outline-none"
+              onClick={handleToggleEdit}
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition"
             >
-              <Pencil className="w-5 h-5" />
-              Cập nhật
+              {isEditing ? "Lưu" : "Chỉnh sửa"}
             </button>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
