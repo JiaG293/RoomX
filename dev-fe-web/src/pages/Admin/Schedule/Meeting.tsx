@@ -104,7 +104,7 @@ const Meeting: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       loadEvents(monthYearRef.current.month, monthYearRef.current.year);
-    }, 15000); // 10 giây
+    }, 5000); // 10 giây
 
     return () => clearInterval(interval); // Cleanup khi component unmount
   }, [loadEvents]);

@@ -1,5 +1,5 @@
 import CMSLayout from "@/layouts/cms-layout";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -13,6 +13,7 @@ import EventModalApproval from "@/components/admin/meetings/event-modal-approval
 import PortalLayout from "@/layouts/portal-layout";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import EventModalApprovalUser from "@/pages/App/EventModalApprovalUser";
+import { useEventStore } from "@/store/usePendingStore"; // import store
 
 interface EventType {
   id: string;
@@ -36,47 +37,65 @@ interface EventType {
 }
 
 const Pending: React.FC = () => {
-  const [events, setEvents] = useState<EventType[]>([]);
+  const events = useEventStore((state) => state.events);
+  const setEvents = useEventStore((state) => state.setEvents);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [modalEvent, setModalEvent] = useState<any>(null);
-
+  const monthYearRef = useRef({
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear(),
+  });
   const loadEvents = useCallback(async (month: number, year: number) => {
-      try {
-        const scheduleService = new ScheduleService();
-        const data = await scheduleService.getPendingSchedules(month, year);
-        console.log(data);
-  
-        const formattedEvents: EventType[] = data.map((event: any) => ({
-          id: event.id,
-          title: event.title || "Sự kiện",
-          start: `${event.updatedAt}`,
-         
-          extendedProps: {
-            status: event.approvalStatus || "Chưa duyệt",
-          },
-          className:
-            event.approvalStatus === "PENDING"
-              ? "event-pending"
-              : "event-conflict",
-        }));
-  
-        setEvents(formattedEvents);
-      } catch (error) {
-        console.error("Error loading schedule:", error);
-      }
-    }, []);
+    try {
+      const scheduleService = new ScheduleService();
+      const data = await scheduleService.getPendingSchedules(month, year);
+      console.log(data);
+
+      const formattedEvents: EventType[] = data.map((event: any) => ({
+        id: event.id,
+        title: event.title || "Sự kiện",
+        start: `${event.updatedAt}`,
+
+        extendedProps: {
+          status: event.approvalStatus || "Chưa duyệt",
+        },
+        className:
+          event.approvalStatus === "PENDING"
+            ? "event-pending"
+            : "event-conflict",
+      }));
+
+      setEvents(formattedEvents);
+    } catch (error) {
+      console.error("Error loading schedule:", error);
+    }
+  }, []);
 
   useEffect(() => {
     loadEvents(currentMonth, currentYear);
   }, [currentMonth, currentYear, loadEvents]);
 
+  //polling
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadEvents(monthYearRef.current.month, monthYearRef.current.year);
+    }, 5000); // 10 giây
+
+    return () => clearInterval(interval); // Cleanup khi component unmount
+  }, [loadEvents]);
+
   return (
-    <PortalLayout >
+    <PortalLayout>
       <div style={{ flex: 0.9 }}>
         <FullCalendar
           locale="vi"
-          plugins={[dayGridPlugin, listPlugin, interactionPlugin, timeGridPlugin]}
+          plugins={[
+            dayGridPlugin,
+            listPlugin,
+            interactionPlugin,
+            timeGridPlugin,
+          ]}
           initialView={"timeGridDay"}
           events={events}
           eventClick={(info) => {

@@ -135,7 +135,7 @@ const EventModalApproval: React.FC<EventModalApprovalProps> = ({
       await service.approveSchedules(event.id);
       toast.success("Duyệt lịch họp thành công!");
       onClose();
-      setTimeout(() => window.location.reload(), 1000);
+      // setTimeout(() => window.location.reload(), 1000);
     } catch (error) {
       console.error("Lỗi duyệt lịch:", error);
     }
@@ -159,7 +159,7 @@ const EventModalApproval: React.FC<EventModalApprovalProps> = ({
       setCancelReason("");
       setIsRejectModalOpen(false);
       onClose();
-      setTimeout(() => window.location.reload(), 1000);
+      // setTimeout(() => window.location.reload(), 1000);
     } catch (error) {
       console.error("Lỗi từ chối lịch:", error);
       toast.error("Có lỗi xảy ra khi từ chối lịch họp.");

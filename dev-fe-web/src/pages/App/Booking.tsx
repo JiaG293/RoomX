@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -10,15 +10,18 @@ import EventModal from "@/components/app/meetings/event-modal";
 import timeGridPlugin from "@fullcalendar/timegrid";
 
 const Booking: React.FC = () => {
-  const [viewMode, setViewMode] = useState<"dayGridMonth" | "listWeek" | "timeGridDay">(
-    "dayGridMonth"
-  );
+  const [viewMode, setViewMode] = useState<
+    "dayGridMonth" | "listWeek" | "timeGridDay"
+  >("dayGridMonth");
   const [events, setEvents] = useState<any[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [modalEvent, setModalEvent] = useState<any>(null);
   const [modalDay, setModalDay] = useState<any>(null);
-
+  const monthYearRef = useRef({
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear(),
+  });
   const loadEvents = useCallback(async (month: number, year: number) => {
     try {
       const scheduleService = new ScheduleService();
@@ -60,12 +63,26 @@ const Booking: React.FC = () => {
     loadEvents(currentMonth, currentYear);
   }, [currentMonth, currentYear, loadEvents]);
 
+  //polling
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadEvents(monthYearRef.current.month, monthYearRef.current.year);
+    }, 5000); // 10 giây
+
+    return () => clearInterval(interval); // Cleanup khi component unmount
+  }, [loadEvents]);
+
   return (
     <PortalLayout>
       <div style={{ flex: 1 }}>
         <FullCalendar
           locale="vi"
-          plugins={[dayGridPlugin, listPlugin, interactionPlugin, timeGridPlugin]}
+          plugins={[
+            dayGridPlugin,
+            listPlugin,
+            interactionPlugin,
+            timeGridPlugin,
+          ]}
           initialView={viewMode}
           events={events}
           dateClick={(info) => {
@@ -126,7 +143,7 @@ const Booking: React.FC = () => {
         onClose={() => setModalDay(null)}
       />
       <EventModal event={modalEvent} onClose={() => setModalEvent(null)} />
-          
+
       {/* Chú thích màu sắc */}
       <div className="mt-4 flex flex-col gap-2">
         {/* <div className="flex gap-4">

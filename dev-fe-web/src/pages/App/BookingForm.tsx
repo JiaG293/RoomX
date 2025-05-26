@@ -226,9 +226,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       return false;
     }
 
-    // ----- Thêm kiểm tra giờ hành chính (ví dụ 7:00 - 23:00) -----
+    // ----- Thêm kiểm tra giờ hành chính (ví dụ 7:00 - 22:00) -----
     const officeStartTime = "07:00";
-    const officeEndTime = "21:00";
+    const officeEndTime = "22:00";
 
     if (
       !isBookingTimeValid(startTime, endTime, officeStartTime, officeEndTime)

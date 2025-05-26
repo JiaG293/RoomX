@@ -25,7 +25,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       { title: "Trang chủ", url: "/portal/home", icon: CalendarCheck },
       { title: "Đặt lịch", url: "/portal/booking", icon: Clock },
       { title: "Yêu cầu", url: "/portal/pending", icon: Hourglass },
-      { title: "Nhóm", url: "/portal/groups", icon: Users },
+      // { title: "Nhóm", url: "/portal/groups", icon: Users },
       { title: "Thống kê", url: "/portal/settings", icon: PieChart },
       { title: "Thông báo", url: "/portal/notifications", icon: Bell },
       { title: "Cài đặt", url: "/portal/settings", icon: Settings },

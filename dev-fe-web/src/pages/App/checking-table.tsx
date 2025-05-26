@@ -74,6 +74,28 @@ const CheckingTable: React.FC<CheckingTableProps> = ({ data }) => {
 
   if (!data || data.length === 0) return null;
 
+  const durationOptions = [30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180];
+
+  function generateTimeOptions(): string[] {
+    const options = [];
+    for (let h = 7; h <= 22; h++) {
+      for (let m = 0; m < 60; m += 15) {
+        if (h === 22 && m > 0) break;
+        const hh = h.toString().padStart(2, "0");
+        const mm = m.toString().padStart(2, "0");
+        options.push(`${hh}:${mm}`);
+      }
+    }
+    return options;
+  }
+
+  function addMinutesToTime(time: string, minutes: number): string {
+    const [h, m] = time.split(":").map(Number);
+    const date = new Date();
+    date.setHours(h, m + minutes, 0, 0);
+    return date.toTimeString().slice(0, 5);
+  }
+
   return (
     <div className="mt-4 overflow-x-auto">
       <Table>
@@ -119,16 +141,12 @@ const CheckingTable: React.FC<CheckingTableProps> = ({ data }) => {
                 {/* Input chọn giờ */}
                 <TableCell>
                   {item.hasConflict && suggestions.length > 0 ? (
-                    <div className="flex gap-4 items-center">
-                      <div className="flex flex-col">
+                    <div className="flex gap-6 items-center">
+                      <div className="flex gap-3 items-center">
                         <label className="text-xs text-gray-500">Bắt đầu</label>
-                        <input
-                          type="time"
+                        <select
                           className="border rounded px-2 py-1 bg-transparent"
-                          min={minTime}
-                          max={maxTime}
-                          step="60"
-                          defaultValue=""
+                          value={current?.startTime || ""}
                           onChange={(e) =>
                             handleTimeChange(
                               item.date,
@@ -137,29 +155,60 @@ const CheckingTable: React.FC<CheckingTableProps> = ({ data }) => {
                               e.target.value
                             )
                           }
-                        />
+                        >
+                          <option value="">-- chọn --</option>
+                          {generateTimeOptions().map((time) => (
+                            <option key={time} value={time}>
+                              {time}
+                            </option>
+                          ))}
+                        </select>
                       </div>
-                      <div className="flex flex-col">
+
+                      <div className="flex gap-3 items-center">
                         <label className="text-xs text-gray-500">
-                          Kết thúc
+                          Thời lượng
                         </label>
-                        <input
-                          type="time"
+                        <select
                           className="border rounded px-2 py-1 bg-transparent"
-                          min={minTime}
-                          max={maxTime}
-                          step="60"
-                          defaultValue=""
-                          onChange={(e) =>
-                            handleTimeChange(
-                              item.date,
-                              item.optimalRoomId,
-                              "endTime",
-                              e.target.value
-                            )
-                          }
-                        />
+                          value={current?.duration || ""}
+                          onChange={(e) => {
+                            const duration = parseInt(e.target.value, 10);
+                            const start = current?.startTime || "";
+                            if (start) {
+                              const endTime = addMinutesToTime(start, duration);
+                              handleTimeChange(
+                                item.date,
+                                item.optimalRoomId,
+                                "endTime",
+                                endTime
+                              );
+                              setExceptions((prev) =>
+                                prev.map((ex) =>
+                                  ex.date === item.date &&
+                                  ex.roomId === item.optimalRoomId
+                                    ? { ...ex, duration }
+                                    : ex
+                                )
+                              );
+                            }
+                          }}
+                        >
+                          <option value="">-- chọn --</option>
+                          {durationOptions.map((d) => (
+                            <option key={d} value={d}>
+                              {d} phút
+                            </option>
+                          ))}
+                        </select>
                       </div>
+
+                      {/* {current?.endTime && (
+                        <div className="text-xs text-gray-600 whitespace-nowrap">
+                          <span className="font-medium">Giờ kết thúc: </span>
+                          {current.endTime}
+                        </div>
+                      )} */}
                     </div>
                   ) : (
                     "-"

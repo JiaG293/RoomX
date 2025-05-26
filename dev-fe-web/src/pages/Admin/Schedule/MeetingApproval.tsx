@@ -1,5 +1,5 @@
 import CMSLayout from "@/layouts/cms-layout";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -34,7 +34,10 @@ const MeetingApproval: React.FC = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [modalEvent, setModalEvent] = useState<any>(null);
-
+  const monthYearRef = useRef({
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear(),
+  });
   const loadEvents = useCallback(async (month: number, year: number) => {
     try {
       const scheduleService = new ScheduleService();
@@ -64,6 +67,16 @@ const MeetingApproval: React.FC = () => {
   useEffect(() => {
     loadEvents(currentMonth, currentYear);
   }, [currentMonth, currentYear, loadEvents]);
+
+   //polling
+    useEffect(() => {
+      const interval = setInterval(() => {
+        loadEvents(monthYearRef.current.month, monthYearRef.current.year);
+      }, 5000); // 10 giây
+  
+      return () => clearInterval(interval); // Cleanup khi component unmount
+    }, [loadEvents]);
+  
 
   const { t } = useTranslation();
 
