@@ -42,6 +42,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MemberSelectionPanel } from "@/pages/App/MemberSelectionPanel";
 import { calculateEndTime, isBookingTimeValid } from "@/utils/date.util";
 import { ResourceSelectionPanel } from "@/pages/App/ResourceSelectionPanel";
+import { RoomService } from "@/services/admin/room.service";
 
 interface BookingModalProps {
   eventDate?: string;
@@ -119,7 +120,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const fetchBranches = async () => {
     try {
       const branchService = new BranchService();
-      const branchList = await branchService.getAllBranches();
+      const branchList = await branchService.getAllBranchesWithHierarchy();
       const dataBranch = branchList.map((branch: any) => ({
         branchId: branch.id,
         branchCode: branch.code,
@@ -181,6 +182,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
     if (!branch) {
       toast.error("Vui lòng chọn chi nhánh.");
+      return false;
+    }
+
+    const svc = new RoomService();
+    const max = await svc.getLimitRoom();
+
+    if (capacity > max) {
+      toast.error("Vượt sức chứa phòng lớn nhất.");
       return false;
     }
 

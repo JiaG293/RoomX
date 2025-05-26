@@ -129,15 +129,75 @@ export class RoomService {
     if (!token) {
       throw new Error("No authentication token found in cookies");
     }
+    let imageUrls: string | undefined = undefined;
+
+    // Nếu có file thì upload ảnh trước
+    if (roomData.file) {
+      const file = roomData.file;
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadRes = await axios.post<UploadResponse>(
+        `${API_BASE_URL}/s3/users/avatar`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+            "X-tenantId": import.meta.env.VITE_KEYCLOAK_REALM,
+          },
+        }
+      );
+
+      if (uploadRes.data.code !== 1000) {
+        throw new Error(`Upload avatar failed, code: ${uploadRes.data.code}`);
+      }
+
+      imageUrls = uploadRes.data.result;
+    }
+
+    const generateRoomClassCode = () =>
+      "" + Math.floor(1e7 + Math.random() * 9e7);
+
     try {
-      const response = await axios.post(`${API_BASE_URL}/rooms`, roomData, {
+      const classRoomResponse = await axios.post(
+        `${API_BASE_URL}/room-classes`,
+        {
+          roomClassCode: generateRoomClassCode(),
+          basePrice: roomData.price,
+          capacity: roomData.capacity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+          },
+        }
+      );
+
+      const roomClassId = classRoomResponse.data.result.id;  
+
+      // tạo phòng
+      const data = {
+        roomCode: roomData.roomCode,
+        placeId: roomData.floorId,
+        roomClassId: roomClassId,
+        description: roomData.description,
+        imageUrls: [imageUrls],
+        status: "AVAILABLE"
+      }
+      const response = await axios.post(`${API_BASE_URL}/rooms`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
           "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
         },
       });
+      toast.success("Thêm phòng thanh cong!");
+      window.location.reload();
       return response.data.result;
+
     } catch (error: any) {
       const responseData = error?.response?.data;
 
@@ -214,6 +274,36 @@ export class RoomService {
 
       console.error("Error fetching users:", error);
       toast.error("Lỗi khi cập nhật phòng!");
+      throw error;
+    }
+  }
+
+  async getLimitRoom() {
+    const token = Cookies.get("token");
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    }
+    try {
+      const response = await axios.get(`${API_BASE_URL}/rooms/capacity-range`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+        },
+      });
+      return response.data.result.max;
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
+      // console.error("Error fetching users:", error);
+      // toast.error("Lỗi khi lấy dữ liệu!");
       throw error;
     }
   }

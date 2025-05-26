@@ -28,7 +28,7 @@ const RoomList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [rooms, setRooms] = useState<RoomType[]>([]);
-const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getRoomStatusLabel = (status: string): string => {
@@ -112,19 +112,29 @@ const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
             </p>
           )}
           {filteredRooms.map((room) => {
-            // Tách vị trí
-            const [building, floor, roomNumber] = room.roomCode.split("-");
+            const parts = room.roomCode.split("-");
+            let building = "";
+            let floor = "";
+            let roomNumber = "";
+
+            if (parts.length === 3) {
+              [building, floor, roomNumber] = parts;
+            } else if (parts.length === 2) {
+              [floor, roomNumber] = parts;
+            } else if (parts.length === 1) {
+              roomNumber = parts[0];
+            }
 
             return (
               <div
                 key={room.id}
                 className="cursor-pointer w-[290px] h-[300px] border rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300
-                 bg-white dark:bg-gray-800
-                 border-gray-200 dark:border-gray-700
-                 flex flex-col"
+       bg-white dark:bg-gray-800
+       border-gray-200 dark:border-gray-700
+       flex flex-col"
                 onClick={() => {
-                  setSelectedRoomId(room.id); // Gán roomId cụ thể
-                  setIsModalOpen(true); // Mở modal
+                  setSelectedRoomId(room.id);
+                  setIsModalOpen(true);
                 }}
               >
                 {/* Ảnh phòng */}
@@ -151,19 +161,19 @@ const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
                         <span className="font-semibold text-gray-900 dark:text-white">
                           Tòa:
                         </span>{" "}
-                        {building}
+                        {building || "-"}
                       </div>
                       <div>
                         <span className="font-semibold text-gray-900 dark:text-white">
                           Lầu:
                         </span>{" "}
-                        {floor}
+                        {floor || "-"}
                       </div>
                       <div>
                         <span className="font-semibold text-gray-900 dark:text-white">
                           Phòng:
                         </span>{" "}
-                        {roomNumber}
+                        {roomNumber || "-"}
                       </div>
                     </div>
                   </div>
