@@ -24,6 +24,9 @@ import UserStatistics from "@/pages/Admin/Statistics/UserStatistics";
 import TimeStatistics from "@/pages/Admin/Statistics/TimeStatistics";
 import Guide from "@/pages/Admin/Information/Guide";
 import Notification from "@/pages/Admin/Notification";
+import Setting from "@/pages/App/Setting";
+import Notifications from "@/pages/App/Notifications";
+import Settings from "@/pages/App/Setting";
 
 export const RootRouter = createBrowserRouter([
   {
@@ -114,6 +117,14 @@ export const RootRouter = createBrowserRouter([
       {
         path: "/portal/pending",
         element: <Pending />,
+      },
+      {
+        path: "/portal/settings",
+        element: <Settings/>,
+      },
+      {
+        path: "/portal/notifications",
+        element: <Notifications/>,
       },
     ],
   },

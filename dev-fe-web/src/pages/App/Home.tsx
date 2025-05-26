@@ -95,59 +95,56 @@ const Home: React.FC = () => {
         className="p-4 bg-gray-100 dark:bg-gray-900 font-sans flex flex-col"
         style={{ height: "calc(100vh - 64px)" }}
       >
-        {/* Tổng quan */}
+        {/* Overview section */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {[
-            {
-              icon: <CalendarDays className="text-blue-700 w-5 h-5" />,
-              label: "Tổng số sự kiện",
-              count: events.length,
-              border: "border-blue-400",
-              bg: "bg-blue-100",
-              text: "text-blue-900",
-            },
-            {
-              icon: <Clock className="text-yellow-600 w-5 h-5" />,
-              label: "Sắp diễn ra",
-              count: upcomingEvents.length,
-              border: "border-yellow-400",
-              bg: "bg-yellow-100",
-              text: "text-yellow-800",
-            },
-            {
-              icon: <CheckCircle2 className="text-green-700 w-5 h-5" />,
-              label: "Đã hoàn thành",
-              count: completedEvents.length,
-              border: "border-green-400",
-              bg: "bg-green-100",
-              text: "text-green-900",
-            },
-          ].map(({ icon, label, count, border, bg, text }) => (
-            <div
-              key={label}
-              className={`rounded-md p-4 border-2 ${border} ${bg} hover:opacity-90 cursor-pointer`}
-            >
-              <div className="flex items-center space-x-3">
-                {icon}
-                <div>
-                  <p className={`text-sm font-medium ${text}`}>{label}</p>
-                  <p className={`text-xl font-bold ${text}`}>{count}</p>
-                </div>
+          <div className="rounded-md p-4 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:opacity-90 cursor-pointer">
+            <div className="flex items-center space-x-3">
+              <CalendarDays className="text-blue-600 dark:text-blue-300 w-5 h-5" />
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  Tổng số sự kiện
+                </p>
+                <p className="text-xl font-bold text-gray-900 dark:text-white">
+                  {events.length}
+                </p>
               </div>
             </div>
-          ))}
+          </div>
+
+          <div className="rounded-md p-4 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:opacity-90 cursor-pointer">
+            <div className="flex items-center space-x-3">
+              <Clock className="text-yellow-600 dark:text-yellow-300 w-5 h-5" />
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  Sắp diễn ra
+                </p>
+                <p className="text-xl font-bold text-gray-900 dark:text-white">
+                  {upcomingEvents.length}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-md p-4 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:opacity-90 cursor-pointer">
+            <div className="flex items-center space-x-3">
+              <CheckCircle2 className="text-green-600 dark:text-green-300 w-5 h-5" />
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  Đã hoàn thành
+                </p>
+                <p className="text-xl font-bold text-gray-900 dark:text-white">
+                  {completedEvents.length}
+                </p>
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Phần dưới - chia 2 cột */}
-        {/* Sự kiện sắp diễn ra - chiếm 2/3 */}
+        {/* Main content section */}
         <section className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Card cha màu trắng */}
-          <div
-            className="md:col-span-2 flex flex-col rounded-md p-6 border border-gray-300
-      bg-white dark:bg-gray-900
-      overflow-auto"
-          >
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-200 mb-5">
+          {/* Upcoming Events List */}
+          <div className="md:col-span-2 flex flex-col rounded-md p-6 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1f2937] overflow-auto">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-5">
               Sự kiện sắp diễn ra
             </h2>
 
@@ -156,19 +153,12 @@ const Home: React.FC = () => {
                 {upcomingEvents.map((event) => (
                   <li
                     key={event.id}
-                    className="
-              rounded-lg p-4 cursor-pointer
-              bg-gradient-to-tr from-blue-100 via-blue-200 to-blue-300
-              dark:from-blue-900 dark:via-blue-800 dark:to-blue-700
-              border border-blue-300 dark:border-blue-700
-              hover:opacity-90
-              transition
-            "
+                    className="rounded-lg p-4 cursor-pointer bg-gradient-to-tr from-blue-200 via-blue-300 to-blue-400 dark:from-blue-800 dark:via-blue-700 dark:to-blue-600 border border-blue-300 dark:border-blue-600 hover:opacity-90 transition"
                   >
-                    <p className="text-blue-900 dark:text-blue-200 font-semibold text-lg">
+                    <p className="text-blue-900 dark:text-blue-100 font-semibold text-lg">
                       {event.title}
                     </p>
-                    <p className="text-sm text-blue-800 dark:text-blue-300 mt-1">
+                    <p className="text-sm text-blue-800 dark:text-blue-200 mt-1">
                       {format(new Date(event.start), "dd/MM/yyyy HH:mm")} -{" "}
                       {format(new Date(event.end), "HH:mm")}
                     </p>
@@ -187,13 +177,13 @@ const Home: React.FC = () => {
             )}
           </div>
 
-          {/* 2 biểu đồ xếp dọc - chiếm 1/3 */}
+          {/* Charts */}
           <div className="flex flex-col gap-5 h-full">
+            {/* Bar Chart */}
             <div className="flex-1 rounded-md p-4 border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 flex flex-col">
               <h3 className="text-md font-semibold mb-3 text-gray-900 dark:text-gray-200">
                 Biểu đồ số sự kiện theo ngày
               </h3>
-              {/* Biểu đồ số sự kiện theo ngày (BarChart màu xanh dương) */}
               <ResponsiveContainer width="100%" height={150}>
                 <BarChart data={chartData1}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -204,12 +194,12 @@ const Home: React.FC = () => {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+
+            {/* Pie Chart */}
             <div className="flex-1 rounded-md p-4 border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 flex flex-col">
               <h3 className="text-md font-semibold mb-3 text-gray-900 dark:text-gray-200">
                 Tổng sự kiện theo trạng thái
               </h3>
-              {/* Biểu đồ sự kiện sắp diễn ra và hoàn thành (PieChart màu cam và xanh lá) */}
-
               <ResponsiveContainer width="100%" height={150}>
                 <PieChart>
                   <Pie
@@ -219,7 +209,7 @@ const Home: React.FC = () => {
                     cx="50%"
                     cy="50%"
                     outerRadius={60}
-                    labelLine={false} // Tắt đường chỉa ra
+                    labelLine={false}
                     label={false}
                   >
                     {chartData2.map((entry, index) => (
@@ -232,20 +222,12 @@ const Home: React.FC = () => {
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
-
-              {/* Custom legend bên dưới */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: 8,
-                  gap: 16,
-                }}
-              >
+              {/* Legend */}
+              <div className="flex justify-center mt-2 gap-4">
                 {chartData2.map((entry, index) => (
                   <div
                     key={`legend-${index}`}
-                    style={{ display: "flex", alignItems: "center", gap: 6 }}
+                    className="flex items-center gap-2"
                   >
                     <div
                       style={{
@@ -255,9 +237,7 @@ const Home: React.FC = () => {
                         borderRadius: 4,
                       }}
                     />
-                    <span style={{ fontSize: 13, color: "black" }}>
-                      {entry.name}
-                    </span>
+                    <span className="text-sm text-black">{entry.name}</span>
                   </div>
                 ))}
               </div>

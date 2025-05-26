@@ -41,8 +41,8 @@ export function NavMain({
             <SidebarMenuItem
               key={item.title}
               className={`relative rounded-md ${
-                isActive ? "bg-blue-200" : "text-gray-700"
-              } hover:bg-gray-100 transition`}
+                isActive ? "bg-blue-200 dark:bg-gray-800" : "text-gray-700"
+              } hover:bg-gray-100 dark:hover:bg-gray-800 transition`}
             >
               {isActive && (
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-1.5 bg-blue-500 rounded-l-sm" />
@@ -51,7 +51,7 @@ export function NavMain({
               <SidebarMenuButton asChild>
                 <Link
                   to={item.url}
-                  className="flex items-center space-x-5 px-6 py-4 text-gray-800 font-sans"
+                  className="flex items-center space-x-5 px-6 py-4 text-gray-800 dark:text-gray-200 font-sans"
                   style={{
                     fontFamily:
                       '"Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
