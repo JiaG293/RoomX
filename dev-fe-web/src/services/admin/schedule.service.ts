@@ -17,7 +17,14 @@ export class ScheduleService {
     try {
       // endpoint cũ: /bookings/list
       const response = await axios.get(`${API_BASE_URL}/bookings/list`, {
-        params: { month, year, size: -1, isAdmin: true, status: "COMPLETED,PENDING,SCHEDULED", sortBy: "status" },
+        params: {
+          month,
+          year,
+          size: -1,
+          isAdmin: true,
+          status: "COMPLETED,PENDING,SCHEDULED",
+          sortBy: "status",
+        },
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -88,7 +95,13 @@ export class ScheduleService {
       const response = await axios.get(
         `${API_BASE_URL}/bookings/request/list`,
         {
-          params: { month, year, size: -1, isAdmin: true, status: "PENDING,CONFLICT" },
+          params: {
+            month,
+            year,
+            size: -1,
+            isAdmin: true,
+            status: "PENDING,CONFLICT",
+          },
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -112,7 +125,6 @@ export class ScheduleService {
       throw error;
     }
   }
-  
 
   //Lấy các lịch cần duyệt của người dùng
   async getPendingSchedulesUser(month: number, year: number) {
@@ -126,7 +138,13 @@ export class ScheduleService {
       const response = await axios.get(
         `${API_BASE_URL}/bookings/request/list`,
         {
-          params: { month, year, size: -1, isAdmin: false, status: "PENDING, CONFLICT" },
+          params: {
+            month,
+            year,
+            size: -1,
+            isAdmin: false,
+            status: "PENDING, CONFLICT",
+          },
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -203,7 +221,62 @@ export class ScheduleService {
           "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
         },
       });
-      return response.data.result;
+
+      const scheduleData = {
+        id: response.data.result.id,
+        bookingCode: response.data.result.bookingCode,
+        title: response.data.result.title,
+        description: response.data.result.description,
+        meeetingDate: response.data.result.meetingDate,
+        startTime: response.data.result.meetingStart,
+        endTime: response.data.result.meetingEnd,
+        totalPrice: response.data.result.totalPrice,
+        status: response.data.result.status,
+        roomId: response.data.result.room.id,
+        roomCode: response.data.result.room.roomCode,
+        bookingRequestId: response.data.result.bookingRequestId,
+        requester:  response.data.result.requester,
+        participants: response.data.result.participants,
+      };
+
+      const roomResponse = await axios.get(
+        `${API_BASE_URL}/rooms/${response.data.result.room.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+          },
+        }
+      )
+
+      const roomPlace = roomResponse.data.result.place.id;
+      const roomImage = roomResponse.data.result.imageUrls[0];
+
+      const placeResponse = await axios.get(
+        `${API_BASE_URL}/places/${roomPlace}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+          },
+        }
+      )
+
+      const placeData = {
+        branch: placeResponse.data.result.branch,
+        building: placeResponse.data.result.building,
+        floor: placeResponse.data.result.floor,
+      }
+
+      const mainData = {
+        ...scheduleData,
+        ...placeData,
+        roomImage
+      }
+      console.log(mainData);
+      return mainData;
     } catch (error: any) {
       const responseData = error?.response?.data;
 
@@ -289,7 +362,7 @@ export class ScheduleService {
   }
 
   // từ chối lịch
-  async rejectSchedules(id: string) {
+  async rejectSchedules(id: string, reason: string) {
     const token = Cookies.get("token");
 
     if (!token) {
@@ -299,7 +372,49 @@ export class ScheduleService {
     try {
       const response = await axios.post(
         `${API_BASE_URL}/bookings/${id}/reject`,
-        {}, // Không cần gửi dữ liệu body nếu API không yêu cầu
+        {
+          note: reason
+        }, // Không cần gửi dữ liệu body nếu API không yêu cầu
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-tenantId": `${import.meta.env.VITE_KEYCLOAK_REALM}`,
+          },
+        }
+      );
+      toast.success("Từ chối lịch thành công!");
+      return response.data;
+    } catch (error: any) {
+      const responseData = error?.response?.data;
+
+      if (error?.response?.status === 401 && responseData?.code === 1007) {
+        console.log("gọi hàm refreshtoken");
+        const authService = new AuthService();
+        await authService.refreshToken();
+        window.location.reload();
+      }
+
+      console.error("Error fetching users:", error);
+      toast.error("Lỗi khi duyệt lịch!");
+      throw error;
+    }
+  }
+
+
+  async cancelSchedules(id: string, reason: string) {
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("No authentication token found in cookies");
+    }
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/bookings/${id}/cancel`,
+        {
+          note: reason
+        }, // Không cần gửi dữ liệu body nếu API không yêu cầu
         {
           headers: {
             Authorization: `Bearer ${token}`,

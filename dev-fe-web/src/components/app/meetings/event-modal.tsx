@@ -4,22 +4,28 @@ import {
   DialogTrigger,
   DialogContent,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ScheduleService } from "@/services/admin/schedule.service";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Calendar,
   Clock,
   User,
-  Home,
   Phone,
   Mail,
-  Info,
-  CheckCircle,
-  Building2,
+  Home,
+  DollarSign,
+  MapPin,
+  Building,
+  Layers,
+  Users,
+  XCircle,
+  Barcode,
+  IdCard,
+  Hash,
 } from "lucide-react";
+import { ScheduleService } from "@/services/admin/schedule.service";
 
 interface EventModalProps {
   event: any | null;
@@ -32,169 +38,204 @@ const EventModal: React.FC<EventModalProps> = ({ event, onClose }) => {
   useEffect(() => {
     if (!event) return;
 
-    const fetchEventDetails = async () => {
+    const fetchData = async () => {
       try {
-        const scheduleService = new ScheduleService();
-        const data = await scheduleService.getDetailSchedule(event.id);
+        const service = new ScheduleService();
+        const data = await service.getDetailSchedule(event.id);
+        console.log(data);
         setEventDetails(data);
       } catch (error) {
         console.error("Error fetching event details:", error);
       }
     };
 
-    fetchEventDetails();
+    fetchData();
   }, [event]);
 
-  if (!event) return null;
+  if (!eventDetails) return null;
+
+  const {
+    bookingCode,
+    bookingRequestId,
+    branch,
+    building,
+    floor,
+    meeetingDate,
+    participants,
+    requester,
+    roomCode,
+    roomId,
+    startTime,
+    endTime,
+    status,
+    title,
+    totalPrice,
+    roomImage,
+  } = eventDetails;
 
   return (
     <Dialog open={!!event} onOpenChange={(open) => !open && onClose()}>
       <DialogTrigger />
-      <DialogContent
-        className="max-w-[900px] w-[90vw] max-h-[90vh] p-6 font-sans bg-white rounded-lg flex flex-col"
-        style={{ backdropFilter: "blur(8px)" }}
-      >
-        <DialogTitle className="text-2xl font-semibold text-gray-900 mb-6 flex-shrink-0">
-          Chi tiết sự kiện
-        </DialogTitle>
+      <DialogContent className="w-full max-w-4xl max-h-[85vh] p-0 bg-background rounded-md flex flex-col">
+        {/* Header cố định */}
+        <div className="flex items-center justify-between px-6 py-4 border-b bg-muted sticky top-0 z-20">
+          <DialogTitle className="text-xl font-semibold">
+            {title || "Chi tiết sự kiện"}
+          </DialogTitle>
+        </div>
 
-        {/* Phần body cuộn */}
-        <DialogDescription className="flex-grow overflow-auto">
-          {eventDetails ? (
-            <div className="space-y-8 min-w-[300px]">
-              {/* Event Info */}
-              <Card title="Thông tin sự kiện" gradientFrom="from-blue-200" gradientTo="to-blue-50">
-                <InfoGrid>
-                  <InfoRow
-                    icon={<Clock className="text-blue-600" />}
-                    label="Mã đặt chỗ"
-                    value={eventDetails.bookingCode}
-                  />
-                  <InfoRow
-                    icon={<Calendar className="text-green-600" />}
-                    label="Ngày họp"
-                    value={eventDetails.meetingDate}
-                  />
-                  <InfoRow
-                    icon={<Clock className="text-purple-600" />}
-                    label="Giờ bắt đầu"
-                    value={eventDetails.meetingStart}
-                  />
-                  <InfoRow
-                    icon={<Clock className="text-pink-600" />}
-                    label="Giờ kết thúc"
-                    value={eventDetails.meetingEnd}
-                  />
-                </InfoGrid>
-              </Card>
-
-              {/* Status */}
-              <Card title="Tình trạng" gradientFrom="from-green-200" gradientTo="to-green-50">
-                <p className="text-gray-700 text-base flex items-center gap-2">
-                  <CheckCircle className="text-green-700" size={20} />
-                  <strong>Trạng thái:</strong> {eventDetails.status}
-                </p>
-              </Card>
-
-              {/* Room Info */}
-              <Card title="Thông tin phòng" gradientFrom="from-yellow-200" gradientTo="to-yellow-50">
-                <InfoGrid>
-                  <InfoRow
-                    icon={<Home className="text-yellow-700" />}
-                    label="Phòng"
-                    value={eventDetails.room?.roomCode || "Chưa phân phòng"}
-                  />
-                  <InfoRow
-                    icon={<Info className="text-indigo-700" />}
-                    label="Mô tả phòng"
-                    value={eventDetails.room?.description || "Không có mô tả"}
-                  />
-                  <InfoRow
-                    icon={<Building2 className="text-red-700" />}
-                    label="Tình trạng phòng"
-                    value={eventDetails.room?.status || "Chưa cập nhật"}
-                  />
-                </InfoGrid>
-              </Card>
-
-              {/* Requester */}
-              <Card title="Người yêu cầu" gradientFrom="from-teal-200" gradientTo="to-teal-50">
-                <InfoGrid>
-                  <InfoRow
-                    icon={<User className="text-teal-700" />}
-                    label="Họ tên"
-                    value={`${eventDetails.requester?.firstName} ${eventDetails.requester?.lastName}`}
-                  />
-                  <InfoRow
-                    icon={<Phone className="text-cyan-700" />}
-                    label="Số điện thoại"
-                    value={eventDetails.requester?.phoneNumber}
-                  />
-                  <InfoRow
-                    icon={<Mail className="text-purple-700" />}
-                    label="Email"
-                    value={eventDetails.requester?.email}
-                  />
-                </InfoGrid>
-              </Card>
-
-              {/* Participants */}
-              <Card title="Danh sách tham gia" gradientFrom="from-pink-200" gradientTo="to-pink-50">
-                {eventDetails.participants?.length ? (
-                  <ul className="list-disc pl-5 space-y-1 text-gray-700 text-base max-h-[250px] overflow-auto rounded-md">
-                    {eventDetails.participants.map((p: any) => (
-                      <li key={p.participantId}>
-                        {p.userCode} - {p.email}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-500 text-base">Không có người tham gia</p>
-                )}
-              </Card>
-            </div>
+        {/* Body cuộn */}
+        <ScrollArea className="flex-1 p-6 space-y-6 overflow-y-auto">
+          {/* Thông tin chung booking */}
+          {roomImage ? (
+            <img
+              src={roomImage}
+              alt="Room"
+              className="w-full h-64 object-cover rounded-md border"
+            />
           ) : (
-            <p className="text-gray-500 text-base">Đang tải thông tin sự kiện...</p>
+            <div className="w-full h-64 bg-gray-200 rounded-md flex items-center justify-center text-gray-500 text-sm border">
+              No image available
+            </div>
           )}
-        </DialogDescription>
 
-        <DialogFooter className="mt-6 flex-shrink-0 flex justify-end">
-          <Button variant="secondary" onClick={onClose} className="px-6 py-2 text-base">
+          <SectionCard
+            title="Thông tin đặt lịch"
+            icon={<Calendar className="text-blue-500 w-4 h-4" />}
+          >
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+              <InfoItem
+                icon={<Barcode className="text-pink-500" />}
+                label="Mã đặt lịch"
+                value={bookingCode || "-"}
+              />
+              <InfoItem
+                icon={<DollarSign className="text-green-600" />}
+                label="Tổng tiền"
+                value={`${totalPrice?.toLocaleString()} VNĐ`}
+              />
+              <InfoItem
+                icon={<Calendar className="text-blue-500" />}
+                label="Ngày họp"
+                value={meeetingDate || "-"}
+              />
+              <InfoItem
+                icon={<Clock className="text-purple-500" />}
+                label="Thời gian"
+                value={`${startTime || "-"} - ${endTime || "-"}`}
+              />
+            </div>
+          </SectionCard>
+
+          {/* Thông tin địa điểm */}
+          <SectionCard
+            title="Địa điểm"
+            icon={<MapPin className="text-green-500  w-4 h-4" />}
+          >
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+              <InfoItem
+                icon={<Home className="text-red-500" />}
+                label="Chi nhánh"
+                value={branch?.name || "-"}
+              />
+              <InfoItem
+                icon={<Building className="text-orange-500" />}
+                label="Tòa nhà"
+                value={building?.name || "-"}
+              />
+              <InfoItem
+                icon={<Layers className="text-indigo-500" />}
+                label="Tầng"
+                value={floor?.name || "-"}
+              />
+              <InfoItem
+                icon={<Home className="text-yellow-600" />}
+                label="Phòng"
+                value={roomCode?.match(/\d+$/)?.[0] || "-"}
+              />
+            </div>
+          </SectionCard>
+
+          {/* Thông tin người yêu cầu */}
+          <SectionCard
+            title="Người đặt lịch"
+            icon={<User className="text-teal-500 w-4 h-4" />}
+          >
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+              <InfoItem
+                icon={<Hash className="text-emerald-600" />}
+                label="Mã nhân viên"
+                value={requester?.userCode || "-"}
+              />
+              <InfoItem
+                icon={<User className="text-teal-500" />}
+                label="Họ tên"
+                value={`${requester?.firstName || ""} ${
+                  requester?.lastName || ""
+                }`}
+              />
+              <InfoItem
+                icon={<Mail className="text-cyan-600" />}
+                label="Email"
+                value={requester?.email || "-"}
+              />
+              <InfoItem
+                icon={<Phone className="text-lime-600" />}
+                label="SĐT"
+                value={requester?.phoneNumber || "-"}
+              />
+            </div>
+          </SectionCard>
+
+          {/* Danh sách người tham gia */}
+          <SectionCard
+            title={`Danh sách người tham gia (${participants?.length || 0})`}
+            icon={<Users className="text-purple-600 w-4 h-4" />}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-48 overflow-y-auto">
+              {participants?.map((p: any) => (
+                <div
+                  key={p.participantId}
+                  className="flex items-center gap-3 p-2 bg-muted rounded-md"
+                >
+                  <User className="w-5 h-5 text-gray-500" />
+                  <div className="text-sm">
+                    <p className="font-semibold">{p.userCode || "N/A"}</p>
+                    <p className="truncate max-w-xs">{p.email || "-"}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+        </ScrollArea>
+
+        {/* Footer nút đóng */}
+        <DialogFooter className="px-6 py-3 border-t bg-muted flex justify-end">
+          <Button
+            variant="secondary"
+            className="border border-gray-800"
+            onClick={onClose}
+          >
             Đóng
           </Button>
+          {/* <Button
+            variant="destructive"
+            size="sm"
+            className="flex items-center gap-1"
+            onClick={() => alert("Chưa gán sự kiện")}
+          >
+            <XCircle className="w-5 h-5" />
+            Huỷ đặt lịch
+          </Button> */}
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-const Card = ({
-  children,
-  title,
-  gradientFrom,
-  gradientTo,
-}: {
-  children: React.ReactNode;
-  title: string;
-  gradientFrom: string;
-  gradientTo: string;
-}) => {
-  return (
-    <div
-      className={`p-5 rounded-xl shadow-lg border border-gray-200 bg-gradient-to-r ${gradientFrom} ${gradientTo} transition-transform hover:scale-[1.02]`}
-      style={{ backdropFilter: "blur(8px)" }}
-    >
-      <h3 className="text-lg font-semibold mb-4 text-gray-900">{title}</h3>
-      {children}
-    </div>
-  );
-};
+export default EventModal;
 
-const InfoGrid = ({ children }: { children: React.ReactNode }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6">{children}</div>
-);
-
-const InfoRow = ({
+const InfoItem = ({
   icon,
   label,
   value,
@@ -203,12 +244,28 @@ const InfoRow = ({
   label: string;
   value: string;
 }) => (
-  <div className="flex items-center space-x-3">
-    {icon && <div className="text-xl">{icon}</div>}
-    <p className="text-base text-gray-800 leading-tight">
+  <div className="flex items-center gap-2 text-sm text-foreground">
+    {icon && <span className="mt-0.5">{icon}</span>}
+    <p>
       <strong>{label}:</strong> {value}
     </p>
   </div>
 );
 
-export default EventModal;
+const SectionCard = ({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <div className="bg-card p-4 rounded-md border border-border space-y-3">
+    <h3 className="flex items-center gap-2 text-base font-semibold text-primary mb-3">
+      {icon}
+      {title}
+    </h3>
+    <div className="space-y-2">{children}</div>
+  </div>
+);

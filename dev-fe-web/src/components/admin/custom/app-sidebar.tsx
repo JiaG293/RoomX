@@ -80,18 +80,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: t("admin.menu.main.users.title"),
-        url: "#",
+        url: "/admin/users",
         icon: Users,
         color: "text-indigo-500",
         items: [
-          {
-            title: t("admin.menu.main.users.sub.accounts"),
-            url: "/admin/users",
-          },
-          {
-            title: t("admin.menu.main.users.sub.groups"),
-            url: "/admin/users/groups",
-          },
+          // {
+          //   title: t("admin.menu.main.users.sub.accounts"),
+          //   url: "/admin/users",
+          // },
+          // {
+          //   title: t("admin.menu.main.users.sub.groups"),
+          //   url: "/admin/users/groups",
+          // },
         ],
       },
       {
@@ -178,10 +178,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: BookOpenText,
         color: "text-slate-500",
         items: [
-          {
-            title: t("admin.menu.main.info.sub.guide"),
-            url: "/admin/guide",
-          },
+          // {
+          //   title: t("admin.menu.main.info.sub.guide"),
+          //   url: "/admin/guide",
+          // },
           {
             title: t("admin.menu.main.info.sub.about"),
             url: "/admin/about",

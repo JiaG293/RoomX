@@ -108,7 +108,7 @@ const SectionCard = ({
   </div>
 );
 
-const EventModalApproval: React.FC<EventModalApprovalProps> = ({
+const EventModalApprovalUser: React.FC<EventModalApprovalProps> = ({
   event,
   onClose,
 }) => {
@@ -155,7 +155,7 @@ const EventModalApproval: React.FC<EventModalApprovalProps> = ({
       const service = new ScheduleService();
       // Giả sử API rejectSchedules có thể nhận thêm lý do
       await service.rejectSchedules(event.id, cancelReason);
-      toast.success("Từ chối lịch họp thành công!");
+      toast.success("Huỷ lịch họp thành công!");
       setCancelReason("");
       setIsRejectModalOpen(false);
       onClose();
@@ -370,7 +370,7 @@ const EventModalApproval: React.FC<EventModalApprovalProps> = ({
               className="gap-2"
             >
               <XCircle size={16} />
-              Từ chối
+              Huỷ đặt phòng
             </Button>
 
             <Button onClick={handleApprove} className="bg-green-500 gap-2">
@@ -444,12 +444,14 @@ const EventModalApproval: React.FC<EventModalApprovalProps> = ({
 };
 
 const cancelReasons = [
-  "Huỷ cuộc họp do trùng lịch",
-  "Huỷ do thay đổi kế hoạch",
-  "Huỷ do sự cố kỹ thuật",
-  "Huỷ do ngày lễ phép",
-  "Huỷ do thông tin đặt lịch không hợp lệ",
-  "Huỷ do phòng bảo trì",
+  "Tôi bị trùng lịch vào thời điểm này",
+  "Tôi có việc cá nhân đột xuất",
+  "Tôi không còn nhu cầu tham gia cuộc họp này",
+  "Không đủ thành viên tham gia",
+  "Tôi cần dời lịch sang thời gian khác",
+  "Tôi cần điều chỉnh thông tin lịch",
+  "Tôi gặp vấn đề kỹ thuật (thiết bị, mạng, v.v.)",
+  "Tôi nhận được thông báo thay đổi từ ban tổ chức",
 ];
 
-export default EventModalApproval;
+export default EventModalApprovalUser;

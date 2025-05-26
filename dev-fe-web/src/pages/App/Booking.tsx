@@ -10,7 +10,7 @@ import EventModal from "@/components/app/meetings/event-modal";
 import timeGridPlugin from "@fullcalendar/timegrid";
 
 const Booking: React.FC = () => {
-  const [viewMode, setViewMode] = useState<"dayGridMonth" | "listWeek | timeGridDay">(
+  const [viewMode, setViewMode] = useState<"dayGridMonth" | "listWeek" | "timeGridDay">(
     "dayGridMonth"
   );
   const [events, setEvents] = useState<any[]>([]);

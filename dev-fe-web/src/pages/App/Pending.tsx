@@ -12,6 +12,7 @@ import { dA } from "node_modules/@fullcalendar/core/internal-common";
 import EventModalApproval from "@/components/admin/meetings/event-modal-approval";
 import PortalLayout from "@/layouts/portal-layout";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import EventModalApprovalUser from "@/pages/App/EventModalApprovalUser";
 
 interface EventType {
   id: string;
@@ -41,30 +42,30 @@ const Pending: React.FC = () => {
   const [modalEvent, setModalEvent] = useState<any>(null);
 
   const loadEvents = useCallback(async (month: number, year: number) => {
-    try {
-      const scheduleService = new ScheduleService();
-      const data = await scheduleService.getPendingSchedulesUser(month, year);
-      console.log(data);
-
-      const formattedEvents: EventType[] = data.map((event: any) => ({
-        id: event.id,
-        title: event.title || "Sự kiện",
-        start: `${event.startDate}T${event.startTime}`,
-        end: `${event.endDate}T${event.endTime}`,
-        extendedProps: {
-          status: event.approvalStatus || "Chưa duyệt",
-        },
-        className:
-          event.approvalStatus === "PENDING"
-            ? "event-pending"
-            : "event-conflict",
-      }));
-
-      setEvents(formattedEvents);
-    } catch (error) {
-      console.error("Error loading schedule:", error);
-    }
-  }, []);
+      try {
+        const scheduleService = new ScheduleService();
+        const data = await scheduleService.getPendingSchedules(month, year);
+        console.log(data);
+  
+        const formattedEvents: EventType[] = data.map((event: any) => ({
+          id: event.id,
+          title: event.title || "Sự kiện",
+          start: `${event.updatedAt}`,
+         
+          extendedProps: {
+            status: event.approvalStatus || "Chưa duyệt",
+          },
+          className:
+            event.approvalStatus === "PENDING"
+              ? "event-pending"
+              : "event-conflict",
+        }));
+  
+        setEvents(formattedEvents);
+      } catch (error) {
+        console.error("Error loading schedule:", error);
+      }
+    }, []);
 
   useEffect(() => {
     loadEvents(currentMonth, currentYear);
@@ -76,7 +77,7 @@ const Pending: React.FC = () => {
         <FullCalendar
           locale="vi"
           plugins={[dayGridPlugin, listPlugin, interactionPlugin, timeGridPlugin]}
-          initialView={"listMonth"}
+          initialView={"timeGridDay"}
           events={events}
           eventClick={(info) => {
             setModalEvent(info.event);
@@ -102,7 +103,7 @@ const Pending: React.FC = () => {
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "listMonth,listWeek,timeGridDay",
+            right: "dayGridMonth,listWeek,timeGridDay",
           }}
           datesSet={(info) => {
             const newMonth = info.view.currentStart.getMonth() + 1;
@@ -167,10 +168,10 @@ const Pending: React.FC = () => {
           ))}
         </div>
       </div>
-      {/* <EventModalApproval
+      <EventModalApprovalUser
         event={modalEvent}
         onClose={() => setModalEvent(null)}
-      /> */}
+      />
     </PortalLayout>
   );
 };

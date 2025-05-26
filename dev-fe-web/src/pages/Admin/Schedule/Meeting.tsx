@@ -40,8 +40,15 @@ const Meeting: React.FC = () => {
           ) {
             return null;
           }
+          const eventEnd = new Date(`${event.meetingDate}T${event.meetingEnd}`);
+          const now = new Date();
+
           // Xác định class theo trạng thái
           const statusClass = (() => {
+            if (event.status === "SCHEDULED" && eventEnd < now) {
+              // Nếu sự kiện đã qua, coi như COMPLETED
+              return "event-completed";
+            }
             switch (event.status) {
               case "COMPLETED":
                 return "event-completed";
@@ -109,7 +116,7 @@ const Meeting: React.FC = () => {
     >
       <div style={{ flex: 0.9 }}>
         <FullCalendar
-          ref={calendarRef} 
+          ref={calendarRef}
           locale="vi"
           plugins={[
             dayGridPlugin,
@@ -184,8 +191,8 @@ const Meeting: React.FC = () => {
           }}
         >
           {[
-            { color: "#1565c0", label: "Lên lịch" },
-            { color: "#2e7d32", label: "Hoàn thành" },
+            { color: "#1565c0", label: "Hoàn thành" },
+            { color: "#2e7d32", label: "Lên lịch" },
             { color: "#f9a825", label: "Chờ duyệt" },
             { color: "#c62828", label: "Xung đột" },
           ].map((item, index) => (
