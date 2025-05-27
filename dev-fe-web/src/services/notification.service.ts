@@ -9,9 +9,9 @@ export const requestNotificationPermission = async (): Promise<string | null> =>
   const permission = await Notification.requestPermission();
   if (permission === "granted") {
     try {
-      const token = await getToken(messaging, {
-        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY as string,
-      });
+      console.log("📱 Requesting FCM token...");
+      const token = await getToken(messaging);
+      console.log("fcm_token", token)
       if (token) {
         Cookies.set("fcm_token", token);
         console.log("📱 FCM Token saved:", token);
