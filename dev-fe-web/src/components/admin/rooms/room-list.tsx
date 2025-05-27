@@ -113,25 +113,22 @@ const RoomList: React.FC = () => {
           )}
           {filteredRooms.map((room) => {
             const parts = room.roomCode.split("-");
+            let branch = "";
             let building = "";
             let floor = "";
             let roomNumber = "";
 
-            if (parts.length === 3) {
-              [building, floor, roomNumber] = parts;
-            } else if (parts.length === 2) {
-              [floor, roomNumber] = parts;
-            } else if (parts.length === 1) {
-              roomNumber = parts[0];
+            if (parts.length === 4) {
+              [branch, building, floor, roomNumber] = parts;
             }
 
             return (
               <div
                 key={room.id}
                 className="cursor-pointer w-[290px] h-[300px] border rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300
-       bg-white dark:bg-gray-800
-       border-gray-200 dark:border-gray-700
-       flex flex-col"
+      bg-white dark:bg-gray-800
+      border-gray-200 dark:border-gray-700
+      flex flex-col"
                 onClick={() => {
                   setSelectedRoomId(room.id);
                   setIsModalOpen(true);
@@ -155,8 +152,15 @@ const RoomList: React.FC = () => {
                 {/* Nội dung */}
                 <div className="p-4 flex flex-col flex-1 gap-2">
                   {/* Vị trí phòng */}
+                  {/* Vị trí phòng */}
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    <div className="flex gap-4 flex-wrap">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          Chi nhánh:
+                        </span>{" "}
+                        {branch || "-"}
+                      </div>
                       <div>
                         <span className="font-semibold text-gray-900 dark:text-white">
                           Tòa:
