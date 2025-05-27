@@ -40,7 +40,7 @@ public class Booking {
 
 
     public String getPlaceDetail(){
-        return  " - " + room.getRoomCode();
+        return  room.getRoomCode();
     }
 
 }
