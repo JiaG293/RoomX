@@ -187,7 +187,7 @@ const CheckingTable: React.FC<CheckingTableProps> = ({ data }) => {
                                 const updated = prev.map((ex) =>
                                   ex.date === item.date &&
                                   ex.roomId === item.optimalRoomId
-                                    ? { ...ex, duration }
+                                    ? { ...ex }
                                     : ex
                                 );
                                 localStorage.setItem(
