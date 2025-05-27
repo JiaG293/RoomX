@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Users, Calendar, CheckCircle, DollarSign } from "lucide-react";
+import { Users, Calendar, CheckCircle, DollarSign, Home } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -28,53 +28,56 @@ import { AuthService } from "@/services/auth.service";
 
 const stats = [
   {
-    title: "trang_chu_so_phong",
-    value: 12,
-    icon: <Calendar className="w-6 h-6" />,
+    title: "common.so_phong_hop",
+    value: 13,
+    icon: <Home className="w-6 h-6" />,
   },
   {
-    title: "trang_chu_so_nguoi",
-    value: 16,
+    title: "common.so_nguoi_dung",
+    value: 22,
     icon: <Users className="w-6 h-6" />,
   },
   {
-    title: "trang_chu_luot_dat_phong",
-    value: 8,
+    title: "common.luot_dat_phong_thang",
+    value: 25,
     icon: <CheckCircle className="w-6 h-6" />,
   },
   {
-    title: "trang_chu_chi_phi",
+    title: "common.chi_phi_thang",
     value: "12,500,000 VNĐ",
     icon: <DollarSign className="w-6 h-6" />,
   },
-];
-
-const bookingChartData = [
-  { name: "Tháng 1", bookings: 30 },
-  { name: "Tháng 2", bookings: 45 },
-  { name: "Tháng 3", bookings: 60 },
-  { name: "Tháng 4", bookings: 50 },
-  { name: "Tháng 5", bookings: 70 },
-  { name: "Tháng 6", bookings: 90 },
-];
-
-const revenueChartData = [
-  { name: "Tháng 1", revenue: 3000 },
-  { name: "Tháng 2", revenue: 4500 },
-  { name: "Tháng 3", revenue: 6000 },
-  { name: "Tháng 4", revenue: 5000 },
-  { name: "Tháng 5", revenue: 7000 },
-  { name: "Tháng 6", revenue: 9000 },
 ];
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
   const [pendingBookings, setPendingBookings] = useState<any[]>([]);
 
+  const bookingChartData = useMemo(
+    () => [
+      { name: t("common.month_labels.1"), bookings: 30 },
+      { name: t("common.month_labels.2"), bookings: 45 },
+      { name: t("common.month_labels.3"), bookings: 60 },
+      { name: t("common.month_labels.4"), bookings: 50 },
+      { name: t("common.month_labels.5"), bookings: 70 },
+      { name: t("common.month_labels.6"), bookings: 90 },
+    ],
+    [t]
+  );
+
+  const revenueChartData = useMemo(
+    () => [
+      { name: t("common.month_labels.1"), revenue: 3000 },
+      { name: t("common.month_labels.2"), revenue: 4500 },
+      { name: t("common.month_labels.3"), revenue: 6000 },
+      { name: t("common.month_labels.4"), revenue: 5000 },
+      { name: t("common.month_labels.5"), revenue: 7000 },
+      { name: t("common.month_labels.6"), revenue: 9000 },
+    ],
+    [t]
+  );
+
   useEffect(() => {
-
-    
-
     const fetchData = async () => {
       try {
         const bookingService = new ScheduleService();
@@ -92,7 +95,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <CMSLayout title={t("admin.menu.main.home")} >
+    <CMSLayout title={t("admin.menu.main.home")}>
       <div className="p-4 space-y-4 h-full flex flex-col">
         {/* Tổng quan nhanh */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -120,7 +123,7 @@ const Dashboard: React.FC = () => {
           <Card className="flex-1 shadow-xl flex flex-col min-h-0 overflow-hidden rounded-lg">
             <CardHeader>
               <CardTitle className="text-lg font-medium text-foreground">
-                {t("trang_chu_luot_dat_phong")}
+                {t("common.luot_dat_gan_day")}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex-1 overflow-auto p-0">
@@ -131,13 +134,13 @@ const Dashboard: React.FC = () => {
                       ID
                     </TableHead>
                     <TableHead className="text-sm text-card-foreground">
-                      Trạng thái
+                      {t("common.trang_thai")}
                     </TableHead>
                     <TableHead className="text-sm text-card-foreground">
-                      Ngày đặt
+                      {t("common.ngay_dat")}
                     </TableHead>
                     <TableHead className="text-sm text-card-foreground">
-                      Tiêu đề
+                      {t("common.tieu_de")}
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -211,7 +214,7 @@ const Dashboard: React.FC = () => {
             <Card className="shadow-xl flex-1 flex flex-col min-h-0 rounded-lg">
               <CardHeader>
                 <CardTitle className="text-lg font-medium text-card-foreground">
-                  {t("trang_chu_thong_ke_dat_phong")}
+                  {t("common.dat_phong_theo_thang")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 min-h-0">
@@ -229,7 +232,7 @@ const Dashboard: React.FC = () => {
             <Card className="shadow-xl flex-1 flex flex-col min-h-0 rounded-lg">
               <CardHeader>
                 <CardTitle className="text-lg font-medium text-card-foreground">
-                  {t("trang_chu_thong_ke_chi_phi")}
+                  {t("common.chi_phi_theo_thang")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 min-h-0">

@@ -76,12 +76,12 @@ const UserList: React.FC = () => {
       {/* Thanh tìm kiếm, bộ lọc và nút Thêm */}
       <div className="mb-4 flex flex-col md:flex-row gap-4 items-center">
         <Input
-          placeholder={t("admin.users.search")}
+          placeholder={t("common.search")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full md:w-1/3"
         />
-        <Select
+        {/* <Select
           value={filterType}
           onValueChange={setFilterType}
           defaultValue="all"
@@ -95,7 +95,7 @@ const UserList: React.FC = () => {
               {t("admin.users.inactive")}
             </SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
         <ToggleGroup
           type="single"
           value={viewMode}
@@ -104,9 +104,9 @@ const UserList: React.FC = () => {
           }
         >
           <ToggleGroupItem value="table">
-            {t("admin.view.table")}
+            {t("common.view.table")}
           </ToggleGroupItem>
-          <ToggleGroupItem value="card">{t("admin.view.card")}</ToggleGroupItem>
+          <ToggleGroupItem value="card">{t("common.view.card")}</ToggleGroupItem>
         </ToggleGroup>
 
         {/* Nút Thêm User */}

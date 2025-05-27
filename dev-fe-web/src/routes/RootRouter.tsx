@@ -27,6 +27,7 @@ import Notification from "@/pages/Admin/Notification";
 import Setting from "@/pages/App/Setting";
 import Notifications from "@/pages/App/Notifications";
 import Settings from "@/pages/App/Setting";
+import path from "path";
 
 export const RootRouter = createBrowserRouter([
   {
@@ -127,6 +128,10 @@ export const RootRouter = createBrowserRouter([
         element: <Notifications/>,
       },
     ],
+  },
+  {
+    path: "/",
+    element: <Login />,
   },
   {
     path: "/login",

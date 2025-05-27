@@ -1,125 +1,152 @@
 {
-    "auth": {
-        "login": {
-            "footer_note": "© 2025 RoomX - Meeting room management system. Open-source project.",
-            "slogan": "Optimized meeting rooms, perfect results.",
-            "label_username": "Employee ID",
-            "label_password": "Password",
-            "login": "Login",
-            "forgot_password": "Forgot password",
-            "placeholder_username": "Enter your username",
-            "placeholder_password": "Enter your password",
-            "error_username_required": "Please enter your username",
-            "error_password_required": "Please enter your password"
-        },
-        "forgot_password": {
-            "title": "Forgot Password",
-            "description": "Enter your email to receive the password reset link.",
-            "label_email": "Email address",
-            "placeholder_email": "Enter your email",
-            "button_send_link": "Send link",
-            "warning_required_email": "Please enter your email address.",
-            "warning_invalid_email": "Please enter a valid email address."
-        },
-        "reset_password": {}
+  "auth": {
+    "login": {
+      "footer_note": "© 2025 RoomX - Meeting Room Management. Open-source project.",
+      "slogan": "Smart rooms, smooth work.",
+      "label_username": "Employee ID",
+      "label_password": "Password",
+      "login": "Login",
+      "forgot_password": "Forgot password?",
+      "placeholder_username": "Enter username",
+      "placeholder_password": "Enter password",
+      "error_username_required": "Username is required",
+      "error_password_required": "Password is required"
     },
-    "common": {
-        "not_found_message": "Oops! This page seems to not exist.",
-        "month_labels": {
-            "1": "January",
-            "2": "February",
-            "3": "March",
-            "4": "April",
-            "5": "May",
-            "6": "June",
-            "7": "July",
-            "8": "August",
-            "9": "September",
-            "10": "October",
-            "11": "November",
-            "12": "December"
-        }
+    "forgot_password": {
+      "title": "Forgot Password",
+      "description": "Enter your email to receive the reset link.",
+      "label_email": "Email address",
+      "placeholder_email": "Enter email",
+      "button_send_link": "Send link",
+      "warning_required_email": "Email is required",
+      "warning_invalid_email": "Invalid email format"
     },
-    "admin": {
-        "menu": {
-            "top": {
-                "admin": "Admin Panel",
-                "portal": "User Portal",
-                "switch": "Switch View"
-            },
-            "main": {
-                "home": "Home",
-                "stats": {
-                    "title": "Statistics",
-                    "sub": {
-                        "time": "By Time",
-                        "room": "By Meeting Room",
-                        "user": "By User",
-                        "cost": "By Cost"
-                    }
-                },
-                "users": {
-                    "title": "Users",
-                    "sub": {
-                        "accounts": "Accounts",
-                        "groups": "Groups"
-                    }
-                },
-                "locations": {
-                    "title": "Locations",
-                    "sub": {
-                        "branches": "Branches",
-                        "rooms": "Meeting Rooms"
-                    }
-                },
-                "resources": {
-                    "title": "Resources",
-                    "sub": {
-                        "equipments": "Equipments",
-                        "services": "Services"
-                    }
-                },
-                "schedule": {
-                    "title": "Schedule",
-                    "sub": {
-                        "overview": "Overview",
-                        "pending": "Pending Approval"
-                    }
-                },
-                "info": {
-                    "title": "Information",
-                    "sub": {
-                        "guide": "User Guide",
-                        "about": "About Us"
-                    }
-                },
-                "notify": "Notifications"
-            },
-            "bottom": {
-                "profile": "Profile",
-                "language": "Language",
-                "dark_mode": "Dark Mode",
-                "logout": "Log Out"
-            }
+    "reset_password": {}
+  },
+  "common": {
+    "not_found_message": "Oops! This page doesn't exist.",
+    "month_labels": {
+      "1": "Jan",
+      "2": "Feb",
+      "3": "Mar",
+      "4": "Apr",
+      "5": "May",
+      "6": "Jun",
+      "7": "Jul",
+      "8": "Aug",
+      "9": "Sep",
+      "10": "Oct",
+      "11": "Nov",
+      "12": "Dec"
+    },
+    "view": {
+      "table": "Table",
+      "card": "Card",
+      "month": "Month",
+      "week": "Week",
+      "day": "Day"
+    },
+    "search": "Search",
+    "button_add_user": "Add User",
+    "title_add_user": "New User",
+    "sub_title": "Fill in the info below",
+    "ma_nhan_vien": "ID",
+    "ten": "First Name",
+    "ho": "Last Name",
+    "sdt": "Phone",
+    "user_type": "User Type",
+    "password": "Password",
+    "so_phong_hop": "Rooms",
+    "so_nguoi_dung": "Users",
+    "luot_dat_phong_thang": "Monthly Bookings",
+    "chi_phi_thang": "Monthly Cost",
+    "luot_dat_gan_day": "Recent Bookings",
+    "trang_thai": "Status",
+    "ngay_dat": "Date",
+    "tieu_de": "Title",
+    "dat_phong_theo_thang": "Bookings by Month",
+    "chi_phi_theo_thang": "Costs by Month"
+  },
+  "admin": {
+    "menu": {
+      "top": {
+        "admin": "Admin Panel",
+        "portal": "User Portal",
+        "switch": "Switch"
+      },
+      "main": {
+        "home": "Home",
+        "stats": {
+          "title": "Statistics",
+          "sub": {
+            "time": "By Time",
+            "room": "By Room",
+            "user": "By User",
+            "cost": "By Cost"
+          }
         },
-        "dashboard": {
-            "total_rooms": "Meeting Rooms",
-            "total_users": "Users",
-            "today_bookings": "Today's Bookings",
-            "monthly_costs": "Monthly Costs",
-            "recent_bookings": "Recent Bookings",
-            "col_serial": "No.",
-            "col_user": "Booked By",
-            "col_room": "Room",
-            "col_time": "Time",
-            "col_status": "Status",
-            "col_actions": "Actions",
-            "action_view": "View",
-            "booking_statistics": "Booking Statistics",
-            "cost_statistics": "Cost Statistics",
-            "status_approved": "Approved",
-            "status_pending": "Pending",
-            "status_cancelled": "Cancelled"
-        }
+        "users": {
+          "title": "Users",
+          "sub": {
+            "accounts": "Accounts",
+            "groups": "Groups"
+          }
+        },
+        "locations": {
+          "title": "Locations",
+          "sub": {
+            "branches": "Branches",
+            "rooms": "Rooms"
+          }
+        },
+        "resources": {
+          "title": "Resources",
+          "sub": {
+            "equipments": "Equipment",
+            "services": "Services"
+          }
+        },
+        "schedule": {
+          "title": "Schedule",
+          "sub": {
+            "overview": "Overview",
+            "pending": "Pending"
+          }
+        },
+        "info": {
+          "title": "Info",
+          "sub": {
+            "guide": "Guide",
+            "about": "About"
+          }
+        },
+        "notify": "Notifications"
+      },
+      "bottom": {
+        "profile": "Profile",
+        "language": "Language",
+        "dark_mode": "Dark Mode",
+        "logout": "Logout"
+      }
+    },
+    "dashboard": {
+      "total_rooms": "Rooms",
+      "total_users": "Users",
+      "today_bookings": "Today's Bookings",
+      "monthly_costs": "Monthly Costs",
+      "recent_bookings": "Recent Bookings",
+      "col_serial": "No.",
+      "col_user": "User",
+      "col_room": "Room",
+      "col_time": "Time",
+      "col_status": "Status",
+      "col_actions": "Actions",
+      "action_view": "View",
+      "booking_statistics": "Booking Stats",
+      "cost_statistics": "Cost Stats",
+      "status_approved": "Approved",
+      "status_pending": "Pending",
+      "status_cancelled": "Cancelled"
     }
+  }
 }

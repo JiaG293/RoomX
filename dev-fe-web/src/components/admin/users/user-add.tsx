@@ -21,6 +21,8 @@ import {
   Users,
   Lock,
 } from "lucide-react";
+import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 // import { useTranslation } from "react-i18next";
 
 export interface User {
@@ -129,6 +131,8 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
     setShowPassword(false);
   };
 
+  const {t} = useTranslation();
+
   return (
     <Dialog
       open={isDialogOpen}
@@ -139,16 +143,16 @@ const UserAddModal: React.FC<UserAddModalProps> = ({ onAddSuccess }) => {
     >
       <DialogTrigger asChild>
         <button className="py-2 px-4 bg-green-500 text-white rounded-xl hover:bg-green-600 transition duration-200 shadow flex items-center gap-2">
-          <UserPlus size={18} /> Thêm người dùng
+          <UserPlus size={18} /> {t("common.button_add_user")}
         </button>
       </DialogTrigger>
 
       <DialogContent className="p-6 bg-background rounded-lg shadow-lg max-w-lg mx-auto">
         <DialogTitle className="text-xl font-semibold mb-4">
-          Tạo người dùng mới
+          {t("common.title_add_user")}
         </DialogTitle>
         <DialogDescription className="text-sm mb-6">
-          Điền đầy đủ các thông tin bên dưới
+          {t("common.sub_title")}
         </DialogDescription>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">

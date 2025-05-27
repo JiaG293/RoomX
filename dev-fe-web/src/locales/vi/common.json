@@ -38,7 +38,34 @@
             "10": "Tháng 10",
             "11": "Tháng 11",
             "12": "Tháng 12"
-        }
+        },
+        "view": {
+            "table": "Bảng",
+            "card": "Thẻ",
+            "month": "Tháng",
+            "week": "Tuần",
+            "day": "Ngày"
+        },
+        "search": "Tìm kiếm",
+        "button_add_user": "Thêm người dùng",
+        "title_add_user": "Tạo người dùng mới",
+        "sub_title": "Điền đầy đủ thông tin bên dưới",
+        "ma_nhan_vien": "Mã nhân viên",
+        "ten": "Tên",
+        "ho": "Họ",
+        "sdt": "Số điện thoại",
+        "user_type": "Loại người dùng",
+        "password": "Mật khẩu",
+        "so_phong_hop": "Số phòng họp",
+        "so_nguoi_dung": "Số người dùng",
+        "luot_dat_phong_thang": "Lượt đặt phòng tháng",
+        "chi_phi_thang": "Chi phí tháng",
+        "luot_dat_gan_day": "Lượt đặt gần đây",
+        "trang_thai": "Trạng thái",
+        "ngay_dat": "Ngày đặt",
+        "tieu_de": "Tiêu đề",
+        "dat_phong_theo_thang": "Đặt phòng theo tháng",
+        "chi_phi_theo_thang": "Chi phí theo tháng"
     },
     "admin": {
         "menu": {
