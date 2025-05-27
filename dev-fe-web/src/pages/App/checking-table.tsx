@@ -183,14 +183,19 @@ const CheckingTable: React.FC<CheckingTableProps> = ({ data }) => {
                                 "endTime",
                                 endTime
                               );
-                              setExceptions((prev) =>
-                                prev.map((ex) =>
+                              setExceptions((prev) => {
+                                const updated = prev.map((ex) =>
                                   ex.date === item.date &&
                                   ex.roomId === item.optimalRoomId
                                     ? { ...ex, duration }
                                     : ex
-                                )
-                              );
+                                );
+                                localStorage.setItem(
+                                  "dateRequestExceptions",
+                                  JSON.stringify(updated)
+                                );
+                                return updated;
+                              });
                             }
                           }}
                         >

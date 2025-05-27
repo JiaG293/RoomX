@@ -288,6 +288,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     };
 
     console.log(scheduleData);
+    // localStorage.removeItem("dateRequestExceptions");
 
     const scheduleService = new ScheduleService();
     try {
