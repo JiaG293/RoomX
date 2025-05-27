@@ -86,8 +86,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         sameSite: "Strict",
       });
       // lấy fcm token của fireb
-      await requestNotificationPermission();
+      const fcm_token = await requestNotificationPermission();
+      console.log("aaaaaaaaaaaaaaaaaaaa", fcm_token)
       const decodedToken: any = jwtDecode(data.access_token);
+      // Cookies.set("fcm_token", fcm_token);
       const roles = decodedToken.roles || [];
       console.log(roles)
 

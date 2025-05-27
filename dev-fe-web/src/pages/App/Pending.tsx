@@ -127,9 +127,13 @@ const Pending: React.FC = () => {
           datesSet={(info) => {
             const newMonth = info.view.currentStart.getMonth() + 1;
             const newYear = info.view.currentStart.getFullYear();
+
             if (newMonth !== currentMonth || newYear !== currentYear) {
               setCurrentMonth(newMonth);
               setCurrentYear(newYear);
+
+              // Cập nhật ref tại đây
+              monthYearRef.current = { month: newMonth, year: newYear };
             }
           }}
           views={{

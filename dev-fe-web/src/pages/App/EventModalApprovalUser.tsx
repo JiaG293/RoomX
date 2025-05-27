@@ -324,15 +324,17 @@ const EventModalApprovalUser: React.FC<EventModalApprovalProps> = ({
             )}
 
             {/* Người tham gia */}
-            {participants?.length > 0 && (
+            {([...new Set(participants)] as string[]).length > 0 && (
               <SectionCard
                 title="Người tham gia"
                 icon={<Users className="text-cyan-600" />}
               >
                 <ul className="list-disc pl-6 space-y-1">
-                  {participants.map((email: string, index: number) => (
-                    <li key={index}>{email}</li>
-                  ))}
+                  {([...new Set(participants)] as string[]).map(
+                    (email, index) => (
+                      <li key={index}>{email}</li>
+                    )
+                  )}
                 </ul>
               </SectionCard>
             )}
