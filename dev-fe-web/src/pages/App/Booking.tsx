@@ -109,8 +109,14 @@ const Booking: React.FC = () => {
             right: "dayGridMonth,dayGridWeek,timeGridDay",
           }}
           datesSet={(info) => {
-            setCurrentMonth(info.view.currentStart.getMonth() + 1);
-            setCurrentYear(info.view.currentStart.getFullYear());
+            const newMonth = info.view.currentStart.getMonth() + 1;
+            const newYear = info.view.currentStart.getFullYear();
+            setCurrentMonth(newMonth);
+            setCurrentYear(newYear);
+            monthYearRef.current = {
+              month: newMonth,
+              year: newYear,
+            };
           }}
           dayCellClassNames={(arg) =>
             arg.date.getMonth() + 1 !== currentMonth ? "disabled-day" : ""

@@ -28,7 +28,7 @@ const CustomHeader = () => {
   return (
   <header className="fixed top-0 left-0 right-0 h-16 bg-[#2b4dab] dark:bg-[#1e3a8a] shadow-md flex items-center justify-between px-6 z-10 border-b border-[#1E40AF] font-poppins text-white">
     <img
-      src="/public/img/logo.png"
+      src="https://s3.jiag.id.vn/sang/public/profile/avatar/499124cf-4657-4e54-a9b1-880c4fbab1cc-1748355305366070126.png"
       className="ml-12 w-20 h-auto hover:scale-105 cursor-pointer"
       alt="Logo"
     />
